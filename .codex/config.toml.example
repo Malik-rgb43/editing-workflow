@@ -22,7 +22,3 @@ startup_timeout_sec = 30
 tool_timeout_sec = 30
 
 # Pro profile additions are NOT shipped here: they need accounts. See integrations/README.md ("Pro templates").
-# Example shape for a key-based HTTP server (the key stays in your OS environment, never in this file):
-#   [mcp_servers.fal]
-#   url = "https://mcp.fal.ai/mcp"
-#   bearer_token_env_var = "FAL_KEY"

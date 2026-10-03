@@ -48,27 +48,27 @@ def test_apply_twice_registers_once(env):
 
 
 def test_key_based_provider_is_never_auto_registered_and_no_secret_in_any_argv(env, monkeypatch):
-    monkeypatch.setenv("FAL_KEY", "super-secret-value-123")
-    rc, out = env.json("apply", "--yes", "--profile", "pro", "--with", "provider-fal")
+    monkeypatch.setenv("TWENTYFIRST_API_KEY", "super-secret-value-123")
+    rc, out = env.json("apply", "--yes", "--profile", "pro", "--with", "ui-21st")
     assert rc == 0
-    assert [c for c in adds(env) if c[2] == "add" and "fal" in c] == []
-    fal = [m for m in out["mcp"] if m["name"] == "fal"]
-    assert fal and fal[0]["status"] == "manual"
+    assert [c for c in adds(env) if c[2] == "add" and "21st-magic" in c] == []
+    magic = [m for m in out["mcp"] if m["name"] == "21st-magic"]
+    assert magic and magic[0]["status"] == "manual"
     assert "super-secret-value-123" not in json.dumps(out) and all("super-secret" not in " ".join(c) for c in env.fake.calls)
-    rc, plan = env.json("plan", "--profile", "pro", "--with", "provider-fal")
+    rc, plan = env.json("plan", "--profile", "pro", "--with", "ui-21st")
     assert plan["api_keys_presence_only"] == [] or all(set(r) >= {"env_var", "present"} for r in plan["api_keys_presence_only"])
     assert "super-secret-value-123" not in json.dumps(plan)
 
 
 def test_oauth_provider_registers_http_without_token_and_codex_stays_manual(env):
-    rc, out = env.json("apply", "--yes", "--profile", "pro", "--with", "provider-elevenlabs,figma", target="both")
+    rc, out = env.json("apply", "--yes", "--profile", "pro", "--with", "provider-elevenlabs,provider-higgsfield", target="both")
     http = [c for c in adds(env) if c[2] == "add"]
     names = {c[c.index("--transport") + 2] for c in http if "http" in c}
-    assert {"elevenlabs", "figma"} <= names
+    assert {"elevenlabs", "higgsfield"} <= names
     for c in http:
         if "elevenlabs" in c:
             assert c[-1] == "https://api.elevenlabs.io/v1/mcp" and "--header" not in c and "--env" not in c
-    assert [c for c in adds(env, "codex") if c[2] == "add" and "figma" in c] == []
+    assert [c for c in adds(env, "codex") if c[2] == "add" and "higgsfield" in c] == []
     assert any(m["target"] == "codex" and m["status"] == "manual" for m in out["mcp"])
 
 
@@ -76,7 +76,7 @@ def test_avoid_entries_are_never_registered(env):
     cat = env.bs.load_catalog(env.repo)
     avoid = [e for e in cat["entry"] if e.get("avoid")]
     assert avoid, "the catalogue must carry the avoid list"
-    rc, plan = env.json("plan", "--profile", "pro", "--with", "provider-fal,provider-higgsfield,provider-elevenlabs,stock-media,blender")
+    rc, plan = env.json("plan", "--profile", "pro", "--with", "ui-21st,provider-higgsfield,provider-elevenlabs,stock-media,blender")
     assert not [m for m in plan["mcp"] if m["register"] == "never" and any(t["status"] == "will-register" for t in m["targets"].values())]
 
 
@@ -118,11 +118,11 @@ def test_cmd_special_characters_are_refused_for_windows_shims(monkeypatch):
 
 
 def test_key_presence_is_reported_without_values(env, monkeypatch):
-    monkeypatch.setenv("FAL_KEY", "super-secret-value-123")
+    monkeypatch.setenv("TWENTYFIRST_API_KEY", "super-secret-value-123")
     monkeypatch.delenv("PEXELS_API_KEY", raising=False)
-    rc, plan = env.json("plan", "--profile", "pro", "--with", "provider-fal,stock-media")
+    rc, plan = env.json("plan", "--profile", "pro", "--with", "ui-21st,stock-media")
     rows = {r["env_var"]: r["present"] for r in plan["api_keys_presence_only"]}
-    assert rows["FAL_KEY"] is True and rows["PEXELS_API_KEY"] is False
+    assert rows["TWENTYFIRST_API_KEY"] is True and rows["PEXELS_API_KEY"] is False
     assert "super-secret-value-123" not in json.dumps(plan)
 
 

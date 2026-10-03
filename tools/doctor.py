@@ -279,7 +279,7 @@ def check_disk(work_root):
 
 def check_credentials():
     c = Check("credentials_presence")
-    names = ["FAL_KEY", "ELEVENLABS_API_KEY", "PEXELS_API_KEY", "PIXABAY_API_KEY", "UNSPLASH_ACCESS_KEY", "GEMINI_API_KEY", "REPLICATE_API_TOKEN"]
+    names = ["ELEVENLABS_API_KEY", "PEXELS_API_KEY", "TWENTYFIRST_API_KEY", "GEMINI_API_KEY"]
     present = [n for n in names if os.environ.get(n)]
     return c.set("pass", f"presence only, values never read or printed: {', '.join(present) if present else 'none set'} (none is required for the core path)", observed=present)
 

@@ -1987,7 +1987,7 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("command", nargs="?", default="plan", choices=["plan", "apply", "add", "verify", "status", "where", "mark", "rollback", "uninstall", "run"])
     p.add_argument("state", nargs="?", help="for `mark`: authorised_account | first_render | inspection_passed | paid_generation_ready; for `add`: an integration id or add-on name")
     p.add_argument("--profile", choices=["minimal", "standard", "pro"], default="minimal", help="MCP profile (default minimal = no MCP servers)")
-    p.add_argument("--with", dest="with_", default="", help="comma list of add-ons, e.g. asr-cpu,blender,provider-fal (see integrations/README.md)")
+    p.add_argument("--with", dest="with_", default="", help="comma list of add-ons, e.g. asr-cpu,blender,provider-higgsfield (see integrations/README.md)")
     p.add_argument("--engine", choices=["hyperframes", "none"], default="hyperframes")
     p.add_argument("--target", choices=["auto", "claude", "codex", "both"], default="auto")
     p.add_argument("--scope", choices=["user", "project"], default="user")

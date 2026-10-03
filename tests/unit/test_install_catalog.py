@@ -11,9 +11,9 @@ CAT = tomllib.loads((REPO / "integrations" / "catalog.toml").read_text(encoding=
 ENTRIES = CAT["entry"]
 KINDS = {"cli", "mcp", "api", "native-plugin", "python-lib", "model"}
 COSTS = ("free", "free-tier", "paid", "plan", "workspace", "the student", "app licence", "none")
-REQUIRED_IDS = ["ffmpeg", "ffprobe", "node", "uv", "git", "gh", "hyperframes", "playwright", "shadcn", "iconify", "pexels", "pixabay", "unsplash",
-                "whisper-cpp", "faster-whisper", "yt-dlp", "blender", "blender-mcp", "higgsfield", "fal", "elevenlabs", "adobe-express-docs",
-                "nle-premiere", "nle-ae", "figma", "notion", "magic-21st", "gemini-vision"]
+REQUIRED_IDS = ["ffmpeg", "ffprobe", "node", "uv", "git", "gh", "hyperframes", "playwright", "shadcn", "iconify", "pexels",
+                "whisper-cpp", "faster-whisper", "yt-dlp", "blender", "blender-mcp", "higgsfield", "elevenlabs",
+                "nle-premiere", "nle-ae", "magic-21st", "gemini-vision"]
 
 
 def test_ids_unique_and_required_entries_present():
@@ -76,7 +76,6 @@ def test_security_notes_for_known_traps():
     assert "--describe false" in by["hyperframes"]["security"] and "Gemini" in by["gemini-vision"]["security"]
     assert "isolated" in by["playwright"]["security"] and "NOT a security boundary" in by["playwright"]["security"]
     assert "consumes credits" in by["higgsfield"]["cost"]
-    assert "DOCUMENTATION ONLY" in by["adobe-express-docs"]["name"]
     assert "GPL" in by["matte-fast"]["license"] and "INTERNAL" in by["matte-fast"]["license"]
     assert "terms" in by["yt-dlp"] and "GPL" in by["yt-dlp"]["license"]
     assert by["node"]["min_version"] == "22.0"
@@ -141,7 +140,7 @@ def test_install_md_has_no_hardware_menu_and_only_uses_real_flags_and_ids():
     for flag in set(re.findall(r"(--[a-z][a-z\-]+)", text)):
         assert flag in helptext or flag in foreign, flag
     known = {e["id"] for e in ENTRIES} | {a for e in ENTRIES for a in e.get("addons", [])}
-    for ident in ("playwright", "fal", "higgsfield", "elevenlabs", "blender", "whisper-cpp", "matte-fast", "stock-media", "yt-dlp"):
+    for ident in ("playwright", "higgsfield", "elevenlabs", "blender", "whisper-cpp", "matte-fast", "stock-media", "yt-dlp"):
         assert ident in known, ident
 
 

@@ -14,7 +14,7 @@
 schema = 1
 
 # Integrations that cost money but have nothing to sign up for through this file (vendor licence, legacy/avoid entries, workspace plans).
-no_referral = ["nle-premiere", "nle-ae", "elevenlabs-local-mcp", "magic-legacy-npm", "luma-legacy-mcp", "figma", "notion", "gemini-vision", "fal"]
+no_referral = ["nle-premiere", "nle-ae", "elevenlabs-local-mcp", "magic-legacy-npm", "luma-legacy-mcp", "gemini-vision"]
 
 [[service]]
 id = "higgsfield"

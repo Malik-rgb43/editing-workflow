@@ -24,7 +24,7 @@ python install/bootstrap.py uninstall --yes
 
 <!-- step: uninstall-04 -->
 ## uninstall-04 - שאריות שרק אתה יכול להסיר
-* כניסות: מבטלים גישת חיבורים בהגדרות החשבון אצל כל ספק (Higgsfield, ‏ElevenLabs, ‏Figma, ‏Notion, ‏Unsplash) ומוחקים מפתחות API שיצרת (fal, ‏Pexels, ‏Pixabay, ‏21st.dev, ‏Gemini) - ההתקנה מעולם לא שמרה אותם.
+* כניסות: מבטלים גישת חיבורים בהגדרות החשבון אצל כל ספק (Higgsfield, ‏ElevenLabs) ומוחקים מפתחות API שיצרת (Pexels, ‏21st.dev, ‏Gemini) - ההתקנה מעולם לא שמרה אותם.
 * משתני סביבה שהגדרת בידיים (Windows: התחל -> "Edit environment variables for your account"; ‏macOS: הקובץ `~/.zshrc` שלך).
 * חבילות שאישרת ממנהל חבילות (`winget uninstall <id>` / ‏`brew uninstall <name>`): ‏Node, ‏FFmpeg, ‏uv, ‏Git הם כלים כלליים - מסירים רק אם שום דבר אחר לא זקוק להם.
 * תיקיית השכפול ו-`~/avc-work` כשאין צורך יותר בפרויקטים. מחיקת תיקיית עבודה מוחקת את הסרטונים שלך: מעתיקים קודם מה שרוצים.

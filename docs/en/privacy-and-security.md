@@ -33,7 +33,7 @@ The toolkit has **no telemetry endpoint** and sends nothing home. Its dependenci
 - Keys live in **environment variables or the operating-system keychain** — never in the repository, on a command line, in logs, diagnostics, output metadata, screenshots or support bundles.
 - The repository ships example files with **empty values**; your real values sit in an ignored local file when you need one.
 - `doctor` checks **presence only**; it never prints, copies or exports a secret. An optional round trip uses a dummy secret you consent to and then deletes.
-- MCP configs use substitution (`${FAL_KEY}` in Claude's `.mcp.json`; `bearer_token_env_var = "FAL_KEY"` in Codex). A project-level `.mcp.json` **starts processes** — review it like code.
+- MCP configs use substitution (`${NAME}` in Claude's `.mcp.json`; `bearer_token_env_var = "NAME"` in Codex). A project-level `.mcp.json` **starts processes** — review it like code.
 - Keychain storage protects secrets at rest; it does not isolate them from other programs you approve that use the same Python interpreter. `[VERIFIED-external]` scoped
 - If a key leaks: revoke it at the provider first, then clean up (section 11).
 - A signed-in connector is **not spend authorisation**: automated generation can consume credits even where the website is "unlimited". Every costed job needs prior approval with a dated estimate. `[VERIFIED-external]`
@@ -65,7 +65,7 @@ The toolkit has **no telemetry endpoint** and sends nothing home. Its dependenci
 | Route | What leaves your machine | Rule |
 |---|---|---|
 | `hyperframes snapshot` | frames, sent to Gemini for an AI description **when a Gemini/Google key exists** | **always `--describe false`**, ≤ 5 timestamps per call; not a full offline guarantee (remote fonts/asset URLs are separate paths) `[PROVEN-internal]` |
-| hosted generation (Higgsfield, Runway, fal …) | the media you send as references | check training/retention terms and the workspace opt-out **first**; Higgsfield API terms (updated 2026-09-02, §7.2): training allowed unless opted out, effective within 10 business days, not retroactive `[VERIFIED-external]` |
+| hosted generation (Higgsfield, Runway …) | the media you send as references | check training/retention terms and the workspace opt-out **first**; Higgsfield API terms (updated 2026-09-02, §7.2): training allowed unless opted out, effective within 10 business days, not retroactive `[VERIFIED-external]` |
 | music generators (Suno …) | uploaded content, voice, likeness | broad rights granted in the terms (revised 2026-08-10, effective 2026-09-03) `[SOURCED-unverified]` |
 | cloud ASR/TTS | audio | eligibility before price; prefer the local ASR profiles for client audio |
 | video-understanding / indexing services | the whole video, retained for indexing | per-client decision |

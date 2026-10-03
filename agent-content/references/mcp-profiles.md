@@ -20,15 +20,15 @@ refresh: "read-only: npm view <pkg> version, README/changelog of each server, pr
 | Non-spending refresh | `npm view`, read changelogs and licence files, re-read provider MCP docs; do **not** sign in, do **not** call a generation tool |
 
 ## 1. Teach the taxonomy first
-Four things setup guides blur: **native plugin** (runs inside an app) · **MCP transport** (stdio / Streamable HTTP / deprecated SSE) · **REST/SDK API** · **model backend**. A listed API or an installed plugin does not prove a working MCP connection. **Docs-only servers** (for example the Adobe Express Developer MCP: two documentation/type tools, *not* a canvas editor) must be labelled differently from **execution servers** (they change files, projects, accounts or spend money).
+Four things setup guides blur: **native plugin** (runs inside an app) · **MCP transport** (stdio / Streamable HTTP / deprecated SSE) · **REST/SDK API** · **model backend**. A listed API or an installed plugin does not prove a working MCP connection. **Docs-only servers** (servers that offer only documentation and type tools, *not* an editor) must be labelled differently from **execution servers** (they change files, projects, accounts or spend money).
 
 | Kind | Examples | Transport | Typical risk |
 |---|---|---|---|
 | native CLI/library (not MCP) | FFmpeg/ffprobe, faster-whisper, Blender headless `bpy` | process args/files | resource load, overwrite, parser surface |
-| local MCP (stdio) | Playwright MCP, filesystem reference server, Adobe Express docs server, Blender MCP | child process | runs with **your OS permissions**; annotations are hints, not a sandbox |
-| hosted MCP (HTTP/OAuth) | Higgsfield, ElevenLabs, fal, Runway (two endpoints), Replicate, Figma, Notion, TwelveLabs, 21st.dev | HTTPS | account scope, uploads of client media, **spend** |
+| local MCP (stdio) | Playwright MCP, filesystem reference server, Blender MCP | child process | runs with **your OS permissions**; annotations are hints, not a sandbox |
+| hosted MCP (HTTP/OAuth) | Higgsfield, ElevenLabs, Runway (two endpoints), Replicate, TwelveLabs, 21st.dev | HTTPS | account scope, uploads of client media, **spend** |
 | plugin + MCP bridge | Higgsfield After Effects / Premiere / Blender plugins | app plugin + bridge | executes editor operations; installer trust |
-| REST/SDK only | Pexels, Pixabay, Unsplash, Iconify, YouTube, Drive | HTTPS | keys, provider terms |
+| REST/SDK only | Pexels, Iconify, YouTube, Drive | HTTPS | keys, provider terms |
 
 ## 2. The three shipped profiles
 | Profile | Claude Code `.mcp.json` | Codex `.codex/config.toml` | Purpose / boundary |
@@ -69,42 +69,41 @@ tool_timeout_sec = 30
 ```
 An allowlist reduces what the client exposes; a malicious server process keeps its OS permissions.
 
-**Pro — provider additions** (templates for a later authorised task; **never put a live secret in a repo file**): fal execution server `https://mcp.fal.ai/mcp` with `Authorization: Bearer ${FAL_KEY}` (Claude: `type: http`; Codex: `bearer_token_env_var = "FAL_KEY"`). Authentication alone does not authorise generation: after an approved login inspect the server inventory, pick real tool names for a narrow allowlist, approve **each costed job separately**. OAuth connectors (Higgsfield, ElevenLabs, Figma, Notion, Runway, TwelveLabs) go into a task-specific profile with a source-confirmed URL; the user signs in by hand; a compatible OAuth client is required.
+**Pro — provider additions** (templates for a later authorised task; **never put a live secret in a repo file**): a key-based server uses `Authorization: Bearer ${NAME}` (Claude: `type: http`; Codex: `bearer_token_env_var = "NAME"`). Authentication alone does not authorise generation: after an approved login inspect the server inventory, pick real tool names for a narrow allowlist, approve **each costed job separately**. OAuth connectors (Higgsfield, ElevenLabs, Runway, TwelveLabs) go into a task-specific profile with a source-confirmed URL; the user signs in by hand; a compatible OAuth client is required.
 
 ## 4. Pro profile = a provider list, not a bundle (choose one per task)
 | Role | Candidates (tier opinion) | What to check first |
 |---|---|---|
-| generation, one provider | Higgsfield MCP (`https://mcp.higgsfield.ai/mcp`) · fal (`https://mcp.fal.ai/mcp`) · Replicate · Runway generation (`https://mcp.runwayml.com/mcp`, **distinct** from Runway Dev `https://dev.runwayml.com/mcp`) · ElevenLabs hosted OAuth server | **automated generation consumes credits even where web use is unlimited; sign-in ≠ spend authorisation** `[VERIFIED-external]`; training/retention terms; Hebrew unvalidated |
+| generation, one provider | Higgsfield MCP (`https://mcp.higgsfield.ai/mcp`) · Replicate · Runway generation (`https://mcp.runwayml.com/mcp`, **distinct** from Runway Dev `https://dev.runwayml.com/mcp`) · ElevenLabs hosted OAuth server | **automated generation consumes credits even where web use is unlimited; sign-in ≠ spend authorisation** `[VERIFIED-external]`; training/retention terms; Hebrew unvalidated |
 | app bridge, one | Higgsfield After Effects / Premiere / Blender bridges | installer inspected; **duplicate the project before writes**; Adobe minimum-version conflict (help says 2024 / 24.0+, plugin page 2025+) `[CONFLICT]` unresolved |
-| stock/icons/UI (REST first) | Pexels, Pixabay (**100 requests / 60 s; 24 h caching required; no mass download**), Unsplash (hotlink + download-event + attribution), Iconify (each set has its own licence), shadcn registries (component licences per registry) | provider terms; asset licence ≠ API access |
+| stock/icons/UI (REST first) | Pexels, Iconify (each set has its own licence), shadcn registries (component licences per registry) | provider terms; asset licence ≠ API access |
 | archive analysis, optional | TwelveLabs Jockey, Gemini video understanding, VideoDB | uploads leave the machine; client decision per client |
 | NLE hand-off, optional | CapCut × Codex plugin (OAuth; region limits; untested) | inspect the bundle before install |
 
-One provider can cover most **cloud** stages (fal documents image, video, speech, music, video understanding and FFmpeg compose; Replicate similar) but **none covers the whole professional workflow through one connection**; Hebrew/RTL quality, accepted-output speed and cost are unmeasured; a price counterexample exists (ElevenLabs v3: fal $0.10 vs Runway $0.20 per 1,000 characters, 2026-10-01). The unified interface is therefore a **job/result contract** (provider, capability, evidence_state, request/job ids, input/output hashes, billing wallet, estimated cost, failure class), not a promise that one vendor does everything. `[SOURCED-unverified]` + `[IDEA]`
+One provider can cover most **cloud** stages (hosted providers document image, video, speech and music) but **none covers the whole professional workflow through one connection**; Hebrew/RTL quality, accepted-output speed and cost are unmeasured; a price counterexample exists (ElevenLabs v3 was priced differently across providers, 2026-10-01). The unified interface is therefore a **job/result contract** (provider, capability, evidence_state, request/job ids, input/output hashes, billing wallet, estimated cost, failure class), not a promise that one vendor does everything. `[SOURCED-unverified]` + `[IDEA]`
 
 ## 5. Docs-only vs execution servers (label every server in `doctor` output)
 | Server | Class | Notes |
 |---|---|---|
-| Adobe Express Developer MCP 1.0.0 | **docs-only** | 2 tools (`get_relevant_documentations`, `get_typedefinitions`); 2,071 B tool list; a doc query returned 28,982 B, a type-def call 66,786 B; docs search sends the query to Adobe (not offline); the types dependency **floats on `latest`** — keep a lockfile; **Recommended only for Express add-on development** |
 | filesystem reference server 2026.8.31 | execution (file read/write) | 14 tools, 14,147 B; only when the client lacks file access; check client roots |
 | Playwright MCP 0.0.83 | execution (browser) | 25 tools, 21,382 B; `--isolated --headless --output-dir`; **origin allow/deny flags are not a security boundary** `[VERIFIED-external]`; never attach the signed-in browser profile; one browser server by default |
 | Chrome DevTools MCP 1.10.1 | execution (browser debug) | exposes browser data; do not run both browser servers |
 | Blender MCP (`mcp-for-blender`) | execution (**arbitrary Python**) | see section 6 |
-| Higgsfield / fal / Runway / ElevenLabs / Replicate | execution + **spend** | behind `paid-generation-gate` |
-| Figma, Notion, Drive, Meta Marketing | execution on accounts | Figma's current server can **write** the canvas; Notion search may span connected sources; Drive broad scopes expose unrelated files; Meta Marketing tokens can change spend — enable one workspace/folder per project |
+| Higgsfield / Runway / ElevenLabs / Replicate | execution + **spend** | behind `paid-generation-gate` |
+| Drive, Meta Marketing | execution on accounts | Drive broad scopes expose unrelated files; Meta Marketing tokens can change spend — enable one workspace/folder per project |
 
 ## 6. Blender MCP isolation (port 9876, no auth)
 The add-on socket on **localhost:9876 has no authentication or encryption and executes arbitrary Python** `[VERIFIED-external]`. Rules: bind to localhost only; **never forward or expose the port**; run Blender with the scene you trust — treat `.blend` files from the internet as untrusted code; do not start it on a machine with unrelated sensitive files open; pin one server, **disable telemetry**, do not global-install or auto-trial provider keys (the add-on ships a shared trial key with a small quota — never rely on it); asset-source keys (Sketchfab, Poly Pizza, Hunyuan) are the student's own. The "safe mode" option is not an established sandbox. For deterministic batch work prefer native headless `blender -b -P script.py` over the socket. Higgsfield `bl_*` tools bill generation credits per call. `[SOURCED-unverified]` for usage details.
 
 ## 7. Context overhead — measured (E06) vs unmeasured
-`tools/list` serialised JSON: filesystem 14 tools = 14,147 B; Playwright 25 tools = 21,382 B; Adobe Express 2 tools = 2,071 B `[MEASURED-lab]`. Tool count is a weak proxy: schema length, lazy loading, response size and reuse differ; bytes are not tokens; Claude's tool search can defer definitions and Codex has `enabled_tools` / `disabled_tools` — **no token saving was measured**. `doctor` reports per profile: tools, schema bytes, response bytes, startup time, latency (stored in `docs/capabilities/`).
+`tools/list` serialised JSON: filesystem 14 tools = 14,147 B; Playwright 25 tools = 21,382 B `[MEASURED-lab]`. Tool count is a weak proxy: schema length, lazy loading, response size and reuse differ; bytes are not tokens; Claude's tool search can defer definitions and Codex has `enabled_tools` / `disabled_tools` — **no token saving was measured**. `doctor` reports per profile: tools, schema bytes, response bytes, startup time, latency (stored in `docs/capabilities/`).
 
 ## 8. Value tiers for students (opinion; verify before shipping)
 | Tier | Items |
 |---|---|
 | Must (capability) | none required as MCP — FFmpeg + scripts + the repo's own tools |
-| Recommended | one isolated Playwright browser; shadcn registries (free); Pexels/Pixabay/Iconify via REST; local transcription (faster-whisper, library not MCP) |
-| Optional | Higgsfield MCP + bridges; ElevenLabs hosted OAuth; fal; Replicate; Runway; Unsplash; 21st.dev Magic (paid account); Figma/Notion/Drive; TwelveLabs/Gemini |
+| Recommended | one isolated Playwright browser; shadcn registries (free); Pexels/Iconify via REST; local transcription (faster-whisper, library not MCP) |
+| Optional | Higgsfield MCP + bridges; ElevenLabs hosted OAuth; Replicate; Runway; 21st.dev Magic (paid account); Drive; TwelveLabs/Gemini |
 | Avoid / stale | ElevenLabs **local** MCP repo (archived 2026-08-20; hosted server replaces it); old Magic npm package (0.2.3 compatibility proxy, old keys reset); Luma legacy MCP (last commit 2025-04-18); the egoist FFmpeg wrapper (last commit 2025-03-29; direct FFmpeg covers it); **exposing Blender port 9876** |
 
 ## 9. Security rules (apply to every server)

@@ -53,7 +53,7 @@ The optional fast route you can add with `add whisper-cpp` (whisper.cpp + Vulkan
 
 <!-- step: troubleshooting-09 -->
 ## troubleshooting-09 - OAuth sign-in failed
-Applies to Higgsfield, ElevenLabs, Figma, Notion, Unsplash. In your agent run `/mcp`, pick the server, authenticate; or in a terminal `claude mcp login <name>` / `codex mcp login <name>` [documented]. Wrong account or workspace? Sign out in the browser first. Pop-up blocked or a company SSO policy? Allow the pop-up or ask your admin. Never paste codes or tokens into the chat. A successful sign-in spends nothing and is not spend approval. If the vendor's hosted MCP URL in the catalogue is flagged `unverified` (Higgsfield, Unsplash), use the vendor's own documented route instead (Higgsfield: its CLI).
+Applies to Higgsfield, ElevenLabs. In your agent run `/mcp`, pick the server, authenticate; or in a terminal `claude mcp login <name>` / `codex mcp login <name>` [documented]. Wrong account or workspace? Sign out in the browser first. Pop-up blocked or a company SSO policy? Allow the pop-up or ask your admin. Never paste codes or tokens into the chat. A successful sign-in spends nothing and is not spend approval. If the vendor's hosted MCP URL in the catalogue is flagged `unverified` (Higgsfield, Unsplash), use the vendor's own documented route instead (Higgsfield: its CLI).
 
 <!-- step: troubleshooting-10 -->
 ## troubleshooting-10 - Port conflicts

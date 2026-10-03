@@ -131,7 +131,7 @@ def test_defaults_carry_no_vendor_or_hardware_specific_choice(env):
     assert sel["profile"] == "minimal" and sel["with"] == [] and sel["engine"] == "hyperframes"
     assert plan["mcp"] == [] and plan["by_hand_plugins"] == []
     names = json.dumps(plan).lower()
-    for taste in ("21st", "higgsfield", "elevenlabs", "fal-ai", "figma", "notion"):
+    for taste in ("21st", "higgsfield", "elevenlabs"):
         assert taste not in names, taste
     assert "GGML_VK_DISABLE_COOPMAT" not in json.dumps(plan)
 
@@ -140,7 +140,7 @@ def test_defaults_carry_no_vendor_or_hardware_specific_choice(env):
 def test_add_list_shows_every_integration(env):
     rc, rows = env.json("add", "--list", repo=True, target=None, work=False)
     ids = {r["id"] for r in rows}
-    assert {"playwright", "fal", "higgsfield", "elevenlabs", "blender-mcp", "faster-whisper", "whisper-cpp", "yt-dlp"} <= ids
+    assert {"playwright", "higgsfield", "elevenlabs", "blender-mcp", "faster-whisper", "whisper-cpp", "yt-dlp"} <= ids
     assert next(r for r in rows if r["id"] == "luma-legacy-mcp")["avoid"] is True
 
 
@@ -168,13 +168,13 @@ def test_add_playwright_registers_exactly_the_standard_server(env):
 
 
 def test_add_key_based_provider_never_registers_and_never_touches_the_key(env, monkeypatch):
-    monkeypatch.setenv("FAL_KEY", "super-secret-value-123")
+    monkeypatch.setenv("TWENTYFIRST_API_KEY", "super-secret-value-123")
     env.run("apply", "--yes", expect=0)
-    rc, out = env.json("add", "fal", "--yes", target=None, work=False)
+    rc, out = env.json("add", "magic-21st", "--yes", target=None, work=False)
     assert rc == 0
     r = out["results"][0]
     assert r["gate"] == "paid-generation-gate" and "not spend authorisation" in r["note"]
-    assert r["env_var"]["name"] == "FAL_KEY" and r["env_var"]["present"] is True
+    assert r["env_var"]["name"] == "TWENTYFIRST_API_KEY" and r["env_var"]["present"] is True
     assert all(a["status"] == "manual" for a in r["actions"])
     assert not [c for c in env.fake.actions("claude", "mcp") if c[2] == "add"]
     assert "super-secret-value-123" not in json.dumps(out)

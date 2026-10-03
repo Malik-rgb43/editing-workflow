@@ -7,6 +7,11 @@ Releases are immutable: a correction is a new release.
 Dates and facts here are perishable; each entry states its source where it relies on research
 (src: blueprint/REPO_ARCHITECTURE.md section 10, 2026-10-02).
 
+## [0.3.2] - 2026-10-03
+
+### Removed
+- fal.ai, Pixabay, Unsplash, Figma, Notion and the Adobe Express docs MCP are gone from the integrations catalogue, the install questions, the docs, the tests and the MCP reference. (Hyper3D was removed in 0.3.1.) The stock-media group is now Pexels and Iconify. Premiere / After Effects bridges stay. Rights notes about stock licences in the skills' references are kept: they are licence guidance, not offers.
+
 ## [0.3.1] - 2026-10-03
 
 ### Changed
