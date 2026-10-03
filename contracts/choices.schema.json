@@ -1,0 +1,112 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://editing-workflow.invalid/contracts/choices.schema.json",
+  "title": "Choice board (choices.json)",
+  "description": "Decisions made visually (fonts, caption motion, palette) instead of by chat round-trips. The board HTML writes selections here. Source: TOOLS_SPEC section 3 item 14.",
+  "type": "object",
+  "required": [
+    "schema",
+    "board_id",
+    "questions"
+  ],
+  "properties": {
+    "schema": {
+      "const": "avc.choices/1"
+    },
+    "board_id": {
+      "type": "string"
+    },
+    "project": {
+      "type": "string"
+    },
+    "created_utc": {
+      "type": "string",
+      "format": "date-time",
+      "description": "timezone-aware ISO-8601 (UTC preferred)"
+    },
+    "language": {
+      "enum": [
+        "he",
+        "en"
+      ]
+    },
+    "questions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "prompt",
+          "options"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "prompt": {
+            "type": "string"
+          },
+          "multi": {
+            "type": "boolean",
+            "default": false
+          },
+          "options": {
+            "type": "array",
+            "minItems": 2,
+            "items": {
+              "type": "object",
+              "required": [
+                "id",
+                "label"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "label": {
+                  "type": "string"
+                },
+                "preview": {
+                  "type": "string",
+                  "description": "project-relative image/video path"
+                },
+                "notes": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "selected": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "string"
+            },
+            "description": "option ids; null = not decided yet"
+          },
+          "decided_by": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "decided_utc": {
+            "oneOf": [
+              {
+                "type": "string",
+                "format": "date-time",
+                "description": "timezone-aware ISO-8601 (UTC preferred)"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

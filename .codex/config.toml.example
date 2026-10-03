@@ -1,0 +1,28 @@
+# Codex - Standard profile template (ONE isolated browser server). NO secrets in this file.
+# Use: copy to <your-video-project>/.codex/config.toml (Codex loads project config only for TRUSTED projects)
+#      or merge the table into ~/.codex/config.toml. `python install/bootstrap.py apply --profile standard --target codex`
+#      does the equivalent with `codex mcp add`. TOML does not expand variables: write the absolute path yourself.
+# Minimal profile = no [mcp_servers.*] tables at all.
+# Sources: Codex config docs (learn.chatgpt.com/docs/extend/mcp), Playwright MCP README - checked 2026-10-02.
+
+[mcp_servers.avc_playwright]
+command = "npx"
+# Native Windows: use  command = "cmd"  and  args = ["/c", "npx", "@playwright/mcp@0.0.83", ...]   [SOURCED-unverified for Codex on Windows]
+args = [
+  "@playwright/mcp@0.0.83",
+  "--isolated",
+  "--headless",
+  "--output-dir",
+  "REPLACE_WITH_ABSOLUTE_WORK_ROOT/browser-output",
+]
+# Narrow allow-list: reduces what the CLIENT exposes; it is not an OS sandbox. Add tools (browser_click, browser_type, ...)
+# only when a task needs them. Keep normal approvals on; no wildcard grants.
+enabled_tools = ["browser_navigate", "browser_snapshot", "browser_close"]
+startup_timeout_sec = 30
+tool_timeout_sec = 30
+
+# Pro profile additions are NOT shipped here: they need accounts. See integrations/README.md ("Pro templates").
+# Example shape for a key-based HTTP server (the key stays in your OS environment, never in this file):
+#   [mcp_servers.fal]
+#   url = "https://mcp.fal.ai/mcp"
+#   bearer_token_env_var = "FAL_KEY"

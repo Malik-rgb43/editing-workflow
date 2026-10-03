@@ -1,0 +1,5 @@
+interface:
+  display_name: "Course Router"
+  short_description: "Choose the one skill that owns a video request and hand it an explicit artifact"
+policy:
+  allow_implicit_invocation: false

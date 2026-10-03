@@ -1,0 +1,5 @@
+interface:
+  display_name: "Revision Round"
+  short_description: "Use when the user sends notes, complaints or timestamped fixes on an existing draft or delivered video - boring, looks A"
+policy:
+  allow_implicit_invocation: false

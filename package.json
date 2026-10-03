@@ -1,0 +1,9 @@
+{
+  "name": "editing-workflow-engine",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Pins the HyperFrames engine (HeyGen, Apache-2.0). Nothing of HyperFrames is stored in this repository: `npm ci --ignore-scripts` downloads it from the official npm package.",
+  "license": "Apache-2.0",
+  "engines": { "node": ">=22" },
+  "dependencies": { "hyperframes": "0.8.98" }
+}

@@ -1,0 +1,156 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://editing-workflow.invalid/contracts/job.schema.json",
+  "title": "Job (local or cloud)",
+  "description": "Unified local/cloud job request. Accepted means QA and required human review completed; provider-succeeded is not accepted. Source: T20 TOOLKIT_DX_SPEC section 7.",
+  "type": "object",
+  "required": [
+    "schema",
+    "job_id",
+    "adapter",
+    "capability",
+    "location",
+    "state",
+    "budget"
+  ],
+  "properties": {
+    "schema": {
+      "const": "avc.job/1"
+    },
+    "job_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "idempotency_key": {
+      "type": "string"
+    },
+    "adapter": {
+      "type": "object",
+      "required": [
+        "id",
+        "version"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        }
+      }
+    },
+    "request_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "capability": {
+      "type": "string"
+    },
+    "location": {
+      "enum": [
+        "local",
+        "cloud"
+      ]
+    },
+    "route": {
+      "type": "string",
+      "description": "OS/device route, e.g. cpu, vulkan, cuda, mlx"
+    },
+    "model": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "weights_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "quantization": {
+          "type": "string"
+        },
+        "checked_at": {
+          "type": "string",
+          "format": "date"
+        }
+      }
+    },
+    "budget": {
+      "$ref": "budget.schema.json"
+    },
+    "inputs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "asset_id",
+          "sha256"
+        ],
+        "properties": {
+          "asset_id": {
+            "type": "string"
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "rights_ref": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "restricted_roots": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "parameters": {
+      "type": "object"
+    },
+    "state": {
+      "enum": [
+        "queued",
+        "running",
+        "awaiting_approval",
+        "succeeded",
+        "failed",
+        "cancelled",
+        "unknown"
+      ]
+    },
+    "attempt": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "network": {
+      "type": "object",
+      "properties": {
+        "outbound_endpoints": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "uploads": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "retention": {
+          "type": "string"
+        },
+        "credential_scope": {
+          "type": "string"
+        }
+      }
+    },
+    "created_utc": {
+      "type": "string",
+      "format": "date-time",
+      "description": "timezone-aware ISO-8601 (UTC preferred)"
+    }
+  }
+}

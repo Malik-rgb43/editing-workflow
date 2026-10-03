@@ -1,0 +1,5 @@
+interface:
+  display_name: "Render Qa Deliver"
+  short_description: "Run the cheap-first render, QA and delivery pipeline for a HyperFrames video: preflight, range renders, one full render,"
+policy:
+  allow_implicit_invocation: false

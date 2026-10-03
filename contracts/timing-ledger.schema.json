@@ -1,0 +1,111 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://editing-workflow.invalid/contracts/timing-ledger.schema.json",
+  "title": "Timing ledger line (JSONL)",
+  "description": "One JSON object per line in projects/<name>/_work/timing-ledger.jsonl. credits null = unknown (never summed as 0). Source: blueprint TOOLS_SPEC section 1.9; implementation src/core/ledger.py.",
+  "type": "object",
+  "required": [
+    "schema",
+    "stage",
+    "started_utc",
+    "ended_utc",
+    "queue_wait_min",
+    "setup_min",
+    "load_min",
+    "run_min",
+    "qa_min",
+    "review_min",
+    "renders",
+    "retries",
+    "credits",
+    "status"
+  ],
+  "properties": {
+    "schema": {
+      "const": "avc.timing-ledger/1"
+    },
+    "project": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "attempt": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "stage": {
+      "type": "string",
+      "minLength": 1
+    },
+    "tool": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "started_utc": {
+      "type": "string",
+      "format": "date-time",
+      "description": "timezone-aware ISO-8601 (UTC preferred)"
+    },
+    "ended_utc": {
+      "type": "string",
+      "format": "date-time",
+      "description": "timezone-aware ISO-8601 (UTC preferred)"
+    },
+    "queue_wait_min": {
+      "type": "number",
+      "minimum": 0
+    },
+    "setup_min": {
+      "type": "number",
+      "minimum": 0
+    },
+    "load_min": {
+      "type": "number",
+      "minimum": 0
+    },
+    "run_min": {
+      "type": "number",
+      "minimum": 0
+    },
+    "qa_min": {
+      "type": "number",
+      "minimum": 0
+    },
+    "review_min": {
+      "type": "number",
+      "minimum": 0
+    },
+    "renders": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "retries": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "credits": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0
+    },
+    "status": {
+      "enum": [
+        "ok",
+        "failed",
+        "cancelled",
+        "timeout"
+      ]
+    },
+    "note": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  }
+}

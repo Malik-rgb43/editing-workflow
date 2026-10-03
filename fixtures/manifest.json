@@ -1,0 +1,849 @@
+{
+  "schema": "avc.fixture-manifest/1",
+  "generated_by": [
+    "fixtures/generators/make_e04_set.py",
+    "fixtures/generators/make_sample_project.py"
+  ],
+  "generator_version": "0.1.0",
+  "recorded_with": {
+    "ffmpeg": "ffmpeg version 8.1-full_build-www.gyan.dev Copyright (c) 2000-2026 the FFmpeg developers",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "python": "3.12.10",
+    "note": "measured on the generating machine only; hashes of encoded/decoded media may differ on other FFmpeg builds"
+  },
+  "rights_policy": "Synthetic, produced by this repository's generator scripts from FFmpeg lavfi sources. No third-party media, no client material, no fonts. Licence: the repository licence (Apache-2.0).",
+  "media_in_git": false,
+  "media_location": "fixtures/_generated/ (git-ignored by the repository's .gitignore; tests generate into a temp directory)",
+  "fonts": {
+    "bundled": [],
+    "used_by_generators": [],
+    "policy": "no font file is bundled or used by the generators; caption rendering fonts must come from the documented OFL fetch step or from the system fallbacks below",
+    "fetch_step": "fixtures/generators/fetch_ofl_fonts.py (pins a google/fonts git commit, records URL + sha256 + OFL text; NOT run in tests, needs network)",
+    "candidate_fonts": [
+      {
+        "family": "Heebo",
+        "licence": "SIL OFL 1.1",
+        "scripts": [
+          "Hebrew",
+          "Latin"
+        ]
+      },
+      {
+        "family": "Assistant",
+        "licence": "SIL OFL 1.1",
+        "scripts": [
+          "Hebrew",
+          "Latin"
+        ]
+      }
+    ],
+    "fallbacks": [
+      "Pillow default font (Latin only: Hebrew will show as missing glyphs)",
+      "DejaVu Sans (system package, Hebrew-capable, licence verified by the user's OS package)",
+      "Arial / Segoe UI on Windows (system fonts: use for local checks only, never redistribute)"
+    ]
+  },
+  "items": [
+    {
+      "id": "clean",
+      "group": "e04",
+      "kind": "video",
+      "filename": "clean.mkv",
+      "creator": "fixtures/generators/make_e04_set.py v0.1.0",
+      "rights": "Synthetic, produced by this repository's generator scripts from FFmpeg lavfi sources. No third-party media, no client material, no fonts. Licence: the repository licence (Apache-2.0).",
+      "params": {
+        "width": 360,
+        "height": 640,
+        "fps": "30",
+        "frames": 60,
+        "duration_s": "2",
+        "codec": "ffv1",
+        "pix_fmt": "gbrp"
+      },
+      "labels": {
+        "defects": [],
+        "intent": [
+          "control"
+        ],
+        "ground_truth": {
+          "note": "no injected defect; saw-tooth gradient; low-feature for optical-flow tools (E04-B07 trigger)"
+        }
+      },
+      "recipe": "color=c=black:s=360x640:r=30:d=2,format=gbrp,geq=r='60+mod(X+2*N,120)':g='60+mod(X+2*N,120)':b='60+mod(X+2*N,120)'",
+      "content_sha256": "003015e540449b73244181af0f7321146dbc829aa2bc848e76e89e35866dc1c0",
+      "hash_kind": "decoded-content (ffmpeg -f hash), stable for one FFmpeg build; drift across builds is a warning"
+    },
+    {
+      "id": "black",
+      "group": "e04",
+      "kind": "video",
+      "filename": "black.mkv",
+      "creator": "fixtures/generators/make_e04_set.py v0.1.0",
+      "rights": "Synthetic, produced by this repository's generator scripts from FFmpeg lavfi sources. No third-party media, no client material, no fonts. Licence: the repository licence (Apache-2.0).",
+      "params": {
+        "width": 360,
+        "height": 640,
+        "fps": "30",
+        "frames": 60,
+        "duration_s": "2",
+        "codec": "ffv1",
+        "pix_fmt": "gbrp"
+      },
+      "labels": {
+        "defects": [
+          "black_frame"
+        ],
+        "intent": [],
+        "ground_truth": {
+          "black_frames": [
+            15
+          ]
+        }
+      },
+      "recipe": "color=c=black:s=360x640:r=30:d=2,format=gbrp,geq=r='60+mod(X+2*N,120)':g='60+mod(X+2*N,120)':b='60+mod(X+2*N,120)',drawbox=x=0:y=0:w=iw:h=ih:color=black:t=fill:enable='eq(n,15)'",
+      "content_sha256": "31a8764725f77cd7dcb352951c2b044dc0c4cda0fecdb9ec2ffda42fd3797350",
+      "hash_kind": "decoded-content (ffmpeg -f hash), stable for one FFmpeg build; drift across builds is a warning"
+    },
+    {
+      "id": "flash",
+      "group": "e04",
+      "kind": "video",
+      "filename": "flash.mkv",
+      "creator": "fixtures/generators/make_e04_set.py v0.1.0",
+      "rights": "Synthetic, produced by this repository's generator scripts from FFmpeg lavfi sources. No third-party media, no client material, no fonts. Licence: the repository licence (Apache-2.0).",
+      "params": {
+        "width": 360,
+        "height": 640,
+        "fps": "30",
+        "frames": 60,
+        "duration_s": "2",
+        "codec": "ffv1",
+        "pix_fmt": "gbrp"
+      },
+      "labels": {
+        "defects": [
+          "flash_frame"
+        ],
+        "intent": [],
+        "ground_truth": {
+          "flash_frames": [
+            30
+          ]
+        }
+      },
+      "recipe": "color=c=black:s=360x640:r=30:d=2,format=gbrp,geq=r='60+mod(X+2*N,120)':g='60+mod(X+2*N,120)':b='60+mod(X+2*N,120)',drawbox=x=0:y=0:w=iw:h=ih:color=white:t=fill:enable='eq(n,30)'",
+      "content_sha256": "4ae0448b7bebda6293b8016f0cb7d42523310f098af285b9cc43c0b98c4e9192",
+      "hash_kind": "decoded-content (ffmpeg -f hash), stable for one FFmpeg build; drift across builds is a warning"
+    },
+    {
+      "id": "freeze",
+      "group": "e04",
+      "kind": "video",
+      "filename": "freeze.mkv",
+      "creator": "fixtures/generators/make_e04_set.py v0.1.0",
+      "rights": "Synthetic, produced by this repository's generator scripts from FFmpeg lavfi sources. No third-party media, no client material, no fonts. Licence: the repository licence (Apache-2.0).",
+      "params": {
+        "width": 360,
+        "height": 640,
+        "fps": "30",
+        "frames": 60,
+        "duration_s": "2",
+        "codec": "ffv1",
+        "pix_fmt": "gbrp"
+      },
+      "labels": {
+        "defects": [
+          "freeze_hold"
+        ],
+        "intent": [],
+        "ground_truth": {
+          "freeze_frames": [
+            20,
+            50
+          ],
+          "copy_of_frame": 19,
+          "hold_span_frames": [
+            19,
+            50
+          ],
+          "note": "policy: a hold is a warning, not a FAIL"
+        }
+      },
+      "recipe": "color=c=black:s=360x640:r=30:d=2,format=gbrp,geq=r='60+mod(X+2*if(between(N,20,50),19,N),120)':g='60+mod(X+2*if(between(N,20,50),19,N),120)':b='60+mod(X+2*if(between(N,20,50),19,N),120)'",
+      "content_sha256": "d2e765f1ce1a3e55ce70353bd22a957987628ec8125c20a2a82d41ed965d3d90",
+      "hash_kind": "decoded-content (ffmpeg -f hash), stable for one FFmpeg build; drift across builds is a warning"
+    },
+    {
+      "id": "caption_drop_30",
+      "group": "e04",
+      "kind": "video",
+      "filename": "caption_drop_30.mkv",
+      "creator": "fixtures/generators/make_e04_set.py v0.1.0",
+      "rights": "Synthetic, produced by this repository's generator scripts from FFmpeg lavfi sources. No third-party media, no client material, no fonts. Licence: the repository licence (Apache-2.0).",
+      "params": {
+        "width": 360,
+        "height": 640,
+        "fps": "30",
+        "frames": 60,
+        "duration_s": "2",
+        "codec": "ffv1",
+        "pix_fmt": "gbrp"
+      },
+      "labels": {
+        "defects": [
+          "caption_drop"
+        ],
+        "intent": [],
+        "ground_truth": {
+          "caption_visible_frames": [
+            0,
+            29
+          ],
+          "caption_drop_frame": 30,
+          "drop_time_s": "1",
+          "box": {
+            "x": 80,
+            "y": 360,
+            "w": 200,
+            "h": 50
+          }
+        }
+      },
+      "recipe": "color=c=black:s=360x640:r=30:d=2,format=gbrp,geq=r='60+mod(X+2*N,120)':g='60+mod(X+2*N,120)':b='60+mod(X+2*N,120)',drawbox=x=80:y=360:w=200:h=50:color=white:t=fill:enable='lt(n,30)'",
+      "content_sha256": "62d5d860c767c24bf4c294d8a97c4915c110b06ba689d3906f48107344aefd97",
+      "hash_kind": "decoded-content (ffmpeg -f hash), stable for one FFmpeg build; drift across builds is a warning"
+    },
+    {
+      "id": "caption_drop_25",
+      "group": "e04",
+      "kind": "video",
+      "filename": "caption_drop_25.mkv",
+      "creator": "fixtures/generators/make_e04_set.py v0.1.0",
+      "rights": "Synthetic, produced by this repository's generator scripts from FFmpeg lavfi sources. No third-party media, no client material, no fonts. Licence: the repository licence (Apache-2.0).",
+      "params": {
+        "width": 360,
+        "height": 640,
+        "fps": "25",
+        "frames": 50,
+        "duration_s": "2",
+        "codec": "ffv1",
+        "pix_fmt": "gbrp"
+      },
+      "labels": {
+        "defects": [
+          "caption_drop"
+        ],
+        "intent": [],
+        "ground_truth": {
+          "caption_visible_frames": [
+            0,
+            24
+          ],
+          "caption_drop_frame": 25,
+          "drop_time_s": "1",
+          "wrong_if_30fps_assumed_s": "5/6",
+          "box": {
+            "x": 80,
+            "y": 360,
+            "w": 200,
+            "h": 50
+          }
+        }
+      },
+      "recipe": "color=c=black:s=360x640:r=25:d=2,format=gbrp,geq=r='60+mod(X+2*N,120)':g='60+mod(X+2*N,120)':b='60+mod(X+2*N,120)',drawbox=x=80:y=360:w=200:h=50:color=white:t=fill:enable='lt(n,25)'",
+      "content_sha256": "cd53f1c881244eceb388481cfd4751f151d1a990456885cf6ba40007b7774b76",
+      "hash_kind": "decoded-content (ffmpeg -f hash), stable for one FFmpeg build; drift across builds is a warning"
+    },
+    {
+      "id": "caption_appear_30",
+      "group": "e04",
+      "kind": "video",
+      "filename": "caption_appear_30.mkv",
+      "creator": "fixtures/generators/make_e04_set.py v0.1.0",
+      "rights": "Synthetic, produced by this repository's generator scripts from FFmpeg lavfi sources. No third-party media, no client material, no fonts. Licence: the repository licence (Apache-2.0).",
+      "params": {
+        "width": 360,
+        "height": 640,
+        "fps": "30",
+        "frames": 60,
+        "duration_s": "2",
+        "codec": "ffv1",
+        "pix_fmt": "gbrp"
+      },
+      "labels": {
+        "defects": [
+          "caption_appearance"
+        ],
+        "intent": [
+          "entrance_is_not_a_defect_by_default"
+        ],
+        "ground_truth": {
+          "caption_appearance_frame": 30,
+          "box": {
+            "x": 80,
+            "y": 360,
+            "w": 200,
+            "h": 50
+          }
+        }
+      },
+      "recipe": "color=c=black:s=360x640:r=30:d=2,format=gbrp,geq=r='60+mod(X+2*N,120)':g='60+mod(X+2*N,120)':b='60+mod(X+2*N,120)',drawbox=x=80:y=360:w=200:h=50:color=white:t=fill:enable='gte(n,30)'",
+      "content_sha256": "9938b9b983ad50008f7f4b175c99aa900c71e532ef7d7bde08440688aa67ff51",
+      "hash_kind": "decoded-content (ffmpeg -f hash), stable for one FFmpeg build; drift across builds is a warning"
+    },
+    {
+      "id": "caption_overlap",
+      "group": "e04",
+      "kind": "video",
+      "filename": "caption_overlap.mkv",
+      "creator": "fixtures/generators/make_e04_set.py v0.1.0",
+      "rights": "Synthetic, produced by this repository's generator scripts from FFmpeg lavfi sources. No third-party media, no client material, no fonts. Licence: the repository licence (Apache-2.0).",
+      "params": {
+        "width": 360,
+        "height": 640,
+        "fps": "30",
+        "frames": 60,
+        "duration_s": "2",
+        "codec": "ffv1",
+        "pix_fmt": "gbrp"
+      },
+      "labels": {
+        "defects": [
+          "caption_overlap"
+        ],
+        "intent": [],
+        "ground_truth": {
+          "captions": [
+            {
+              "id": "A",
+              "frames": [
+                15,
+                45
+              ],
+              "bbox": [
+                60,
+                355,
+                290,
+                390
+              ]
+            },
+            {
+              "id": "B",
+              "frames": [
+                30,
+                60
+              ],
+              "bbox": [
+                80,
+                375,
+                310,
+                410
+              ]
+            }
+          ],
+          "frame_ranges": "half-open [first, last)",
+          "temporal_overlap_frames": [
+            30,
+            45
+          ],
+          "spatial_overlap_bbox": [
+            80,
+            375,
+            290,
+            390
+          ]
+        }
+      },
+      "recipe": "color=c=0x5a5a5a:s=360x640:r=30:d=2,format=gbrp,drawbox=x=60:y=355:w=230:h=35:color=white:t=fill:enable='between(n,15,44)',drawbox=x=80:y=375:w=230:h=35:color=white:t=fill:enable='between(n,30,59)'",
+      "content_sha256": "95d3bfb8ff21f59e71461bc221a26ac344fb1cc1d5843827cec76a80764c4d65",
+      "hash_kind": "decoded-content (ffmpeg -f hash), stable for one FFmpeg build; drift across builds is a warning"
+    },
+    {
+      "id": "low_feature",
+      "group": "e04",
+      "kind": "video",
+      "filename": "low_feature.mkv",
+      "creator": "fixtures/generators/make_e04_set.py v0.1.0",
+      "rights": "Synthetic, produced by this repository's generator scripts from FFmpeg lavfi sources. No third-party media, no client material, no fonts. Licence: the repository licence (Apache-2.0).",
+      "params": {
+        "width": 360,
+        "height": 640,
+        "fps": "30",
+        "frames": 60,
+        "duration_s": "2",
+        "codec": "ffv1",
+        "pix_fmt": "gbrp"
+      },
+      "labels": {
+        "defects": [],
+        "intent": [
+          "insufficient_evidence_for_motion_qa"
+        ],
+        "ground_truth": {
+          "note": "smooth gradient without corners: a feature tracker must return INSUFFICIENT_EVIDENCE, never PASS or a crash (E04-B07)"
+        }
+      },
+      "recipe": "color=c=black:s=360x640:r=30:d=2,format=gbrp,geq=r='128+60*sin(2*PI*X/360+N/12)':g='128+60*sin(2*PI*X/360+N/12)':b='128+60*sin(2*PI*X/360+N/12)'",
+      "content_sha256": "55bb7167cb8be3955b0196f42df61115b199e4702ac699a01fa376055c368a63",
+      "hash_kind": "decoded-content (ffmpeg -f hash), stable for one FFmpeg build; drift across builds is a warning"
+    },
+    {
+      "id": "ntsc_30000_1001",
+      "group": "e04",
+      "kind": "video",
+      "filename": "ntsc_30000_1001.mkv",
+      "creator": "fixtures/generators/make_e04_set.py v0.1.0",
+      "rights": "Synthetic, produced by this repository's generator scripts from FFmpeg lavfi sources. No third-party media, no client material, no fonts. Licence: the repository licence (Apache-2.0).",
+      "params": {
+        "width": 360,
+        "height": 640,
+        "fps": "30000/1001",
+        "frames": 90,
+        "duration_s": "3003/1000",
+        "codec": "ffv1",
+        "pix_fmt": "gbrp"
+      },
+      "labels": {
+        "defects": [],
+        "intent": [
+          "rational_fps_control"
+        ],
+        "ground_truth": {
+          "note": "frame 30 is at 1001/1000 s, not 1.000 s; 108000 frames would drift 3.6 s if treated as 30 fps",
+          "frame_30_time_s": "1001/1000"
+        }
+      },
+      "recipe": "color=c=black:s=360x640:r=30000/1001:d=4,format=gbrp,geq=r='60+mod(X+2*N,120)':g='60+mod(X+2*N,120)':b='60+mod(X+2*N,120)'",
+      "content_sha256": "024895bc8b2344b17fc2cd265303521b0a5a25b9b8bb513b3bfaae01a4d92832",
+      "hash_kind": "decoded-content (ffmpeg -f hash), stable for one FFmpeg build; drift across builds is a warning"
+    },
+    {
+      "id": "clipped_audio",
+      "group": "e04",
+      "kind": "audio",
+      "filename": "clipped.wav",
+      "creator": "fixtures/generators/make_e04_set.py v0.1.0",
+      "rights": "Synthetic, produced by this repository's generator scripts from FFmpeg lavfi sources. No third-party media, no client material, no fonts. Licence: the repository licence (Apache-2.0).",
+      "params": {
+        "sample_rate": 48000,
+        "channels": 1,
+        "duration_s": "3",
+        "codec": "pcm_s16le"
+      },
+      "labels": {
+        "defects": [
+          "clipped_audio"
+        ],
+        "intent": [],
+        "ground_truth": {
+          "expect_peak_sample": 32767,
+          "note": "volume=12 on the default 0.125 amplitude sine = 1.5 -> hard-clipped to full scale"
+        }
+      },
+      "recipe": "sine=frequency=1000:sample_rate=48000:duration=3,volume=12",
+      "content_sha256": "23382d52a4e666691afd507d12a0d4f340bf4999ad9e4e355651799e26fe034d",
+      "hash_kind": "decoded-content (ffmpeg -f hash), stable for one FFmpeg build; drift across builds is a warning"
+    },
+    {
+      "id": "tone_ok_audio",
+      "group": "e04",
+      "kind": "audio",
+      "filename": "tone_ok.wav",
+      "creator": "fixtures/generators/make_e04_set.py v0.1.0",
+      "rights": "Synthetic, produced by this repository's generator scripts from FFmpeg lavfi sources. No third-party media, no client material, no fonts. Licence: the repository licence (Apache-2.0).",
+      "params": {
+        "sample_rate": 48000,
+        "channels": 1,
+        "duration_s": "3",
+        "codec": "pcm_s16le"
+      },
+      "labels": {
+        "defects": [],
+        "intent": [
+          "control"
+        ],
+        "ground_truth": {
+          "expect_peak_dbfs_approx": -10.1,
+          "note": "0.125 amplitude (-18.06 dBFS) + 8 dB = about -10.1 dBFS peak"
+        }
+      },
+      "recipe": "sine=frequency=1000:sample_rate=48000:duration=3,volume=8dB",
+      "content_sha256": "b393f612dfb25e9efdacaa553c2795805f81359865e957fa5f237e3e9260246c",
+      "hash_kind": "decoded-content (ffmpeg -f hash), stable for one FFmpeg build; drift across builds is a warning"
+    },
+    {
+      "id": "delivery_clipped",
+      "group": "e04",
+      "kind": "av",
+      "filename": "delivery_clipped.mp4",
+      "creator": "fixtures/generators/make_e04_set.py v0.1.0",
+      "rights": "Synthetic, produced by this repository's generator scripts from FFmpeg lavfi sources. No third-party media, no client material, no fonts. Licence: the repository licence (Apache-2.0).",
+      "params": {
+        "width": 360,
+        "height": 640,
+        "fps": "30",
+        "frames": 60,
+        "duration_s": "2",
+        "codec": "h264+aac",
+        "pix_fmt": "yuv420p"
+      },
+      "labels": {
+        "defects": [
+          "clipped_audio"
+        ],
+        "intent": [],
+        "ground_truth": {
+          "note": "E04: verify rejected the clipped mux (-1.4 LUFS, 0.0 dBTP) and passed the normalised mux (-14.0 LUFS)"
+        }
+      },
+      "recipe": "see make_e04_set.py generate_delivery",
+      "content_sha256": "9550871f9cc80aaef2f06c4e6a147e66bed8bb18c6e4ad633025e177f226c3be",
+      "hash_kind": "decoded-content (ffmpeg -f hash), stable for one FFmpeg build; drift across builds is a warning"
+    },
+    {
+      "id": "delivery_ok",
+      "group": "e04",
+      "kind": "av",
+      "filename": "delivery_ok.mp4",
+      "creator": "fixtures/generators/make_e04_set.py v0.1.0",
+      "rights": "Synthetic, produced by this repository's generator scripts from FFmpeg lavfi sources. No third-party media, no client material, no fonts. Licence: the repository licence (Apache-2.0).",
+      "params": {
+        "width": 360,
+        "height": 640,
+        "fps": "30",
+        "frames": 60,
+        "duration_s": "2",
+        "codec": "h264+aac",
+        "pix_fmt": "yuv420p"
+      },
+      "labels": {
+        "defects": [],
+        "intent": [
+          "control"
+        ],
+        "ground_truth": {
+          "note": "audio level about -10 dBFS peak; LUFS not measured by the generator"
+        }
+      },
+      "recipe": "see make_e04_set.py generate_delivery",
+      "content_sha256": "9bb71509405d8f554dc66bb778a56ca20044f9be10e2b05591495aa5690e3681",
+      "hash_kind": "decoded-content (ffmpeg -f hash), stable for one FFmpeg build; drift across builds is a warning"
+    },
+    {
+      "id": "sample_speaker_standin_1080x1920",
+      "group": "sample-project",
+      "kind": "av",
+      "filename": "projects/sample-he-en/source/speaker_standin_1080x1920.mp4",
+      "creator": "fixtures/generators/make_sample_project.py v0.1.0",
+      "rights": "Synthetic, produced by this repository's generator scripts from FFmpeg lavfi sources. No third-party media, no client material, no fonts. Licence: the repository licence (Apache-2.0).",
+      "params": {
+        "width": 1080,
+        "height": 1920,
+        "fps": "30",
+        "frames": 240,
+        "duration_s": "8",
+        "codec": "h264+aac"
+      },
+      "labels": {
+        "defects": [],
+        "intent": [
+          "speaker_stand_in"
+        ],
+        "ground_truth": {
+          "asr_testable": false,
+          "reason": "audio is a modulated tone, not speech"
+        }
+      },
+      "recipe": "gradients + geq circle sprite + aevalsrc tone",
+      "content_sha256": "cc521a25520d8429a720ec952f08d3093ddd81bf8450c70b7740a6f794d60d40",
+      "hash_kind": "decoded-content (ffmpeg -f hash), stable for one FFmpeg build; drift across builds is a warning"
+    },
+    {
+      "id": "sample_broll_abstract_1080x1920",
+      "group": "sample-project",
+      "kind": "video",
+      "filename": "projects/sample-he-en/source/broll_abstract_1080x1920.mp4",
+      "creator": "fixtures/generators/make_sample_project.py v0.1.0",
+      "rights": "Synthetic, produced by this repository's generator scripts from FFmpeg lavfi sources. No third-party media, no client material, no fonts. Licence: the repository licence (Apache-2.0).",
+      "params": {
+        "width": 1080,
+        "height": 1920,
+        "fps": "30",
+        "frames": 120,
+        "duration_s": "4",
+        "codec": "h264"
+      },
+      "labels": {
+        "defects": [],
+        "intent": [
+          "b_roll"
+        ],
+        "ground_truth": {}
+      },
+      "recipe": "gradients spiral",
+      "content_sha256": "b0f36d601fca742890120a444b9939328bbbc9d242ee412d3a6eda5b3c9a8b51",
+      "hash_kind": "decoded-content (ffmpeg -f hash), stable for one FFmpeg build; drift across builds is a warning"
+    },
+    {
+      "id": "sample_music_bed",
+      "group": "sample-project",
+      "kind": "audio",
+      "filename": "projects/sample-he-en/source/music_bed.wav",
+      "creator": "fixtures/generators/make_sample_project.py v0.1.0",
+      "rights": "Synthetic, produced by this repository's generator scripts from FFmpeg lavfi sources. No third-party media, no client material, no fonts. Licence: the repository licence (Apache-2.0).",
+      "params": {
+        "sample_rate": 48000,
+        "channels": 2,
+        "duration_s": "8",
+        "codec": "pcm_s16le"
+      },
+      "labels": {
+        "defects": [],
+        "intent": [
+          "music_bed"
+        ],
+        "ground_truth": {}
+      },
+      "recipe": "aevalsrc A-minor triad with fades",
+      "content_sha256": "808acc0c19c15cf5429a124b1cd5bd150f40e4308e37f59409dac3309d2c1ee4",
+      "hash_kind": "decoded-content (ffmpeg -f hash), stable for one FFmpeg build; drift across builds is a warning"
+    },
+    {
+      "id": "sample_logo_mark",
+      "group": "sample-project",
+      "kind": "image",
+      "filename": "projects/sample-he-en/source/logo_mark.png",
+      "creator": "fixtures/generators/make_sample_project.py v0.1.0",
+      "rights": "Synthetic, produced by this repository's generator scripts from FFmpeg lavfi sources. No third-party media, no client material, no fonts. Licence: the repository licence (Apache-2.0).",
+      "params": {
+        "width": 512,
+        "height": 512,
+        "codec": "png",
+        "pix_fmt": "rgba"
+      },
+      "labels": {
+        "defects": [],
+        "intent": [
+          "logo"
+        ],
+        "ground_truth": {}
+      },
+      "recipe": "color + drawbox",
+      "content_sha256": "3f264c2ce4c7b95e082300a50d724f7154ad142f3bdc61ec484e6bb3c1bbc27d",
+      "hash_kind": "bytes (deterministic)"
+    },
+    {
+      "id": "sample_script.he",
+      "group": "sample-project",
+      "kind": "text",
+      "filename": "projects/sample-he-en/source/script.he.txt",
+      "creator": "fixtures/generators/make_sample_project.py v0.1.0",
+      "rights": "Synthetic, produced by this repository's generator scripts from FFmpeg lavfi sources. No third-party media, no client material, no fonts. Licence: the repository licence (Apache-2.0).",
+      "params": {
+        "encoding": "utf-8",
+        "bom": false,
+        "newline": "\\n"
+      },
+      "labels": {
+        "defects": [],
+        "intent": [
+          "script"
+        ],
+        "ground_truth": {
+          "bidi_hazards_by_line": {
+            "1": [],
+            "2": [],
+            "3": [
+              "currency_symbol_with_thousands_comma",
+              "percent_after_digits",
+              "hebrew_prefix_hyphen_before_digits"
+            ],
+            "4": [
+              "hebrew_prefix_hyphen_before_latin_word",
+              "latin_word_with_hyphen_inside_hebrew"
+            ]
+          },
+          "line_count": 4
+        }
+      },
+      "recipe": "deterministic table in make_sample_project.py",
+      "content_sha256": "49423fc77a42090dc9c6cadae568a40637e78eee634486caee67a20597832971",
+      "hash_kind": "bytes (deterministic)"
+    },
+    {
+      "id": "sample_script.en",
+      "group": "sample-project",
+      "kind": "text",
+      "filename": "projects/sample-he-en/source/script.en.txt",
+      "creator": "fixtures/generators/make_sample_project.py v0.1.0",
+      "rights": "Synthetic, produced by this repository's generator scripts from FFmpeg lavfi sources. No third-party media, no client material, no fonts. Licence: the repository licence (Apache-2.0).",
+      "params": {
+        "encoding": "utf-8",
+        "bom": false,
+        "newline": "\\n"
+      },
+      "labels": {
+        "defects": [],
+        "intent": [
+          "script"
+        ],
+        "ground_truth": {
+          "bidi_hazards_by_line": {
+            "1": [],
+            "2": [],
+            "3": [
+              "currency_symbol_with_thousands_comma",
+              "percent_after_digits",
+              "hebrew_prefix_hyphen_before_digits"
+            ],
+            "4": [
+              "hebrew_prefix_hyphen_before_latin_word",
+              "latin_word_with_hyphen_inside_hebrew"
+            ]
+          },
+          "line_count": 4
+        }
+      },
+      "recipe": "deterministic table in make_sample_project.py",
+      "content_sha256": "819e56f260e4fb75232b5631f8d45975ba8884e979301a15fb78babc0c358854",
+      "hash_kind": "bytes (deterministic)"
+    },
+    {
+      "id": "sample_captions.he_srt",
+      "group": "sample-project",
+      "kind": "text",
+      "filename": "projects/sample-he-en/source/captions.he.srt",
+      "creator": "fixtures/generators/make_sample_project.py v0.1.0",
+      "rights": "Synthetic, produced by this repository's generator scripts from FFmpeg lavfi sources. No third-party media, no client material, no fonts. Licence: the repository licence (Apache-2.0).",
+      "params": {
+        "encoding": "utf-8",
+        "bom": false,
+        "newline": "\\n"
+      },
+      "labels": {
+        "defects": [],
+        "intent": [
+          "captions"
+        ],
+        "ground_truth": {
+          "bidi_hazards_by_line": {
+            "1": [],
+            "2": [],
+            "3": [
+              "currency_symbol_with_thousands_comma",
+              "percent_after_digits",
+              "hebrew_prefix_hyphen_before_digits"
+            ],
+            "4": [
+              "hebrew_prefix_hyphen_before_latin_word",
+              "latin_word_with_hyphen_inside_hebrew"
+            ]
+          },
+          "line_count": 4
+        }
+      },
+      "recipe": "deterministic table in make_sample_project.py",
+      "content_sha256": "032057b9f19fd27b20bebb4ed3ae9d3b8add920b2fc7f77cac3d9a352d495309",
+      "hash_kind": "bytes (deterministic)"
+    },
+    {
+      "id": "sample_captions.en_srt",
+      "group": "sample-project",
+      "kind": "text",
+      "filename": "projects/sample-he-en/source/captions.en.srt",
+      "creator": "fixtures/generators/make_sample_project.py v0.1.0",
+      "rights": "Synthetic, produced by this repository's generator scripts from FFmpeg lavfi sources. No third-party media, no client material, no fonts. Licence: the repository licence (Apache-2.0).",
+      "params": {
+        "encoding": "utf-8",
+        "bom": false,
+        "newline": "\\n"
+      },
+      "labels": {
+        "defects": [],
+        "intent": [
+          "captions"
+        ],
+        "ground_truth": {
+          "bidi_hazards_by_line": {
+            "1": [],
+            "2": [],
+            "3": [
+              "currency_symbol_with_thousands_comma",
+              "percent_after_digits",
+              "hebrew_prefix_hyphen_before_digits"
+            ],
+            "4": [
+              "hebrew_prefix_hyphen_before_latin_word",
+              "latin_word_with_hyphen_inside_hebrew"
+            ]
+          },
+          "line_count": 4
+        }
+      },
+      "recipe": "deterministic table in make_sample_project.py",
+      "content_sha256": "19b06854ee97f34da4f6cfae9e112ff467c5cfbd72560f231265f2bcedb5071f",
+      "hash_kind": "bytes (deterministic)"
+    },
+    {
+      "id": "sample_cues",
+      "group": "sample-project",
+      "kind": "text",
+      "filename": "projects/sample-he-en/source/cues.json",
+      "creator": "fixtures/generators/make_sample_project.py v0.1.0",
+      "rights": "Synthetic, produced by this repository's generator scripts from FFmpeg lavfi sources. No third-party media, no client material, no fonts. Licence: the repository licence (Apache-2.0).",
+      "params": {
+        "encoding": "utf-8",
+        "bom": false,
+        "newline": "\\n"
+      },
+      "labels": {
+        "defects": [],
+        "intent": [
+          "metadata"
+        ],
+        "ground_truth": {
+          "bidi_hazards_by_line": {
+            "1": [],
+            "2": [],
+            "3": [
+              "currency_symbol_with_thousands_comma",
+              "percent_after_digits",
+              "hebrew_prefix_hyphen_before_digits"
+            ],
+            "4": [
+              "hebrew_prefix_hyphen_before_latin_word",
+              "latin_word_with_hyphen_inside_hebrew"
+            ]
+          },
+          "line_count": 4
+        }
+      },
+      "recipe": "deterministic table in make_sample_project.py",
+      "content_sha256": "cfecb19ac3fae3e921cce29d9c46ba81886c52d2e3e25674cc10ebd87853b85f",
+      "hash_kind": "bytes (deterministic)"
+    },
+    {
+      "id": "sample_brief",
+      "group": "sample-project",
+      "kind": "text",
+      "filename": "projects/sample-he-en/source/brief.json",
+      "creator": "fixtures/generators/make_sample_project.py v0.1.0",
+      "rights": "Synthetic, produced by this repository's generator scripts from FFmpeg lavfi sources. No third-party media, no client material, no fonts. Licence: the repository licence (Apache-2.0).",
+      "params": {
+        "encoding": "utf-8",
+        "bom": false,
+        "newline": "\\n"
+      },
+      "labels": {
+        "defects": [],
+        "intent": [
+          "metadata"
+        ],
+        "ground_truth": {}
+      },
+      "recipe": "deterministic table in make_sample_project.py",
+      "content_sha256": "080383eb2ba6bc514b4f655fc3a2e7694848e4a5558a7548513dba960b058c7a",
+      "hash_kind": "bytes (deterministic)"
+    }
+  ]
+}

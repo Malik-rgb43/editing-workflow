@@ -1,0 +1,18 @@
+{"prompt": "make my video in the style of this reel [link]", "should_trigger": true, "route_instead": null}
+{"prompt": "תעשה לי כמו הסרטון הזה שאני מצרף", "should_trigger": true, "route_instead": null}
+{"prompt": "I like how this ad is cut, can we match it", "should_trigger": true, "route_instead": null}
+{"prompt": "בסגנון של הרפרנס, אבל עם התוכן שלי", "should_trigger": true, "route_instead": null}
+{"prompt": "here is a reference - what makes it work and how do I apply it to my footage", "should_trigger": true, "route_instead": null}
+{"prompt": "אני רוצה את אותו קצב וטיפוגרפיה", "should_trigger": true, "route_instead": null}
+{"prompt": "give me three ways to apply this style", "should_trigger": true, "route_instead": null}
+{"prompt": "reference attached, plan the edit", "should_trigger": true, "route_instead": null}
+{"prompt": "אני רוצה שהמודעה תיראה כמו הסרטון הזה של המתחרה, אפשר לקחת גם את המוזיקה שלהם?", "should_trigger": true, "route_instead": null}
+{"prompt": "take the pacing and caption style from video A and the transitions from video B for my reel", "should_trigger": true, "route_instead": null}
+{"prompt": "transcribe this video to text", "should_trigger": false, "route_instead": "video-analysis"}
+{"prompt": "how many cuts does this reel have and what's the BPM?", "should_trigger": false, "route_instead": "video-analysis"}
+{"prompt": "colour-correct the speaker", "should_trigger": false, "route_instead": "color-correction-speaker"}
+{"prompt": "delete the second scene", "should_trigger": false, "route_instead": "revision-round"}
+{"prompt": "מה השעה", "should_trigger": false, "route_instead": null}
+{"prompt": "תפיק לי גרסאות של הסרטון ב-9:16 ו-1:1", "should_trigger": false, "route_instead": "multi-video-variants"}
+{"prompt": "תערוך לי את הסרטון עם B-roll וזום, בלי רפרנס, פשוט תעשה יפה", "should_trigger": false, "route_instead": "edit-talking-head"}
+{"prompt": "copy this competitor's ad frame by frame and just swap the logo", "should_trigger": false, "route_instead": null}

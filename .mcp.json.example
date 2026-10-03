@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "avc-playwright": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "@playwright/mcp@0.0.83",
+        "--isolated",
+        "--headless",
+        "--output-dir",
+        "${AVC_PATHS_WORK_ROOT:-.}/browser-output"
+      ]
+    }
+  }
+}

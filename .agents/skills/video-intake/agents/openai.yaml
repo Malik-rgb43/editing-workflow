@@ -1,0 +1,5 @@
+interface:
+  display_name: "Video Intake"
+  short_description: "Turn a new video idea, brief or list of specifics into a checkable Concept Ledger and ask questions until every paramete"
+policy:
+  allow_implicit_invocation: false

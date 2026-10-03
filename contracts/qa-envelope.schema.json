@@ -1,0 +1,273 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://editing-workflow.invalid/contracts/qa-envelope.schema.json",
+  "title": "QA envelope (fail-closed)",
+  "description": "Every QA tool emits this object and exits 0 (PASS), 1 (FAIL), 2 (INSUFFICIENT_EVIDENCE) or 3 (tool error). PASS (kind 'qa') requires input_sha256 and decoded_frames == expected_frames > 0. A timeout, empty sample set or missing input can never be PASS. Source: blueprint TOOLS_SPEC section 1.3; implementation src/core/envelope.py.",
+  "type": "object",
+  "required": [
+    "tool",
+    "version",
+    "input_sha256",
+    "decoded_frames",
+    "expected_frames",
+    "coverage",
+    "status",
+    "findings"
+  ],
+  "properties": {
+    "schema": {
+      "const": "avc.qa-envelope/1"
+    },
+    "tool": {
+      "type": "string",
+      "minLength": 1
+    },
+    "version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "kind": {
+      "enum": [
+        "qa",
+        "attestation",
+        "aggregate"
+      ],
+      "default": "qa"
+    },
+    "input_sha256": {
+      "oneOf": [
+        {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "input_path": {
+      "type": "string"
+    },
+    "decoded_frames": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 0
+    },
+    "expected_frames": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 0
+    },
+    "coverage": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0,
+      "maximum": 1
+    },
+    "min_coverage": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "maximum": 1,
+      "default": 1,
+      "description": "coverage the PASS was judged against; below 1 only when sampling was chosen on purpose"
+    },
+    "fps": {
+      "type": "string",
+      "description": "rational frame rate as text, e.g. 30000/1001"
+    },
+    "status": {
+      "enum": [
+        "PASS",
+        "FAIL",
+        "INSUFFICIENT_EVIDENCE"
+      ]
+    },
+    "gate_state": {
+      "enum": [
+        "unsupported",
+        "not_run",
+        "insufficient_evidence",
+        "error"
+      ],
+      "description": "optional refinement of INSUFFICIENT_EVIDENCE"
+    },
+    "attested_by": {
+      "type": "string"
+    },
+    "started_utc": {
+      "type": "string",
+      "format": "date-time",
+      "description": "timezone-aware ISO-8601 (UTC preferred)"
+    },
+    "ended_utc": {
+      "type": "string",
+      "format": "date-time",
+      "description": "timezone-aware ISO-8601 (UTC preferred)"
+    },
+    "duration_s": {
+      "type": "number",
+      "minimum": 0
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/finding"
+      }
+    },
+    "extra": {
+      "type": "object"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "PASS"
+          },
+          "kind": {
+            "enum": [
+              "qa"
+            ]
+          }
+        },
+        "required": [
+          "status",
+          "kind"
+        ]
+      },
+      "then": {
+        "properties": {
+          "input_sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "decoded_frames": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "expected_frames": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "coverage": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          }
+        },
+        "anyOf": [
+          {
+            "properties": {
+              "coverage": {
+                "const": 1
+              }
+            }
+          },
+          {
+            "required": [
+              "min_coverage"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "PASS"
+          }
+        },
+        "required": [
+          "status"
+        ],
+        "not": {
+          "required": [
+            "kind"
+          ]
+        }
+      },
+      "then": {
+        "properties": {
+          "input_sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "decoded_frames": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "expected_frames": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "coverage": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          }
+        },
+        "anyOf": [
+          {
+            "properties": {
+              "coverage": {
+                "const": 1
+              }
+            }
+          },
+          {
+            "required": [
+              "min_coverage"
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "$defs": {
+    "finding": {
+      "type": "object",
+      "required": [
+        "code",
+        "message"
+      ],
+      "properties": {
+        "code": {
+          "type": "string"
+        },
+        "severity": {
+          "enum": [
+            "error",
+            "warning",
+            "info",
+            "evidence_gap"
+          ],
+          "default": "error"
+        },
+        "message": {
+          "type": "string"
+        },
+        "frame": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "time_s": {
+          "type": "string",
+          "pattern": "^-?[0-9]+(/[1-9][0-9]*)?$",
+          "description": "exact rational seconds"
+        },
+        "timecode": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object"
+        }
+      }
+    }
+  }
+}

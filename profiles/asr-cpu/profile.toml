@@ -1,0 +1,57 @@
+schema = "avc-profile/1"
+id = "asr-cpu"
+title = "Hebrew ASR on CPU (faster-whisper, CTranslate2 int8)"
+status = "optional"
+evidence_state = "measured"            # E02 + E08, the reference machine only
+checked_at = "2026-10-02"
+expires = "2026-12-31"
+
+[install]
+python_extras = ["asr-cpu"]            # uv optional-dependency group (pyproject owned by the core agent)
+python_env = "separate environment from asr-vulkan / matte routes (torch pins differ)"
+runtime = "faster-whisper 1.2.1 (MIT) + CTranslate2 4.7.1 measured (docs 4.8.2), CPU int8, forced language he"
+system_tools = []
+needs_account = false
+needs_api_key = false
+spends_money = false
+
+[[install.models]]
+name = "ivrit-ai/whisper-large-v3-turbo-ct2"
+revision = "72ad623a37947395efcc3933132353790e5a12f5"
+bytes = 1617884968                     # main weight; plus 3780213 bytes config/tokenizer/vocab
+licence = "Apache-2.0 (model-card declaration; pin the exact checkpoint)"
+source = "huggingface model card; research/tracks/T08 sources T08-S002"
+
+[download_sizes]
+model = "1,617,884,968 B main weight + 3,780,213 B config/tokenizer/vocab (sourced, T08-S002)"
+python_packages = "unmeasured"
+source = "distilled/06-hebrew-footage-reference/asr-and-transcription.md section 1"
+
+[hardware]
+instructor_recommendation = "8 physical cores and 16 GB or more recommended; measured on the reference machine"
+peak_rss_measured = "about 2.0 GB (E08 1.99 GB sampled; E02 1.942 GiB)"
+gpu_required = false
+
+[tested_on]
+state = "measured"
+machine = "the reference machine (one Windows laptop; hardware details not published)"
+e08 = "68 FLEURS he_il clips, 614.22 s: CT2 int8 plain 731.384 s whole-wrapper (0.840 audio-s per wall-s), 206/1161 word edits, WER 17.743%, CER 8.028%; with Silero VAD serial 1147.038 s, WER 19.380%; parallel 4x2 770.860 s"
+e02 = "5 clips, 38.58 s: CT2 first 57.899 s, warm 54.645 s; with VAD warm 49.216 s; import 34.521 s, model load 8.411 s"
+negative_controls = "3 s digital silence and 3 s seeded noise produced non-empty Hebrew text without VAD (CT2 and whisper.cpp); empty with VAD"
+not_tested = ["cloud ASR", "diarization", "spontaneous speech", "accents", "noisy scenes", "phone microphones", "word-timing ground truth", "human correction time", "long recordings", "NVIDIA", "Apple"]
+
+[states]
+unsupported_when = ["non-x86-64/ARM64 CPU", "less RAM than the model needs (about 2 GB working set plus the media)"]
+missing_when = ["extra asr-cpu not installed", "model revision not present or hash mismatch"]
+error_when = ["a real tiny transcription of the bundled Hebrew fixture fails or returns empty text for known speech"]
+note = "unsupported != missing != error"
+
+[licences]
+runtime = "faster-whisper MIT; CTranslate2 MIT"
+weights = "Apache-2.0 declared on the exact ivrit-ai CT2 checkpoint; does not license other conversions or the ivrit.ai training recordings"
+data = "do NOT ship ivrit.ai speech datasets as sample footage (training/academic purpose terms)"
+rights_note = "see agent-content/references/licences-bom-rules.md"
+
+[uninstall]
+remove = ["the asr-cpu Python environment", "the model cache directory shown at install time (about 1.6 GB)", "HuggingFace cache entries for the pinned revision"]
+global_changes = "none"

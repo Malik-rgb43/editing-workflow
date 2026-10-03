@@ -1,0 +1,58 @@
+# Authorised model-eval lane. DISABLED by default and MANUAL only: it never runs on push, pull request or schedule.
+# Decision default Q4: no model evaluation runs without the owner's explicit approval. The runner behind it is not
+# implemented yet (tests/evals/run_trigger_evals.py --model-lane is a stub that refuses without --approved-by-owner and
+# exits "not_run"), so even an approved dispatch spends nothing today.
+#
+# To enable (owner only): set the repository VARIABLE MODEL_EVAL_ENABLED to "true", review and implement the isolated
+# runner, add provider credentials ONLY to a protected environment that has required reviewers (never to this file,
+# never to workflows that run on pull requests), then dispatch with `approved` ticked and an approval reference.
+# The budget is capped at 60 invocations (E05); the script refuses a larger number.
+name: eval-model
+
+on:
+  workflow_dispatch:
+    inputs:
+      approved:
+        description: "Owner approves this model run and its spend (decision default Q4). Leave unticked to do nothing."
+        type: boolean
+        required: true
+        default: false
+      approval_ref:
+        description: "Reference of the owner's written campaign approval (date + where it is recorded)."
+        type: string
+        required: true
+      budget:
+        description: "Maximum model invocations (cap 60)."
+        type: string
+        required: true
+        default: "60"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: eval-model
+  cancel-in-progress: false
+
+jobs:
+  model-eval:
+    name: model eval lane (disabled until MODEL_EVAL_ENABLED=true)
+    if: ${{ inputs.approved == true && vars.MODEL_EVAL_ENABLED == 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+
+      - name: Run the model lane (stub today: exits not_run, spends nothing)
+        env:
+          APPROVAL_REF: ${{ inputs.approval_ref }}
+          BUDGET: ${{ inputs.budget }}
+        run: python tests/evals/run_trigger_evals.py --model-lane --approved-by-owner --approval-ref "$APPROVAL_REF" --budget "$BUDGET"

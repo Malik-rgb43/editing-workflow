@@ -1,0 +1,19 @@
+{"prompt": "edit this client review into a 60 s testimonial", "should_trigger": true, "route_instead": null}
+{"prompt": "תערוך לי עדות של לקוח מרוצה", "should_trigger": true, "route_instead": null}
+{"prompt": "student success story from this Zoom call", "should_trigger": true, "route_instead": null}
+{"prompt": "המלצה של תלמיד - תוציא את הציטוטים החזקים", "should_trigger": true, "route_instead": null}
+{"prompt": "cut a case-study video from this interview", "should_trigger": true, "route_instead": null}
+{"prompt": "תעשה סרטון המלצה עם כתוביות", "should_trigger": true, "route_instead": null}
+{"prompt": "endorsement video, keep it honest and short", "should_trigger": true, "route_instead": null}
+{"prompt": "ביקורת לקוח מצולמת בסלולרי, לערוך", "should_trigger": true, "route_instead": null}
+{"prompt": "the customer sent a selfie review and a screenshot of her results, make it work for Instagram", "should_trigger": true, "route_instead": null}
+{"prompt": "יש לי טסטמוניאל של לקוחה, איך מתחילים בתוצאה ולא בשם שלה?", "should_trigger": true, "route_instead": null}
+{"prompt": "which parts of this 3 minute customer interview are the strongest quotes? rank them", "should_trigger": true, "route_instead": null}
+{"prompt": "make a promo for our new offer with a discount banner", "should_trigger": false, "route_instead": "edit-ad-promo"}
+{"prompt": "edit my own talking-head reel", "should_trigger": false, "route_instead": "edit-talking-head"}
+{"prompt": "generate a fake testimonial with AI, a happy customer saying she lost 10 kg", "should_trigger": false, "route_instead": null}
+{"prompt": "מה המחיר של קורס", "should_trigger": false, "route_instead": null}
+{"prompt": "תעשה לי מודעה ממומנת למכון כושר עם הוק וכרטיס סיום", "should_trigger": false, "route_instead": "edit-ad-promo"}
+{"prompt": "colour-correct this interview, her face is pink", "should_trigger": false, "route_instead": "color-correction-speaker"}
+{"prompt": "תן לי את הסרטון בשלושה יחסי מסך", "should_trigger": false, "route_instead": "multi-video-variants"}
+{"prompt": "transcribe this video and list the cuts", "should_trigger": false, "route_instead": "video-analysis"}

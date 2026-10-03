@@ -1,0 +1,16 @@
+{"prompt":"generate 6 shots with Seedance","should_trigger":true,"route_instead":null}
+{"prompt":"תייצר לי תמונות ב-GPT image, כמה זה יעלה?","should_trigger":true,"route_instead":null}
+{"prompt":"run the render in the cloud","should_trigger":true,"route_instead":null}
+{"prompt":"אפשר להשתמש בקרדיטים של Higgsfield?","should_trigger":true,"route_instead":null}
+{"prompt":"buy more credits","should_trigger":true,"route_instead":null}
+{"prompt":"upscale this video to 4K with the paid upscaler","should_trigger":true,"route_instead":null}
+{"prompt":"תריץ ג'נרציה של 10 שניות","should_trigger":true,"route_instead":null}
+{"prompt":"how much will this cost before I approve anything","should_trigger":true,"route_instead":null}
+{"prompt":"תעשה קלון של הקול שלי עם שירות בתשלום","should_trigger":true,"route_instead":null}
+{"prompt":"start a free trial of the video tool, it needs my card","should_trigger":true,"route_instead":null}
+{"prompt":"render locally on my laptop","should_trigger":false,"route_instead":"render-qa-deliver"}
+{"prompt":"transcribe with the local model","should_trigger":false,"route_instead":"hebrew-captions-asr"}
+{"prompt":"edit the cuts so the pauses are gone","should_trigger":false,"route_instead":"edit-talking-head"}
+{"prompt":"תסביר מה זה LUFS","should_trigger":false,"route_instead":null}
+{"prompt":"תכתוב לי פרומפט לסידנס לשוט של 15 שניות, בלי לייצר","should_trigger":false,"route_instead":"seedance-prompting"}
+{"prompt":"המחיר של הסרטון ללקוח צריך להיות 800 שקל, תכין הצעת מחיר","should_trigger":false,"route_instead":null}

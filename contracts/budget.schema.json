@@ -1,0 +1,142 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://editing-workflow.invalid/contracts/budget.schema.json",
+  "title": "Budget and approval receipt",
+  "description": "Authorised ceilings for one job. null means 'not authorised / unknown', never zero. A paid action needs an approval receipt with a dated estimate (owner rule). Source: T20 TOOLKIT_DX_SPEC section 7.",
+  "type": "object",
+  "required": [
+    "schema",
+    "paid_actions_allowed"
+  ],
+  "properties": {
+    "schema": {
+      "const": "avc.budget/1"
+    },
+    "paid_actions_allowed": {
+      "type": "boolean",
+      "description": "false = free/local only (default for every job)"
+    },
+    "max_money": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "properties": {
+        "amount": {
+          "type": "number",
+          "minimum": 0
+        },
+        "currency": {
+          "type": "string",
+          "pattern": "^[A-Z]{3}$"
+        }
+      },
+      "required": [
+        "amount",
+        "currency"
+      ]
+    },
+    "max_credits": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0
+    },
+    "max_minutes": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0
+    },
+    "estimate": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "properties": {
+        "amount": {
+          "type": "number",
+          "minimum": 0
+        },
+        "unit": {
+          "type": "string"
+        },
+        "estimated_on": {
+          "type": "string",
+          "format": "date"
+        },
+        "rate_source": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "amount",
+        "unit",
+        "estimated_on",
+        "rate_source"
+      ]
+    },
+    "retries_allowed": {
+      "type": "integer",
+      "minimum": 0,
+      "default": 0
+    },
+    "approval_receipt": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "properties": {
+        "approved_by": {
+          "type": "string"
+        },
+        "approved_utc": {
+          "type": "string",
+          "format": "date-time",
+          "description": "timezone-aware ISO-8601 (UTC preferred)"
+        },
+        "scope": {
+          "type": "string"
+        },
+        "estimate_ref": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "approved_by",
+        "approved_utc",
+        "scope"
+      ]
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "paid_actions_allowed": {
+            "const": true
+          }
+        },
+        "required": [
+          "paid_actions_allowed"
+        ]
+      },
+      "then": {
+        "required": [
+          "estimate",
+          "approval_receipt"
+        ],
+        "properties": {
+          "estimate": {
+            "type": "object"
+          },
+          "approval_receipt": {
+            "type": "object"
+          }
+        }
+      }
+    }
+  ]
+}

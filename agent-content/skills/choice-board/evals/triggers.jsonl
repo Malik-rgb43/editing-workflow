@@ -1,0 +1,15 @@
+{"prompt":"I can't decide between these three fonts","should_trigger":true,"route_instead":null}
+{"prompt":"תראה לי כמה אנימציות לכתוביות ואני אבחר","should_trigger":true,"route_instead":null}
+{"prompt":"pick a palette for the launch, show me options","should_trigger":true,"route_instead":null}
+{"prompt":"איזה מעבר הכי מתאים? תעשה לי לוח בחירה","should_trigger":true,"route_instead":null}
+{"prompt":"show me hook variants side by side","should_trigger":true,"route_instead":null}
+{"prompt":"אני מתלבט בין שתי כותרות, איך זה נראה על הסרטון?","should_trigger":true,"route_instead":null}
+{"prompt":"choose easing for the title reveal, I want to see them move","should_trigger":true,"route_instead":null}
+{"prompt":"תן לי להצביע על הפונט, אני לא מצליח להחליט","should_trigger":true,"route_instead":null}
+{"prompt":"which caption style looks better on my clip, show all the options","should_trigger":true,"route_instead":null}
+{"prompt":"use Rubik, it's decided","should_trigger":false,"route_instead":null}
+{"prompt":"render the video","should_trigger":false,"route_instead":"render-qa-deliver"}
+{"prompt":"analyse the reference and tell me which font it uses","should_trigger":false,"route_instead":"video-analysis"}
+{"prompt":"מה השעה","should_trigger":false,"route_instead":null}
+{"prompt":"תכתוב לי פרומפט לסידנס לשוט קולנועי","should_trigger":false,"route_instead":"seedance-prompting"}
+{"prompt":"הפלטה נעולה, תשתמש בכחול וזהב ותמשיך","should_trigger":false,"route_instead":null}

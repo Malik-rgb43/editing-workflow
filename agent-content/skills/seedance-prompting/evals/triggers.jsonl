@@ -1,0 +1,16 @@
+{"prompt": "write a Seedance prompt for this scene", "should_trigger": true, "route_instead": null}
+{"prompt": "/seedance תכין לי פרומפט לסצנה", "should_trigger": true, "route_instead": null}
+{"prompt": "turn this script into shot-by-shot prompts", "should_trigger": true, "route_instead": null}
+{"prompt": "פרומפט קולנועי של 15 שניות", "should_trigger": true, "route_instead": null}
+{"prompt": "שוט אחר שוט לסרטון המוצר", "should_trigger": true, "route_instead": null}
+{"prompt": "camera and lens details for this beat", "should_trigger": true, "route_instead": null}
+{"prompt": "תעשה לי סטוריבורד בפרומפטים", "should_trigger": true, "route_instead": null}
+{"prompt": "split this 40 s scene into 15 s Seedance prompts that keep the same character tags", "should_trigger": true, "route_instead": null}
+{"prompt": "spend credits on generation", "should_trigger": false, "route_instead": "paid-generation-gate"}
+{"prompt": "edit the cut", "should_trigger": false, "route_instead": "edit-ai-generated"}
+{"prompt": "colour grade this footage", "should_trigger": false, "route_instead": "color-correction-speaker"}
+{"prompt": "תתרגם לי את התסריט הזה לאנגלית", "should_trigger": false, "route_instead": null}
+{"prompt": "כמה זה יעלה להריץ 4 שוטים בסידנס?", "should_trigger": false, "route_instead": "paid-generation-gate"}
+{"prompt": "write a still-image prompt for GPT Image of the keeper's portrait", "should_trigger": false, "route_instead": null}
+{"prompt": "which is better for this shot, Kling or Seedance?", "should_trigger": false, "route_instead": "edit-ai-generated"}
+{"prompt": "תכין לי לוח בחירה אינטראקטיבי של סגנונות פרומפט", "should_trigger": false, "route_instead": "choice-board"}

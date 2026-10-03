@@ -1,0 +1,20 @@
+{"prompt": "watch this and tell me what's in it: D:/clips/reel1.mp4", "should_trigger": true, "route_instead": null}
+{"prompt": "תמלל לי את הסרטון הזה", "should_trigger": true, "route_instead": null}
+{"prompt": "break down the cuts in this reel", "should_trigger": true, "route_instead": null}
+{"prompt": "תנתח את הקצב של המודעה הזאת", "should_trigger": true, "route_instead": null}
+{"prompt": "what song is playing here and what's the BPM", "should_trigger": true, "route_instead": null}
+{"prompt": "go over all videos in this folder and give me a summary of each", "should_trigger": true, "route_instead": null}
+{"prompt": "מה קורה בסרטון בדקה 0:40", "should_trigger": true, "route_instead": null}
+{"prompt": "how many cuts per second does this ad have", "should_trigger": true, "route_instead": null}
+{"prompt": "הנה קישור לרילס באינסטגרם, תעבור עליו ותגיד לי מה הסאונד ואיפה החיתוכים", "should_trigger": true, "route_instead": null}
+{"prompt": "transcribe this Hebrew interview with word timestamps", "should_trigger": true, "route_instead": null}
+{"prompt": "תעשה לי spectrogram של האודיו מהקליפ ותגיד אם יש שם ווש או רייזר", "should_trigger": true, "route_instead": null}
+{"prompt": "is the music in this video synced to the cuts?", "should_trigger": true, "route_instead": null}
+{"prompt": "edit this video into a 30 second reel", "should_trigger": false, "route_instead": "edit-talking-head"}
+{"prompt": "make captions for my final render and burn them in", "should_trigger": false, "route_instead": "hebrew-captions-asr"}
+{"prompt": "generate a new video of a cat surfing", "should_trigger": false, "route_instead": "edit-ai-generated"}
+{"prompt": "תכתוב לי מייל ללקוח", "should_trigger": false, "route_instead": null}
+{"prompt": "make my video in the style of this reel", "should_trigger": false, "route_instead": "reference-style-transfer"}
+{"prompt": "תתקן את הצבע של הדובר, הפנים כהות", "should_trigger": false, "route_instead": "color-correction-speaker"}
+{"prompt": "render the final file and check loudness", "should_trigger": false, "route_instead": "render-qa-deliver"}
+{"prompt": "תתרגם את הסרטון הזה לאנגלית ותדביב אותו", "should_trigger": false, "route_instead": null}

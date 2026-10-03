@@ -1,0 +1,11 @@
+<!doctype html><html lang="he"><head><style>
+@font-face{font-family:'Rubik';src:url('./fonts/Rubik.ttf');font-weight:300 900}
+body{font-family:'Rubik',sans-serif}
+</style></head><body>
+<div data-composition-id="main" data-width="1920" data-height="1080" data-duration="12">
+<div id="main-card" class="clip" data-start="0" data-duration="12">שלום</div></div>
+<script>
+const tl = gsap.timeline({ paused: true });
+tl.fromTo('#main-card', {opacity:0, x:40}, {opacity:1, x:0, duration:.4, ease:'power3.out'}, 0.1);
+window.__timelines = window.__timelines || {}; window.__timelines['main'] = tl;
+</script></body></html>

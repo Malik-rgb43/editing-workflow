@@ -1,0 +1,53 @@
+schema = "avc-profile/1"
+id = "blender"
+title = "Blender (headless scripts; optional live MCP bridge)"
+status = "optional"
+evidence_state = "sourced"             # owner timings measured at small sizes; no controlled benchmark
+checked_at = "2026-10-02"
+expires = "2026-12-31"
+
+[install]
+python_extras = []                     # no named extra; Blender uses its own bundled Python
+host = "Blender, EXACT version recorded (owner runs 5.2; the pinned manual in the research is 4.5 LTS - do not carry 4.5 engine/API assumptions to 5.2)"
+system_tools = ["Blender (student-installed, GPL)", "system Python + Pillow only for the sprite-packing helper"]
+mcp = "optional: MCP for Blender (add-on socket on localhost:9876) - NO authentication, executes arbitrary Python; see isolation rules"
+needs_account = false
+needs_api_key = "only for optional asset/generation providers (Sketchfab, Poly Pizza, Hunyuan, Tripo Premium): the student's own keys"
+spends_money = false                   # hosted generators and Higgsfield bl_* tools do spend: behind the paid-generation gate, not part of this profile
+
+[download_sizes]
+blender = "unmeasured"
+source = "none recorded by the research"
+
+[hardware]
+official_minimum = "4-core SSE4.2 CPU, 8 GB RAM, 2 GB VRAM + required graphics APIs (documentation; not a guarantee for a given scene)"
+recommended = "8 cores, 32 GB RAM, 8 GB VRAM (planning recommendation)"
+apple = "Blender 5.x requires Apple Silicon; 4.5 LTS is the last Intel-Mac branch"
+amd_cycles = "Cycles-HIP officially supported on Windows for the RX 7000 family from driver 24.6.1 (manual 4.5): HIP-RT and GPU denoise exist; shadow caustics NOT supported; exact run on the reference machine pending"
+
+[tested_on]
+state = "sourced"
+machine = "the reference machine (one Windows laptop; hardware details not published)"
+measured_small = "EEVEE objects 1.2-2.25 s per frame at 384-640 px; EEVEE 3D type 1.0-1.25 s per frame; Cycles-CPU plates 51 / 79 / 253 s; each Blender launch about 1-1.5 min; MCP launcher about 50 s"
+not_tested = ["controlled 1080p fixture", "Cycles-HIP on the one reference machine", "Blender 4.5 vs 5.2 differences", "macOS", "Linux", "NVIDIA OptiX", "Apple Metal"]
+
+[states]
+unsupported_when = ["OS/GPU below Blender's documented requirements", "Intel Mac with a 5.x build"]
+missing_when = ["Blender not found at the recorded version"]
+error_when = ["a tiny headless render of the bundled fixture fails", "the MCP socket answers but the add-on version does not match"]
+note = "unsupported != missing != error"
+
+[security]
+mcp_port = 9876
+mcp_authentication = "none"
+rules = ["bind to localhost only", "never forward or expose the port", "treat .blend files from the internet as untrusted code", "disable telemetry", "no silent provider trials or shared trial keys", "prefer native headless bpy for deterministic batch work"]
+
+[licences]
+blender = "GPL; add-ons and assets have their own licences; rendered output is distinguished (indexed FAQ only, direct page returned 402)"
+mcp_for_blender = "MIT (ahujasid)"
+assets = "Poly Haven CC0; Poly Pizza mixed CC0/CC-BY (credit); Sketchfab: reject NC; Tripo free = CC BY 4.0 non-commercial; Meshy free = CC BY 4.0 with credit"
+rights_note = "see agent-content/references/three-d-routes.md and licences-bom-rules.md"
+
+[uninstall]
+remove = ["the Blender install the student made", "toolkit-generated render output and sprite sheets in _work/", "the MCP add-on if installed"]
+global_changes = "none by the toolkit"

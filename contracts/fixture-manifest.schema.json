@@ -1,0 +1,170 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://editing-workflow.invalid/contracts/fixture-manifest.schema.json",
+  "title": "Fixture manifest (fixtures/manifest.json)",
+  "type": "object",
+  "required": [
+    "schema",
+    "rights_policy",
+    "fonts",
+    "items"
+  ],
+  "properties": {
+    "schema": {
+      "const": "avc.fixture-manifest/1"
+    },
+    "generated_by": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "generator_version": {
+      "type": "string"
+    },
+    "recorded_with": {
+      "type": "object",
+      "required": [
+        "ffmpeg",
+        "platform"
+      ],
+      "properties": {
+        "ffmpeg": {
+          "type": "string"
+        },
+        "platform": {
+          "type": "string"
+        },
+        "python": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        }
+      }
+    },
+    "rights_policy": {
+      "type": "string"
+    },
+    "media_in_git": {
+      "const": false
+    },
+    "media_location": {
+      "type": "string"
+    },
+    "fonts": {
+      "type": "object",
+      "required": [
+        "bundled",
+        "policy"
+      ],
+      "properties": {
+        "bundled": {
+          "type": "array",
+          "maxItems": 0,
+          "description": "must stay empty unless a font's licence is verified and recorded"
+        },
+        "policy": {
+          "type": "string"
+        },
+        "fetch_step": {
+          "type": "string"
+        },
+        "fallbacks": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "items": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "group",
+          "kind",
+          "filename",
+          "creator",
+          "rights",
+          "params",
+          "labels",
+          "recipe",
+          "content_sha256",
+          "hash_kind"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "group": {
+            "enum": [
+              "e04",
+              "sample-project"
+            ]
+          },
+          "kind": {
+            "enum": [
+              "video",
+              "audio",
+              "av",
+              "image",
+              "text"
+            ]
+          },
+          "filename": {
+            "type": "string"
+          },
+          "creator": {
+            "type": "string"
+          },
+          "rights": {
+            "type": "string",
+            "minLength": 10
+          },
+          "params": {
+            "type": "object"
+          },
+          "labels": {
+            "type": "object",
+            "required": [
+              "defects",
+              "intent",
+              "ground_truth"
+            ],
+            "properties": {
+              "defects": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "intent": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "ground_truth": {
+                "type": "object"
+              }
+            }
+          },
+          "recipe": {
+            "type": "string"
+          },
+          "content_sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "hash_kind": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

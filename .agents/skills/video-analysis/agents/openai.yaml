@@ -1,0 +1,5 @@
+interface:
+  display_name: "Video Analysis"
+  short_description: "Turn a video the user sends or links (file, or YouTube/TikTok/Instagram URL) or a folder of clips into measurements (cut"
+policy:
+  allow_implicit_invocation: false

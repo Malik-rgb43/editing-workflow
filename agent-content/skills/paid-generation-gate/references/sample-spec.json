@@ -1,0 +1,32 @@
+{
+  "_comment": "EXAMPLE ONLY. These numbers reproduce an arithmetic example from the course cost model (checked 2026-10-01, USD, 720p). They are NOT a current price list. Replace every price from the provider's current price card and set checked_at to the day you read it; estimate.py refuses a source older than 7 days (a course setting). To try this file as-is: python estimate.py estimate sample-spec.json --today 2026-10-02",
+  "project": "demo_talking_head_45s",
+  "retry_cap": 1,
+  "limits": { "example_api_usd": 20 },
+  "price_sources": {
+    "ex1": {
+      "name": "example provider price page (placeholder)",
+      "url": "https://example.invalid/pricing",
+      "checked_at": "2026-10-01",
+      "plan": "pay-as-you-go example",
+      "region": "n/a",
+      "tax_status": "excl_vat"
+    }
+  },
+  "lines": [
+    {
+      "id": "V1", "provider": "example-provider", "model": "example-video-model-id", "route": "api",
+      "mode": "reference_to_video", "wallet": "example_api_usd", "currency": "USD", "price_source": "ex1",
+      "count": 2, "calc": "tokens",
+      "width": 1280, "height": 720, "out_seconds": 10, "in_video_seconds": 4,
+      "fps_factor": 24, "divisor": 1024, "price_per_1k_tokens": 0.0214, "multiplier": 0.6,
+      "note": "2 shots; supplied 4 s input video counts toward tokens in this example tariff"
+    },
+    {
+      "id": "I1", "provider": "example-provider", "model": "example-image-model-id", "route": "api",
+      "mode": "text_to_image", "wallet": "example_api_usd", "currency": "USD", "price_source": "ex1",
+      "count": 2, "calc": "per_unit", "quantity": 1, "unit": "image", "unit_price": 0.05,
+      "note": "2 stills 720p"
+    }
+  ]
+}

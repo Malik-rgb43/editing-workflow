@@ -1,0 +1,20 @@
+{"prompt": "export this ad as 9:16, 1:1 and 16:9", "should_trigger": true, "route_instead": null}
+{"prompt": "תכין גרסאות הוק שונות לאותו סרטון", "should_trigger": true, "route_instead": null}
+{"prompt": "make three variants with different first 3 seconds", "should_trigger": true, "route_instead": null}
+{"prompt": "תמסור גם בלי מוזיקה וגם בלי כתוביות", "should_trigger": true, "route_instead": null}
+{"prompt": "run these four videos in parallel", "should_trigger": true, "route_instead": null}
+{"prompt": "גרסה לסטורי וגרסה לפיד", "should_trigger": true, "route_instead": null}
+{"prompt": "batch: 6 shorts from this podcast episode, each in 9:16 and 16:9", "should_trigger": true, "route_instead": null}
+{"prompt": "אותו סרטון ליוטיוב ולטיקטוק", "should_trigger": true, "route_instead": null}
+{"prompt": "the master is approved, now give me the 1x1 and 4x5 versions without re-rendering the audio", "should_trigger": true, "route_instead": null}
+{"prompt": "אני צריך את המודעה בשלושה יחסי מסך ושלושה הוקים, איך מסדרים את הקבצים?", "should_trigger": true, "route_instead": null}
+{"prompt": "the client found a typo in the master after we already delivered the 9:16, update everything", "should_trigger": true, "route_instead": null}
+{"prompt": "תן לי רשימה של כל הקבצים שיצאו מהפרויקט ואיזה מהם כבר לא מעודכן", "should_trigger": true, "route_instead": null}
+{"prompt": "fix a typo in the caption of this single reel", "should_trigger": false, "route_instead": "revision-round"}
+{"prompt": "colour grade this interview", "should_trigger": false, "route_instead": "color-correction-speaker"}
+{"prompt": "generate a new shot of a product on a table", "should_trigger": false, "route_instead": "edit-ai-generated"}
+{"prompt": "תתרגם את הכתוביות לאנגלית", "should_trigger": false, "route_instead": "hebrew-captions-asr"}
+{"prompt": "render the final file and check loudness, one output only", "should_trigger": false, "route_instead": "render-qa-deliver"}
+{"prompt": "make the ad's offer sharper and rank three hooks", "should_trigger": false, "route_instead": "edit-ad-promo"}
+{"prompt": "תערוך רילס מהקלטה של דובר מדבר למצלמה", "should_trigger": false, "route_instead": "edit-talking-head"}
+{"prompt": "what is the best time to post on TikTok", "should_trigger": false, "route_instead": null}

@@ -1,0 +1,58 @@
+schema = "avc-profile/1"
+id = "core-cpu"
+title = "Core (CPU only) - default profile"
+status = "default"
+evidence_state = "measured"            # measured on ONE machine; see [tested_on]
+checked_at = "2026-10-02"
+expires = "2026-12-31"                 # or on any change of a pinned version
+
+[install]
+python_extras = []                     # core needs none; optional named groups below
+python_extras_optional = ["opencv", "color", "analysis"]
+python_runtime = "uv-managed CPython 3.12 (measured with 3.12.10)"
+node_runtime = "project-pinned Node (HyperFrames 0.8.98 requires Node >= 22; measured with 24.14.0)"
+engine = "HyperFrames 0.8.98 (research pin; re-verify at build)"
+system_tools = ["ffmpeg (8.1 measured: user-installed, NOT bundled)", "ffprobe", "headless Chrome (Chrome Headless Shell 152.0.7977.30 measured)"]
+models = []
+needs_account = false
+needs_api_key = false
+spends_money = false
+network_at_install = "package registries and one browser download; declared before install"
+
+[download_sizes]
+# every size is sourced or "unmeasured"; never estimated
+python_runtime = "unmeasured"
+node_runtime = "unmeasured"
+hyperframes_npm = "unmeasured (E01: install step took 18.042 s on the reference machine; not from-zero)"
+headless_browser = "unmeasured (E01: browser install step took 10.391 s for the Remotion browser; reused browser for HyperFrames)"
+source = "research/experiments/E01 report (timings only); sizes not recorded"
+
+[hardware]
+instructor_recommendation = "supported 64-bit OS, modern 4-core CPU, 16 GB RAM, SSD, reliable network (NOT a measured minimum)"
+measured_machine = "the reference machine (one Windows laptop; hardware details not published)"
+gpu_required = false
+cuda_required = false
+
+[tested_on]
+state = "measured"
+machine = "the reference machine (one Windows laptop; hardware details not published)"
+evidence = "E01: 12 s, 360-frame, 1080x1920 30 fps Hebrew fixture, CPU H.264 CRF 18, software browser, one worker: HyperFrames 0.8.98 cold 44.262 s, warm 42.292 s and 42.406 s; peak RSS about 1.7 GiB; 360/360 frame hashes + PCM audio + MP4 SHA-256 identical within the engine"
+not_tested = ["macOS", "Linux", "NVIDIA", "other AMD cards", "long footage", "4K", "HDR", "variable frame rate"]
+
+[states]
+unsupported_when = ["no supported 64-bit OS", "no writable ASCII work root can be created"]
+missing_when = ["uv, Node, FFmpeg or the headless browser not found at the pinned version"]
+error_when = ["the fixture render or an ffprobe/decode probe fails after the pieces are present"]
+note = "unsupported != missing != error; an optional profile failing never invalidates the core"
+
+[licences]
+hyperframes = "Apache-2.0 (licence + NOTICE + change markers; dependencies, registry assets, fonts and hosted services are separate)"
+ffmpeg = "LGPL 2.1+ baseline; GPL/nonfree components change obligations - install instructions only, binaries are not bundled"
+gsap = "Standard No-Charge GSAP licence (not MIT)"
+three_js = "MIT (only if a lesson uses it)"
+remotion = "not included in v1.0 (custom licence; decision default Q14)"
+rights_note = "see agent-content/references/licences-bom-rules.md; nothing is cleared until the release gate has run"
+
+[uninstall]
+remove = ["project .venv", "project node_modules", "uv cache for this project (uv cache clean)", "HyperFrames cache (~/.cache/hyperframes)", "downloaded headless browser directory", "workspace _work/ folders"]
+global_changes = "none - no PATH edits, no system Python/Node updates, no registry changes"

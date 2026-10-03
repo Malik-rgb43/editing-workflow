@@ -1,0 +1,18 @@
+# Example client-name denylist for scripts/scan_private.py.
+#
+# Copy this file to scripts/private_denylist.txt (that file is git-ignored and is NEVER committed or shipped) and
+# replace the made-up entries with the real names that must not appear anywhere in the student repository:
+# client names, brand names of client projects, footage titles, private people.
+#
+# One entry per line; '#' starts a comment; matching is case-insensitive.
+#   plain text   substring match (best for Hebrew, where prefixes attach to words)
+#   word:TEXT    whole-word match (Latin names; avoids hits inside longer words)
+#   re:PATTERN   regular expression
+#
+# Matched text is never printed by the scanner (only the entry number, file and line), so a client name cannot
+# leak into a CI log. Without a usable denylist the scan reports NOT_RUN for this part (never PASS);
+# release builds (scripts/release.py build --final) require it.
+
+word:Example Client Ltd
+Fictional Brand Name
+re:project[-_ ]?codename[-_ ]\d+

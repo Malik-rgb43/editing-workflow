@@ -1,0 +1,106 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://editing-workflow.invalid/contracts/artifact.schema.json",
+  "title": "Artifact",
+  "description": "A produced or consumed file, identified by content hash. Final bytes must match the manifest.",
+  "type": "object",
+  "required": [
+    "schema",
+    "path",
+    "sha256",
+    "bytes"
+  ],
+  "properties": {
+    "schema": {
+      "const": "avc.artifact/1"
+    },
+    "id": {
+      "type": "string"
+    },
+    "path": {
+      "type": "string",
+      "description": "project-relative POSIX path (no drive letter, no backslash, no ..)",
+      "pattern": "^(?![A-Za-z]:)(?!/)(?!.*\\\\)(?!.*(^|/)\\.\\.(/|$)).+$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "bytes": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "media_type": {
+      "type": "string"
+    },
+    "role": {
+      "enum": [
+        "source",
+        "intermediate",
+        "draft",
+        "final",
+        "report",
+        "other"
+      ]
+    },
+    "created_utc": {
+      "type": "string",
+      "format": "date-time",
+      "description": "timezone-aware ISO-8601 (UTC preferred)"
+    },
+    "produced_by_job": {
+      "type": "string"
+    },
+    "rights": {
+      "type": "object",
+      "properties": {
+        "owner": {
+          "type": "string"
+        },
+        "licence": {
+          "type": "string"
+        },
+        "consent_ref": {
+          "type": "string"
+        },
+        "source_url": {
+          "type": "string"
+        }
+      }
+    },
+    "probe": {
+      "type": "object",
+      "properties": {
+        "width": {
+          "type": "integer"
+        },
+        "height": {
+          "type": "integer"
+        },
+        "fps": {
+          "type": "string"
+        },
+        "frames": {
+          "type": "integer"
+        },
+        "duration_s": {
+          "type": "string"
+        },
+        "sample_rate": {
+          "type": "integer"
+        },
+        "channels": {
+          "type": "integer"
+        }
+      }
+    },
+    "rendered_from": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[0-9a-f]{64}$"
+      },
+      "description": "hashes of the source files this artifact was rendered from"
+    }
+  }
+}

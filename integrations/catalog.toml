@@ -1,0 +1,1250 @@
+# AI Video Editing Toolkit - integration catalogue (machine-readable, read by install/bootstrap.py and doctor).
+# Every MCP / CLI / API / plugin / model the toolkit can use. Human view: integrations/README.md and docs/{en,he}/integrations.md.
+#
+# Rules encoded here (src: blueprint MCP_PROFILES s2/s4/s7, SECURITY_AND_LICENSING s6, COST_MODEL s7; 2026-10-02):
+#  * NO secret ever lives in this file - only the NAME of an environment variable (api.env_var / mcp.env_var).
+#  * "cost" = free | free-tier | paid. Anything that can generate paid output goes through the paid-generation-gate skill.
+#  * status = "verified" means the command/URL was read on an official page on `checked`; otherwise "unverified" and the
+#    bootstrap prints the command but does not rely on it. confidence = high | medium | low.
+#  * profiles: core (always) | minimal | standard | pro | optional.  addons: opt-in names for `bootstrap.py add <id|addon>` (also accepted by --with).
+#  * Never turn this catalogue into a startup profile: Minimal = no MCP servers (blueprint MCP_PROFILES s2).
+schema = 1
+
+[meta]
+checked_at = "2026-10-02"
+note = "Perishable. Versions/URLs/prices are re-checked before each release (non-spending refresh: read the source URLs below; never call a paid API)."
+research_pins = "HyperFrames 0.8.98 (research pin, distilled 04 2026-10-01); Playwright MCP 0.0.83 (E06 pin)"
+
+# ----------------------------------------------------------------------------- profiles (documentation; selection logic is in bootstrap.py)
+[profiles.minimal]
+title = "Minimal (default)"
+mcp = []
+summary = "Core only: skills + FFmpeg + the toolkit's own tools. No MCP server is registered. Needs no account, key, GPU or payment."
+
+[profiles.standard]
+title = "Standard"
+mcp = ["playwright"]
+summary = "Minimal + ONE isolated browser server for reference inspection and local preview QA."
+
+[profiles.pro]
+title = "Pro"
+mcp = ["playwright"]
+summary = "Same as Standard; bridges and providers are added one at a time later with `bootstrap.py add <id>` (nothing is registered until the student asks)."
+
+# ============================================================================= CORE CLIs
+[[entry]]
+id = "git"
+kind = "cli"
+name = "Git"
+role = "clone/update the toolkit; version control for student projects"
+profiles = ["core"]
+binary = "git"
+cost = "free"
+license = "GPL-2.0"
+doctor = { smoke = ["git", "--version"] }
+  [entry.install.windows]
+  command = "winget install --id Git.Git -e --source winget"
+  status = "verified"
+  source = "https://git-scm.com/install/windows"
+  checked = "2026-10-02"
+  confidence = "high"
+  [entry.install.macos]
+  command = "brew install git"
+  status = "verified"
+  source = "https://git-scm.com/install/mac"
+  checked = "2026-10-02"
+  confidence = "high"
+  [entry.install.linux]
+  manual = "Use your distribution package (e.g. sudo apt install git). We never run sudo for you."
+  status = "unverified"
+  checked = "2026-10-02"
+  confidence = "medium"
+
+[[entry]]
+id = "ffmpeg"
+kind = "cli"
+name = "FFmpeg"
+role = "decode/encode/probe/mux - the common media layer; QA tools and renders depend on it"
+profiles = ["core"]
+binary = "ffmpeg"
+version_argv = ["-version"]
+cost = "free"
+license = "build-dependent: LGPL-2.1+ default, GPL-2.0+/3.0 when GPL components are enabled (do not ship binaries; install instructions only)"
+security = "media parsers + overwrite + resource load; run on files you trust or copies"
+doctor = { smoke = ["ffmpeg", "-version"], real_test = "bootstrap.py runs a real H.264+AAC mini-encode and ffprobes it (a listed encoder proves nothing)" }
+notes = "ffmpeg.org ships source only and lists third-party binary builds; there is no 'official' package-manager command. winget id Gyan.FFmpeg and brew formula ffmpeg are widely used. NVENC/QSV can be listed yet fail to initialise - the mini-encode, not the encoder list, decides."
+  [entry.install.windows]
+  command = "winget install --id Gyan.FFmpeg -e --source winget"
+  status = "verified"
+  source = "https://github.com/microsoft/winget-pkgs (manifests/g/Gyan/FFmpeg) ; https://ffmpeg.org/download.html"
+  checked = "2026-10-02"
+  confidence = "high"
+  note = "Open a NEW terminal afterwards so PATH refreshes."
+  [entry.install.macos]
+  command = "brew install ffmpeg"
+  status = "verified"
+  source = "https://formulae.brew.sh/api/formula/ffmpeg.json"
+  checked = "2026-10-02"
+  confidence = "high"
+  [entry.install.linux]
+  manual = "sudo apt install ffmpeg (Debian/Ubuntu). Package name is standard but was not read on an official page."
+  status = "unverified"
+  checked = "2026-10-02"
+  confidence = "medium"
+
+[[entry]]
+id = "ffprobe"
+kind = "cli"
+name = "ffprobe"
+role = "media inspection (ships with FFmpeg)"
+profiles = ["core"]
+binary = "ffprobe"
+version_argv = ["-version"]
+cost = "free"
+license = "same as FFmpeg"
+doctor = { smoke = ["ffprobe", "-version"] }
+  [entry.install.windows]
+  command = "winget install --id Gyan.FFmpeg -e --source winget"
+  status = "verified"
+  source = "https://github.com/microsoft/winget-pkgs (manifests/g/Gyan/FFmpeg)"
+  checked = "2026-10-02"
+  confidence = "high"
+  [entry.install.macos]
+  command = "brew install ffmpeg"
+  status = "verified"
+  source = "https://formulae.brew.sh/api/formula/ffmpeg.json"
+  checked = "2026-10-02"
+  confidence = "high"
+  [entry.install.linux]
+  manual = "installed together with ffmpeg"
+  status = "unverified"
+  checked = "2026-10-02"
+  confidence = "medium"
+
+[[entry]]
+id = "node"
+kind = "cli"
+name = "Node.js (LTS)"
+role = "runs the HyperFrames engine and npx-based MCP servers"
+profiles = ["core"]
+binary = "node"
+min_version = "22.0"
+cost = "free"
+license = "MIT"
+doctor = { smoke = ["node", "--version"] }
+notes = "As of 2026-10-02 the LTS line is v24 (HyperFrames needs >= 22). v26 becomes LTS on 2026-10-28 - do not switch the pin without a re-test. Never update system Node to satisfy one module; prefer the installer / nvm the student already trusts."
+  [entry.install.windows]
+  command = "winget install --id OpenJS.NodeJS.LTS -e --source winget"
+  status = "verified"
+  source = "https://github.com/microsoft/winget-pkgs (manifests/o/OpenJS/NodeJS/LTS) ; https://raw.githubusercontent.com/nodejs/Release/main/schedule.json"
+  checked = "2026-10-02"
+  confidence = "high"
+  note = "The Node MSI may show a Windows UAC prompt; the student approves it by hand."
+  [entry.install.macos]
+  command = "brew install node@24"
+  status = "verified"
+  source = "https://formulae.brew.sh/api/formula/node@24.json"
+  checked = "2026-10-02"
+  confidence = "medium"
+  note = "node@24 is keg-only: follow the brew caveat to put it on PATH. Alternative: nvm (https://github.com/nvm-sh/nvm) then `nvm install 24`."
+  [entry.install.linux]
+  manual = "Use nvm (curl installer from https://github.com/nvm-sh/nvm) then `nvm install 24`, or your distribution's NodeSource/apt route. We never run sudo."
+  status = "verified"
+  source = "https://github.com/nvm-sh/nvm"
+  checked = "2026-10-02"
+  confidence = "medium"
+
+[[entry]]
+id = "npm"
+kind = "cli"
+name = "npm"
+role = "installs the pinned engine from the lockfile (ships with Node)"
+profiles = ["core"]
+binary = "npm"
+cost = "free"
+license = "Artistic-2.0"
+doctor = { smoke = ["npm", "--version"] }
+  [entry.install.windows]
+  manual = "installed together with Node.js"
+  status = "verified"
+  checked = "2026-10-02"
+  confidence = "high"
+  [entry.install.macos]
+  manual = "installed together with Node.js"
+  status = "verified"
+  checked = "2026-10-02"
+  confidence = "high"
+  [entry.install.linux]
+  manual = "installed together with Node.js"
+  status = "verified"
+  checked = "2026-10-02"
+  confidence = "high"
+
+[[entry]]
+id = "uv"
+kind = "cli"
+name = "uv (Astral)"
+role = "project-scoped Python environment (uv sync) and uv-managed Python 3.12; never touches system Python"
+profiles = ["core"]
+binary = "uv"
+cost = "free"
+license = "MIT OR Apache-2.0"
+doctor = { smoke = ["uv", "--version"] }
+  [entry.install.windows]
+  command = "winget install --id astral-sh.uv -e --source winget"
+  status = "verified"
+  source = "https://docs.astral.sh/uv/getting-started/installation/"
+  checked = "2026-10-02"
+  confidence = "high"
+  note = "Alternative from the same page: powershell -ExecutionPolicy ByPass -c \"irm https://astral.sh/uv/install.ps1 | iex\" (downloads and runs a script - the student decides)."
+  [entry.install.macos]
+  command = "brew install uv"
+  status = "verified"
+  source = "https://docs.astral.sh/uv/getting-started/installation/"
+  checked = "2026-10-02"
+  confidence = "high"
+  [entry.install.linux]
+  manual = "curl -LsSf https://astral.sh/uv/install.sh | sh  (downloads and runs a script - the student decides)"
+  status = "verified"
+  source = "https://docs.astral.sh/uv/getting-started/installation/"
+  checked = "2026-10-02"
+  confidence = "high"
+
+# ----------------------------------------------------------------------------- agent hosts (selected by --target, never installed by us)
+[[entry]]
+id = "claude"
+kind = "cli"
+name = "Claude Code"
+role = "agent host (the thing the student pasted the link into); `claude mcp add` is used to register MCP servers"
+host = "claude"
+profiles = ["core"]
+binary = "claude"
+cost = "the student's own Claude subscription or API account (not controlled by this toolkit)"
+license = "proprietary (Anthropic)"
+doctor = { smoke = ["claude", "--version"], note = "`claude doctor` diagnoses the Claude Code installation only - it does not prove video, font or GPU readiness" }
+  [entry.install.windows]
+  command = "winget install Anthropic.ClaudeCode"
+  status = "verified"
+  source = "https://code.claude.com/docs/en/setup"
+  checked = "2026-10-02"
+  confidence = "high"
+  note = "Native installer alternative (PowerShell): irm https://claude.ai/install.ps1 | iex"
+  [entry.install.macos]
+  command = "brew install --cask claude-code"
+  status = "verified"
+  source = "https://code.claude.com/docs/en/setup"
+  checked = "2026-10-02"
+  confidence = "high"
+  [entry.install.linux]
+  manual = "curl -fsSL https://claude.ai/install.sh | bash   (official native installer)"
+  status = "verified"
+  source = "https://code.claude.com/docs/en/setup"
+  checked = "2026-10-02"
+  confidence = "high"
+
+[[entry]]
+id = "codex"
+kind = "cli"
+name = "Codex CLI"
+role = "agent host; skills are discovered from ~/.agents/skills; MCP servers via config.toml or `codex mcp add`"
+host = "codex"
+profiles = ["core"]
+binary = "codex"
+cost = "the student's own ChatGPT/OpenAI account"
+license = "Apache-2.0"
+doctor = { smoke = ["codex", "--version"] }
+notes = "Codex does NOT read CLAUDE.md by default; AGENTS.md is the shared file. Official docs moved to learn.chatgpt.com/docs (developers.openai.com/codex/* redirects)."
+  [entry.install.windows]
+  command = "npm install -g @openai/codex"
+  status = "verified"
+  source = "https://github.com/openai/codex"
+  checked = "2026-10-02"
+  confidence = "high"
+  [entry.install.macos]
+  command = "brew install --cask codex"
+  status = "verified"
+  source = "https://github.com/openai/codex"
+  checked = "2026-10-02"
+  confidence = "high"
+  [entry.install.linux]
+  manual = "npm install -g @openai/codex"
+  status = "verified"
+  source = "https://github.com/openai/codex"
+  checked = "2026-10-02"
+  confidence = "high"
+
+# ============================================================================= ENGINE
+[[entry]]
+id = "hyperframes"
+kind = "cli"
+name = "HyperFrames CLI (HeyGen, Apache-2.0)"
+role = "primary HTML/CSS/GSAP video engine: init, check, snapshot, render"
+group = "engine"
+profiles = ["core"]
+managed_by = "bootstrap"
+pin = "0.8.98"
+latest_seen = "0.8.111"
+cost = "free (local render); `cloud*` subcommands are a separate paid product - not used by the toolkit"
+license = "Apache-2.0"
+security = "`hyperframes snapshot` uploads frames to Gemini unless `--describe false` (always pass it; <= 5 timestamps per call). Telemetry opt-out: HYPERFRAMES_NO_TELEMETRY=1 (the installer sets it for its own child processes)."
+doctor = { smoke = ["npx", "hyperframes", "doctor", "--json"], note = "run from the toolkit home after npm ci; `doctor --json` always exits 0 - gate on its payload" }
+notes = "Research pin is 0.8.98; npm latest on 2026-10-02 was 0.8.111 (about 100 releases per month). Upgrading is an explicit, re-tested step (hyperframes upgrade --project <dir> --check), never automatic. Never run `init` under a Hebrew path."
+  [entry.install.windows]
+  command = "npm ci --ignore-scripts  (inside the toolkit home; the pin comes from package.json + lockfile, or `npx hyperframes@0.8.98`)"
+  status = "verified"
+  source = "https://github.com/heygen-com/hyperframes ; https://registry.npmjs.org/hyperframes/latest"
+  checked = "2026-10-02"
+  confidence = "high"
+  note = "Package name, Node >= 22 and FFmpeg requirement verified from README + npm engines; the 0.8.98 pin is the research pin (not re-measured)."
+  [entry.install.macos]
+  command = "npm ci --ignore-scripts  (inside the toolkit home)"
+  status = "verified"
+  source = "https://registry.npmjs.org/hyperframes/latest"
+  checked = "2026-10-02"
+  confidence = "high"
+  [entry.install.linux]
+  command = "npm ci --ignore-scripts  (inside the toolkit home)"
+  status = "verified"
+  source = "https://registry.npmjs.org/hyperframes/latest"
+  checked = "2026-10-02"
+  confidence = "medium"
+
+# ============================================================================= MCP: Standard profile
+[[entry]]
+id = "playwright"
+kind = "mcp"
+name = "Playwright MCP (Microsoft), isolated"
+role = "reference capture and local preview QA of HTML compositions in an isolated browser"
+profiles = ["standard"]
+cost = "free"
+license = "Apache-2.0"
+security = "run --isolated --headless with an explicit --output-dir; origin filters are NOT a security boundary; never attach the signed-in browser profile; one browser server only"
+overhead = "25 tools = 21,382 B tools/list (E06, the reference machine, pinned 0.0.83); bytes are not tokens"
+doctor = { smoke = "client `mcp get avc-playwright`, then one browser_navigate to a local fixture page + browser_snapshot + browser_close", failure_control = "navigate to a closed port must return an error, not a pass" }
+  [entry.mcp]
+  name = "avc-playwright"
+  existing_names = ["playwright"]
+  transport = "stdio"
+  command = "npx"
+  args = ["@playwright/mcp@0.0.83", "--isolated", "--headless", "--output-dir", "{browser_out}"]
+  auth = "none"
+  register = "auto"
+  codex_auto = true
+  status = "verified"
+  source = "https://github.com/microsoft/playwright-mcp (README) ; https://registry.npmjs.org/@playwright/mcp/latest (0.0.83 = latest on 2026-10-02)"
+  checked = "2026-10-02"
+  confidence = "high"
+  by_hand = "If the browser is missing the server says so: let the student approve its browser install, or add `--browser msedge` / use the installed Chrome."
+  [entry.install.windows]
+  command = "claude mcp add --scope user --transport stdio avc-playwright -- cmd /c npx @playwright/mcp@0.0.83 --isolated --headless --output-dir <WORK_ROOT>/browser-output"
+  status = "verified"
+  source = "https://code.claude.com/docs/en/mcp (Windows cmd /c wrapper) ; https://github.com/microsoft/playwright-mcp"
+  checked = "2026-10-02"
+  confidence = "high"
+  [entry.install.macos]
+  command = "claude mcp add --scope user --transport stdio avc-playwright -- npx @playwright/mcp@0.0.83 --isolated --headless --output-dir <WORK_ROOT>/browser-output"
+  status = "verified"
+  source = "https://code.claude.com/docs/en/mcp"
+  checked = "2026-10-02"
+  confidence = "high"
+  [entry.install.linux]
+  command = "claude mcp add --scope user --transport stdio avc-playwright -- npx @playwright/mcp@0.0.83 --isolated --headless --output-dir <WORK_ROOT>/browser-output"
+  status = "verified"
+  source = "https://code.claude.com/docs/en/mcp"
+  checked = "2026-10-02"
+  confidence = "medium"
+  note = "Linux may need OS browser dependencies."
+
+[[entry]]
+id = "shadcn"
+kind = "mcp"
+name = "shadcn registries + MCP"
+role = "free UI component search/add for motion-graphics and UI scenes (the free option; a paid alternative is magic-21st)"
+addons = ["ui-shadcn"]
+profiles = ["optional"]
+cost = "free"
+license = "per-registry component licences; the shadcn CLI is MIT"
+security = "registry content is code that you paste into projects; private registry tokens must stay in env vars"
+doctor = { smoke = ["npx", "shadcn@latest", "--help"], note = "project-oriented: run inside a folder with components.json" }
+  [entry.mcp]
+  name = "shadcn"
+  transport = "stdio"
+  command = "npx"
+  args = ["shadcn@latest", "mcp"]
+  auth = "none"
+  register = "manual"
+  status = "verified"
+  source = "https://ui.shadcn.com/docs/mcp"
+  checked = "2026-10-02"
+  confidence = "medium"
+  by_hand = "Inside the UI project folder: pnpm dlx shadcn@latest mcp init --client claude   (the docs show the pnpm form; the equivalent npx form was not shown verbatim). It writes the project's .mcp.json."
+  [entry.install.windows]
+  command = "npx shadcn@latest mcp init --client claude"
+  status = "unverified"
+  source = "https://ui.shadcn.com/docs/mcp (shows pnpm dlx)"
+  checked = "2026-10-02"
+  confidence = "medium"
+  [entry.install.macos]
+  command = "npx shadcn@latest mcp init --client claude"
+  status = "unverified"
+  source = "https://ui.shadcn.com/docs/mcp (shows pnpm dlx)"
+  checked = "2026-10-02"
+  confidence = "medium"
+  [entry.install.linux]
+  command = "npx shadcn@latest mcp init --client claude"
+  status = "unverified"
+  source = "https://ui.shadcn.com/docs/mcp (shows pnpm dlx)"
+  checked = "2026-10-02"
+  confidence = "medium"
+
+# ============================================================================= STOCK / ICONS (REST APIs; terms apply)
+[[entry]]
+id = "iconify"
+kind = "mcp"
+name = "Iconify (community MCP wrapper over the public Iconify REST API)"
+role = "icons and logos for motion graphics"
+addons = ["stock-media", "icons"]
+profiles = ["optional"]
+cost = "free"
+license = "MIT (wrapper); EVERY icon set has its own licence - service access is not a redistribution grant"
+security = "community package: pin the exact version, read it before first run"
+doctor = { smoke = "search_icons for a common word via the client" }
+  [entry.mcp]
+  name = "avc-iconify"
+  transport = "stdio"
+  command = "npx"
+  args = ["@osmansiddiquer/iconify-mcp"]
+  auth = "none"
+  register = "manual"
+  status = "unverified"
+  source = "https://www.npmjs.com/package/@osmansiddiquer/iconify-mcp (community; no official Iconify MCP found)"
+  checked = "2026-10-02"
+  confidence = "low"
+  by_hand = "Pin an exact version after reading the package; the toolkit also works without it (HyperFrames media-use resolves icons locally)."
+  [entry.install.windows]
+  command = "claude mcp add --scope user --transport stdio avc-iconify -- cmd /c npx @osmansiddiquer/iconify-mcp"
+  status = "unverified"
+  source = "https://www.npmjs.com/package/@osmansiddiquer/iconify-mcp"
+  checked = "2026-10-02"
+  confidence = "low"
+  [entry.install.macos]
+  command = "claude mcp add --scope user --transport stdio avc-iconify -- npx @osmansiddiquer/iconify-mcp"
+  status = "unverified"
+  source = "https://www.npmjs.com/package/@osmansiddiquer/iconify-mcp"
+  checked = "2026-10-02"
+  confidence = "low"
+  [entry.install.linux]
+  command = "claude mcp add --scope user --transport stdio avc-iconify -- npx @osmansiddiquer/iconify-mcp"
+  status = "unverified"
+  source = "https://www.npmjs.com/package/@osmansiddiquer/iconify-mcp"
+  checked = "2026-10-02"
+  confidence = "low"
+
+[[entry]]
+id = "pexels"
+kind = "api"
+name = "Pexels (REST API; no official MCP)"
+role = "stock video/photos"
+addons = ["stock-media"]
+profiles = ["optional"]
+cost = "free-tier"
+terms = "free subject to limits (200/hour, 20,000/month); a visible 'Photos provided by Pexels' link and photographer credit are required; check content terms per asset"
+license = "Pexels licence per asset (not a redistribution grant)"
+security = "API key = secret: environment variable only"
+doctor = { smoke = "presence-only check of PEXELS_API_KEY; no call is made by doctor" }
+  [entry.api]
+  env_var = "PEXELS_API_KEY"
+  auth = "env-var"
+  status = "verified"
+  source = "https://www.pexels.com/api/documentation/"
+  checked = "2026-10-02"
+  confidence = "high"
+  where_credentials_go = "OS user environment variable PEXELS_API_KEY (student creates the key on pexels.com by hand)"
+
+[[entry]]
+id = "pixabay"
+kind = "api"
+name = "Pixabay (REST API; no official MCP)"
+role = "stock video/photos"
+addons = ["stock-pixabay"]
+profiles = ["optional"]
+cost = "free-tier"
+terms = "100 requests / 60 s; cache API results 24 h; no permanent hotlinking (download instead); show attribution; no systematic mass download"
+license = "Pixabay content licence per asset"
+security = "API key = secret: environment variable only"
+doctor = { smoke = "presence-only check of PIXABAY_API_KEY" }
+  [entry.api]
+  env_var = "PIXABAY_API_KEY"
+  auth = "env-var"
+  status = "verified"
+  source = "https://pixabay.com/api/docs/"
+  checked = "2026-10-02"
+  confidence = "high"
+  where_credentials_go = "OS user environment variable PIXABAY_API_KEY"
+
+[[entry]]
+id = "unsplash"
+kind = "mcp"
+name = "Unsplash (photos)"
+role = "photos only"
+addons = ["stock-unsplash"]
+profiles = ["optional"]
+cost = "free-tier"
+terms = "API terms: hotlink the returned URLs, send the download-event request, show attribution; 1,000 requests/hour on the free tier [from third-party READMEs]"
+license = "Unsplash licence per asset"
+security = "OAuth by hand; do not reuse another stock adapter's caching policy"
+doctor = { smoke = "client MCP status must read 'connected' after the student authorises" }
+  [entry.mcp]
+  name = "unsplash"
+  transport = "http"
+  url = "https://mcp.unsplash.com/mcp"
+  auth = "oauth-by-hand"
+  register = "manual"
+  status = "unverified"
+  source = "no official Unsplash MCP documentation found on 2026-10-02 (unsplash.com/developers does not mention MCP); URL comes from the owner's environment"
+  checked = "2026-10-02"
+  confidence = "low"
+  by_hand = "claude mcp add --scope user --transport http unsplash https://mcp.unsplash.com/mcp  then /mcp -> authenticate (student does the sign-in)"
+  [entry.install.windows]
+  command = "claude mcp add --scope user --transport http unsplash https://mcp.unsplash.com/mcp"
+  status = "unverified"
+  source = "https://code.claude.com/docs/en/mcp (generic http form)"
+  checked = "2026-10-02"
+  confidence = "low"
+  [entry.install.macos]
+  command = "claude mcp add --scope user --transport http unsplash https://mcp.unsplash.com/mcp"
+  status = "unverified"
+  source = "https://code.claude.com/docs/en/mcp (generic http form)"
+  checked = "2026-10-02"
+  confidence = "low"
+  [entry.install.linux]
+  command = "claude mcp add --scope user --transport http unsplash https://mcp.unsplash.com/mcp"
+  status = "unverified"
+  source = "https://code.claude.com/docs/en/mcp (generic http form)"
+  checked = "2026-10-02"
+  confidence = "low"
+
+[[entry]]
+id = "magic-21st"
+kind = "mcp"
+name = "21st.dev Magic (UI components)"
+role = "optional UI component search/generation; shadcn registries are the free default"
+addons = ["ui-21st"]
+profiles = ["optional"]
+cost = "paid (account/quota; plan not measured)"
+gate = "paid-generation-gate"
+terms = "credit the component source in the project README"
+license = "generated code per 21st.dev terms"
+security = "API key = secret: env var; old Magic keys were reset; the legacy @21st-dev/magic 0.2.3 package is only a compatibility proxy - do not follow old guides"
+doctor = { smoke = "presence-only check of TWENTYFIRST_API_KEY (name chosen by us); real call only after the student has an account" }
+  [entry.mcp]
+  name = "21st-magic"
+  transport = "http"
+  url = "https://21st.dev/api/mcp"
+  auth = "env-var"
+  env_var = "TWENTYFIRST_API_KEY"
+  register = "manual"
+  status = "verified"
+  source = "https://raw.githubusercontent.com/21st-dev/magic-mcp/main/README.md"
+  checked = "2026-10-02"
+  confidence = "medium"
+  by_hand = "The README's current route is the CLI: npx @21st-dev/cli@latest init --client claude  (student pastes their own key when the CLI asks). Or: claude mcp add --scope user --transport http 21st-magic https://21st.dev/api/mcp --header \"x-api-key: ${TWENTYFIRST_API_KEY}\"  - check that your client expands the variable; never type the key into chat."
+  [entry.install.windows]
+  command = "npx @21st-dev/cli@latest init --client claude"
+  status = "verified"
+  source = "https://raw.githubusercontent.com/21st-dev/magic-mcp/main/README.md"
+  checked = "2026-10-02"
+  confidence = "medium"
+  [entry.install.macos]
+  command = "npx @21st-dev/cli@latest init --client claude"
+  status = "verified"
+  source = "https://raw.githubusercontent.com/21st-dev/magic-mcp/main/README.md"
+  checked = "2026-10-02"
+  confidence = "medium"
+  [entry.install.linux]
+  command = "npx @21st-dev/cli@latest init --client claude"
+  status = "verified"
+  source = "https://raw.githubusercontent.com/21st-dev/magic-mcp/main/README.md"
+  checked = "2026-10-02"
+  confidence = "medium"
+
+# ============================================================================= GENERATION PROVIDERS (Pro; every spend goes through paid-generation-gate)
+[[entry]]
+id = "higgsfield"
+kind = "mcp"
+name = "Higgsfield (cloud generation)"
+role = "image/video/audio generation and presets; OAuth connector"
+addons = ["provider-higgsfield"]
+profiles = ["optional"]
+cost = "paid (plan credits; automated generation consumes credits even where web use is unlimited)"
+gate = "paid-generation-gate"
+terms = "API terms may allow training on content unless the workspace opts out - check before client footage"
+license = "proprietary service"
+security = "sign-in is NOT spend authorisation; uploads leave the machine; never log a token"
+doctor = { smoke = "client MCP status 'connected' after the student's OAuth; then a NON-generating call (list balance/models)" }
+  [entry.mcp]
+  name = "higgsfield"
+  transport = "http"
+  url = "https://mcp.higgsfield.ai/mcp"
+  auth = "oauth-by-hand"
+  register = "auto"
+  status = "unverified"
+  source = "URL from research T15-S010 and third-party pages; the official help-center page for Claude Code documents the CLI route instead (https://higgsfield.ai/creator-hub/help-center/integrations/how-do-i-connect-higgsfield-to-ai-agent)"
+  checked = "2026-10-02"
+  confidence = "medium"
+  by_hand = "After registration: in the agent run /mcp, choose higgsfield, authenticate in the browser. Official alternative: npm i -g @higgsfield/cli ; higgsfield auth login ; npx skills add higgsfield-ai/skills (student does every sign-in)."
+  [entry.install.windows]
+  command = "claude mcp add --scope user --transport http higgsfield https://mcp.higgsfield.ai/mcp"
+  status = "unverified"
+  source = "https://code.claude.com/docs/en/mcp (generic http form) + URL above"
+  checked = "2026-10-02"
+  confidence = "medium"
+  [entry.install.macos]
+  command = "claude mcp add --scope user --transport http higgsfield https://mcp.higgsfield.ai/mcp"
+  status = "unverified"
+  source = "https://code.claude.com/docs/en/mcp (generic http form) + URL above"
+  checked = "2026-10-02"
+  confidence = "medium"
+  [entry.install.linux]
+  command = "claude mcp add --scope user --transport http higgsfield https://mcp.higgsfield.ai/mcp"
+  status = "unverified"
+  source = "https://code.claude.com/docs/en/mcp (generic http form) + URL above"
+  checked = "2026-10-02"
+  confidence = "medium"
+
+[[entry]]
+id = "higgsfield-cli"
+kind = "cli"
+name = "Higgsfield CLI (@higgsfield/cli)"
+role = "official Claude Code route to Higgsfield per the vendor help centre"
+addons = ["provider-higgsfield"]
+profiles = ["optional"]
+binary = "higgsfield"
+cost = "paid (credits)"
+gate = "paid-generation-gate"
+license = "MIT"
+security = "`higgsfield auth login` opens a browser: the student signs in by hand"
+doctor = { smoke = ["higgsfield", "--version"] }
+  [entry.install.windows]
+  command = "npm install -g @higgsfield/cli"
+  status = "verified"
+  source = "https://higgsfield.ai/creator-hub/help-center/integrations/how-do-i-connect-higgsfield-to-ai-agent ; https://registry.npmjs.org/@higgsfield/cli/latest"
+  checked = "2026-10-02"
+  confidence = "medium"
+  [entry.install.macos]
+  command = "npm install -g @higgsfield/cli"
+  status = "verified"
+  source = "https://registry.npmjs.org/@higgsfield/cli/latest"
+  checked = "2026-10-02"
+  confidence = "medium"
+  [entry.install.linux]
+  command = "npm install -g @higgsfield/cli"
+  status = "verified"
+  source = "https://registry.npmjs.org/@higgsfield/cli/latest"
+  checked = "2026-10-02"
+  confidence = "medium"
+
+[[entry]]
+id = "fal"
+kind = "mcp"
+name = "fal (hosted execution MCP + REST)"
+role = "one task-selected cloud provider: image, video, speech, music, video understanding"
+addons = ["provider-fal"]
+profiles = ["optional"]
+cost = "paid (metered; run_model and submit_job spend fal credits)"
+gate = "paid-generation-gate"
+terms = "model licences and budgets are separate from the transport"
+license = "proprietary service"
+security = "Bearer key = secret. Env var FAL_KEY only; a key in the client's stored config is still a secret on disk: prefer the project .mcp.json with ${FAL_KEY} expansion"
+doctor = { smoke = "presence-only check of FAL_KEY; then the free tools search_models/get_pricing only" }
+  [entry.mcp]
+  name = "fal"
+  transport = "http"
+  url = "https://mcp.fal.ai/mcp"
+  auth = "env-var"
+  env_var = "FAL_KEY"
+  register = "manual"
+  status = "verified"
+  source = "https://fal.ai/docs/documentation/setting-up/mcp"
+  checked = "2026-10-02"
+  confidence = "high"
+  by_hand = "Student sets FAL_KEY in their OS environment (not in chat). Then add the server with the Pro template in integrations/README.md (headers.Authorization = Bearer ${FAL_KEY}). Authentication does not authorise generation: inspect tools, narrow the allow-list, approve each costed job separately."
+  [entry.install.windows]
+  command = "claude mcp add --scope project --transport http fal https://mcp.fal.ai/mcp --header \"Authorization: Bearer ${FAL_KEY}\""
+  status = "unverified"
+  source = "https://fal.ai/docs/documentation/setting-up/mcp (documents the literal-key form; ${FAL_KEY} expansion is documented for .mcp.json only)"
+  checked = "2026-10-02"
+  confidence = "medium"
+  note = "Preferred: write the .mcp.json entry (expansion verified for .mcp.json at https://code.claude.com/docs/en/mcp); never put the literal key in a command."
+  [entry.install.macos]
+  command = "claude mcp add --scope project --transport http fal https://mcp.fal.ai/mcp --header \"Authorization: Bearer ${FAL_KEY}\""
+  status = "unverified"
+  source = "https://fal.ai/docs/documentation/setting-up/mcp"
+  checked = "2026-10-02"
+  confidence = "medium"
+  [entry.install.linux]
+  command = "claude mcp add --scope project --transport http fal https://mcp.fal.ai/mcp --header \"Authorization: Bearer ${FAL_KEY}\""
+  status = "unverified"
+  source = "https://fal.ai/docs/documentation/setting-up/mcp"
+  checked = "2026-10-02"
+  confidence = "medium"
+
+[[entry]]
+id = "elevenlabs"
+kind = "mcp"
+name = "ElevenLabs hosted MCP (OAuth)"
+role = "TTS / voice / transcription (Hebrew ASR is listed for Scribe; unmeasured here)"
+addons = ["provider-elevenlabs"]
+profiles = ["optional"]
+cost = "paid (credits/plan)"
+gate = "paid-generation-gate"
+terms = "voice cloning needs consent/provenance; workspace-scope mutations possible"
+license = "proprietary service"
+security = "OAuth only (no API key in this route). AVOID the archived local repo `elevenlabs-mcp` (read-only since 2026-08-20) and old guides that use ELEVENLABS_API_KEY with uvx"
+doctor = { smoke = "client status 'connected' after OAuth; non-generating tool listing only" }
+  [entry.mcp]
+  name = "elevenlabs"
+  transport = "http"
+  url = "https://api.elevenlabs.io/v1/mcp"
+  auth = "oauth-by-hand"
+  register = "auto"
+  status = "unverified"
+  source = "https://elevenlabs.io/docs/eleven-agents/operate/hosted-mcp.md (URL + OAuth verified; no official `claude mcp add` line; generic http form used)"
+  checked = "2026-10-02"
+  confidence = "medium"
+  by_hand = "After registration: /mcp -> elevenlabs -> authenticate in the browser (student does it). EU/India/Singapore residency URLs exist (api.eu/api.in/api.sg .residency.elevenlabs.io/v1/mcp)."
+  [entry.install.windows]
+  command = "claude mcp add --scope user --transport http elevenlabs https://api.elevenlabs.io/v1/mcp"
+  status = "unverified"
+  source = "https://code.claude.com/docs/en/mcp (generic http form) + docs URL above"
+  checked = "2026-10-02"
+  confidence = "medium"
+  [entry.install.macos]
+  command = "claude mcp add --scope user --transport http elevenlabs https://api.elevenlabs.io/v1/mcp"
+  status = "unverified"
+  source = "https://code.claude.com/docs/en/mcp (generic http form) + docs URL above"
+  checked = "2026-10-02"
+  confidence = "medium"
+  [entry.install.linux]
+  command = "claude mcp add --scope user --transport http elevenlabs https://api.elevenlabs.io/v1/mcp"
+  status = "unverified"
+  source = "https://code.claude.com/docs/en/mcp (generic http form) + docs URL above"
+  checked = "2026-10-02"
+  confidence = "medium"
+
+# ============================================================================= OPTIONAL CONNECTORS (OAuth by hand)
+[[entry]]
+id = "figma"
+kind = "mcp"
+name = "Figma remote MCP"
+role = "design context for motion graphics (the current server can WRITE the canvas - not read-only)"
+addons = ["figma"]
+profiles = ["optional"]
+cost = "plan-dependent"
+license = "proprietary service"
+security = "OAuth by hand; one file/project per task; do not call it read-only"
+doctor = { smoke = "client status 'connected' after OAuth" }
+  [entry.mcp]
+  name = "figma"
+  transport = "http"
+  url = "https://mcp.figma.com/mcp"
+  auth = "oauth-by-hand"
+  register = "auto"
+  status = "verified"
+  source = "https://developers.figma.com/docs/figma-mcp-server/remote-server-installation/"
+  checked = "2026-10-02"
+  confidence = "high"
+  by_hand = "/mcp -> figma -> authenticate (browser consent by the student)."
+  [entry.install.windows]
+  command = "claude mcp add --scope user --transport http figma https://mcp.figma.com/mcp"
+  status = "verified"
+  source = "https://developers.figma.com/docs/figma-mcp-server/remote-server-installation/"
+  checked = "2026-10-02"
+  confidence = "high"
+  [entry.install.macos]
+  command = "claude mcp add --scope user --transport http figma https://mcp.figma.com/mcp"
+  status = "verified"
+  source = "https://developers.figma.com/docs/figma-mcp-server/remote-server-installation/"
+  checked = "2026-10-02"
+  confidence = "high"
+  [entry.install.linux]
+  command = "claude mcp add --scope user --transport http figma https://mcp.figma.com/mcp"
+  status = "verified"
+  source = "https://developers.figma.com/docs/figma-mcp-server/remote-server-installation/"
+  checked = "2026-10-02"
+  confidence = "high"
+
+[[entry]]
+id = "notion"
+kind = "mcp"
+name = "Notion hosted MCP"
+role = "optional: read project briefs from a Notion workspace"
+addons = ["notion"]
+profiles = ["optional"]
+cost = "workspace plan"
+license = "proprietary service"
+security = "search may span connected sources; writes possible; enable only the project-relevant workspace; confidential briefs"
+doctor = { smoke = "client status 'connected' after OAuth" }
+  [entry.mcp]
+  name = "notion"
+  transport = "http"
+  url = "https://mcp.notion.com/mcp"
+  auth = "oauth-by-hand"
+  register = "auto"
+  status = "verified"
+  source = "https://developers.notion.com/guides/mcp/get-started-with-mcp"
+  checked = "2026-10-02"
+  confidence = "high"
+  by_hand = "/mcp -> notion -> authenticate (interactive only)."
+  [entry.install.windows]
+  command = "claude mcp add --scope user --transport http notion https://mcp.notion.com/mcp"
+  status = "verified"
+  source = "https://developers.notion.com/guides/mcp/get-started-with-mcp"
+  checked = "2026-10-02"
+  confidence = "high"
+  [entry.install.macos]
+  command = "claude mcp add --scope user --transport http notion https://mcp.notion.com/mcp"
+  status = "verified"
+  source = "https://developers.notion.com/guides/mcp/get-started-with-mcp"
+  checked = "2026-10-02"
+  confidence = "high"
+  [entry.install.linux]
+  command = "claude mcp add --scope user --transport http notion https://mcp.notion.com/mcp"
+  status = "verified"
+  source = "https://developers.notion.com/guides/mcp/get-started-with-mcp"
+  checked = "2026-10-02"
+  confidence = "high"
+
+[[entry]]
+id = "adobe-express-docs"
+kind = "mcp"
+name = "Adobe Express Developer MCP (DOCUMENTATION ONLY)"
+role = "docs + TypeScript types for building Express add-ons. NOT a canvas/design editor and NOT needed for video editing"
+addons = ["adobe-express-docs"]
+profiles = ["optional"]
+cost = "free"
+license = "see package LICENSE (npm license field says 'See LICENSE file')"
+security = "sends the docs query + client metadata to Adobe's doc service (not offline); its types dependency floats on `latest` - keep a lockfile; one doc call returned ~29 KB and one type call ~67 KB (E06)"
+overhead = "2 tools = 2,071 B tools/list (E06)"
+doctor = { smoke = "tools/list returns exactly get_relevant_documentations and get_typedefinitions" }
+  [entry.mcp]
+  name = "adobe-express-docs"
+  transport = "stdio"
+  command = "npx"
+  args = ["@adobe/express-developer-mcp@1.0.0"]
+  auth = "none"
+  register = "manual"
+  codex_auto = true
+  status = "verified"
+  source = "https://developer.adobe.com/express/add-ons/docs/guides/getting-started/local-development/mcp-server ; https://registry.npmjs.org/@adobe/express-developer-mcp/latest (1.0.0)"
+  checked = "2026-10-02"
+  confidence = "high"
+  by_hand = "Only while developing Express add-ons. Docs label: documentation server, not an editor."
+  [entry.install.windows]
+  command = "claude mcp add --scope project --transport stdio adobe-express-docs -- cmd /c npx @adobe/express-developer-mcp@1.0.0"
+  status = "unverified"
+  source = "https://developer.adobe.com/express/add-ons/docs/guides/getting-started/local-development/mcp-server (no Claude Code line documented; generic stdio form)"
+  checked = "2026-10-02"
+  confidence = "medium"
+  [entry.install.macos]
+  command = "claude mcp add --scope project --transport stdio adobe-express-docs -- npx @adobe/express-developer-mcp@1.0.0"
+  status = "unverified"
+  source = "https://developer.adobe.com/express/add-ons/docs/guides/getting-started/local-development/mcp-server"
+  checked = "2026-10-02"
+  confidence = "medium"
+  [entry.install.linux]
+  command = "claude mcp add --scope project --transport stdio adobe-express-docs -- npx @adobe/express-developer-mcp@1.0.0"
+  status = "unverified"
+  source = "https://developer.adobe.com/express/add-ons/docs/guides/getting-started/local-development/mcp-server"
+  checked = "2026-10-02"
+  confidence = "medium"
+
+# ============================================================================= 3D / NLE bridges (opt-in, unmeasured)
+[[entry]]
+id = "blender"
+kind = "cli"
+name = "Blender (native app)"
+role = "3D scenes for motion graphics; headless `bpy` is preferred for deterministic batch work"
+addons = ["blender"]
+profiles = ["optional"]
+binary = "blender"
+cost = "free"
+license = "GPL-2.0+ (the app); do not redistribute"
+doctor = { smoke = ["blender", "--version"], note = "Blender is often NOT on PATH; check the default install folder or use the full path" }
+notes = "Exact version matters for the opt-in `blender` profile (research host: Blender 5.2). macOS build is Apple Silicon only (macOS 13+) per the download page."
+  [entry.install.windows]
+  command = "winget install --id BlenderFoundation.Blender -e --source winget"
+  status = "verified"
+  source = "https://github.com/microsoft/winget-pkgs (manifests/b/BlenderFoundation/Blender)"
+  checked = "2026-10-02"
+  confidence = "medium"
+  [entry.install.macos]
+  command = "brew install --cask blender"
+  status = "verified"
+  source = "https://formulae.brew.sh/cask/blender"
+  checked = "2026-10-02"
+  confidence = "medium"
+  [entry.install.linux]
+  manual = "Download from https://www.blender.org/download/ (or your distribution/Steam)."
+  status = "verified"
+  source = "https://www.blender.org/download/"
+  checked = "2026-10-02"
+  confidence = "medium"
+
+[[entry]]
+id = "blender-mcp"
+kind = "mcp"
+name = "MCP for Blender (renamed from blender-mcp; ahujasid)"
+role = "drive a live Blender via a local socket + add-on"
+addons = ["blender"]
+profiles = ["optional"]
+cost = "free (optional asset/generation services inside it may charge)"
+license = "MIT"
+security = "THE SOCKET (default localhost:9876) HAS NO AUTHENTICATION OR ENCRYPTION and `execute_blender_code` runs arbitrary Python in Blender: keep it on localhost, never forward the port, save your scene first, treat .blend files from the internet as untrusted. Telemetry is on by default upstream - set DISABLE_TELEMETRY=true."
+doctor = { smoke = "client status connected AND Blender add-on 'Connect' pressed; then get_scene_info (read-only)" }
+notes = "Prefer native headless bpy for deterministic batch jobs. Do NOT use the curl|sh / irm|iex one-liners from the project's website; use uvx."
+  [entry.mcp]
+  name = "avc-blender"
+  existing_names = ["blender"]
+  transport = "stdio"
+  command = "uvx"
+  args = ["mcp-for-blender"]
+  env = { DISABLE_TELEMETRY = "true" }
+  auth = "none"
+  register = "manual"
+  status = "verified"
+  source = "https://pypi.org/pypi/mcp-for-blender/json (2.1.3, MIT) ; https://github.com/ahujasid/blender-mcp"
+  checked = "2026-10-02"
+  confidence = "high"
+  by_hand = "uvx mcp-for-blender install-addon ; in Blender: Edit > Preferences > Add-ons > enable 'MCP for Blender'; N panel > MCP for Blender > Connect."
+  [entry.install.windows]
+  command = "claude mcp add --scope user --transport stdio --env DISABLE_TELEMETRY=true avc-blender -- cmd /c uvx mcp-for-blender"
+  status = "verified"
+  source = "https://github.com/ahujasid/blender-mcp (README Windows variant: cmd /c uvx)"
+  checked = "2026-10-02"
+  confidence = "medium"
+  [entry.install.macos]
+  command = "claude mcp add --scope user --transport stdio --env DISABLE_TELEMETRY=true avc-blender -- uvx mcp-for-blender"
+  status = "verified"
+  source = "https://github.com/ahujasid/blender-mcp"
+  checked = "2026-10-02"
+  confidence = "medium"
+  [entry.install.linux]
+  command = "claude mcp add --scope user --transport stdio --env DISABLE_TELEMETRY=true avc-blender -- uvx mcp-for-blender"
+  status = "verified"
+  source = "https://github.com/ahujasid/blender-mcp"
+  checked = "2026-10-02"
+  confidence = "medium"
+
+[[entry]]
+id = "nle-premiere"
+kind = "native-plugin"
+name = "Premiere Pro agent bridge (Higgsfield plugin, pr_* tools)"
+role = "opt-in NLE bridge; executes editor operations"
+addons = ["nle-premiere"]
+profiles = ["optional"]
+cost = "app licence + generation credits"
+gate = "paid-generation-gate"
+security = "inspect the installer before running it; duplicate the project before any write; Adobe minimum-version conflict (help says 2024/24.0+, plugin page says 2025+) is unresolved; installation UNMEASURED"
+doctor = { smoke = "none - student installs by hand; verify with a read-only pr_* call such as pr_get_project_info" }
+install_by_hand = "Student downloads the plugin from the vendor's official page and installs it themselves; the agent never runs an installer it has not shown the student first."
+status = "unverified"
+checked = "2026-10-02"
+confidence = "low"
+
+[[entry]]
+id = "nle-ae"
+kind = "native-plugin"
+name = "After Effects agent bridge (Higgsfield plugin, ae_* tools)"
+role = "opt-in NLE bridge"
+addons = ["nle-ae"]
+profiles = ["optional"]
+cost = "app licence + generation credits"
+gate = "paid-generation-gate"
+security = "same as nle-premiere; duplicate the project before writes"
+doctor = { smoke = "none - student installs by hand; verify with a read-only ae_* call such as ae_get_composition_info" }
+install_by_hand = "Same as nle-premiere."
+status = "unverified"
+checked = "2026-10-02"
+confidence = "low"
+
+# ============================================================================= ASR / MATTE routes (separate Python envs per route)
+[[entry]]
+id = "faster-whisper"
+kind = "python-lib"
+name = "faster-whisper (CTranslate2) - CPU int8 ASR route"
+role = "local Hebrew/English transcription on any CPU (measured baseline on the reference machine only)"
+addons = ["asr-cpu"]
+profiles = ["optional"]
+cost = "free (local compute)"
+license = "MIT (library); model weights have their own licence"
+pip_spec = "faster-whisper==1.2.1"
+venv = "asr-cpu"
+status = "verified"
+source = "https://pypi.org/pypi/faster-whisper/json (1.2.1, MIT, Python >=3.9)"
+checked = "2026-10-02"
+confidence = "high"
+security = "separate environment under <state>/venvs/asr-cpu; weights are NOT downloaded by the installer"
+doctor = { smoke = "python -c 'import faster_whisper' inside the route venv" }
+notes = "Hebrew: use ivrit-ai weights, not the default English small model. Do not infer an AMD GPU route from CPU support."
+
+[[entry]]
+id = "ivrit-ct2"
+kind = "model"
+name = "ivrit-ai/whisper-large-v3-turbo-ct2 (Hebrew ASR weights, CT2)"
+role = "Hebrew ASR weights for faster-whisper"
+addons = ["asr-cpu"]
+profiles = ["optional"]
+cost = "free (download only)"
+license = "Apache-2.0 (verified on the model page 2026-10-02)"
+download_size = "about 1.5 GB [unverified - read the Hugging Face file list before approving]"
+source_url = "https://huggingface.co/ivrit-ai/whisper-large-v3-turbo-ct2"
+status = "verified"
+checked = "2026-10-02"
+confidence = "medium"
+security = "never auto-downloaded; the student approves the size first; pin the revision hash"
+doctor = { smoke = "file presence + sha256 recorded by the transcribe tool" }
+
+[[entry]]
+id = "whisper-cpp"
+kind = "cli"
+name = "whisper.cpp (CPU / Vulkan / CUDA / CoreML builds)"
+role = "fast local ASR; Vulkan route measured about 9.8x its CPU run on the reference machine only (E08)"
+addons = ["asr-vulkan", "asr-cuda", "asr-mlx"]
+profiles = ["optional"]
+binary = "whisper-cli"
+cost = "free"
+license = "MIT"
+security = "Vulkan on the reference GPU's driver needs GGML_VK_DISABLE_COOPMAT=1 [LOCAL-only]; otherwise it crashes. NVIDIA/Apple routes are UNMEASURED."
+doctor = { smoke = ["whisper-cli", "--help"] }
+notes = "Input must be 16 kHz 16-bit mono WAV (ffmpeg -ar 16000 -ac 1 -c:a pcm_s16le). The newest tagged release (v1.9.4) lists no prebuilt assets; prebuilt zips live on nightly b#### pre-releases and v1.9.2. Hebrew weights: ivrit-ai/whisper-large-v3-turbo-ggml (Apache-2.0, file ggml-model.bin)."
+  [entry.install.windows]
+  manual = "Download a prebuilt whisper-bin-x64.zip from https://github.com/ggml-org/whisper.cpp/releases (nightly or v1.9.2) or build: cmake -B build -DGGML_VULKAN=1 && cmake --build build -j --config Release. Student approves the download."
+  status = "verified"
+  source = "https://github.com/ggml-org/whisper.cpp ; https://api.github.com/repos/ggml-org/whisper.cpp/releases"
+  checked = "2026-10-02"
+  confidence = "medium"
+  [entry.install.macos]
+  command = "brew install whisper.cpp"
+  status = "verified"
+  source = "https://formulae.brew.sh/formula/whisper.cpp"
+  checked = "2026-10-02"
+  confidence = "medium"
+  [entry.install.linux]
+  manual = "Build from source: cmake -B build && cmake --build build -j --config Release (add -DGGML_CUDA=1 or -DGGML_VULKAN=1 for GPU)"
+  status = "verified"
+  source = "https://github.com/ggml-org/whisper.cpp"
+  checked = "2026-10-02"
+  confidence = "medium"
+
+[[entry]]
+id = "ivrit-ggml"
+kind = "model"
+name = "ivrit-ai/whisper-large-v3-turbo-ggml (Hebrew ASR weights, whisper.cpp)"
+role = "Hebrew ASR weights for the whisper.cpp routes"
+addons = ["asr-vulkan", "asr-cuda", "asr-mlx"]
+profiles = ["optional"]
+cost = "free (download only)"
+license = "Apache-2.0 (verified on the model page 2026-10-02)"
+download_size = "about 1.6 GB [unverified]"
+source_url = "https://huggingface.co/ivrit-ai/whisper-large-v3-turbo-ggml"
+status = "verified"
+checked = "2026-10-02"
+confidence = "medium"
+security = "never auto-downloaded; pin the revision hash"
+doctor = { smoke = "file presence" }
+
+[[entry]]
+id = "matte-fast"
+kind = "python-lib"
+name = "matte-fast route (RVM + ONNX Runtime/DirectML internal; MODNet as bundle-safe alternative)"
+role = "speaker cut-out (alpha) for text-behind-speaker; measured only on the reference machine (E09)"
+addons = ["matte-fast"]
+profiles = ["optional"]
+cost = "free (local compute)"
+license = "RVM is GPL-3.0 -> INTERNAL USE ONLY until the licence question is resolved; MODNet Apache-2.0; native `hyperframes remove-background` (u2net_human_seg, Apache-2.0) is the fallback"
+status = "unverified"
+checked = "2026-10-02"
+confidence = "low"
+security = "no pip_spec is pinned here on purpose: the route is installed by the toolkit's own `cutout` tool after the licence gate; the installer only reports it"
+doctor = { smoke = "cutout --help (lazy imports; < 1 s)" }
+
+# ============================================================================= OPTIONAL CLIs
+[[entry]]
+id = "gh"
+kind = "cli"
+name = "GitHub CLI"
+role = "optional: clone private forks, open issues"
+addons = ["gh"]
+profiles = ["optional"]
+binary = "gh"
+cost = "free"
+license = "MIT"
+security = "`gh auth login` is the student's own sign-in"
+doctor = { smoke = ["gh", "--version"] }
+  [entry.install.windows]
+  command = "winget install --id GitHub.cli -e --source winget"
+  status = "verified"
+  source = "https://raw.githubusercontent.com/cli/cli/trunk/docs/install_windows.md"
+  checked = "2026-10-02"
+  confidence = "high"
+  [entry.install.macos]
+  command = "brew install gh"
+  status = "verified"
+  source = "https://raw.githubusercontent.com/cli/cli/trunk/docs/install_macos.md"
+  checked = "2026-10-02"
+  confidence = "high"
+  [entry.install.linux]
+  manual = "See https://github.com/cli/cli/blob/trunk/docs/install_linux.md"
+  status = "unverified"
+  checked = "2026-10-02"
+  confidence = "medium"
+
+[[entry]]
+id = "yt-dlp"
+kind = "cli"
+name = "yt-dlp (optional reference downloader)"
+role = "fetch a reference video the student is entitled to analyse"
+addons = ["yt-dlp"]
+profiles = ["optional"]
+binary = "yt-dlp"
+cost = "free"
+license = "Unlicense (source); the PyInstaller executables bundle GPLv3+ code -> the combined binary is GPLv3+"
+terms = "Downloading may breach a site's terms of service or copyright; the student is responsible. Never download client or third-party footage you have no right to use. Reference downloads stay local, are never uploaded, never shipped."
+security = "parses untrusted remote content; keep it updated (yt-dlp -U)"
+doctor = { smoke = ["yt-dlp", "--version"] }
+  [entry.install.windows]
+  command = "winget install --source winget --id yt-dlp.yt-dlp"
+  status = "verified"
+  source = "https://github.com/yt-dlp/yt-dlp/wiki/Installation"
+  checked = "2026-10-02"
+  confidence = "high"
+  [entry.install.macos]
+  command = "brew install yt-dlp"
+  status = "verified"
+  source = "https://github.com/yt-dlp/yt-dlp/wiki/Installation"
+  checked = "2026-10-02"
+  confidence = "high"
+  [entry.install.linux]
+  manual = "python3 -m pip install -U \"yt-dlp[default]\"  or a release binary from https://github.com/yt-dlp/yt-dlp/releases"
+  status = "verified"
+  source = "https://github.com/yt-dlp/yt-dlp/wiki/Installation"
+  checked = "2026-10-02"
+  confidence = "high"
+
+[[entry]]
+id = "gemini-vision"
+kind = "api"
+name = "Gemini video/frame understanding (reached ONLY through `hyperframes snapshot` unless disabled)"
+role = "frame description; default OFF in the toolkit"
+profiles = ["optional"]
+cost = "free-tier/paid (provider quota)"
+terms = "uploads frames to a third party; retention per provider"
+license = "proprietary service"
+security = "PRIVACY: `hyperframes snapshot` sends frames to Gemini unless `--describe false`. The toolkit always passes --describe false (<= 5 timestamps per call). Client footage never goes to a hosted analysis route without an explicit per-client decision."
+doctor = { smoke = "grep the toolkit's own snapshot calls for --describe false; no network call" }
+  [entry.api]
+  env_var = "GEMINI_API_KEY"
+  auth = "env-var"
+  status = "unverified"
+  source = "research distilled 04 hyperframes-traps (2026-10-01)"
+  checked = "2026-10-02"
+  confidence = "medium"
+  where_credentials_go = "OS user environment variable GEMINI_API_KEY - only if the student deliberately enables description"
+
+# ============================================================================= AVOID / STALE (kept so doctor and docs can warn)
+[[entry]]
+id = "elevenlabs-local-mcp"
+kind = "mcp"
+name = "ElevenLabs LOCAL MCP repo (elevenlabs-mcp, uvx)"
+role = "none - replaced by the hosted OAuth server"
+avoid = true
+profiles = ["avoid"]
+cost = "paid"
+security = "archived/read-only since 2026-08-20; needs ELEVENLABS_API_KEY on disk"
+status = "verified"
+source = "https://github.com/elevenlabs/elevenlabs-mcp (README: deprecated, archived)"
+checked = "2026-10-02"
+confidence = "high"
+  [entry.mcp]
+  name = "elevenlabs-local"
+  transport = "stdio"
+  command = "uvx"
+  args = ["elevenlabs-mcp"]
+  register = "never"
+  source = "https://github.com/elevenlabs/elevenlabs-mcp (README: deprecated, archived)"
+  checked = "2026-10-02"
+  confidence = "high"
+  status = "verified"
+
+[[entry]]
+id = "magic-legacy-npm"
+kind = "mcp"
+name = "@21st-dev/magic 0.2.3 (legacy npm proxy)"
+role = "none - use the CLI route in `magic-21st`"
+avoid = true
+profiles = ["avoid"]
+cost = "paid"
+security = "compatibility proxy only; old Magic API keys were reset"
+status = "verified"
+source = "https://raw.githubusercontent.com/21st-dev/magic-mcp/main/README.md"
+checked = "2026-10-02"
+confidence = "medium"
+  [entry.mcp]
+  name = "magic-legacy"
+  transport = "stdio"
+  command = "npx"
+  args = ["@21st-dev/magic"]
+  register = "never"
+  source = "https://raw.githubusercontent.com/21st-dev/magic-mcp/main/README.md"
+  checked = "2026-10-02"
+  confidence = "medium"
+  status = "verified"
+
+[[entry]]
+id = "ffmpeg-mcp-wrapper"
+kind = "mcp"
+name = "FFmpeg MCP wrapper (egoist)"
+role = "none - direct FFmpeg covers it"
+avoid = true
+profiles = ["avoid"]
+cost = "free"
+security = "last commit 2025-03-29; broad file/process permissions; licence text conflict"
+status = "unverified"
+source = "research T15 M11 (2026-10-01)"
+checked = "2026-10-02"
+confidence = "medium"
+  [entry.mcp]
+  name = "ffmpeg-mcp"
+  transport = "stdio"
+  command = "npx"
+  args = ["ffmpeg-mcp"]
+  register = "never"
+  source = "research T15 M11 (2026-10-01)"
+  checked = "2026-10-02"
+  confidence = "medium"
+  status = "unverified"
+
+[[entry]]
+id = "luma-legacy-mcp"
+kind = "mcp"
+name = "Luma legacy API MCP"
+role = "none"
+avoid = true
+profiles = ["avoid"]
+cost = "paid"
+security = "last commit 2025-04-18; 2 static tools; Ray2/Photon defaults do not prove current coverage"
+status = "unverified"
+source = "research T15 M19 (2026-10-01)"
+checked = "2026-10-02"
+confidence = "medium"
+  [entry.mcp]
+  name = "luma-legacy"
+  transport = "stdio"
+  command = "uvx"
+  args = ["luma-ai-mcp-server"]
+  register = "never"
+  source = "research T15 M19 (2026-10-01)"
+  checked = "2026-10-02"
+  confidence = "medium"
+  status = "unverified"

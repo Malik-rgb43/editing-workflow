@@ -1,0 +1,41 @@
+# toolkit.toml - the ONE config file for every path the code would otherwise hard-code.
+#
+# Rules (src: blueprint TOOLS_SPEC section 1.1; E04 conclusion "make model/asset roots configurable"):
+#   * An empty string means "not set". The toolkit never invents a private default path.
+#   * Relative paths are resolved against the folder that contains this file.
+#   * Put machine-specific values in `toolkit.local.toml` (same keys, overrides this file, not committed)
+#     or in environment variables:  AVC_<SECTION>_<KEY>  e.g.  AVC_PATHS_WORK_ROOT=D:/avc-work
+#   * `AVC_CONFIG=<file>` points to a different config file.
+#   * Show what was resolved and where each value came from:  python -m core config
+
+[paths]
+# ASCII-only folder where projects/<name>/{source,hf,final,_work} are created.
+# `npx hyperframes init` silently skips index.html under a path with Hebrew letters, so the work root must be ASCII.
+work_root = ""
+# Heavy-job lock file: ONE absolute path shared by every copy of the toolkit on this machine.
+# Empty = a per-user location (%LOCALAPPDATA% / $XDG_STATE_HOME / ~/Library/Application Support).
+lock_path = ""
+# Download/model cache. Empty = per-user cache location. Shown before any download (never fetched implicitly).
+cache_dir = ""
+# Folder holding camera-original (e.g. 4K) files that colour/matte tools bake from.
+camera_original_dir = ""
+
+[models]
+# Matte / segmentation model directory (e.g. the folder that contains the .onnx files). Not bundled.
+matte_dir = ""
+# Hebrew/multilingual ASR model directory and (optional) the virtualenv that holds the ASR runtime. Not bundled.
+asr_model_dir = ""
+asr_venv = ""
+
+[binaries]
+# Leave empty to use PATH. Set only when the tool is not on PATH or several versions exist.
+ffmpeg = ""
+ffprobe = ""
+blender = ""
+
+[output]
+# Folder names inside a project. Hebrew display titles live in project.json, never in folder names.
+source_dir = "source"
+hf_dir = "hf"
+final_dir = "final"
+work_dir = "_work"

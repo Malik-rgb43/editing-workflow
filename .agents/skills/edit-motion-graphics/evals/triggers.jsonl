@@ -1,0 +1,21 @@
+{"prompt": "build a 30 s launch video for my app from these screenshots", "should_trigger": true, "route_instead": null}
+{"prompt": "תעשה מושן להשקה של המוצר", "should_trigger": true, "route_instead": null}
+{"prompt": "kinetic typography for this quote", "should_trigger": true, "route_instead": null}
+{"prompt": "אנימציה של לוגו עם צליל", "should_trigger": true, "route_instead": null}
+{"prompt": "make it feel like a Higgsfield launch film", "should_trigger": true, "route_instead": null}
+{"prompt": "תעשה לי סרטון הסבר גרפי על הפיצ'ר", "should_trigger": true, "route_instead": null}
+{"prompt": "animate this dashboard screenshot", "should_trigger": true, "route_instead": null}
+{"prompt": "מושן עם 3D של כסף", "should_trigger": true, "route_instead": null}
+{"prompt": "should this beat be Blender or Three.js? it is a rotating globe with flight routes", "should_trigger": true, "route_instead": null}
+{"prompt": "תבנה לי מושן גרפיקס עם טיפוגרפיה קינטית בעברית לציטוט הזה", "should_trigger": true, "route_instead": null}
+{"prompt": "design the camera path and seams for a 45 s product reveal, one spline per scene", "should_trigger": true, "route_instead": null}
+{"prompt": "the UI cards in my launch film look generic, find me a better component and port it so it renders", "should_trigger": true, "route_instead": null}
+{"prompt": "cut the pauses from my talking video", "should_trigger": false, "route_instead": "edit-talking-head"}
+{"prompt": "write ad copy for a Meta campaign", "should_trigger": false, "route_instead": "edit-ad-promo"}
+{"prompt": "fix the colour of the speaker", "should_trigger": false, "route_instead": "color-correction-speaker"}
+{"prompt": "תתרגם את הסרטון", "should_trigger": false, "route_instead": null}
+{"prompt": "תוסיף כתוביות בעברית לסרטון הזה", "should_trigger": false, "route_instead": "hebrew-captions-asr"}
+{"prompt": "generate six AI shots of a lighthouse and cut them into a story", "should_trigger": false, "route_instead": "edit-ai-generated"}
+{"prompt": "analyze this reel: list every cut and the music BPM", "should_trigger": false, "route_instead": "video-analysis"}
+{"prompt": "מה זה LUFS ולמה -14?", "should_trigger": false, "route_instead": null}
+{"prompt": "make a 9:16 and a 1:1 version of the approved film", "should_trigger": false, "route_instead": "multi-video-variants"}

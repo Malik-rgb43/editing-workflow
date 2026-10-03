@@ -1,0 +1,8 @@
+# Extra globs excluded from every release archive (scripts/release.py also has built-in excludes:
+# .git, dist, projects, _work, .env files, scripts/private_denylist.txt, dry-run archives).
+# One glob per line; '#' starts a comment; ** crosses directories.
+#
+# Maintainer-only material that students do not need in the download goes here. Keep this list short and reviewed:
+# everything not listed ships, and the bill of materials gate (scripts/gen_bom.py) still applies to every shipped file.
+
+.github/workflows/eval-model.yml

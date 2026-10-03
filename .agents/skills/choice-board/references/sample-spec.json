@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "project": "sample_reel",
+  "title": "בחירת מראה לריל (דוגמה)",
+  "lang": "he",
+  "text": "לא לבזבז את ה-1,990 ₪ שלך",
+  "keyword": "לבזבז",
+  "banned": ["bounce", "crossfade"],
+  "decisions": [
+    {
+      "id": "font", "title": "פונט", "kind": "font",
+      "options": [
+        {"id": "A", "label": "Arial 800", "family": "Arial", "weight": 800, "fallback": "sans-serif"},
+        {"id": "B", "label": "Tahoma 700", "family": "Tahoma", "weight": 700, "fallback": "sans-serif"},
+        {"id": "C", "label": "Times New Roman 700", "family": "Times New Roman", "weight": 700, "fallback": "serif"}
+      ]
+    },
+    {
+      "id": "anim", "title": "אנימציית כתוביות", "kind": "caption_anim",
+      "options": [
+        {"id": "A", "label": "עלייה", "anim": "rise"},
+        {"id": "B", "label": "טשטוש פנימה", "anim": "blur_in"},
+        {"id": "C", "label": "מילה אחרי מילה", "anim": "word_rise"},
+        {"id": "D", "label": "מסכה", "anim": "mask_wipe"},
+        {"id": "E", "label": "קריוקי", "anim": "karaoke"}
+      ]
+    },
+    {
+      "id": "palette", "title": "פלטה", "kind": "palette",
+      "options": [
+        {"id": "A", "label": "לילה וזהב", "colors": {"bg": "#0b0b10", "text": "#ffffff", "accent": "#ffcc00"}},
+        {"id": "B", "label": "נייר", "colors": {"bg": "#f4efe6", "text": "#17171b", "accent": "#c2410c"}},
+        {"id": "C", "label": "טורקיז כהה", "colors": {"bg": "#0f2f35", "text": "#f2fbfb", "accent": "#5eead4"}}
+      ]
+    },
+    {
+      "id": "ease", "title": "תנועה (easing)", "kind": "easing",
+      "options": [
+        {"id": "A", "label": "Expo out", "bezier": [0.16, 1, 0.3, 1], "duration_ms": 600},
+        {"id": "B", "label": "Ease in-out", "bezier": [0.65, 0, 0.35, 1], "duration_ms": 700},
+        {"id": "C", "label": "Linear", "bezier": [0, 0, 1, 1], "duration_ms": 600}
+      ]
+    },
+    {
+      "id": "layout", "title": "מיקום כתובית", "kind": "layout",
+      "options": [
+        {"id": "A", "label": "60%", "caption_y_pct": 60},
+        {"id": "B", "label": "68%", "caption_y_pct": 68},
+        {"id": "C", "label": "78% (מחוץ לאזור הבטוח)", "caption_y_pct": 78}
+      ]
+    },
+    {
+      "id": "transition", "title": "מעבר", "kind": "transition",
+      "options": [
+        {"id": "A", "label": "מגב", "trans": "wipe"},
+        {"id": "B", "label": "דחיפה", "trans": "push"},
+        {"id": "C", "label": "איריס", "trans": "iris"}
+      ]
+    }
+  ]
+}

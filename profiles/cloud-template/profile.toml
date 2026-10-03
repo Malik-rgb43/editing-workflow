@@ -1,0 +1,61 @@
+schema = "avc-profile/1"
+id = "cloud-template"
+title = "Cloud provider profile - TEMPLATE (copy to profiles/cloud-<provider>/ and fill in)"
+status = "optional"
+evidence_state = "unmeasured"          # a template has no evidence of its own; the copy records the provider's
+checked_at = "2026-10-02"
+expires = "2026-10-16"                 # price snapshots expire fast: a copied profile must carry its own dated snapshot
+
+[install]
+python_extras = []
+what_it_is = "an opt-in profile that lets the toolkit call ONE named cloud provider for ONE named stage (generation, ASR, TTS, rendering, analysis)"
+provider = "<fill in: provider name>"
+stage = "<fill in: e.g. generation | asr | tts | render | analysis>"
+transport = "<fill in: REST | MCP (hosted) | CLI | SDK> and the exact endpoint"
+auth = "explicit, by the student; credentials only in environment variables or the OS keychain, never in repo files, command lines, logs, diagnostics, output metadata or screenshots"
+needs_account = true
+needs_api_key = "<fill in>"
+spends_money = "<fill in: yes/no>"
+no_implicit_fallback = true            # a failure never silently switches to another paid route
+no_paid_retry = true                   # a billable timed-out request is never retried automatically until the provider state is reconciled
+
+[snapshot]
+# required in every copy; the profile refuses to run a paid action when this block is older than the configured age
+captured_at = "<YYYY-MM-DD>"
+price_card_url = "<official page>"
+price_formula = "<unit, rates, minimums, rounding, tax status, wallet (credits vs dollars)>"
+capabilities = "<documented capabilities; evidence_state per capability: documented | live (needs a dated smoke test)>"
+terms = "<training/retention terms, commercial-use terms, territory, region of processing>"
+opt_out_state = "<recorded per project>"
+model_ids = "<exact ids; a model name is not a spec>"
+
+[download_sizes]
+local = "none (cloud); upload and download bytes are shown per job before sending"
+
+[hardware]
+requirements = "network; no local GPU"
+measured = false
+
+[tested_on]
+state = "unmeasured"
+evidence = "template only. Hebrew/RTL quality, accepted-output speed and cost are unmeasured for every provider; no single provider covers the whole workflow."
+rule = "record a live smoke test date, request id and ffprobe/hash of outputs before the profile claims 'live'"
+
+[states]
+unsupported_when = ["the provider is not available in the student's region/plan", "the client footage may not leave the machine (eligibility is decided before price)"]
+missing_when = ["no credentials present (presence-only check; the value is never read or printed)", "no dated snapshot"]
+error_when = ["a real tiny non-spending call fails", "snapshot older than the configured age (blocked, not 'pass')"]
+note = "unsupported != missing != error"
+
+[gates]
+paid_generation_gate = "prior approval WITH a dated estimate for every costed job; an explicit 'generate' is approval within the balance and never covers on-screen facts or client approval; buying credits is the user's action"
+privacy_gate = "check the provider's training/retention terms and the workspace opt-out BEFORE any client footage is uploaded (see docs/en/legal-guide.md#privacy-footage); never use hyperframes snapshot without --describe false"
+ledger = "every job writes provider, capability, evidence_state, request_id, job_id, input/output hashes, billing wallet, estimated and actual cost, failure class, timestamps"
+
+[licences]
+terms = "the provider's own; library licence, asset licence, model-output rights, account entitlement and cost are separate decisions"
+rights_note = "see agent-content/references/model-routing.md, cost-model.md and licences-bom-rules.md"
+
+[uninstall]
+remove = ["the copied profile folder", "the provider's credentials from the environment/keychain (the student's action)", "cached job results the toolkit stored"]
+global_changes = "none"

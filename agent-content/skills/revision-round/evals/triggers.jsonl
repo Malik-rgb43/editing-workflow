@@ -1,0 +1,16 @@
+{"prompt":"the hook at 0:03 is boring","should_trigger":true,"route_instead":null}
+{"prompt":"תתקן: הכתובית ב-0:12 מאוחרת","should_trigger":true,"route_instead":null}
+{"prompt":"it looks AI-generated, change it","should_trigger":true,"route_instead":null}
+{"prompt":"משעמם בדקה 20","should_trigger":true,"route_instead":null}
+{"prompt":"here are 9 notes on the draft","should_trigger":true,"route_instead":null}
+{"prompt":"תחליף את הפונט ואת האנימציה בכותרת","should_trigger":true,"route_instead":null}
+{"prompt":"make the globe bigger and the person higher","should_trigger":true,"route_instead":null}
+{"prompt":"הסרטון סטטי מ-0:30 עד 0:38","should_trigger":true,"route_instead":null}
+{"prompt":"the music is too loud in the delivered version","should_trigger":true,"route_instead":null}
+{"prompt":"הדובר לא במרכז בכל הסרטון, תתקן","should_trigger":true,"route_instead":null}
+{"prompt":"start a new video about my product","should_trigger":false,"route_instead":"video-intake"}
+{"prompt":"analyse this reference","should_trigger":false,"route_instead":"video-analysis"}
+{"prompt":"what is the best camera for interviews","should_trigger":false,"route_instead":null}
+{"prompt":"תכין לי חשבונית ללקוח","should_trigger":false,"route_instead":null}
+{"prompt":"render the final version and check loudness","should_trigger":false,"route_instead":"render-qa-deliver"}
+{"prompt":"תן לי שלושה רעיונות לסרטון חדש על המספרה שלי","should_trigger":false,"route_instead":"video-intake"}

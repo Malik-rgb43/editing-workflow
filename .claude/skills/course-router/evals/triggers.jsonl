@@ -1,0 +1,21 @@
+{"prompt":"I have a 2-minute interview, make a reel out of it","should_trigger":true,"route_instead":null}
+{"prompt":"תערוך לי את הסרטון הזה לרילס","should_trigger":true,"route_instead":null}
+{"prompt":"make a 20 s ad for my shop","should_trigger":true,"route_instead":null}
+{"prompt":"תעשה מושן להשקה של האפליקציה","should_trigger":true,"route_instead":null}
+{"prompt":"the captions are 0.3 s late in the second half","should_trigger":true,"route_instead":null}
+{"prompt":"תקן את הצבע של הדובר, הוא נראה ורוד","should_trigger":true,"route_instead":null}
+{"prompt":"render the final version for Instagram and TikTok","should_trigger":true,"route_instead":null}
+{"prompt":"אפשר לנתח את הסרטון הזה? https://example.com/reel","should_trigger":true,"route_instead":null}
+{"prompt":"the hook in project clinic_reel feels slow","should_trigger":true,"route_instead":null}
+{"prompt":"הוספתי הערות על הדראפט, תעבור עליהן ותתקן","should_trigger":true,"route_instead":null}
+{"prompt":"use Remotion for this one, a 30 s launch teaser","should_trigger":true,"route_instead":null}
+{"prompt":"אני רוצה סרטון קצר על המוצר החדש שלי, אין לי רפרנס","should_trigger":true,"route_instead":null}
+{"prompt":"make three short clips from this 50 minute podcast episode","should_trigger":true,"route_instead":null}
+{"prompt":"write a Python script that renames my files","should_trigger":false,"route_instead":null}
+{"prompt":"summarize this PDF contract","should_trigger":false,"route_instead":null}
+{"prompt":"design a landing page for my store","should_trigger":false,"route_instead":null}
+{"prompt":"what is the weather in Tel Aviv","should_trigger":false,"route_instead":null}
+{"prompt":"תכתוב לי פונקציה בפייתון שממיינת רשימה של שמות","should_trigger":false,"route_instead":null}
+{"prompt":"תתרגם את החוזה הזה לאנגלית","should_trigger":false,"route_instead":null}
+{"prompt":"/seedance cinematic 15 s shot of a chef plating a dish","should_trigger":false,"route_instead":"seedance-prompting"}
+{"prompt":"what does LUFS mean, in two sentences","should_trigger":false,"route_instead":null}

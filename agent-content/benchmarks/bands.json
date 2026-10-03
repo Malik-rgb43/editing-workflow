@@ -1,0 +1,1425 @@
+{
+  "schema_version": "0.1",
+  "written": "2026-10-02",
+  "status": "descriptive reference bands for informational use; NOT a quality score. specified, deterministic checks only; model eval not run (decision default Q4)",
+  "source": "distilled/02-workflow-types-techniques/qa-and-benchmarks.md section 7.4 (numbers as stored in the owner's benchmarks/<type>.json, rounded), read 2026-10-02",
+  "machine_note": "Descriptive statistics of reference collections; no machine dependence. Analysis ran on the reference machine; the automatic cut counter is known to be wrong in many videos.",
+  "reading_notes": [
+    "A band is a description of a small reference collection (n = 3 to 14 per profile), not excellence and not a perceptual or platform limit.",
+    "p10/p90 are null: they were not carried into the distilled tables; recompute from the originals if needed.",
+    "Metric keys follow the owner's benchmark tool: duration_s, cuts_per_min, median_shot_s, first_cut_s, visual_events_per_min, integrated_lufs, true_peak_dbfs (units dBFS vs dBTP were unclear in the original tool), music_ratio, sfx_per_min, words_per_sec.",
+    "The automatic cut count was wrong in about 60 % of ads (e.g. 108 vs 42 and 89 vs 56 cuts/min); correct from frames (metrics_override).",
+    "Market true peaks above -1 dBTP are common (many references are mastered hot), which is why the house delivery gate (<= -1 dBTP) is stricter than the market median.",
+    "A missing metric is null = unmeasured, never 0. Where a median of 0 appears (e.g. sfx_per_min) it is a measured zero in the source table."
+  ],
+  "scorer_semantics_original_tool": {
+    "per_metric": "100 inside p25-p75, 70 inside p10-p90, 30 outside, with a direction hint; total = rounded mean over metrics present",
+    "hard_gates": [
+      "true_peak above -1 dBTP (house gate)",
+      "wrong aspect for the brief",
+      "unintended stepped cadence"
+    ],
+    "known_defects": [
+      "a metric missing in the input is skipped and the rest averaged (an incomplete analysis can score high)",
+      "bands can rest on as few as 3 items",
+      "true peak 0.0 treated as missing (falsy default) - E04 reproduced",
+      "a failed hard gate printed but process exit 0 - E04 reproduced",
+      "aspect printed, not compared exactly",
+      "analysis cache keyed by file stem can score a stale file"
+    ],
+    "port_requirement": "structured gate results, numeric preservation, exit non-zero on failed gate, undefined = unavailable not perfect, coverage in the envelope"
+  },
+  "types": {
+    "talking-head": {
+      "owner_rubric": false,
+      "rubric_file": "talking-head.rubric.md (provisional, derived)",
+      "profiles": {
+        "market": {
+          "n_videos": 10,
+          "aspects": {
+            "9:16": 10
+          },
+          "house_preset": false,
+          "kind": "descriptive reference distribution (not a target)",
+          "source": "distilled/02-workflow-types-techniques/qa-and-benchmarks.md section 7.4 (numbers as stored in the owner's benchmarks/<type>.json, rounded), read 2026-10-02",
+          "metrics": {
+            "duration_s": {
+              "median": 44.79,
+              "p25": 38.0,
+              "p75": 49.3,
+              "p10": null,
+              "p90": null,
+              "n": 10
+            },
+            "cuts_per_min": {
+              "median": 6.65,
+              "p25": 3.7,
+              "p75": 20.0,
+              "p10": null,
+              "p90": null,
+              "n": 10
+            },
+            "median_shot_s": {
+              "median": 8.93,
+              "p25": 1.5,
+              "p75": 13.8,
+              "p10": null,
+              "p90": null,
+              "n": 10
+            },
+            "first_cut_s": {
+              "median": 3.12,
+              "p25": 1.5,
+              "p75": 7.2,
+              "p10": null,
+              "p90": null,
+              "n": 10
+            },
+            "visual_events_per_min": {
+              "median": 6.66,
+              "p25": 3.7,
+              "p75": 26.4,
+              "p10": null,
+              "p90": null,
+              "n": 10
+            },
+            "integrated_lufs": {
+              "median": -17.0,
+              "p25": -19.1,
+              "p75": -15.3,
+              "p10": null,
+              "p90": null,
+              "n": 10
+            },
+            "true_peak_dbfs": {
+              "median": -0.6,
+              "p25": -2.2,
+              "p75": 0.2,
+              "p10": null,
+              "p90": null,
+              "n": 10
+            },
+            "music_ratio": {
+              "median": 0.04,
+              "p25": 0.0,
+              "p75": 0.69,
+              "p10": null,
+              "p90": null,
+              "n": 10
+            },
+            "sfx_per_min": {
+              "median": 0,
+              "p25": 0,
+              "p75": 0,
+              "p10": null,
+              "p90": null,
+              "n": 10
+            },
+            "words_per_sec": {
+              "median": 4.6,
+              "p25": 3.8,
+              "p75": 4.8,
+              "p10": null,
+              "p90": null,
+              "n": 10
+            },
+            "longest_shot_s": {
+              "median": 17.7,
+              "p25": null,
+              "p75": null,
+              "p10": null,
+              "p90": null,
+              "n": 10
+            },
+            "speech_ratio": {
+              "median": 0.78,
+              "p25": null,
+              "p75": null,
+              "p10": null,
+              "p90": null,
+              "n": 10
+            }
+          },
+          "notes": [
+            "one test draft scored 75/100 against this profile; the gaps (cuts/min, longest shot, LRA) were the reference's own style on purpose"
+          ]
+        },
+        "owner": {
+          "n_videos": 10,
+          "aspects": {
+            "9:16": 10
+          },
+          "house_preset": false,
+          "kind": "descriptive reference distribution (not a target)",
+          "source": "distilled/02-workflow-types-techniques/qa-and-benchmarks.md section 7.4 (numbers as stored in the owner's benchmarks/<type>.json, rounded), read 2026-10-02",
+          "metrics": {
+            "duration_s": {
+              "median": 49.69,
+              "p25": 38.3,
+              "p75": 64.1,
+              "p10": null,
+              "p90": null,
+              "n": 10
+            },
+            "cuts_per_min": {
+              "median": 15.25,
+              "p25": 1.5,
+              "p75": 22.9,
+              "p10": null,
+              "p90": null,
+              "n": 10
+            },
+            "median_shot_s": {
+              "median": 3.23,
+              "p25": 1.8,
+              "p75": 28.3,
+              "p10": null,
+              "p90": null,
+              "n": 10
+            },
+            "first_cut_s": {
+              "median": 3.77,
+              "p25": 3.3,
+              "p75": 5.2,
+              "p10": null,
+              "p90": null,
+              "n": 10
+            },
+            "visual_events_per_min": {
+              "median": 26.84,
+              "p25": 4.0,
+              "p75": 30.5,
+              "p10": null,
+              "p90": null,
+              "n": 10
+            },
+            "integrated_lufs": {
+              "median": -16.35,
+              "p25": -19.5,
+              "p75": -13.8,
+              "p10": null,
+              "p90": null,
+              "n": 10
+            },
+            "true_peak_dbfs": {
+              "median": -0.6,
+              "p25": -0.7,
+              "p75": -0.18,
+              "p10": null,
+              "p90": null,
+              "n": 10
+            },
+            "music_ratio": {
+              "median": 0.31,
+              "p25": 0.08,
+              "p75": 0.46,
+              "p10": null,
+              "p90": null,
+              "n": 10
+            },
+            "sfx_per_min": {
+              "median": 1.18,
+              "p25": 0,
+              "p75": 3.4,
+              "p10": null,
+              "p90": null,
+              "n": 10
+            },
+            "words_per_sec": {
+              "median": 4.09,
+              "p25": 3.6,
+              "p75": 4.7,
+              "p10": null,
+              "p90": null,
+              "n": 10
+            }
+          },
+          "notes": []
+        }
+      },
+      "numeric_house_presets": {
+        "cut_pause_s": {
+          "natural": 0.6,
+          "tight_default_for_reels": 0.4,
+          "aggressive": 0.25,
+          "house_preset": true,
+          "source": "owner's earlier tool constants (distilled/02 video-types 2.4)",
+          "scope": "silence cutting"
+        },
+        "min_shot_s": {
+          "value": 0.35,
+          "house_preset": true
+        },
+        "cut_inside_silence_s": {
+          "value": 0.06,
+          "house_preset": true
+        },
+        "padding_s": {
+          "lead": 0.08,
+          "tail": 0.12,
+          "house_preset": true
+        },
+        "beat_cadence_s": {
+          "min": 3,
+          "max": 6,
+          "house_preset": true,
+          "note": "assistant translation of broader owner comments; earlier notes said 5-7 s and 2-6 s [CONFLICT]"
+        },
+        "source_cut_cover_margin_frames": {
+          "min": 6,
+          "house_preset": true
+        },
+        "preroll_frames": {
+          "min": 6,
+          "house_preset": true
+        }
+      }
+    },
+    "testimonial": {
+      "owner_rubric": true,
+      "rubric_file": "testimonial.rubric.md",
+      "profiles": {
+        "market": {
+          "n_videos": 10,
+          "aspects": {
+            "16:9": 9,
+            "9:16": 1
+          },
+          "house_preset": false,
+          "kind": "descriptive reference distribution (not a target)",
+          "source": "distilled/02-workflow-types-techniques/qa-and-benchmarks.md section 7.4 (numbers as stored in the owner's benchmarks/<type>.json, rounded), read 2026-10-02",
+          "metrics": {
+            "duration_s": {
+              "median": 46.99,
+              "p25": 36.3,
+              "p75": 65.9,
+              "p10": null,
+              "p90": null,
+              "n": 10
+            },
+            "cuts_per_min": {
+              "median": 19.7,
+              "p25": 10.2,
+              "p75": 24.1,
+              "p10": null,
+              "p90": null,
+              "n": 10
+            },
+            "median_shot_s": {
+              "median": 2.37,
+              "p25": 1.6,
+              "p75": 4.1,
+              "p10": null,
+              "p90": null,
+              "n": 10
+            },
+            "first_cut_s": {
+              "median": 2.59,
+              "p25": 2.3,
+              "p75": 4.8,
+              "p10": null,
+              "p90": null,
+              "n": 10
+            },
+            "visual_events_per_min": {
+              "median": 22.63,
+              "p25": 13.5,
+              "p75": 32.1,
+              "p10": null,
+              "p90": null,
+              "n": 10
+            },
+            "integrated_lufs": {
+              "median": -14.15,
+              "p25": -16.7,
+              "p75": -13.6,
+              "p10": null,
+              "p90": null,
+              "n": 10
+            },
+            "true_peak_dbfs": {
+              "median": 0.2,
+              "p25": -1.5,
+              "p75": 0.4,
+              "p10": null,
+              "p90": null,
+              "n": 10
+            },
+            "music_ratio": {
+              "median": 0.59,
+              "p25": 0.53,
+              "p75": 0.77,
+              "p10": null,
+              "p90": null,
+              "n": 10
+            },
+            "sfx_per_min": {
+              "median": 0,
+              "p25": 0,
+              "p75": 0,
+              "p10": null,
+              "p90": null,
+              "n": 10
+            },
+            "words_per_sec": {
+              "median": 3.12,
+              "p25": 2.7,
+              "p75": 3.8,
+              "p10": null,
+              "p90": null,
+              "n": 10
+            }
+          },
+          "notes": []
+        },
+        "owner": {
+          "n_videos": 10,
+          "aspects": {
+            "9:16": 10
+          },
+          "house_preset": false,
+          "kind": "descriptive reference distribution (not a target)",
+          "source": "distilled/02-workflow-types-techniques/qa-and-benchmarks.md section 7.4 (numbers as stored in the owner's benchmarks/<type>.json, rounded), read 2026-10-02",
+          "metrics": {
+            "duration_s": {
+              "median": 54.55,
+              "p25": 45.8,
+              "p75": 79.6,
+              "p10": null,
+              "p90": null,
+              "n": 10
+            },
+            "cuts_per_min": {
+              "median": 6.75,
+              "p25": 2.8,
+              "p75": 18.1,
+              "p10": null,
+              "p90": null,
+              "n": 10
+            },
+            "median_shot_s": {
+              "median": 4.85,
+              "p25": 2.6,
+              "p75": 11.4,
+              "p10": null,
+              "p90": null,
+              "n": 10
+            },
+            "first_cut_s": {
+              "median": 4.35,
+              "p25": 2.0,
+              "p75": 6.8,
+              "p10": null,
+              "p90": null,
+              "n": 10
+            },
+            "visual_events_per_min": {
+              "median": 6.72,
+              "p25": 2.9,
+              "p75": 26.6,
+              "p10": null,
+              "p90": null,
+              "n": 10
+            },
+            "integrated_lufs": {
+              "median": -18.6,
+              "p25": -20.1,
+              "p75": -16.6,
+              "p10": null,
+              "p90": null,
+              "n": 10
+            },
+            "true_peak_dbfs": {
+              "median": -1.4,
+              "p25": -2.6,
+              "p75": 0.0,
+              "p10": null,
+              "p90": null,
+              "n": 10
+            },
+            "music_ratio": {
+              "median": 0.2,
+              "p25": 0.09,
+              "p75": 0.48,
+              "p10": null,
+              "p90": null,
+              "n": 10
+            },
+            "sfx_per_min": {
+              "median": 0,
+              "p25": 0,
+              "p75": 0,
+              "p10": null,
+              "p90": null,
+              "n": 10
+            },
+            "words_per_sec": {
+              "median": 3.35,
+              "p25": 2.8,
+              "p75": 4.0,
+              "p10": null,
+              "p90": null,
+              "n": 10
+            }
+          },
+          "notes": [
+            "owner's real testimonials: selfie UGC, no lower-third, end card, B-roll, punch-in, music or SFX; whether the slowness is intentional is an open owner decision"
+          ]
+        }
+      },
+      "numeric_house_presets": {
+        "visual_change_max_s": {
+          "value": 3,
+          "house_preset": true
+        },
+        "social_length_s": {
+          "min": 30,
+          "max": 45,
+          "house_preset": true
+        },
+        "long_length_s": {
+          "min": 60,
+          "max": 90,
+          "house_preset": true
+        },
+        "end_card_max_s": {
+          "value": 3,
+          "house_preset": true
+        },
+        "min_cue_s": {
+          "value": 0.4,
+          "house_preset": true
+        }
+      }
+    },
+    "ad-promo": {
+      "owner_rubric": true,
+      "rubric_file": "ad-promo.rubric.md",
+      "profiles": {
+        "market": {
+          "n_videos": 10,
+          "aspects": {
+            "16:9": 10
+          },
+          "house_preset": false,
+          "kind": "descriptive reference distribution (not a target)",
+          "source": "distilled/02-workflow-types-techniques/qa-and-benchmarks.md section 7.4 (numbers as stored in the owner's benchmarks/<type>.json, rounded), read 2026-10-02",
+          "metrics": {
+            "duration_s": {
+              "median": 29.03,
+              "p25": 16.5,
+              "p75": 30.1,
+              "p10": null,
+              "p90": null,
+              "n": 10
+            },
+            "cuts_per_min": {
+              "median": 36.25,
+              "p25": 23.9,
+              "p75": 49.6,
+              "p10": null,
+              "p90": null,
+              "n": 10
+            },
+            "median_shot_s": {
+              "median": 1.04,
+              "p25": 0.78,
+              "p75": 1.85,
+              "p10": null,
+              "p90": null,
+              "n": 10
+            },
+            "first_cut_s": {
+              "median": 1.9,
+              "p25": 1.15,
+              "p75": 2.28,
+              "p10": null,
+              "p90": null,
+              "n": 10
+            },
+            "visual_events_per_min": {
+              "median": 43.94,
+              "p25": 29.9,
+              "p75": 57.6,
+              "p10": null,
+              "p90": null,
+              "n": 10
+            },
+            "integrated_lufs": {
+              "median": -15.95,
+              "p25": -23.0,
+              "p75": -12.8,
+              "p10": null,
+              "p90": null,
+              "n": 10
+            },
+            "true_peak_dbfs": {
+              "median": -1.55,
+              "p25": -6.3,
+              "p75": 0.2,
+              "p10": null,
+              "p90": null,
+              "n": 10
+            },
+            "music_ratio": {
+              "median": 0.73,
+              "p25": 0.64,
+              "p75": 0.92,
+              "p10": null,
+              "p90": null,
+              "n": 10
+            },
+            "sfx_per_min": {
+              "median": 0,
+              "p25": 0,
+              "p75": 0,
+              "p10": null,
+              "p90": null,
+              "n": 10
+            },
+            "words_per_sec": {
+              "median": 3.19,
+              "p25": 2.0,
+              "p75": 10.8,
+              "p10": null,
+              "p90": null,
+              "n": 10
+            },
+            "speech_ratio": {
+              "median": 0.34,
+              "p25": null,
+              "p75": null,
+              "p10": null,
+              "p90": null,
+              "n": 10
+            },
+            "cut_on_beat_ratio_over_chance": {
+              "median": 0.94,
+              "p25": null,
+              "p75": null,
+              "p10": null,
+              "p90": null,
+              "n": null
+            }
+          },
+          "notes": []
+        },
+        "owner": {
+          "n_videos": 10,
+          "aspects": {
+            "9:16": 9,
+            "1:1": 1
+          },
+          "house_preset": false,
+          "kind": "descriptive reference distribution (not a target)",
+          "source": "distilled/02-workflow-types-techniques/qa-and-benchmarks.md section 7.4 (numbers as stored in the owner's benchmarks/<type>.json, rounded), read 2026-10-02",
+          "metrics": {
+            "duration_s": {
+              "median": 29.75,
+              "p25": 17.6,
+              "p75": 44.2,
+              "p10": null,
+              "p90": null,
+              "n": 10
+            },
+            "cuts_per_min": {
+              "median": 34.5,
+              "p25": 22.0,
+              "p75": 40.8,
+              "p10": null,
+              "p90": null,
+              "n": 10
+            },
+            "median_shot_s": {
+              "median": 1.59,
+              "p25": 1.0,
+              "p75": 1.7,
+              "p10": null,
+              "p90": null,
+              "n": 10
+            },
+            "first_cut_s": {
+              "median": 1.67,
+              "p25": 1.3,
+              "p75": 3.3,
+              "p10": null,
+              "p90": null,
+              "n": 10
+            },
+            "visual_events_per_min": {
+              "median": 42.0,
+              "p25": 27.7,
+              "p75": 81.4,
+              "p10": null,
+              "p90": null,
+              "n": 10
+            },
+            "integrated_lufs": {
+              "median": -14.2,
+              "p25": -17.1,
+              "p75": -12.4,
+              "p10": null,
+              "p90": null,
+              "n": 10
+            },
+            "true_peak_dbfs": {
+              "median": 0.15,
+              "p25": -0.7,
+              "p75": 0.4,
+              "p10": null,
+              "p90": null,
+              "n": 10
+            },
+            "music_ratio": {
+              "median": 0.57,
+              "p25": 0.5,
+              "p75": 0.8,
+              "p10": null,
+              "p90": null,
+              "n": 10
+            },
+            "sfx_per_min": {
+              "median": 0,
+              "p25": 0,
+              "p75": 0.85,
+              "p10": null,
+              "p90": null,
+              "n": 10
+            },
+            "words_per_sec": {
+              "median": 4.11,
+              "p25": 3.4,
+              "p75": 4.6,
+              "p10": null,
+              "p90": null,
+              "n": 10
+            },
+            "speech_ratio": {
+              "median": 0.57,
+              "p25": null,
+              "p75": null,
+              "p10": null,
+              "p90": null,
+              "n": 10
+            },
+            "cut_on_beat_ratio_over_chance": {
+              "median": 1.32,
+              "p25": null,
+              "p75": null,
+              "p10": null,
+              "p90": null,
+              "n": null
+            }
+          },
+          "notes": [
+            "7 of 10 owner ads at or above 0 dBTP (up to +3.3)"
+          ]
+        }
+      },
+      "numeric_house_presets": {
+        "brand_visible_max_s": {
+          "value": 1,
+          "house_preset": true
+        },
+        "product_visible_max_s": {
+          "value": 3,
+          "house_preset": true
+        },
+        "visual_change_max_s": {
+          "value": 1.4,
+          "house_preset": true
+        },
+        "offer_touches": {
+          "value": 3,
+          "house_preset": true,
+          "note": "voice, super, end card"
+        },
+        "cta_on_screen_min_s": {
+          "value": 6,
+          "house_preset": true
+        },
+        "default_lengths_s": [
+          15,
+          30
+        ],
+        "default_hooks": 3,
+        "end_card_s": {
+          "min": 2,
+          "max": 3,
+          "house_preset": true
+        }
+      }
+    },
+    "motion-graphics": {
+      "owner_rubric": true,
+      "rubric_file": "motion-graphics.rubric.md",
+      "profiles": {
+        "market": {
+          "n_videos": 14,
+          "aspects": {
+            "16:9": 14
+          },
+          "house_preset": false,
+          "kind": "descriptive reference distribution (not a target)",
+          "source": "distilled/02-workflow-types-techniques/qa-and-benchmarks.md section 7.4 (numbers as stored in the owner's benchmarks/<type>.json, rounded), read 2026-10-02",
+          "metrics": {
+            "duration_s": {
+              "median": 55.73,
+              "p25": 43.8,
+              "p75": 71.1,
+              "p10": null,
+              "p90": null,
+              "n": 14
+            },
+            "cuts_per_min": {
+              "median": 11.75,
+              "p25": 8.9,
+              "p75": 27.1,
+              "p10": null,
+              "p90": null,
+              "n": 14
+            },
+            "median_shot_s": {
+              "median": 2.91,
+              "p25": 1.2,
+              "p75": 8.4,
+              "p10": null,
+              "p90": null,
+              "n": 14
+            },
+            "first_cut_s": {
+              "median": 3.63,
+              "p25": 2.7,
+              "p75": 6.3,
+              "p10": null,
+              "p90": null,
+              "n": 14
+            },
+            "visual_events_per_min": {
+              "median": 21.47,
+              "p25": 13.1,
+              "p75": 33.3,
+              "p10": null,
+              "p90": null,
+              "n": 14
+            },
+            "integrated_lufs": {
+              "median": -15.3,
+              "p25": -20.6,
+              "p75": -12.3,
+              "p10": null,
+              "p90": null,
+              "n": 14
+            },
+            "true_peak_dbfs": {
+              "median": -1.05,
+              "p25": -5.1,
+              "p75": 0.4,
+              "p10": null,
+              "p90": null,
+              "n": 14
+            },
+            "music_ratio": {
+              "median": 0.97,
+              "p25": 0.86,
+              "p75": 1.0,
+              "p10": null,
+              "p90": null,
+              "n": 14
+            },
+            "sfx_per_min": {
+              "median": 0,
+              "p25": 0,
+              "p75": 1.37,
+              "p10": null,
+              "p90": null,
+              "n": 14
+            },
+            "words_per_sec": {
+              "median": 3.29,
+              "p25": 2.9,
+              "p75": 3.8,
+              "p10": null,
+              "p90": null,
+              "n": 4
+            },
+            "speech_ratio": {
+              "median": 0.0,
+              "p25": null,
+              "p75": null,
+              "p10": null,
+              "p90": null,
+              "n": 14
+            }
+          },
+          "notes": []
+        },
+        "owner": {
+          "n_videos": 4,
+          "aspects": {
+            "mixed": 4
+          },
+          "house_preset": false,
+          "kind": "descriptive reference distribution (not a target)",
+          "source": "distilled/02-workflow-types-techniques/qa-and-benchmarks.md section 7.4 (numbers as stored in the owner's benchmarks/<type>.json, rounded), read 2026-10-02",
+          "metrics": {
+            "duration_s": {
+              "median": 24.57,
+              "p25": 15.3,
+              "p75": 33.7,
+              "p10": null,
+              "p90": null,
+              "n": 4
+            },
+            "cuts_per_min": {
+              "median": 20.35,
+              "p25": 17.4,
+              "p75": 34.4,
+              "p10": null,
+              "p90": null,
+              "n": 4
+            },
+            "median_shot_s": {
+              "median": 1.13,
+              "p25": 0.81,
+              "p75": 2.2,
+              "p10": null,
+              "p90": null,
+              "n": 4
+            },
+            "first_cut_s": {
+              "median": 3.83,
+              "p25": 2.9,
+              "p75": 4.3,
+              "p10": null,
+              "p90": null,
+              "n": 4
+            },
+            "visual_events_per_min": {
+              "median": 42.45,
+              "p25": 35.5,
+              "p75": 57.4,
+              "p10": null,
+              "p90": null,
+              "n": 4
+            },
+            "integrated_lufs": {
+              "median": -15.8,
+              "p25": -18.4,
+              "p75": -14.2,
+              "p10": null,
+              "p90": null,
+              "n": 4
+            },
+            "true_peak_dbfs": {
+              "median": -0.35,
+              "p25": -1.7,
+              "p75": 0.6,
+              "p10": null,
+              "p90": null,
+              "n": 4
+            },
+            "music_ratio": {
+              "median": 0.69,
+              "p25": 0.32,
+              "p75": 0.97,
+              "p10": null,
+              "p90": null,
+              "n": 4
+            },
+            "sfx_per_min": {
+              "median": 1.8,
+              "p25": 0,
+              "p75": 3.7,
+              "p10": null,
+              "p90": null,
+              "n": 4
+            },
+            "words_per_sec": {
+              "median": 3.97,
+              "p25": 3.4,
+              "p75": 4.2,
+              "p10": null,
+              "p90": null,
+              "n": 3
+            },
+            "speech_ratio": {
+              "median": 0.65,
+              "p25": null,
+              "p75": null,
+              "p10": null,
+              "p90": null,
+              "n": 4
+            }
+          },
+          "notes": [
+            "owner profile n = 4 (mixed aspects); small sample"
+          ]
+        }
+      },
+      "hand_counted_bands": {
+        "visual_events_per_min": {
+          "low": 45,
+          "high": 110,
+          "kinetic_type_example_max": 195,
+          "method": "counted by hand from frames; the automatic cut count under-counts",
+          "source": "owner's motion-graphics rubric (distilled/02 qa 6.2)",
+          "house_preset": true
+        },
+        "event_gap_max_frames_at_30fps": {
+          "value": 21,
+          "equals_s": 0.7,
+          "scope": "before the end card",
+          "house_preset": true
+        }
+      },
+      "numeric_house_presets": {
+        "enter_frames": {
+          "min": 2,
+          "max": 10,
+          "ease": "expo.out / power3.out",
+          "house_preset": true
+        },
+        "exit_frames": {
+          "min": 3,
+          "max": 7,
+          "ease": "power2-4.in",
+          "house_preset": true
+        },
+        "transform_frames": {
+          "min": 12,
+          "max": 18,
+          "ease": "power3.inOut",
+          "house_preset": true
+        },
+        "drift_pct_per_s": {
+          "min": 2,
+          "max": 4,
+          "house_preset": true
+        },
+        "push_in_pct": {
+          "min": 8,
+          "max": 15,
+          "house_preset": true
+        },
+        "camera_move_min_s": {
+          "value": 1.2,
+          "house_preset": true
+        },
+        "number_hold_min_frames": {
+          "value": 12,
+          "house_preset": true
+        },
+        "take_away_frames_before_hit": {
+          "min": 4,
+          "max": 12,
+          "house_preset": true
+        },
+        "sfx_lead_frames": {
+          "min": 1,
+          "max": 3,
+          "house_preset": true
+        },
+        "note": "frame units in the owner's signature table were measured at 60 fps; halve for 30 fps"
+      }
+    },
+    "ai-generated": {
+      "owner_rubric": true,
+      "rubric_file": "ai-generated.rubric.md",
+      "profiles": {
+        "market": {
+          "n_videos": 11,
+          "aspects": {
+            "16:9": 10,
+            "other": 1
+          },
+          "house_preset": false,
+          "kind": "descriptive reference distribution (not a target)",
+          "source": "distilled/02-workflow-types-techniques/qa-and-benchmarks.md section 7.4 (numbers as stored in the owner's benchmarks/<type>.json, rounded), read 2026-10-02",
+          "metrics": {
+            "duration_s": {
+              "median": 81.35,
+              "p25": 60.7,
+              "p75": 113.0,
+              "p10": null,
+              "p90": null,
+              "n": 11
+            },
+            "cuts_per_min": {
+              "median": 26,
+              "p25": 22.6,
+              "p75": 30.5,
+              "p10": null,
+              "p90": null,
+              "n": 11
+            },
+            "median_shot_s": {
+              "median": 1.67,
+              "p25": 1.3,
+              "p75": 2.3,
+              "p10": null,
+              "p90": null,
+              "n": 11
+            },
+            "first_cut_s": {
+              "median": 2.79,
+              "p25": 2.2,
+              "p75": 5.4,
+              "p10": null,
+              "p90": null,
+              "n": 11
+            },
+            "visual_events_per_min": {
+              "median": 28.98,
+              "p25": 24.5,
+              "p75": 42.5,
+              "p10": null,
+              "p90": null,
+              "n": 11
+            },
+            "integrated_lufs": {
+              "median": -16.1,
+              "p25": -19.0,
+              "p75": -14.05,
+              "p10": null,
+              "p90": null,
+              "n": 11
+            },
+            "true_peak_dbfs": {
+              "median": 0.3,
+              "p25": -0.8,
+              "p75": 0.95,
+              "p10": null,
+              "p90": null,
+              "n": 11
+            },
+            "music_ratio": {
+              "median": 0.55,
+              "p25": 0.33,
+              "p75": 0.89,
+              "p10": null,
+              "p90": null,
+              "n": 11
+            },
+            "sfx_per_min": {
+              "median": 1.16,
+              "p25": 0.5,
+              "p75": 3.3,
+              "p10": null,
+              "p90": null,
+              "n": 11
+            },
+            "words_per_sec": {
+              "median": 3.16,
+              "p25": 2.6,
+              "p75": 3.3,
+              "p10": null,
+              "p90": null,
+              "n": 8
+            },
+            "lra_lu": {
+              "median": 8.2,
+              "p25": null,
+              "p75": null,
+              "p10": null,
+              "p90": null,
+              "n": 11
+            }
+          },
+          "notes": [
+            "market profile is 16:9 long form: length is information only; the 9:16 social target is 22-35 cuts/min"
+          ]
+        },
+        "owner": {
+          "n_videos": 9,
+          "aspects": {
+            "9:16": 7,
+            "other": 2
+          },
+          "house_preset": false,
+          "kind": "descriptive reference distribution (not a target)",
+          "source": "distilled/02-workflow-types-techniques/qa-and-benchmarks.md section 7.4 (numbers as stored in the owner's benchmarks/<type>.json, rounded), read 2026-10-02",
+          "metrics": {
+            "duration_s": {
+              "median": 27.83,
+              "p25": 23.4,
+              "p75": 44.5,
+              "p10": null,
+              "p90": null,
+              "n": 9
+            },
+            "cuts_per_min": {
+              "median": 8.5,
+              "p25": 6.5,
+              "p75": 15.0,
+              "p10": null,
+              "p90": null,
+              "n": 9
+            },
+            "median_shot_s": {
+              "median": 12.0,
+              "p25": 3.1,
+              "p75": 14.0,
+              "p10": null,
+              "p90": null,
+              "n": 9
+            },
+            "first_cut_s": {
+              "median": 9.51,
+              "p25": 8.3,
+              "p75": 14.7,
+              "p10": null,
+              "p90": null,
+              "n": 8
+            },
+            "visual_events_per_min": {
+              "median": 11.35,
+              "p25": 6.4,
+              "p75": 19.4,
+              "p10": null,
+              "p90": null,
+              "n": 9
+            },
+            "integrated_lufs": {
+              "median": -14.1,
+              "p25": -15.3,
+              "p75": -14.1,
+              "p10": null,
+              "p90": null,
+              "n": 9
+            },
+            "true_peak_dbfs": {
+              "median": -0.1,
+              "p25": -1.6,
+              "p75": 0.0,
+              "p10": null,
+              "p90": null,
+              "n": 9
+            },
+            "music_ratio": {
+              "median": 0.6,
+              "p25": 0.35,
+              "p75": 0.81,
+              "p10": null,
+              "p90": null,
+              "n": 9
+            },
+            "sfx_per_min": {
+              "median": 0,
+              "p25": 0,
+              "p75": 2.56,
+              "p10": null,
+              "p90": null,
+              "n": 9
+            },
+            "words_per_sec": {
+              "median": 3.04,
+              "p25": 2.9,
+              "p75": 3.4,
+              "p10": null,
+              "p90": null,
+              "n": 9
+            },
+            "lra_lu": {
+              "median": 3.6,
+              "p25": null,
+              "p75": null,
+              "p10": null,
+              "p90": null,
+              "n": 9
+            }
+          },
+          "notes": []
+        }
+      },
+      "numeric_house_presets": {
+        "clean_window_s": {
+          "min": 1.2,
+          "max": 2.5,
+          "house_preset": true
+        },
+        "target_cuts_per_min_social_9x16": {
+          "min": 22,
+          "max": 35,
+          "house_preset": true
+        },
+        "grain_pct": {
+          "min": 3,
+          "max": 4,
+          "house_preset": true
+        },
+        "silence_before_payoff_ms": {
+          "min": 100,
+          "max": 175,
+          "house_preset": true
+        },
+        "timeline_fps": "native fps of the takes (usually 24); never place 24p takes in a 30/60 timeline",
+        "cover_kit": "2-4 f whip, 1-2 f flash, 8-15 f black-blink + boom"
+      }
+    },
+    "podcast-clip": {
+      "owner_rubric": false,
+      "rubric_file": "podcast-clip.rubric.md (provisional, derived)",
+      "profiles": {
+        "market": null,
+        "owner": null
+      },
+      "status": "unmeasured: no benchmark JSON exists for this type; bands are null by design. The two reference breakdowns below are n=1 examples, not distributions.",
+      "examples_n1": [
+        {
+          "label": "conversation-dry reference clip",
+          "duration_s": 141,
+          "shots": 8,
+          "cuts_per_min": 3.0,
+          "average_shot_s": 17.6,
+          "source": "distilled/02 video-types 7.3 [SOURCED-unverified]"
+        },
+        {
+          "label": "punchy Q&A reference clip",
+          "duration_s": 147,
+          "shots": 41,
+          "cuts_per_min": 16.3,
+          "mean_shot_s": 3.58,
+          "source": "distilled/02 video-types 7.3 [SOURCED-unverified]"
+        }
+      ],
+      "numeric_house_presets": {
+        "shot_switch_hysteresis_s": {
+          "min": 1.5,
+          "house_preset": true,
+          "source": "research layout notes [SOURCED-unverified]"
+        },
+        "crop_dead_zone_pct": {
+          "value": 10,
+          "house_preset": true,
+          "source": "research layout notes [SOURCED-unverified]"
+        },
+        "selection_standalone_score_min_of_10": {
+          "value": 4,
+          "house_preset": true,
+          "source": "owner's earlier clipper research gate (distilled/02 video-types 7.1)"
+        }
+      }
+    }
+  },
+  "delivery_profile": {
+    "house_preset": true,
+    "note": "owner studio/social policy, NOT a verified universal platform requirement; destination profiles may differ",
+    "integrated_lufs": {
+      "target": -14.0,
+      "tolerance": 0.5
+    },
+    "true_peak_dbtp_max": -1.0,
+    "mix_true_peak_dbtp_max": -1.5,
+    "black_segment_max_frames": 1,
+    "length_tolerance_frames": 1,
+    "edge_band": "no dead right-edge band (30 sampled frames); author 1088 + data-deliver-width for 1080-wide ratios",
+    "encode": "H.264, SDR (--sdr), yuv420p, AAC 48 kHz 320k; 30 fps default, native fps for AI takes",
+    "source": "distilled/02 workflow-end-to-end 10.3-10.5; qa 2.6"
+  },
+  "qa_tool_thresholds": {
+    "house_preset": true,
+    "note": "owner heuristics, not perceptual or platform standards; all must report coverage and statuses (pass/fail/warning/not_run/unsupported/insufficient_evidence/error)",
+    "frame_qa": {
+      "black_mean_luma_below": 6,
+      "pop_neighbour_diff_above": 12,
+      "pop_skip_ratio_below": 0.45,
+      "flash_jump_above": 60,
+      "flash_return_within_frames": 2,
+      "hold_seconds_at_least": 1.0,
+      "hold_diff_below": 0.15,
+      "hard_cut_diff_above": 22,
+      "double_jump_diff_above": 8,
+      "analysis_grid": "96x54 grey"
+    },
+    "caption_qa": {
+      "bright_luma_above": 175,
+      "drop_ratio": 0.85,
+      "drop_to_below_ratio": 0.12,
+      "previous_min_px": 900,
+      "default_band_y": [
+        950,
+        1320
+      ],
+      "default_x": [
+        120,
+        960
+      ],
+      "note": "defaults fit one project; set per layout"
+    },
+    "motion_qa": {
+      "accel_px_s2_above": 1500,
+      "zoom_accel_per_s2_above": 0.6,
+      "zoom_accel_used_in_decision": false,
+      "pan_reversal_px_s_above": 60,
+      "zoom_reversal_per_s_above": 0.05,
+      "jitter_sign_flips_in_s": [
+        3,
+        0.5
+      ],
+      "min_range_s": 0.2,
+      "min_inlier_points": 12,
+      "min_inlier_fraction": 0.25
+    },
+    "camera_path": {
+      "ok_accel_px_s2_max": 400,
+      "ok_face_px_max": 45,
+      "smooth_gaussian_sigma_s": 0.6,
+      "per_frame_follow_peak_px_s2_measured": 2782,
+      "smoothed_peak_px_s2_measured": 139,
+      "measured_on": "one 10 s take, the reference machine"
+    },
+    "face_center_audit": {
+      "tolerance_px": 30,
+      "note": "a pass with zero audited frames must be INSUFFICIENT_EVIDENCE"
+    },
+    "color_check": {
+      "skin_y_pct": 46,
+      "skin_y_tol": 9,
+      "skin_hue_deg": [
+        105,
+        125
+      ],
+      "skin_chroma_codes": [
+        16,
+        32
+      ],
+      "black_cb_cr_tol": 3,
+      "black_y_pct_max": 9,
+      "sky_chroma_max": 3,
+      "p1_pct_min": 1,
+      "pass_fraction_min": 0.85,
+      "scope": "targets from ONE reference footage = a named preset; moody/AI-film footage uses skin Y 34-42"
+    },
+    "hf_mix_report": {
+      "vo_margin_db_min_1_4khz": 5,
+      "dead_silence_s_min": 0.4,
+      "dead_silence_lufs_below": -45,
+      "lufs_step_3s_max_lu": 3,
+      "sfx_under_vo_db": [
+        -26,
+        -18
+      ]
+    }
+  },
+  "layout_house_policy": {
+    "house_preset": true,
+    "dated": "owner table checked 2026-09; the Meta placement page could not be verified on 2026-10-01; perishable",
+    "master_9x16_key_text": {
+      "top": 300,
+      "bottom_y_max": 1248,
+      "left": 140,
+      "right": 192
+    },
+    "caption_rail_bottom_y_max": 1450,
+    "see": "agent-content/references (platform safe-zone module) for the per-platform rows"
+  },
+  "historical_acceptance_bars": {
+    "note": "historical targets of the owner's kit A/B experiment, NOT research-proven standards",
+    "design_gain_per_dimension": 0.5,
+    "time_or_token_saving_pct": 20,
+    "release_average_min": 4.0,
+    "release_dimension_min": 3,
+    "critic_rounds_max": 3
+  }
+}

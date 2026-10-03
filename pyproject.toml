@@ -1,0 +1,42 @@
+[project]
+name = "editing-workflow"
+version = "0.1.0"
+description = "Core toolkit for an AI-assisted video editing course: fail-closed QA envelopes, safe paths, locks, timing ledger, FFmpeg helpers."
+requires-python = ">=3.12,<3.14"
+# Core runtime = stdlib + numpy + Pillow only (blueprint TOOLS_SPEC section 4). Everything else is an optional group.
+dependencies = [
+    "numpy>=2.0",
+    "Pillow>=10.1",
+]
+
+# Optional profiles. Declared here, never installed by the core gate.
+# Versions are the lower bounds seen on the reference machine in experiment E04 (2026-10-01).
+[project.optional-dependencies]
+opencv = ["opencv-python-headless>=5.0"]                     # motion_qa, color_scopes (not needed by core)
+plots = ["matplotlib>=3.9"]                                   # optional QA plots
+audio = ["soundfile>=0.12", "pyloudnorm>=0.1"]                # audio analysis helpers
+asr-cpu = ["faster-whisper>=1.2"]                             # CTranslate2 int8 CPU route; weights pinned separately
+matte-ort = ["onnxruntime>=1.20", "scipy>=1.13", "numba>=0.60"]   # matte/face models (model files are NOT bundled)
+depth = ["onnxruntime>=1.20"]                                 # Depth Anything V2 Small only (Apache-2.0)
+
+# Developer tooling (PEP 735). `uv run --group dev pytest`.
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+    "jsonschema>=4.20",
+]
+
+[tool.uv]
+# The repo is run from source: `src/` is put on sys.path (pytest: `pythonpath` below; tools/*.py insert <repo>/src).
+# The importable package name is `core` (src/core), per REPO_ARCHITECTURE section 3. Not built as a wheel in v0.x.
+package = false
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "-ra -q"
+markers = [
+    "ffmpeg: needs ffmpeg and ffprobe on PATH (skipped, never silently passed, when missing)",
+    "slow: spawns several subprocesses",
+]

@@ -1,0 +1,47 @@
+# Sign-up links for paid services (read by install/bootstrap.py `add`).
+#
+# HOW THIS WORKS
+#  * When a student adds a paid integration (`bootstrap.py add higgsfield` ...), the installer prints the sign-up link(s) of that service
+#    together with a one-line disclosure. The student chooses the referral link or the plain link (or skips: they may already have an account).
+#  * `referral_url` is a PUBLIC referral/affiliate link. Leave it "" until you have one: the plain link is then the only option shown.
+#  * The referral counts at sign-up / purchase, once. Nothing here changes how the MCP / CLI / API is called afterwards, and the toolkit never
+#    rewrites, wraps or injects anything into requests to a provider.
+#  * The installer never opens a browser by itself and never hides that a link is a referral link. If asked, the agent says so plainly.
+#  * Put NO secret in this file: only public URLs. Check the provider's affiliate terms before publishing a link (some forbid link cloaking
+#    or redistribution inside tools - you are responsible for that).
+#
+# Every integration in catalog.toml that costs money must appear either in a [[service]].entries list or in `no_referral` (checked by the tests).
+schema = 1
+
+# Integrations that cost money but have nothing to sign up for through this file (vendor licence, legacy/avoid entries, workspace plans).
+no_referral = ["nle-premiere", "nle-ae", "elevenlabs-local-mcp", "magic-legacy-npm", "luma-legacy-mcp", "figma", "notion", "gemini-vision", "fal"]
+
+[[service]]
+id = "higgsfield"
+name = "Higgsfield"
+entries = ["higgsfield", "higgsfield-cli"]
+plain_url = "https://higgsfield.ai"
+referral_url = ""
+
+[[service]]
+id = "elevenlabs"
+name = "ElevenLabs"
+entries = ["elevenlabs"]
+plain_url = "https://elevenlabs.io"
+referral_url = ""
+
+[[service]]
+id = "magic-21st"
+name = "21st.dev Magic"
+entries = ["magic-21st"]
+plain_url = "https://21st.dev"
+referral_url = ""
+
+# 3D model generation reached through the Blender connector (optional services inside it may charge). Only Tripo is listed here:
+# it is the one with a sign-up programme; other 3D services are not offered through this file.
+[[service]]
+id = "tripo"
+name = "Tripo (3D generation)"
+entries = ["blender-mcp"]
+plain_url = "https://www.tripo3d.ai"
+referral_url = ""

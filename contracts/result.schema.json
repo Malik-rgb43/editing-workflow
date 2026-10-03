@@ -1,0 +1,212 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://editing-workflow.invalid/contracts/result.schema.json",
+  "title": "Job result",
+  "type": "object",
+  "required": [
+    "schema",
+    "job_id",
+    "state",
+    "accepted"
+  ],
+  "properties": {
+    "schema": {
+      "const": "avc.result/1"
+    },
+    "job_id": {
+      "type": "string"
+    },
+    "state": {
+      "enum": [
+        "queued",
+        "running",
+        "awaiting_approval",
+        "succeeded",
+        "failed",
+        "cancelled",
+        "unknown"
+      ]
+    },
+    "accepted": {
+      "type": "boolean",
+      "description": "true only after required QA gates passed AND the required human review approved"
+    },
+    "started_utc": {
+      "type": "string",
+      "format": "date-time",
+      "description": "timezone-aware ISO-8601 (UTC preferred)"
+    },
+    "ended_utc": {
+      "type": "string",
+      "format": "date-time",
+      "description": "timezone-aware ISO-8601 (UTC preferred)"
+    },
+    "timing": {
+      "type": "object",
+      "properties": {
+        "queue_wait_min": {
+          "type": "number",
+          "minimum": 0
+        },
+        "setup_min": {
+          "type": "number",
+          "minimum": 0
+        },
+        "load_min": {
+          "type": "number",
+          "minimum": 0
+        },
+        "run_min": {
+          "type": "number",
+          "minimum": 0
+        },
+        "qa_min": {
+          "type": "number",
+          "minimum": 0
+        },
+        "review_min": {
+          "type": "number",
+          "minimum": 0
+        }
+      }
+    },
+    "outputs": {
+      "type": "array",
+      "items": {
+        "$ref": "artifact.schema.json"
+      }
+    },
+    "qa": {
+      "type": "array",
+      "items": {
+        "$ref": "qa-envelope.schema.json"
+      }
+    },
+    "gates": {
+      "type": "object",
+      "additionalProperties": {
+        "enum": [
+          "pass",
+          "fail",
+          "unsupported",
+          "not_run",
+          "insufficient_evidence",
+          "error"
+        ]
+      }
+    },
+    "review": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "properties": {
+        "decision": {
+          "enum": [
+            "approved",
+            "rejected",
+            "needs_changes"
+          ]
+        },
+        "reviewer": {
+          "type": "string"
+        },
+        "reviewed_utc": {
+          "type": "string",
+          "format": "date-time",
+          "description": "timezone-aware ISO-8601 (UTC preferred)"
+        }
+      }
+    },
+    "loss_report": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "field": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "spend": {
+      "type": "object",
+      "properties": {
+        "credits": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "money": {
+          "type": [
+            "object",
+            "null"
+          ]
+        }
+      }
+    },
+    "error": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "properties": {
+        "code": {
+          "type": "string"
+        },
+        "retryable": {
+          "type": "boolean"
+        },
+        "partial_output": {
+          "type": "boolean"
+        },
+        "diagnostic": {
+          "type": "string"
+        },
+        "recovery_action": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "code"
+      ]
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "accepted": {
+            "const": true
+          }
+        },
+        "required": [
+          "accepted"
+        ]
+      },
+      "then": {
+        "required": [
+          "qa",
+          "review"
+        ],
+        "properties": {
+          "review": {
+            "type": "object",
+            "required": [
+              "decision"
+            ],
+            "properties": {
+              "decision": {
+                "const": "approved"
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

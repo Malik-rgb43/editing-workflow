@@ -1,0 +1,60 @@
+# ---- Local secrets and private lists (never commit) -------------------------------------------
+.env
+.env.*
+!.env.example
+!.env.sample
+!.env.template
+*.pem
+*.key
+*.p12
+*.pfx
+id_rsa
+id_ed25519
+credentials.json
+scripts/private_denylist.txt
+toolkit.local.toml
+.claude/settings.local.json
+
+# ---- Student work, renders and caches (created by the tools, never part of the release) -----------
+/projects/
+**/_work/
+/dist/
+/cache/
+/models/
+*.log
+*.tmp
+
+# Rendered media and model weights are never committed unless a licenses.toml rule allows them;
+# this is only a safety net, scripts/gen_bom.py is the real gate.
+*.onnx
+*.safetensors
+*.gguf
+*.ckpt
+*.pth
+
+# ---- Python ----------------------------------------------------------------------------------
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.uv-cache/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+*.egg-info/
+
+# ---- Node (only for the selected browser engine) ----------------------------------------------
+node_modules/
+
+# ---- Editors and OS -----------------------------------------------------------------------------
+.idea/
+.vscode/
+*.swp
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# NOTE: .claude/skills/ and .agents/skills/ are GENERATED but TRACKED on purpose (a plain clone must
+# work without a build step); scripts/build_agent_adapters.py --check proves they match agent-content/.

@@ -1,0 +1,11 @@
+<html dir="rtl"><head><style>.a{transition: all .3s} .b{animation: spin 1s infinite}
+body{font-family:'Missing Font',serif}</style></head><body>
+<div data-composition-id="main"><div data-start="-0.2"></div></div>
+<video src="a.mp4" crossorigin="anonymous"></video>
+<script>
+const tl = gsap.timeline();
+function loop(){ requestAnimationFrame(loop); const t = Date.now(); const r = Math.random(); }
+setInterval(()=>{}, 100); tl.play(); fetch('https://x.test/a.json');
+gsap.to('#a',{left: 100, duration: 1, repeat:-1});
+</script></body></html>
+<style>.pink{color:#ff2fb3}.ok{color:#2F6BFF}</style>

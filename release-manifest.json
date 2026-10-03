@@ -1,0 +1,56 @@
+{
+  "schema_version": "1",
+  "name": "editing-workflow",
+  "version": "0.3.1",
+  "status": "released (public, Apache-2.0); scripts/release.py regenerates this file inside every archive with the file list and hashes",
+  "licence": {
+    "status": "Apache-2.0",
+    "decision_default": "Q12 resolved 2026-10-02: public, Apache-2.0",
+    "file": "LICENSE"
+  },
+  "hashes": {
+    "algorithm": "sha256",
+    "files": null,
+    "note": "filled by scripts/release.py at build time; null here means not generated"
+  },
+  "support_matrix": {
+    "checked_at": "2026-10-03",
+    "note": "GitHub Actions ran the unit tests (with real FFmpeg, numpy, Pillow, OpenCV) on windows-latest, macos-latest and ubuntu-latest; no clean student machine was used. 'specified' is not 'tested'.",
+    "os": {
+      "windows-11": {
+        "status": "unit tests green on windows-latest (FFmpeg 9.0.2) and on the reference machine; a clean-machine install was run once through the installer in an isolated home",
+        "evidence": "GitHub Actions run 2026-10-03 (workflow ci)"
+      },
+      "macos": { "status": "unit tests green on macos-latest (FFmpeg 9.0.1, arm64 runner); no real Mac installation tested", "evidence": "GitHub Actions run 2026-10-03 (workflow ci)" },
+      "ubuntu": { "status": "unit tests green on ubuntu-latest (FFmpeg 6.1.1); no real Linux installation tested", "evidence": "GitHub Actions run 2026-10-03 (workflow ci)" }
+    },
+    "python": { "required": ">=3.12,<3.14", "source": "pyproject.toml" },
+    "agent_hosts": {
+      "claude-code": {
+        "researched_baseline": "2.1.251",
+        "status": "discovery of generated .claude/skills not verified on a real client"
+      },
+      "codex": {
+        "researched_baseline": "0.157.1",
+        "status": "discovery of generated .agents/skills not verified on a real client"
+      },
+      "source": "REPO_ARCHITECTURE section 5 (research baselines; re-verify on the then-current versions)"
+    },
+    "gpu_routes": {
+      "amd-vulkan-asr": "measured on the reference machine only (E08)",
+      "nvidia": "unmeasured",
+      "apple": "unmeasured"
+    },
+    "engines": {
+      "hyperframes": { "pin": "0.8.98 in research; re-verify at build", "status": "not pinned in this repository yet" }
+    }
+  },
+  "evaluation": {
+    "model_eval": "not_run",
+    "reason": "owner decision Q4 open; skills are specified with deterministic checks only"
+  },
+  "provenance": {
+    "source": "blueprint/REPO_ARCHITECTURE.md sections 6 and 10, written 2026-10-02"
+  },
+  "files": []
+}

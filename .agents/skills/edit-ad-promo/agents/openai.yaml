@@ -1,0 +1,5 @@
+interface:
+  display_name: "Edit Ad Promo"
+  short_description: "Script, edit or review a paid-social ad, sponsored post or brand promo for a business, product, app or store (Meta, Inst"
+policy:
+  allow_implicit_invocation: false
