@@ -165,6 +165,7 @@ def serve(video: Path, out_dir: Path, round_n: int = 1, lang: str = "he", fps: f
     """Serve the review page and wait for ONE valid send. Returns 0 (notes received), 2 (no video / cannot listen), 3 (timeout)."""
     import secrets
     import threading
+    import socketserver
     from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
     out = out or sys.stdout
@@ -288,8 +289,13 @@ def serve(video: Path, out_dir: Path, round_n: int = 1, lang: str = "he", fps: f
                 if getattr(self, "_final", False):
                     done.set()
 
+    class Server(ThreadingHTTPServer):
+        def server_bind(self):  # skip HTTPServer's reverse-DNS lookup (socket.getfqdn), which can take seconds on macOS
+            socketserver.TCPServer.server_bind(self)
+            self.server_name, self.server_port = self.server_address[:2]
+
     try:
-        httpd = ThreadingHTTPServer(("127.0.0.1", port), Handler)
+        httpd = Server(("127.0.0.1", port), Handler)
     except OSError as exc:
         print(json.dumps({"status": "not_run", "reason": f"cannot listen on 127.0.0.1:{port}: {exc}"}, ensure_ascii=False), file=out, flush=True)
         return 2

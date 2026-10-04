@@ -253,10 +253,11 @@ class BoardTests(unittest.TestCase):
         box = {}
         th = threading.Thread(target=lambda: box.setdefault("code", mb.serve(self.dir / "out", 0, timeout, False, out)), daemon=True)
         th.start()
-        for _ in range(200):
+        for _ in range(1500):  # up to 30 s: a cold CI runner can be slow to start the server
             if '"url"' in out.getvalue():
                 break
             time.sleep(0.02)
+        self.assertIn('"url"', out.getvalue(), f"the server printed no url within 30 s: {out.getvalue()!r}")
         url = json.loads(out.getvalue().splitlines()[0])["url"]
         return man, url, out, th, box
 
