@@ -26,10 +26,11 @@ The gate every new video passes first (stage wf-00). Output: a verbatim intake l
 0. **Read what exists**: the message, the attachments, and the WHOLE source tree: `python scripts/source_inventory.py <source folder> --write projects/<name>/_work/intake` (writes `source_ls.txt` + `probe.json`; a 4K camera original once sat unseen beside a rough cut). Check `projects/` for a sibling on the same source: ask "new project or continuation of X?". Branches (reference, pasted prompt, "חדש לגמרי", "רק תכנן"): `references/branches-and-mistakes.md`.
 1. **Log verbatim** to `_work/intake/INTAKE_LOG.md`: the user's words as plain lines, your questions as `Q:` lines under `## Round N`.
 2. **Parse the ledger** into the `<ledger>` block of `hf/PROMPT.md` (a draft with no `<structure>` yet): ids, dim, `said`, measurable `spec`, `where / when`, acceptance check, `src` U/R/D/A, status (`references/ledger-template.md`).
-3. **Question loop** (`references/question-bank.md`): rounds of 3-4 questions, concrete options, first = recommended; BAR in round 1. After each round print `נעול: ... | פתוח: ...` and update the ledger. "תמשיך" / "continue" = take the recommended options, mark `D`, say so in ONE line.
-4. **Reference present?** hand it to `reference-style-matching` and ask which time range is "the style". Absent: keep asking; never invent a style.
-5. **Concepts**: if the user did not fix one, three cards Proven / Bold / Wild that differ in concept; recommend one (`references/concept-cards-and-brief.md`).
-6. **BRIEF.md** from the template (`agent-content/techniques/templates/BRIEF.md`) with the rights facts, run `ledger_check.py`, hand over to the PROMPT writer, wait for approval, then log `PROMPT_APPROVED <date> "<words>"` in `hf/CHANGELOG.md`.
+3. **Inputs with defaults.** Ask for every input the edit needs (name, logo, footage, images, brand colours and font, voice, music) in ONE list, each with the default you will use if it is skipped. A missing input never blocks; it is taken as `D` and said back. Facts about the user's product, claims and rights never get a default.
+4. **Question loop** (`references/question-bank.md`): rounds of 3-4 questions, concrete options, first = recommended; BAR in round 1. After each round print `נעול: ... | פתוח: ...` and update the ledger. "תמשיך" / "continue" = take the recommended options, mark `D`, say so in ONE line.
+5. **Reference present?** hand it to `reference-style-matching` and ask which time range is "the style". Absent: keep asking; never invent a style.
+6. **Concepts**: if the user did not fix one, three cards Proven / Bold / Wild that differ in concept; recommend one (`references/concept-cards-and-brief.md`).
+7. **BRIEF.md** from the template (`agent-content/techniques/templates/BRIEF.md`) with the rights facts, run `ledger_check.py`, hand over to the PROMPT writer, wait for approval, then log `PROMPT_APPROVED <date> "<words>"` in `hf/CHANGELOG.md`.
 
 ## The question loop in brief
 - 3-4 questions per round, highest impact first: FMT / LEN / STR / BAR, then HOOK / TON / LOOK / MOT, then TYPE / 3D / BROLL / BRAND, then CAP / MUS / SFX / CTA, then FILE / VAR / DUE.

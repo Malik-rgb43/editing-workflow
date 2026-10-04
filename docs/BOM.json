@@ -2,15 +2,15 @@
   "schema": 1,
   "tool": "scripts/gen_bom.py",
   "status": "PASS",
-  "file_count": 809,
-  "total_bytes": 7108418,
+  "file_count": 826,
+  "total_bytes": 7209651,
   "by_origin": {
-    "generated": 350,
-    "owner": 447,
+    "generated": 352,
+    "owner": 462,
     "third_party": 12
   },
   "by_licence": {
-    "Apache-2.0": 795,
+    "Apache-2.0": 812,
     "OFL-1.1": 12,
     "generated-lockfile": 2
   },
@@ -344,7 +344,7 @@
     {
       "path": ".agents/skills/pro-video-editor/.GENERATED-DO-NOT-EDIT",
       "size": 302,
-      "sha256": "fc9cb6a655f9cc0bc13d0e346765fd901e27dca17aef00e45dad3c46647da569",
+      "sha256": "3e27d3e88646c4503698eff647976529e50228437ab811241a61eb7c944216b5",
       "class": "text",
       "origin": "generated",
       "licence": "Apache-2.0",
@@ -353,8 +353,8 @@
     },
     {
       "path": ".agents/skills/pro-video-editor/SKILL.md",
-      "size": 15366,
-      "sha256": "b7317b61f5960673ec0a0b6b289bd21df4368e3df9b5332b793c2fab9e156121",
+      "size": 20149,
+      "sha256": "71e1af8f66677531af84af09be80cca804711badc500855bda339c9a1523a447",
       "class": "text",
       "origin": "generated",
       "licence": "Apache-2.0",
@@ -525,6 +525,16 @@
       "path": ".agents/skills/pro-video-editor/references/visual-beats.md",
       "size": 23890,
       "sha256": "52b250321fa4cb89e68db0a2b1dd0775a1c3a0484f34e80e1864089898721ca0",
+      "class": "text",
+      "origin": "generated",
+      "licence": "Apache-2.0",
+      "rule": 4,
+      "flags": []
+    },
+    {
+      "path": ".agents/skills/pro-video-editor/references/worked-example-launch-film.md",
+      "size": 6952,
+      "sha256": "f60370bc5173acb8fe85c011f1afe1b73955e2c80b35d7330a896910e4ace7e1",
       "class": "text",
       "origin": "generated",
       "licence": "Apache-2.0",
@@ -754,7 +764,7 @@
     {
       "path": ".agents/skills/render-qa-delivery/.GENERATED-DO-NOT-EDIT",
       "size": 304,
-      "sha256": "0bb404179d24d41e01c0d65a7b3f0134ced069f1bfd77e9f0a23b7b938979ff6",
+      "sha256": "a8124a2cbf69cfdd981b20118a3fcb0b25a1482a6cfbdfa174cc63d78f587ba6",
       "class": "text",
       "origin": "generated",
       "licence": "Apache-2.0",
@@ -763,8 +773,8 @@
     },
     {
       "path": ".agents/skills/render-qa-delivery/SKILL.md",
-      "size": 10862,
-      "sha256": "c41980a3cf7b8a90bd2109cb5ffffb76d6fdde7b386b51b63682324791a24e32",
+      "size": 11057,
+      "sha256": "8e73b14b6effac1c03517f732955dbf0edc1d158f3599de63dc3743211f15a28",
       "class": "text",
       "origin": "generated",
       "licence": "Apache-2.0",
@@ -1266,7 +1276,7 @@
     {
       "path": ".agents/skills/video-brief-intake/.GENERATED-DO-NOT-EDIT",
       "size": 304,
-      "sha256": "e0fff6d28e7dd9acf99bac41a5b92ed0f0352fc6a51b4c766201035e02393f79",
+      "sha256": "4635c31ac1cf02a1af027885baee5bd2a16d3a3b3f08b2566d02bcec230a0692",
       "class": "text",
       "origin": "generated",
       "licence": "Apache-2.0",
@@ -1275,8 +1285,8 @@
     },
     {
       "path": ".agents/skills/video-brief-intake/SKILL.md",
-      "size": 10256,
-      "sha256": "5505d88b81e1d21cd472925b24e33f19fe91f0f5bd2dc29fc6380d8c1047109c",
+      "size": 10589,
+      "sha256": "db65cef29c1897efcc1e37095619bd9f8ec0529c91be9f807be1b5c92edc73b0",
       "class": "text",
       "origin": "generated",
       "licence": "Apache-2.0",
@@ -2178,7 +2188,7 @@
     {
       "path": ".claude/skills/pro-video-editor/.GENERATED-DO-NOT-EDIT",
       "size": 302,
-      "sha256": "fc9cb6a655f9cc0bc13d0e346765fd901e27dca17aef00e45dad3c46647da569",
+      "sha256": "3e27d3e88646c4503698eff647976529e50228437ab811241a61eb7c944216b5",
       "class": "text",
       "origin": "generated",
       "licence": "Apache-2.0",
@@ -2187,8 +2197,8 @@
     },
     {
       "path": ".claude/skills/pro-video-editor/SKILL.md",
-      "size": 15366,
-      "sha256": "b7317b61f5960673ec0a0b6b289bd21df4368e3df9b5332b793c2fab9e156121",
+      "size": 20149,
+      "sha256": "71e1af8f66677531af84af09be80cca804711badc500855bda339c9a1523a447",
       "class": "text",
       "origin": "generated",
       "licence": "Apache-2.0",
@@ -2349,6 +2359,16 @@
       "path": ".claude/skills/pro-video-editor/references/visual-beats.md",
       "size": 23890,
       "sha256": "52b250321fa4cb89e68db0a2b1dd0775a1c3a0484f34e80e1864089898721ca0",
+      "class": "text",
+      "origin": "generated",
+      "licence": "Apache-2.0",
+      "rule": 4,
+      "flags": []
+    },
+    {
+      "path": ".claude/skills/pro-video-editor/references/worked-example-launch-film.md",
+      "size": 6952,
+      "sha256": "f60370bc5173acb8fe85c011f1afe1b73955e2c80b35d7330a896910e4ace7e1",
       "class": "text",
       "origin": "generated",
       "licence": "Apache-2.0",
@@ -2568,7 +2588,7 @@
     {
       "path": ".claude/skills/render-qa-delivery/.GENERATED-DO-NOT-EDIT",
       "size": 304,
-      "sha256": "0bb404179d24d41e01c0d65a7b3f0134ced069f1bfd77e9f0a23b7b938979ff6",
+      "sha256": "a8124a2cbf69cfdd981b20118a3fcb0b25a1482a6cfbdfa174cc63d78f587ba6",
       "class": "text",
       "origin": "generated",
       "licence": "Apache-2.0",
@@ -2577,8 +2597,8 @@
     },
     {
       "path": ".claude/skills/render-qa-delivery/SKILL.md",
-      "size": 10862,
-      "sha256": "c41980a3cf7b8a90bd2109cb5ffffb76d6fdde7b386b51b63682324791a24e32",
+      "size": 11057,
+      "sha256": "8e73b14b6effac1c03517f732955dbf0edc1d158f3599de63dc3743211f15a28",
       "class": "text",
       "origin": "generated",
       "licence": "Apache-2.0",
@@ -3040,7 +3060,7 @@
     {
       "path": ".claude/skills/video-brief-intake/.GENERATED-DO-NOT-EDIT",
       "size": 304,
-      "sha256": "e0fff6d28e7dd9acf99bac41a5b92ed0f0352fc6a51b4c766201035e02393f79",
+      "sha256": "4635c31ac1cf02a1af027885baee5bd2a16d3a3b3f08b2566d02bcec230a0692",
       "class": "text",
       "origin": "generated",
       "licence": "Apache-2.0",
@@ -3049,8 +3069,8 @@
     },
     {
       "path": ".claude/skills/video-brief-intake/SKILL.md",
-      "size": 10256,
-      "sha256": "5505d88b81e1d21cd472925b24e33f19fe91f0f5bd2dc29fc6380d8c1047109c",
+      "size": 10589,
+      "sha256": "db65cef29c1897efcc1e37095619bd9f8ec0529c91be9f807be1b5c92edc73b0",
       "class": "text",
       "origin": "generated",
       "licence": "Apache-2.0",
@@ -3671,8 +3691,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 17458,
-      "sha256": "a583fa393730ce86168598ed40c796a07662be8ada180fac2c73fd819a118d0c",
+      "size": 19515,
+      "sha256": "c9bcca2c5a2bb697ba3ac68250667065098e895770b5c202bde30ff9917fd6e9",
       "class": "text",
       "origin": "owner",
       "licence": "Apache-2.0",
@@ -3731,8 +3751,8 @@
     },
     {
       "path": "SYSTEM.md",
-      "size": 22069,
-      "sha256": "d333fe798c049aa933e1eb57d9ecd9ca6d6ae5c722298714cbd00d84994e34eb",
+      "size": 22727,
+      "sha256": "c6e173004dc4a6af63999a0aaefc051b74c7d711827eed1373abe32a7f2ce16d",
       "class": "text",
       "origin": "generated",
       "licence": "Apache-2.0",
@@ -4451,8 +4471,8 @@
     },
     {
       "path": "agent-content/skills/pro-video-editor/SKILL.md",
-      "size": 15366,
-      "sha256": "b7317b61f5960673ec0a0b6b289bd21df4368e3df9b5332b793c2fab9e156121",
+      "size": 20149,
+      "sha256": "71e1af8f66677531af84af09be80cca804711badc500855bda339c9a1523a447",
       "class": "text",
       "origin": "owner",
       "licence": "Apache-2.0",
@@ -4613,6 +4633,16 @@
       "path": "agent-content/skills/pro-video-editor/references/visual-beats.md",
       "size": 23890,
       "sha256": "52b250321fa4cb89e68db0a2b1dd0775a1c3a0484f34e80e1864089898721ca0",
+      "class": "text",
+      "origin": "owner",
+      "licence": "Apache-2.0",
+      "rule": 2,
+      "flags": []
+    },
+    {
+      "path": "agent-content/skills/pro-video-editor/references/worked-example-launch-film.md",
+      "size": 6952,
+      "sha256": "f60370bc5173acb8fe85c011f1afe1b73955e2c80b35d7330a896910e4ace7e1",
       "class": "text",
       "origin": "owner",
       "licence": "Apache-2.0",
@@ -4821,8 +4851,8 @@
     },
     {
       "path": "agent-content/skills/render-qa-delivery/SKILL.md",
-      "size": 10862,
-      "sha256": "c41980a3cf7b8a90bd2109cb5ffffb76d6fdde7b386b51b63682324791a24e32",
+      "size": 11057,
+      "sha256": "8e73b14b6effac1c03517f732955dbf0edc1d158f3599de63dc3743211f15a28",
       "class": "text",
       "origin": "owner",
       "licence": "Apache-2.0",
@@ -5253,8 +5283,8 @@
     },
     {
       "path": "agent-content/skills/video-brief-intake/SKILL.md",
-      "size": 10256,
-      "sha256": "5505d88b81e1d21cd472925b24e33f19fe91f0f5bd2dc29fc6380d8c1047109c",
+      "size": 10589,
+      "sha256": "db65cef29c1897efcc1e37095619bd9f8ec0529c91be9f807be1b5c92edc73b0",
       "class": "text",
       "origin": "owner",
       "licence": "Apache-2.0",
@@ -5805,8 +5835,8 @@
     },
     {
       "path": "agent-content/techniques/frame-spec-prompt.md",
-      "size": 30138,
-      "sha256": "06b70b5da6cce70fce9c97da6e96b727e71785066027638741603fff58a06b5a",
+      "size": 30827,
+      "sha256": "01767ab5be1fe2cb500219398e942908f34047fb613c6bd000e564f5af76d60f",
       "class": "text",
       "origin": "owner",
       "licence": "Apache-2.0",
@@ -5965,8 +5995,8 @@
     },
     {
       "path": "docs/TOOLS.md",
-      "size": 12837,
-      "sha256": "a9d661f9487b1d49e350cebdea6244d6593b910982cfb2b17d32de0cb45417d5",
+      "size": 13485,
+      "sha256": "1355a1f5fda8d5a7c9a5da38e0e2f388a01de4a48ff0b7b99f9de03bb017b72d",
       "class": "text",
       "origin": "generated",
       "licence": "Apache-2.0",
@@ -6404,6 +6434,56 @@
       "flags": []
     },
     {
+      "path": "hf-blocks/liquid-glass/README.md",
+      "size": 1475,
+      "sha256": "95d942e34541b41c3ad813d737bf229a286ea3cd8ffac3b174d2a298f6003456",
+      "class": "text",
+      "origin": "owner",
+      "licence": "Apache-2.0",
+      "rule": 2,
+      "flags": []
+    },
+    {
+      "path": "hf-blocks/liquid-glass/SOURCE.md",
+      "size": 567,
+      "sha256": "05314de7a8eb11c3079f28b1b9a3bcb496c0d83ea4c30030cd9142ff804153fb",
+      "class": "text",
+      "origin": "owner",
+      "licence": "Apache-2.0",
+      "rule": 2,
+      "flags": []
+    },
+    {
+      "path": "hf-blocks/liquid-glass/block.html",
+      "size": 10490,
+      "sha256": "43c8922011c74e1fe6215815154c9dd7b36274856d78594d3d3176f50748b811",
+      "class": "text",
+      "origin": "owner",
+      "licence": "Apache-2.0",
+      "rule": 2,
+      "flags": []
+    },
+    {
+      "path": "hf-blocks/liquid-glass/block.json",
+      "size": 1733,
+      "sha256": "cce8e0b2c52fccfb636c408b05a6fdf7a73b4c90f1614b02fe8fb1c1f2ff3e3a",
+      "class": "text",
+      "origin": "owner",
+      "licence": "Apache-2.0",
+      "rule": 2,
+      "flags": []
+    },
+    {
+      "path": "hf-blocks/liquid-glass/demo.html",
+      "size": 1331,
+      "sha256": "49aad625c6a7b2c62dab00c22d278c05d427d517d5a7fd6946bfaac204bf6ec6",
+      "class": "text",
+      "origin": "owner",
+      "licence": "Apache-2.0",
+      "rule": 2,
+      "flags": []
+    },
+    {
       "path": "hf-blocks/notification-stack/README.md",
       "size": 1259,
       "sha256": "60e6550e279271abfa131f36fd05d51da455ae4b9cba2f9792b6a1209fdcc6e4",
@@ -6547,6 +6627,56 @@
       "path": "hf-blocks/task-steps/demo.html",
       "size": 993,
       "sha256": "245e99a5b502d865e012f47481986ef3d3e7f5cf519b31b5c6eded1ccb836b9d",
+      "class": "text",
+      "origin": "owner",
+      "licence": "Apache-2.0",
+      "rule": 2,
+      "flags": []
+    },
+    {
+      "path": "hf-blocks/typed-caption/README.md",
+      "size": 1294,
+      "sha256": "cddc408a75853ec75d26d8ff88a69a7eda91826fe89d615ce34e24601ee5c9a7",
+      "class": "text",
+      "origin": "owner",
+      "licence": "Apache-2.0",
+      "rule": 2,
+      "flags": []
+    },
+    {
+      "path": "hf-blocks/typed-caption/SOURCE.md",
+      "size": 315,
+      "sha256": "81454592596e942672967fdd658ddf53c1c6b0be2cc98cbf60c5b28af77bca60",
+      "class": "text",
+      "origin": "owner",
+      "licence": "Apache-2.0",
+      "rule": 2,
+      "flags": []
+    },
+    {
+      "path": "hf-blocks/typed-caption/block.html",
+      "size": 8248,
+      "sha256": "2bc4b8af7eeccc0533425bbd5a68186f64ac953f7f88c6c53eac3301421005f5",
+      "class": "text",
+      "origin": "owner",
+      "licence": "Apache-2.0",
+      "rule": 2,
+      "flags": []
+    },
+    {
+      "path": "hf-blocks/typed-caption/block.json",
+      "size": 1663,
+      "sha256": "e151ea5ad95fca11eb0a8b589cf024c087d29825245130e9991d667a2db9d8e3",
+      "class": "text",
+      "origin": "owner",
+      "licence": "Apache-2.0",
+      "rule": 2,
+      "flags": []
+    },
+    {
+      "path": "hf-blocks/typed-caption/demo.html",
+      "size": 1086,
+      "sha256": "b763e0363593d502b0bfe6fb2e74165013552b61d0a440f29cb3a97da1ae3a88",
       "class": "text",
       "origin": "owner",
       "licence": "Apache-2.0",
@@ -7194,6 +7324,16 @@
       "flags": []
     },
     {
+      "path": "src/core/vo.py",
+      "size": 9747,
+      "sha256": "37eeff22bb7001f2d553cc875bffa287abac20b6676f09ceb93cbf379134abf7",
+      "class": "text",
+      "origin": "owner",
+      "licence": "Apache-2.0",
+      "rule": 2,
+      "flags": []
+    },
+    {
       "path": "tests/conftest.py",
       "size": 3936,
       "sha256": "9cd7f20a72eba02372cf9607753a000c2163c21ee677051b8f7dad77da543a11",
@@ -7337,6 +7477,16 @@
       "path": "tests/unit/test_core_timebase.py",
       "size": 4810,
       "sha256": "c8960e4f975ea27068114ae4663c73be6c33f5af364fe66c89fa6d82c8e4674b",
+      "class": "text",
+      "origin": "owner",
+      "licence": "Apache-2.0",
+      "rule": 2,
+      "flags": []
+    },
+    {
+      "path": "tests/unit/test_core_vo.py",
+      "size": 3858,
+      "sha256": "81a27645602fecdb032ad709f5eaf606c930d6d4391095b427c8d7a680932438",
       "class": "text",
       "origin": "owner",
       "licence": "Apache-2.0",
@@ -7645,8 +7795,8 @@
     },
     {
       "path": "tests/unit/test_tools_hf_blocks.py",
-      "size": 5866,
-      "sha256": "51c4e2441f8dae5b5f0f1bbeb61b106505c00f8dd1a46fe1cd001013026f4a24",
+      "size": 5899,
+      "sha256": "004eb718c5b5b4604b85ae6113038d0ef245433272e4e8a291d653989c819136",
       "class": "text",
       "origin": "owner",
       "licence": "Apache-2.0",
@@ -7655,8 +7805,8 @@
     },
     {
       "path": "tests/unit/test_tools_misc.py",
-      "size": 7047,
-      "sha256": "150c00d0b7e2ae43b28d3c417769a3745ed985455ac27f97d50174b7cafe60a0",
+      "size": 7686,
+      "sha256": "a580e77dee97e7f9d06dd03ebd0ffeb9b05e262a8760658596c4987d4ebbd2ff",
       "class": "text",
       "origin": "owner",
       "licence": "Apache-2.0",
@@ -7665,8 +7815,8 @@
     },
     {
       "path": "tests/unit/test_tools_p1a.py",
-      "size": 8909,
-      "sha256": "2f03663ab08b4a20b59d59b636151fcd0f1f6ad05ceb6fa0173ffd2cf7c2470e",
+      "size": 10112,
+      "sha256": "e16d28ace83971d3e67a9ebf93300438c2d010849773e427a9f1904535917fc8",
       "class": "text",
       "origin": "owner",
       "licence": "Apache-2.0",
@@ -7885,8 +8035,8 @@
     },
     {
       "path": "tools/frame_qa.py",
-      "size": 6860,
-      "sha256": "22568ae5212a2eebde9eb7046b735298bca7f22fa9f6966a964c91e0da813ffc",
+      "size": 8015,
+      "sha256": "9073d089e37c64ffcb79d5109c4033de7ed9eb0c15819244d092312ac36b1e4d",
       "class": "text",
       "origin": "owner",
       "licence": "Apache-2.0",
@@ -7935,8 +8085,8 @@
     },
     {
       "path": "tools/hf_mix.py",
-      "size": 10710,
-      "sha256": "409f6e299d3cce4db5b78f70ecca72347d22f1c7c231aa516ecc63865b08cfc5",
+      "size": 15031,
+      "sha256": "1d7ae4c870fdf7c12570482f5cead0bfee7e108b64d662e2204a3c6adcdcca3b",
       "class": "text",
       "origin": "owner",
       "licence": "Apache-2.0",
@@ -8107,6 +8257,26 @@
       "path": "tools/ui.py",
       "size": 13959,
       "sha256": "8d6cee288f84cc927f615107573b34f49a239e40cf6aa59faa804c7aba0ad3a4",
+      "class": "text",
+      "origin": "owner",
+      "licence": "Apache-2.0",
+      "rule": 2,
+      "flags": []
+    },
+    {
+      "path": "tools/vo_clean.py",
+      "size": 5829,
+      "sha256": "1b7a90e08950caed97ef8de497313c148d1e27e2465edec44b20fadf3a1e6fc1",
+      "class": "text",
+      "origin": "owner",
+      "licence": "Apache-2.0",
+      "rule": 2,
+      "flags": []
+    },
+    {
+      "path": "tools/word_retime.py",
+      "size": 5405,
+      "sha256": "22ff5b15d3b4c66eaac7ab8a8c731298e681f4dc1c4fdf2c5559dabe44e19cc5",
       "class": "text",
       "origin": "owner",
       "licence": "Apache-2.0",

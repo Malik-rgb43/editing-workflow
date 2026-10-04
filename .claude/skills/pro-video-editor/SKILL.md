@@ -29,6 +29,19 @@ Along the way, call the right skill or connection at the right moment. There are
 8. **The face is the strongest image.** Leave it for the emotion, the proof and the promise; cover the face only when the beat shows something the face cannot.
 9. **Make it feel made for this video.** Derive the look from the subject, the brand and the reference, never from your defaults. Invent one device that belongs to this story, such as a boarding pass in a travel video, and make it carry information.
 10. **The edit is made in review.** Watch it as a stranger, muted, then with sound. Compare it against the best version of this kind of video you can find. Assume your first version is the draft.
+11. **The voice is the timeline.** One word table (each word's onset, measured) drives everything:
+    - captions appear as each word is spoken;
+    - scenes change on phrase starts;
+    - the one stressed word gets the one special treatment.
+
+    Nothing is placed by eye when a word can place it.
+12. **The music is the grid.** Find the tempo, then anchor the drop to the line that matters. Fast runs (images switching on 8th or 16th notes, each with a click) happen only where the energy should peak; everything else drifts and eases. A beat-snapped slam on every beat reads as a template.
+13. **One continuous camera.** The frame always drifts a little (for example a 1.00 to 1.04 push per scene). When one scene hands its content to the next, the next starts where the last one ended, in position and in zoom. Elements leave by carrying on, such as a blur-through or a fly into the next layout, never by vanishing.
+14. **Prove the claim in the picture.** Every line the voice says should be visible as a fact:
+    - "in any style": the same subject switching styles;
+    - "it gets you": the result takes on the moodboard's look;
+    - "tune it": the slider moves and the picture answers.
+15. **A number for every taste, and a reason for every rule.** "Smooth" becomes fades of at least 0.3 s, eased; "tight" becomes pauses over 0.28 s cut to 0.2 s. Write the number into the spec. A number can be checked; an adjective cannot.
 
 The thinking loop for each decision: **intent** (what should the viewer feel here) -> **two or three options** -> **choose, with the reason in PROMPT.md** -> build cheaply -> **look** -> keep or replace.
 
@@ -67,6 +80,17 @@ Run Round 0, then only the questions the material did not answer (`video-brief-i
 | Sound | Bed or silence? Which effects land on visible events? Where is the silence before the payoff? | `references/sound.md` |
 | Honesty | Does every claim, number, person and licence have its evidence row? | `references/honesty-and-rights.md` |
 
+**What a strong spec answers.** PROMPT.md is written as answers to these questions, in this order. It is not a form: skip what does not apply, and add what this video needs.
+1. **Inputs:** what the user must give, with a stated default for each, so nothing blocks. Example: "no logo given -> the name set in the type, said back".
+2. **Script:** the shape of the voice line by line, and the delivery (where it is calm, where it is excited, which word is stressed).
+3. **Voice:** where it comes from, how many takes the user picks from, and how pauses and levels are cleaned. Word timings are measured per phrase, because one transcription pass drifts.
+4. **Direction:** the world (page, typeface, palette, materials); the motion rules with numbers; the banned list.
+5. **Structure:** scenes hung on the voice. Each scene names its line, what is seen, how it enters, and how it hands off to the next.
+6. **Sound:** where the drop lands; the ducking; the voice-over-music target; SFX per visible event, placed by measured peak; the ending; loudness.
+7. **Build:** how the picture is made, so that every frame is a pure function of time and every caption and cut reads the word table.
+8. **Gotchas:** the failures you already know for this kind of video.
+9. **Start:** the checkpoint order (below), so the user approves the cheap things before the expensive ones.
+
 The kind of video changes the answers, not the method:
 - **speaker / podcast clip:** cadence, a face-centred camera, hidden jump cuts;
 - **testimonial:** result first, the witness's own words, proof shown original, consent;
@@ -76,13 +100,25 @@ The kind of video changes the answers, not the method:
 
 ## Step 4 - Build, the user watching
 - Studio stays open; generate the composition from data (edit list, faces, beat table), so a re-cut regenerates instead of breaking.
-- Sources in order: what the student owns, then the toolkit blocks (`python tools/hf_blocks.py list`), then connected sources (table below), then hand-built.
+- Sources in order: what the student owns, then the toolkit blocks (`python tools/hf_blocks.py list`, e.g. `typed-caption`, `liquid-glass`, `caption`, `notification-stack`, `boarding-pass-stamp`), then connected sources (table below), then hand-built.
+- Voice-led pieces: `python tools/word_retime.py` before any caption or scene is placed; `python tools/vo_clean.py` for a VO track (never picture-locked dialogue); SFX in the `hf_mix` cues with `"align": "peak"`.
 - Take stills at every decision point: `hyperframes snapshot --at <up to 5 times> --describe false`.
+- **The checkpoint ladder** (cheap before expensive; the user approves each rung):
+  1. the script text;
+  2. the voice, with 2-4 takes to pick from (one bad line is regenerated alone and spliced in);
+  3. 6-8 stills of the key beats;
+  4. the draft in Studio;
+  5. ONE full render.
+
+  Never show the full render first.
 
 ## Step 5 - Review like an editor, then prove it
 1. **Look** at a still of every beat and every seam, then ask each the questions in `Common mistakes`.
 2. **Compare** with the reference or benchmark at the same moments: what does the pro do there that you do not? Write it down, even when you keep your choice.
-3. **One full render**, then QA on the FINAL file through `render-qa-delivery`. A QA failure is fixed before presenting.
+3. **One full render**, then QA on the FINAL file through `render-qa-delivery`. A QA failure is fixed before presenting. Before showing anything, run three checks:
+   - a contact sheet;
+   - a frame-diff scan for single-frame pops, where only the planned fast runs may jump (`frame_qa --allow <t0-t1>`);
+   - the voice-over-music level for every phrase, whenever there is music under the voice.
 4. **Present:** the file first, the decisions you took for the user, the QA line, the honest gaps, one question. Notes then go to `revision-notes-handler`.
 
 ## The orchestra: which skill, when
@@ -135,8 +171,16 @@ A connection that is missing is never a reason to stop: say what it would add, u
 | Per-frame face follow (jitter) | One smoothed path per segment between cuts |
 | "Boring / looks AI" answered by polishing | Replace the beat concept |
 | Every element centred, one easing everywhere, stock-caption look | One signature device, varied rhythm, motion with a reason |
+| A highlight box behind a word (it looks like a text selection) | Stress the word with colour, weight or a gradient and a faint glow |
+| A 0.05 s fade (it reads as a pop-in) | Fades of at least 0.3 s, eased |
+| The next scene's camera restarts at 1.0 (the zoom snaps) | Start it at the zoom the last scene ended on |
+| Captions placed from one transcription pass (up to 0.5 s late) | Re-time per phrase: cut at pauses, transcribe each chunk, pin its first word to the measured onset |
+| A long SFX file placed by its start (a 4 s riser lands late) | Place it by its measured peak, trimmed around the peak |
+| Emotion tags on a TTS voice overdone ("warmly" whispers, "excited" sounds fake) | Light tags only on the lines that need them; the opener plain |
+| Glass or frosted UI on a plain white page (it shows nothing) | Put something behind it: a slow pastel aura or a blurred wash of the picture |
 
 ## References (load when)
+- `references/worked-example-launch-film.md` - writing PROMPT.md for a voice-and-music piece (launch, explainer, product film); seeing a strong spec next to the measured film it produced.
 - `references/story-and-structure.md` - the hook, the order, the length, what to cut, the ending; soundbites; ad blueprint; registers; rubrics.
 - `references/cutting-and-rhythm.md` - cutting, silence constants, joins, hidden cuts, clean windows of AI takes.
 - `references/camera-and-motion.md` - zooms, the camera path, seams and camera events, face audits.

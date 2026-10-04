@@ -1,0 +1,60 @@
+{
+  "schema": "avc.hf-block/1",
+  "name": "typed-caption",
+  "title": "Typed caption (word by word, from measured onsets)",
+  "description": "Every word types letter by letter from its measured onset with a caret; the previous line steps back smaller and grey; the stressed word in a gradient with a faint glow. Hebrew via rtl (on the text only).",
+  "duration_s": 3,
+  "size": [
+    1080,
+    1920
+  ],
+  "overlay": true,
+  "variables": [
+    {
+      "id": "lines",
+      "type": "string",
+      "default": "[{\"words\":[{\"w\":\"The\",\"start\":0.2,\"end\":0.35},{\"w\":\"more\",\"start\":0.35,\"end\":0.55},{\"w\":\"you\",\"start\":0.55,\"end\":0.7},{\"w\":\"use\",\"start\":0.7,\"end\":0.9},{\"w\":\"it,\",\"start\":0.9,\"end\":1.2}]},{\"words\":[{\"w\":\"the\",\"start\":1.4,\"end\":1.5},{\"w\":\"better\",\"start\":1.5,\"end\":1.9},{\"w\":\"it\",\"start\":1.9,\"end\":2.05},{\"w\":\"gets\",\"start\":2.05,\"end\":2.4}],\"stress\":\"better\"}]"
+    },
+    {
+      "id": "rtl",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "id": "size",
+      "type": "number",
+      "default": 96
+    },
+    {
+      "id": "top",
+      "type": "number",
+      "default": 960
+    },
+    {
+      "id": "step_back",
+      "type": "number",
+      "default": 0.62
+    },
+    {
+      "id": "caret",
+      "type": "boolean",
+      "default": true
+    },
+    {
+      "id": "duration",
+      "type": "number",
+      "default": 3
+    }
+  ],
+  "replace": {},
+  "demo_assets": [],
+  "palette": [
+    "--hfb-caret",
+    "--hfb-dim",
+    "--hfb-font",
+    "--hfb-grad-a",
+    "--hfb-grad-b",
+    "--hfb-ink"
+  ],
+  "license": "Apache-2.0 (written for this toolkit)"
+}

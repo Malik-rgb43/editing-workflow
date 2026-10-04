@@ -87,6 +87,22 @@ class TestHfMix:
         c = hf_mix.load_cues(write_cues(mixdir))
         assert abs(c["sfx"][0]["start"] - (3.0 - 2 / 30)) < 1e-9
 
+    def test_peak_aligned_riser_lands_its_peak_on_the_event_and_the_ratio_is_measured(self, mixdir):
+        import hf_mix
+
+        # a 4 s riser whose loudest moment is at ~3.5 s: placed by its START it would peak 3.5 s late
+        ff("-f", "lavfi", "-i", "sine=frequency=600:duration=4", "-af", "volume='if(lt(t,3.5),t/3.5,0.1)':eval=frame", "-ar", "48000", mixdir / "assets" / "riser.wav")
+        s = {"at": 5.0, "pre_s": 0.3, "post_s": 0.8, "start": 5.0, "align": "peak"}
+        placed = hf_mix.place_by_peak(s, 3.5)
+        assert placed["trim"] == (3.2, 4.3) and placed["start"] == 4.7  # trimmed to 3.2 s, so the peak (0.3 s in) lands at 5.0
+        f = write_cues(mixdir, sfx=[{"file": "assets/riser.wav", "at": 5.0, "gain_db": -18, "lead_frames": 0, "align": "peak"}],
+                       master={"lufs": -14, "tp": -1.0, "vo_over_music_db": 0})
+        rc, d, p = run("hf_mix", f, "-o", mixdir / "mix_peak.wav", "--report")
+        assert rc == 0, p.stderr + p.stdout
+        assert 3.3 <= d["sfx_placed"][0]["peak_s"] <= 3.55
+        vom = d["vo_over_music"]
+        assert vom and vom["measured_on"] == "stems after ducking" and len(vom["phrases"]) >= 1 and vom["min_db"] is not None
+
     def test_missing_file_and_bad_cues_refuse(self, mixdir, tmp_path):
         f = write_cues(mixdir, vo=[{"file": "assets/absent.wav", "start": 0}])
         rc, _, p = run("hf_mix", f, "-o", mixdir / "m.wav")

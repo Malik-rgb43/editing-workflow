@@ -1,0 +1,94 @@
+{
+  "schema": "avc.hf-block/1",
+  "name": "liquid-glass",
+  "title": "Liquid glass control",
+  "description": "A glass prompt bar, pill or panel: the scene behind frosted, a thin edge band that bends it like thick glass, milk, top sheen, bright rim, lift shadow, an optional slow pastel aura, optional typed text.",
+  "duration_s": 3,
+  "size": [
+    1080,
+    1920
+  ],
+  "overlay": true,
+  "variables": [
+    {
+      "id": "text",
+      "type": "string",
+      "default": "a horse"
+    },
+    {
+      "id": "width",
+      "type": "number",
+      "default": 720
+    },
+    {
+      "id": "height",
+      "type": "number",
+      "default": 132
+    },
+    {
+      "id": "radius",
+      "type": "number",
+      "default": 66
+    },
+    {
+      "id": "top",
+      "type": "number",
+      "default": 894
+    },
+    {
+      "id": "blur",
+      "type": "number",
+      "default": 14
+    },
+    {
+      "id": "edge",
+      "type": "number",
+      "default": 12
+    },
+    {
+      "id": "magnify",
+      "type": "number",
+      "default": 1.06
+    },
+    {
+      "id": "aura",
+      "type": "boolean",
+      "default": true
+    },
+    {
+      "id": "type_on",
+      "type": "boolean",
+      "default": true
+    },
+    {
+      "id": "type_at",
+      "type": "number",
+      "default": 0.5
+    },
+    {
+      "id": "cps",
+      "type": "number",
+      "default": 18
+    },
+    {
+      "id": "rtl",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "id": "duration",
+      "type": "number",
+      "default": 3
+    }
+  ],
+  "replace": {},
+  "demo_assets": [],
+  "palette": [
+    "--hfb-aura-a",
+    "--hfb-aura-b",
+    "--hfb-aura-c",
+    "--hfb-font",
+    "--hfb-ink"
+  ],
+  "license": "Apache-2.0 (written for this toolkit)"
+}

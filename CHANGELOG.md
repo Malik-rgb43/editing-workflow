@@ -17,6 +17,18 @@ Dates and facts here are perishable; each entry states its source where it relie
 - Removed: the two template-format linters (`ad_gate_check.py`, `motion_spec_check.py`), the talking-head starter, and `new_project --starter`.
 - The router sends every edit to `pro-video-editor`; the kind of video is context in the handoff note.
 - `motion_qa --cuts` accepts seconds (a value with a decimal point); `hf_deliver` aims loudnorm 0.5 dB under the true-peak gate.
+- Learned from a strong public launch-film prompt and its measured result (2026-10-05):
+  - `pro-video-editor` gains five thinking principles: the voice is the timeline; the music is the grid; one continuous camera; prove the claim in the picture; a number for every taste;
+  - it also gains "What a strong spec answers" (inputs with defaults, script, voice, direction, structure, sound, build, gotchas, start), the checkpoint ladder (script -> voice takes -> stills -> Studio -> one render), seven new mistake rows, and `references/worked-example-launch-film.md` (a paraphrased spec next to the measured film);
+  - `frame_qa --allow t0-t1` records single-frame jumps inside a PLANNED fast run as `pop_allowed` (info); every other jump still fails;
+  - `video-brief-intake` asks for every input once, each with a stated default (claims and rights never defaulted);
+  - `render-qa-delivery` checks the voice-over-music level per phrase.
+- New tools and blocks for voice-and-music pieces (2026-10-05; tested on synthetic signals, on real FFmpeg mixes and on a real 52 s Hebrew talking head):
+  - `tools/word_retime.py`: speech chunks split at pauses of at least 100 ms; each chunk's first word pinned to its measured onset (1 ms). Fast mode re-uses words.json; `--model-dir` re-transcribes every chunk on its own;
+  - `tools/vo_clean.py`: long pauses cut to a set length from their middle, phrases levelled toward the median with gain changed only in pauses, and the word table re-timed through the same cuts;
+  - `src/core/vo.py`: the shared, pure audio functions;
+  - `hf_mix`: SFX `"align": "peak"` (the measured peak lands on the event, trimmed around it), and `vo_over_music` per phrase on the stems after ducking with an optional target;
+  - blocks `typed-caption` (letters from measured onsets, caret, step-back, a stressed word in a gradient with a glow, shrink-to-fit) and `liquid-glass` (frost, a refracting edge ring along the shape's normal, milk, sheen, rim, shadow, a pastel aura). Both are admitted by `hf_blocks verify` and checked on stills.
 
 ### Added
 - `tools/hf_studio.py`: opens the project in HyperFrames Studio (owner rule, AGENTS.md rule 10) with the pinned engine; probes the server after start (some agent hosts kill background children) and offers `--attach` for the host's background command; the URL carries `?p=<project>` because every project is called `hf`.

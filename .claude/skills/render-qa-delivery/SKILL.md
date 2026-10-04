@@ -37,7 +37,7 @@ In: `hf/` project, approved PROMPT.md, `assets/mix.wav` (or the render's audio),
 | 3 | Snapshots | `snapshot --at t1,t2,t3,t4,t5 --describe false` at transitions, new effects at peak, keywords at full size | 1-2 min per pack |
 | 4 | Studio review / range render | `preview`; `hf_segment <hf> --from a --to b --qa` only for render-only risks | 2-4 min per range vs 8-13 full |
 | 5 | ONE full render | `hf_deliver <hf> --name <n> --draft` for self-check; final only after preview approval | 8-13 min (4-21 observed) |
-| 6 | Automatic QA, new file only | `frame_qa`, `caption_qa --band <top>:1450`, `motion_qa`, `face_center audit`, `color_check`, then `qa delivery` / `scripts/qa_aggregate.py` | 2-4 min |
+| 6 | Automatic QA, new file only | `frame_qa` (`--allow t0-t1` for each PLANNED fast run, e.g. images on 16th notes; any other single-frame jump fails), the voice-over-music level per phrase when music sits under a voice (`hf_mix --report`), `caption_qa --band <top>:1450`, `motion_qa`, `face_center audit`, `color_check`, then `qa delivery` / `scripts/qa_aggregate.py` | 2-4 min |
 | 7 | Visual review, 4 axes | contact sheets, tiles <= 180-270 px; `references/visual-review.md` | 10-15 min |
 | 8 | ONE fix round | one numbered list -> one patch -> stages 1-4 on touched ranges -> one full render -> 6-7 on corrected ranges | <= 45 min |
 | 9 | Deliver | verify on the final file; manifest; naming; present | 15 min |

@@ -20,7 +20,7 @@ def run(tool, *args, env=None, timeout=120):
     return subprocess.run([sys.executable, "-X", "utf8", str(TOOLS / f"{tool}.py"), *map(str, args)], capture_output=True, text=True, encoding="utf-8", timeout=timeout, env=env)
 
 
-@pytest.mark.parametrize("tool", ["transcribe", "new_project", "render_lock", "ledger", "hf_segment", "hf_deliver"])
+@pytest.mark.parametrize("tool", ["transcribe", "new_project", "render_lock", "ledger", "hf_segment", "hf_deliver", "word_retime", "vo_clean"])
 def test_help_under_one_and_a_half_seconds(tool):
     t = time.monotonic()
     p = run(tool, "--help")
@@ -158,3 +158,18 @@ def test_hf_deliver_loudnorm_aims_under_the_true_peak_gate():
     import hf_deliver
 
     assert hf_deliver.TP_MARGIN_DB >= 0.3  # a target equal to the gate measured -0.99 vs -1.0 after AAC (2026-10-04)
+
+
+def test_frame_qa_allows_pops_only_inside_planned_fast_runs():
+    import frame_qa
+    from core.timebase import FrameClock
+
+    means = [100.0] * 20
+    diffs = [0.0] * 20
+    for i in (5, 15):  # a single different frame at 5 and at 15
+        diffs[i] = diffs[i + 1] = 60.0
+    clock = FrameClock.cfr("10", 20)
+    allow = frame_qa.allowed_frames(["0.4-0.6"], 10.0)  # frames 4..6: a 16th-note run
+    findings, _ = frame_qa.analyze(means, diffs, clock=clock, allow_frames=allow)
+    codes = {(f.code, f.frame) for f in findings}
+    assert ("pop_allowed", 5) in codes and ("pop_frame", 15) in codes and ("pop_frame", 5) not in codes

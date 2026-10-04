@@ -15,7 +15,7 @@ sys.path.insert(0, str(REPO / "src"))
 
 import hf_blocks  # noqa: E402
 
-BLOCK_NAMES = {"voice-orb", "task-steps", "boarding-pass-stamp", "notification-stack", "film-burn", "speaker-cutout-behind", "caption"}
+BLOCK_NAMES = {"voice-orb", "task-steps", "boarding-pass-stamp", "notification-stack", "film-burn", "speaker-cutout-behind", "caption", "typed-caption", "liquid-glass"}
 
 
 def test_every_block_has_its_five_files_and_a_valid_manifest():

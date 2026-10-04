@@ -77,7 +77,7 @@ Every skill, workflow and tool in one place. Skills are specified with determini
 - `agent-content/references/platform-specs.md` - Platform specs, delivery presets and AI-disclosure — dated reference
 - `agent-content/references/three-d-routes.md` - 3D routes — dated reference
 
-## Tools (34)
+## Tools (36)
 
 | tool | purpose | usage |
 |---|---|---|
@@ -92,7 +92,7 @@ Every skill, workflow and tool in one place. Skills are specified with determini
 | `tools/cutout.py` | cutout - cut the speaker out of a clip as a transparent video (WebM VP9 alpha or ProRes 4444), ONLY for the beats that put graphics behind the speaker. | python tools/cutout.py <clip> -o hf/assets/video/speaker.webm [--from 12.0 --to 18.0] [--route native\|onnx\|external] [--cut-at 14.2,16.0 \| --cuts src_cuts.json] [--model m.onnx] [--stride 1] [--alpha-from alpha.mp4] [--erode 4] [--blur 1.8] [--quality fast\|balanced\|best] [--cache-dir DIR] [--no-cache] [--timeout 7200] |
 | `tools/doctor.py` | doctor - health check AND hardware auto-detection. Decides the safest working profile for THIS machine (no questions asked). | python tools/doctor.py [report\|recommend\|smoke] [--json] [--work-root DIR] [--out report.json] |
 | `tools/face_center.py` | face_center - where is the speaker's face, and is it centred? (`source` measures, `audit` judges) | python tools/face_center.py source <video> -o faces.json [--model yunet.onnx] [--every 5] [--max-width 480] [--min-coverage 0.5] [--timeout 900] python tools/face_center.py audit <faces.json> [--tol 0.08] [--min-run 6] [--json-out r.json] |
-| `tools/frame_qa.py` | frame_qa - decode EVERY frame of a video and flag black frames, flashes, one-frame pops, holds and hard cuts. | python tools/frame_qa.py <video> [--black-mean 4] [--flash-mean 250] [--pop-diff 25] [--hold-frames 8] [--cut-diff 40] [--allow-black-edge 0] [--timeout 900] [--max-width 320] [--json-out report.json] |
+| `tools/frame_qa.py` | frame_qa - decode EVERY frame of a video and flag black frames, flashes, one-frame pops, holds and hard cuts. | python tools/frame_qa.py <video> [--black-mean 4] [--flash-mean 250] [--pop-diff 25] [--hold-frames 8] [--cut-diff 40] [--allow-black-edge 0] [--allow t0-t1 ...] [--timeout 900] [--max-width 320] [--json-out report.json] |
 | `tools/frames.py` | frames - the zoom tool of video-analysis: EVERY frame (or every Nth) of a short window around a moment, on one labelled sheet with tiles >= 280 px. | python tools/frames.py <video> --at <seconds> [--pad 0.25] [--step 1] [--tile 280] [--cols 6] --out analysis/<video> |
 | `tools/grade_bake.py` | grade_bake - bake a colour grade into the A-roll as a FILE with FFmpeg ("grade = file, not attribute"). | python tools/grade_bake.py <source> -o <out.mp4> [--lut grade.cube] [--eq brightness=0.03:contrast=1.05:saturation=1.1:gamma=1.0] [--colorbalance "rs=0.02:bs=-0.02"] [--ss 12.0 --to 18.0] [--preroll-frames 6] [--crf 12] [--preset medium] |
 | `tools/hf_blocks.py` | hf_blocks - the studio's own HyperFrames block library: list, add to a project, feed with real data, and ADMIT (verify in an empty project). | python tools/hf_blocks.py <list\|add\|levels\|caption-words\|verify> ...      (details below) |
@@ -115,6 +115,8 @@ Every skill, workflow and tool in one place. Skills are specified with determini
 | `tools/source_cuts.py` | source_cuts - find the hidden cuts inside a rough-cut source video and the frame ranges a cover (B-roll / zoom) must hide. | python tools/source_cuts.py <video> [-o src_cuts.json] [--margin 6] [--min-diff 18] [--sigma 6] [--timeout 900] |
 | `tools/transcribe.py` | transcribe - word-level speech-to-text (Hebrew first) with route auto-selection and a CPU route that always works. | python tools/transcribe.py <audio-or-video> -o words.json [--language he] [--model-dir DIR \| --allow-download] [--revision SHA] [--vad] [--beam 5] [--threads N] python tools/transcribe.py --check          (which routes are usable on this machine; imports nothing heavy beyond find_spec) |
 | `tools/ui.py` | ui - search and READ shadcn-registry components as source (nothing is installed), with the licence tier of each registry next to every hit. | python tools/ui.py registries [--query text] [--tier ok\|restricted\|excluded\|unknown] [--json] python tools/ui.py search "<english description>" [--registry @magicui ...] [--limit 20] [--json]     (default: the ok-tier registries) python tools/ui.py view @registry/item [--source] [--save DIR] [--json] python tools/ui.py add-command @registry/item                                                         (prints the command, runs nothing) common: [--offline] [--cache-dir DIR] [--timeout 20] |
+| `tools/vo_clean.py` | vo_clean - tighten and level a voice-over: long pauses cut to a set length, phrases levelled toward the median, gain moved only in pauses. | python tools/vo_clean.py <voice.wav> -o voice_clean.wav [--max-pause 0.28] [--target 0.20] [--amount 0.85] [--protect 3.2,7.9] [--words words.json --words-out words_clean.json] |
+| `tools/word_retime.py` | word_retime - make a word table frame-true: cut the read at every pause, pin each chunk's first word to its MEASURED onset. | python tools/word_retime.py <voice.wav\|video> --words words.json -o words_retimed.json [--min-pause 0.10] [--model-dir DIR --language he] |
 
 ## Ideal pipeline
 

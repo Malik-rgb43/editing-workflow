@@ -39,6 +39,9 @@ Principles to keep: a protagonist object that morphs (no cutting away); at most 
 7. **Every transition different.** Choose from the vocabulary (zoom-through into an object, shared element, 3D page fall-away, light-line bloom, match-move of a number, whip with blur, clip-path portal, push into a device).
 8. **Four approval stills before any full render** (`<start>`), named by frame.
 9. In HyperFrames the **paused GSAP timeline plays the role of `seek(t)`**: every style is a pure function of time.
+10. **The voice is the timeline.** With a voice-over, measure a word table first (onsets re-timed per phrase). Captions, scene starts and the stressed word read it, and nothing is placed by eye.
+11. **The music is the grid.** Anchor the drop to the line that matters. Fast runs (8th or 16th notes) belong only where the energy peaks, each switch with its own click; everything else drifts.
+12. **Inputs with defaults, gotchas written down, a checkpoint ladder** (script -> voice takes -> stills -> render). This is the full question list in `pro-video-editor` ("What a strong spec answers"), and a measured worked example is in `pro-video-editor/references/worked-example-launch-film.md`.
 
 **Permanent Banned list** (union of the author's lists; add each new note): crossfade · fade as a transition · bounce on text · glow on static text · small corner labels / "feature pills" that look like AI · the same transition trick twice · an empty screen (a dot or rings on black) · a static hold ≥ 1 s in promo and motion · template look · another brand's signature colour · stock UI kits · accent colour before the reveal (launch default) · a 3D object covering information such as a price · full-film `backdrop-filter` / large blur. (src: distilled/OWNER_STYLE §M) `[RULE-owner]`
 

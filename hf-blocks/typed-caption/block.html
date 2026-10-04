@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"lines","type":"string","label":"Lines: JSON array of {words:[{w,start,end}], stress:\"word\"} - seconds from the start of THIS block (measured onsets: tools/word_retime.py)","default":"[{\"words\":[{\"w\":\"The\",\"start\":0.2,\"end\":0.35},{\"w\":\"more\",\"start\":0.35,\"end\":0.55},{\"w\":\"you\",\"start\":0.55,\"end\":0.7},{\"w\":\"use\",\"start\":0.7,\"end\":0.9},{\"w\":\"it,\",\"start\":0.9,\"end\":1.2}]},{\"words\":[{\"w\":\"the\",\"start\":1.4,\"end\":1.5},{\"w\":\"better\",\"start\":1.5,\"end\":1.9},{\"w\":\"it\",\"start\":1.9,\"end\":2.05},{\"w\":\"gets\",\"start\":2.05,\"end\":2.4}],\"stress\":\"better\"}]"},
+  {"id":"rtl","type":"boolean","label":"Right-to-left text (Hebrew): set on the text element only","default":false},
+  {"id":"size","type":"number","label":"Font size of the active line in px","default":96},
+  {"id":"top","type":"number","label":"Vertical centre of the active line in px","default":960},
+  {"id":"step_back","type":"number","label":"Scale of the previous line (it also moves up and greys)","default":0.62},
+  {"id":"caret","type":"boolean","label":"Show a typing caret","default":true},
+  {"id":"duration","type":"number","label":"Seconds the block lasts (must match the host data-duration)","default":3}
+]'>
+  <head>
+    <meta charset="UTF-8" />
+    <style>
+      /* Typed captions: every word types letter by letter from its MEASURED onset, the previous line steps back (smaller, grey), the
+         stressed word is set in a gradient with a faint glow behind it (never a highlight box: it reads as a text selection).
+         Font from the page (@font-face file + --hfb-font). Palette from the page: --hfb-ink, --hfb-dim, --hfb-grad-a, --hfb-grad-b. */
+      #typed-caption { position: absolute; inset: 0; overflow: hidden; font-family: var(--hfb-font, sans-serif); }
+      #typed-caption .tc-line { position: absolute; left: 60px; right: 60px; text-align: center; white-space: nowrap; color: var(--hfb-ink, #111214);
+        font-weight: 600; letter-spacing: -0.01em; transform-origin: 50% 50%; line-height: 1.12; }
+      #typed-caption .tc-ch { opacity: 0; }
+      #typed-caption .tc-word { position: relative; display: inline-block; isolation: isolate; } /* the glow (z -1) stays behind the letters, inside the word */
+      #typed-caption .tc-stress .tc-ch { background: linear-gradient(100deg, var(--hfb-grad-a, #ff5ea8), var(--hfb-grad-b, #6d5dfc));
+        -webkit-background-clip: text; background-clip: text; color: transparent; }
+      #typed-caption .tc-glow { position: absolute; inset: -10% -6%; border-radius: 40%; opacity: 0; filter: blur(26px);
+        background: linear-gradient(100deg, var(--hfb-grad-a, #ff5ea8), var(--hfb-grad-b, #6d5dfc)); z-index: -1; }
+      /* the caret takes NO width (a hidden caret beside every letter must not space the letters out); the bar is drawn by ::after */
+      #typed-caption .tc-caret { display: inline-block; position: relative; width: 0; height: 0.92em; vertical-align: -0.12em; opacity: 0; }
+      #typed-caption .tc-caret::after { content: ""; position: absolute; left: 0.02em; top: 0; width: 0.06em; height: 100%; background: var(--hfb-caret, #6d5dfc); }
+    </style>
+  </head>
+  <body>
+    <div id="typed-caption" data-composition-id="typed-caption" data-width="1080" data-height="1920">
+      <script>
+        (function () {
+          var v = window.__hyperframes.getVariables();
+          var D = Math.max(0.5, Number(v.duration) || 3);
+          var size = Number(v.size) || 96, top = Number(v.top) || 960;
+          var back = Math.min(1, Math.max(0.3, Number(v.step_back) || 0.62));
+          var rtl = v.rtl === true || v.rtl === "true";
+          var caretOn = !(v.caret === false || v.caret === "false");
+          var lines;
+          try { lines = JSON.parse(v.lines); } catch (e) { lines = []; }
+          lines = (Array.isArray(lines) ? lines : []).filter(function (l) { return l && Array.isArray(l.words) && l.words.length; });
+          var root = document.getElementById("typed-caption");
+          var tl = gsap.timeline({ paused: true });
+          var lineH = size * 1.25;
+          var caretSeq = []; // [time, caretId] in order: the caret shown is always the last letter typed
+          lines.forEach(function (line, li) {
+            var el = document.createElement("div");
+            el.className = "tc-line"; el.id = "tc-line-" + li;
+            el.style.fontSize = size + "px"; el.style.top = (top - size * 0.6) + "px";
+            if (rtl) { el.style.direction = "rtl"; }
+            var t0 = Number(line.words[0].start) || 0;
+            line.words.forEach(function (w, wi) {
+              var word = String(w.w || ""), s = Math.max(0, Number(w.start) || 0), e = Math.max(s, Number(w.end) || s);
+              var span = document.createElement("span");
+              var stressed = line.stress && word.replace(/[.,!?;:]+$/, "") === String(line.stress);
+              span.className = "tc-word" + (stressed ? " tc-stress" : ""); span.id = "tc-w-" + li + "-" + wi;
+              var g = null;
+              if (stressed) { g = document.createElement("span"); g.className = "tc-glow"; g.id = "tc-glow-" + li + "-" + wi; span.appendChild(g); }
+              var chars = Array.from(word.replace(/[.]+$/, "")); // no full stops on screen
+              var typeDur = Math.min(0.32, Math.max(0.08, (e - s) * 0.8)); // type fast, then wait for the next word
+              chars.forEach(function (ch, ci) {
+                var c = document.createElement("span");
+                c.className = "tc-ch"; c.id = "tc-c-" + li + "-" + wi + "-" + ci; c.textContent = ch;
+                if (stressed) { c.setAttribute("data-layout-allow-occlusion", ""); } // gradient-clipped letters are transparent boxes: kerning overlap is not occlusion
+                span.appendChild(c);
+                var at = s + (chars.length > 1 ? typeDur * ci / chars.length : 0);
+                tl.set(c, { opacity: 1 }, at); // the element itself: a selector would resolve before the line is in the page
+                if (caretOn) {
+                  var k = document.createElement("span");
+                  k.className = "tc-caret"; k.id = "tc-k-" + li + "-" + wi + "-" + ci;
+                  span.appendChild(k);
+                  caretSeq.push([at, k]);
+                }
+              });
+              if (g) { tl.fromTo(g, { opacity: 0 }, { opacity: 0.38, duration: 0.45, ease: "power2.out" }, s + typeDur); }
+              el.appendChild(span);
+              if (wi < line.words.length - 1) { el.appendChild(document.createTextNode(" ")); }
+            });
+            root.appendChild(el);
+            // shrink to fit: a line wider than the safe width gets a smaller font (measured on the full text, typed or not)
+            var avail = 1080 - 120;
+            if (el.scrollWidth > avail) { el.style.fontSize = Math.floor(size * avail / el.scrollWidth) + "px"; }
+            // the previous lines step back when this line starts typing (eased, 0.4 s: never a pop)
+            for (var p = 0; p < li; p++) {
+              var depth = li - p;
+              tl.to("#tc-line-" + p, { y: -lineH * (depth === 1 ? 0.95 : 1.7), scale: depth === 1 ? back : back * 0.8,
+                color: "var(--hfb-dim, #8a8d93)", opacity: depth === 1 ? 1 : 0, duration: 0.4, ease: "power3.out" }, Math.max(0, t0 - 0.05));
+            }
+          });
+          // caret: only the most recently typed letter carries it; it blinks while waiting (deterministic sets, no CSS animation)
+          caretSeq.forEach(function (c, i) {
+            tl.set(c[1], { opacity: 1 }, c[0]);
+            var next = i + 1 < caretSeq.length ? caretSeq[i + 1][0] : D;
+            tl.set(c[1], { opacity: 0 }, next);
+            for (var b = c[0] + 0.5; b < next; b += 1.0) {
+              tl.set(c[1], { opacity: 0 }, b);
+              if (b + 0.5 < next) { tl.set(c[1], { opacity: 1 }, b + 0.5); }
+            }
+          });
+          tl.to("#typed-caption", { opacity: 1, duration: D }, 0); // the timeline lasts the whole block
+          window.__timelines = window.__timelines || {};
+          window.__timelines["typed-caption"] = tl;
+        })();
+      </script>
+    </div>
+  </body>
+</html>
