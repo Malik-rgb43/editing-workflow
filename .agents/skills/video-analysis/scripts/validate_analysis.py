@@ -170,8 +170,6 @@ def check_measurements(rep, d: Path, m, stage):
         if not env.get(k):
             rep.add(C, "insufficient", "ENV_MISSING", f"environment.{k} not recorded (machine profile / ASR route gate)")
     route = str(env.get("asr_route", ""))
-    if "vulkan" in route and "ggml_vk_disable_coopmat" not in {k.lower(): v for k, v in (env.get("env") or {}).items()}:
-        rep.add(C, "warn", "VULKAN_ENV", "Vulkan route: record GGML_VK_DISABLE_COOPMAT (the reference machine's driver crashes without =1; other drivers untested)")
     # coverage
     mode = cov.get("mode")
     if mode not in ("full", "sampled"):

@@ -87,7 +87,7 @@ The toolkit has **no telemetry endpoint** and sends nothing home. Its dependenci
 ## 9. Paths, deletion and export tools
 
 - **Path handling is tested** with spaces, apostrophes, Hebrew letters, emoji and long paths, and with **forbidden roots** (a tool must refuse to write to or delete the source folder, any ancestor of it, a sibling, a symlink or junction pointing there, or an empty argument).
-- **A tool that deletes or overwrites must validate the resolved path first.** An export tool that runs a recursive delete on an unchecked output path can destroy the input tree — the owner's own export tool had exactly this open defect, which is why such a tool is not shipped to students until fixed and tested on disposable fixtures. `[PROVEN-internal]`
+- **A tool that deletes or overwrites must validate the resolved path first.** An export tool that runs a recursive delete on an unchecked output path can destroy the input tree — the author's own export tool had exactly this open defect, which is why such a tool is not shipped to students until fixed and tested on disposable fixtures. `[PROVEN-internal]`
 - **An export or support bundle must not carry a privacy report that quotes private names** — the report itself would leak what it found. Findings are a gate (non-zero exit), not a note inside the package. `[PROVEN-internal]`
 - Use an **ASCII work/cache root**; keep Hebrew names for display titles; never rename source folders. Sources are read-only by convention: **copy, never move**. Finals folders hold finals plus the manifest only.
 - Never run a delete or "clean" command on a path you did not resolve and print first.

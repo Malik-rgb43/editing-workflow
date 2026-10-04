@@ -1,0 +1,5 @@
+interface:
+  display_name: "Talking Head Editor"
+  short_description: "Edit a talking-head / speaker-to-camera video (expert, coach, service provider) from raw or rough-cut footage into a pre"
+policy:
+  allow_implicit_invocation: false

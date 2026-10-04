@@ -40,7 +40,7 @@ Measure the complete **final** stream after encode/mux. Bind the report to file 
 
 `loudnorm` facts `[VERIFIED-external]` scoped: linear mode needs all measured values from the exact processed input; `linear=true` can silently fall back to dynamic — inspect `normalization_type`; dynamic mode upsamples to 192 kHz for true-peak detection so set the output rate explicitly (48 kHz); mono for stereo playback needs a dual-mono policy. Owner trap `[PROVEN-internal]`: a raw mix peaking above 0 dBFS makes two-pass loudnorm fall back to dynamic and crushes LRA (1.9 LU) — **pre-limit with `alimiter=limit=0.56`** before the two passes (LRA 3.4).
 
-## 4. Mix rules and numbers (owner's mix tool; read statically; limits stated)
+## 4. Mix rules and numbers (author's mix tool; read statically; limits stated)
 | Item | Value | Limit / status |
 |---|---|---|
 | VO line, before gain | normalised to **−14.5 LUFS** (pyloudnorm), then per-line gain | `[PROVEN-internal]` |

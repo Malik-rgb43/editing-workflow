@@ -13,7 +13,7 @@ refresh: "free: re-read each licence file at the pinned version; regenerate the 
 | Field | Value |
 |---|---|
 | Fact set | what may go into the student download; per-licence obligations; component-level licence facts; blocking items; owner-rule reconciliation; release gate and BOM fields |
-| Versions / ids | HyperFrames 0.8.98 (Apache-2.0) · three.js (MIT) · shadcn/ui core (MIT) · GSAP Standard No-Charge licence (effective 2025-04-30, modified 2025-05-30) · Remotion 4.0.531 (custom v4; v5 "upcoming") · FFmpeg (LGPL 2.1+ baseline) · faster-whisper / whisper.cpp (MIT) · SDXL-Turbo community licence (2024-07-05) · C2PA 2.4 |
+| Versions / ids | HyperFrames 0.8.98 (Apache-2.0) · three.js (MIT) · shadcn/ui core (MIT) · GSAP Standard No-Charge licence (effective 2025-04-30, modified 2025-05-30) · Remotion 4.0.531 (custom v4; v5 "upcoming") · FFmpeg (LGPL 2.1+ baseline) · faster-whisper (MIT) · SDXL-Turbo community licence (2024-07-05) · C2PA 2.4 |
 | `checked_at` | **2026-10-02** (= research date; **must be refreshed before use**) |
 | Source | blueprint `SECURITY_AND_LICENSING.md`; `distilled/08-…/legal-and-licensing.md` (T18 register: 392 candidate rows, **none cleared**, 114 `unresolved`); `research/tracks/T18-legal-licensing/LEGAL_GUIDE.md` |
 | Scope / plan / region | worldwide student bundle assessed generically; US/EU/Israel statements are in the legal guide |
@@ -50,11 +50,10 @@ refresh: "free: re-read each licence file at the pinned version; regenerate the 
 | GSAP + standard plugins | Standard No-Charge GSAP licence — **not MIT**; commercial and agent-generated code permitted; a competing visual no-code animation builder needs written consent | keep notices |
 | Remotion 4.0.531 `[VERIFIED-external]` | custom v4 licence; free for qualified individuals/small for-profits (≤ 3 employees; headcounts aggregate); FAQ separates MP4-only agency delivery from client operation of project code; **v5 terms "upcoming"** | HyperFrames only in v1.0 (decision default Q14); keep the exact tagged v4 LICENSE; separate company gate |
 | FFmpeg | LGPL 2.1+ baseline; GPL/nonfree optional components | install instructions, not binaries |
-| faster-whisper / whisper.cpp | MIT | weights/conversions separate |
+| faster-whisper | MIT | weights/conversions separate |
 | ivrit-ai turbo CT2 (rev `72ad623a37947395efcc3933132353790e5a12f5`) | Apache-2.0 model-card declaration | pin the exact checkpoint; does not license other conversions or the training recordings |
 | **ivrit-ai ONNX conversions** (revs `edb17b6b65f60a299d4b620d043e15b60321e5ff`, `9dbd271d18ff3f85140b64cf7949d53da6581e57`) `[VERIFIED-external]` | **unresolved** (READMEs failed to read, no licence metadata) | **no redistribution clearance**; failure to read is not proof of a restrictive licence |
 | ivrit.ai speech datasets | training / academic purpose terms | not course footage, not a voice-cloning fixture |
-| Depth Anything V2 | Small Apache-2.0; Base/Large/Giant **CC-BY-NC 4.0** | exclude NC sizes from the commercial route |
 | Tencent Hunyuan 3D 2.1 | custom Community licence; excludes **EU, UK, South Korea** | not unrestricted |
 | Ultralytics (YOLO) | AGPL-3.0 | corresponding-source / network / integration review |
 | SDXL-Turbo `[VERIFIED-external]` | Stability AI Community License (2024-07-05) | commercial use needs registration + revenue conditions (~US$1 M organisation revenue); owner eligibility unresolved |
@@ -66,7 +65,7 @@ refresh: "free: re-read each licence file at the pinned version; regenerate the 
 | Freesound | per-file CC0 / CC-BY / CC-BY-NC | not a uniform CC0 |
 
 ## 5. Blocking today (cannot go in the student download)
-Mixkit SFX files (standalone/tool/template/source bundles prohibited; integrated rendered end products OK) · Eleven Music self-serve outputs (libraries/repositories/resale prohibited) · Artlist assets (integrated projects only) · Suno outputs (no generic repo clearance) · Adobe Fonts and Apple SF (no file/bundle grant; SF is UI mock-ups only) · ivrit.ai ONNX conversions · ivrit.ai training data · Depth Anything V2 Base/Large/Giant · Hunyuan 3D 2.1 · FFmpeg binaries · Ultralytics · RVM (as part of the bundle) · any proprietary font whose EULA was not read (installed ≠ redistributable) · any owner/client media. Fonts to bundle: only OFL families with their licence files and reserved names kept (Rubik, Heebo, Assistant, Alef, IBM Plex Sans Hebrew, Noto Sans/Serif Hebrew, Frank Ruhl Libre, Secular One, Varela Round, Arimo, Karantina — headers read at google/fonts commit `9710da1eacb3be272583c3224dcb70f9da6eadbb`); record file hash per font.
+Mixkit SFX files (standalone/tool/template/source bundles prohibited; integrated rendered end products OK) · Eleven Music self-serve outputs (libraries/repositories/resale prohibited) · Artlist assets (integrated projects only) · Suno outputs (no generic repo clearance) · Adobe Fonts and Apple SF (no file/bundle grant; SF is UI mock-ups only) · ivrit.ai ONNX conversions · ivrit.ai training data · Hunyuan 3D 2.1 · FFmpeg binaries · Ultralytics · RVM (as part of the bundle) · any proprietary font whose EULA was not read (installed ≠ redistributable) · any owner/client media. Fonts to bundle: only OFL families with their licence files and reserved names kept (Rubik, Heebo, Assistant, Alef, IBM Plex Sans Hebrew, Noto Sans/Serif Hebrew, Frank Ruhl Libre, Secular One, Varela Round, Arimo, Karantina — headers read at google/fonts commit `9710da1eacb3be272583c3224dcb70f9da6eadbb`); record file hash per font.
 
 ## 6. Owner rules vs the legal research (reconciled for the course)
 | Owner rule | Research | Decision |

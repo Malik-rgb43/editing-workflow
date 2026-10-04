@@ -12,7 +12,7 @@ a green dry run says the eval DATA is well-formed, never that any skill triggers
 Model lane (stub): REFUSES to run unless --approved-by-owner AND --approval-ref are given, and refuses when the planned
 number of invocations (cases x hosts x attempts) exceeds --budget (default 60, the E05 ceiling; no hidden grader or
 retry calls). Even when authorised it only raises NotImplementedError and exits 3 (not_run): no runner is implemented
-because the owner decision Q4 is open. A future implementation must decrement a durable counter BEFORE each spawn,
+because the author decision Q4 is open. A future implementation must decrement a durable counter BEFORE each spawn,
 count retries/judges as invocations, isolate the workspace, never load credentials from fixtures, and treat errors as
 invalid results rather than negative passes (see research SKILL_EVAL_HARNESS.md sections 2, 5, 8, 9).
 Exit codes: 0 ok, 1 invalid eval data, 2 usage or REFUSED, 3 not_run.
@@ -165,7 +165,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--strict", action="store_true", help="exit 3 when there is nothing to evaluate")
     parser.add_argument("--model-lane", action="store_true", help="request the (unimplemented) authorised model lane")
     parser.add_argument("--approved-by-owner", action="store_true", help="owner explicitly approved this model run (required for --model-lane)")
-    parser.add_argument("--approval-ref", default=None, help="reference of the owner's campaign approval (required for --model-lane)")
+    parser.add_argument("--approval-ref", default=None, help="reference of the author's campaign approval (required for --model-lane)")
     parser.add_argument("--budget", type=int, default=DEFAULT_BUDGET, help=f"maximum model invocations (default and cap {DEFAULT_BUDGET})")
     parser.add_argument("--hosts", type=int, default=1, help="number of hosts (planning only)")
     parser.add_argument("--attempts", type=int, default=1, help="attempts per case (planning only)")

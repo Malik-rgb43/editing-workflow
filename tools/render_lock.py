@@ -2,7 +2,7 @@
 
 One heavy job at a time (render, ``hyperframes check``, Blender, ASR, matte): the lease is an OS-level lock on ONE absolute shared
 path (``[paths] lock_path``; default a per-user state folder). The OS releases it if the process dies; it is never taken over
-automatically while its lifetime is uncertain; the owner/heartbeat file beside it is advisory only. A forged or ancient timestamp can
+automatically while its lifetime is uncertain; the author/heartbeat file beside it is advisory only. A forged or ancient timestamp can
 neither steal nor free a live lock (both races of the original were reproduced and are regression-tested in tests/unit/test_core_lock.py).
 
 Usage:

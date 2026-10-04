@@ -12,7 +12,20 @@ The block below is rewritten by `python scripts/gen_bom.py --update-notices` fro
 <!-- BEGIN GENERATED:bom -->
 <!-- GENERATED from docs/BOM.json by scripts/gen_bom.py --update-notices - edit outside this block only. -->
 
-No third-party files are bundled in this tree (nothing to attribute here).
+| file | licence | source | register_id |
+|---|---|---|---|
+| `.agents/skills/revision-notes-handler/scripts/ui/OFL-Heebo.txt` | OFL-1.1 | https://github.com/google/fonts/tree/main/ofl/heebo (Heebo[wght].ttf, 122,012 B, sha256 18f930b5...); subset to Hebrew + Latin as WOFF2 with fontTools pyftsubset on 2026-10-04; OFL.txt shipped beside it |  |
+| `.agents/skills/revision-notes-handler/scripts/ui/heebo-he-latin.woff2` | OFL-1.1 | https://github.com/google/fonts/tree/main/ofl/heebo (Heebo[wght].ttf, 122,012 B, sha256 18f930b5...); subset to Hebrew + Latin as WOFF2 with fontTools pyftsubset on 2026-10-04; OFL.txt shipped beside it |  |
+| `.agents/skills/visual-choice-board/scripts/ui/OFL-Heebo.txt` | OFL-1.1 | https://github.com/google/fonts/tree/main/ofl/heebo (Heebo[wght].ttf, 122,012 B, sha256 18f930b5...); subset to Hebrew + Latin as WOFF2 with fontTools pyftsubset on 2026-10-04; OFL.txt shipped beside it |  |
+| `.agents/skills/visual-choice-board/scripts/ui/heebo-he-latin.woff2` | OFL-1.1 | https://github.com/google/fonts/tree/main/ofl/heebo (Heebo[wght].ttf, 122,012 B, sha256 18f930b5...); subset to Hebrew + Latin as WOFF2 with fontTools pyftsubset on 2026-10-04; OFL.txt shipped beside it |  |
+| `.claude/skills/revision-notes-handler/scripts/ui/OFL-Heebo.txt` | OFL-1.1 | https://github.com/google/fonts/tree/main/ofl/heebo (Heebo[wght].ttf, 122,012 B, sha256 18f930b5...); subset to Hebrew + Latin as WOFF2 with fontTools pyftsubset on 2026-10-04; OFL.txt shipped beside it |  |
+| `.claude/skills/revision-notes-handler/scripts/ui/heebo-he-latin.woff2` | OFL-1.1 | https://github.com/google/fonts/tree/main/ofl/heebo (Heebo[wght].ttf, 122,012 B, sha256 18f930b5...); subset to Hebrew + Latin as WOFF2 with fontTools pyftsubset on 2026-10-04; OFL.txt shipped beside it |  |
+| `.claude/skills/visual-choice-board/scripts/ui/OFL-Heebo.txt` | OFL-1.1 | https://github.com/google/fonts/tree/main/ofl/heebo (Heebo[wght].ttf, 122,012 B, sha256 18f930b5...); subset to Hebrew + Latin as WOFF2 with fontTools pyftsubset on 2026-10-04; OFL.txt shipped beside it |  |
+| `.claude/skills/visual-choice-board/scripts/ui/heebo-he-latin.woff2` | OFL-1.1 | https://github.com/google/fonts/tree/main/ofl/heebo (Heebo[wght].ttf, 122,012 B, sha256 18f930b5...); subset to Hebrew + Latin as WOFF2 with fontTools pyftsubset on 2026-10-04; OFL.txt shipped beside it |  |
+| `agent-content/skills/revision-notes-handler/scripts/ui/OFL-Heebo.txt` | OFL-1.1 | https://github.com/google/fonts/tree/main/ofl/heebo (Heebo[wght].ttf, 122,012 B, sha256 18f930b5...); subset to Hebrew + Latin as WOFF2 with fontTools pyftsubset on 2026-10-04; OFL.txt shipped beside it |  |
+| `agent-content/skills/revision-notes-handler/scripts/ui/heebo-he-latin.woff2` | OFL-1.1 | https://github.com/google/fonts/tree/main/ofl/heebo (Heebo[wght].ttf, 122,012 B, sha256 18f930b5...); subset to Hebrew + Latin as WOFF2 with fontTools pyftsubset on 2026-10-04; OFL.txt shipped beside it |  |
+| `agent-content/skills/visual-choice-board/scripts/ui/OFL-Heebo.txt` | OFL-1.1 | https://github.com/google/fonts/tree/main/ofl/heebo (Heebo[wght].ttf, 122,012 B, sha256 18f930b5...); subset to Hebrew + Latin as WOFF2 with fontTools pyftsubset on 2026-10-04; OFL.txt shipped beside it |  |
+| `agent-content/skills/visual-choice-board/scripts/ui/heebo-he-latin.woff2` | OFL-1.1 | https://github.com/google/fonts/tree/main/ofl/heebo (Heebo[wght].ttf, 122,012 B, sha256 18f930b5...); subset to Hebrew + Latin as WOFF2 with fontTools pyftsubset on 2026-10-04; OFL.txt shipped beside it |  |
 
 <!-- END GENERATED:bom -->
 
@@ -29,9 +42,8 @@ redistributed by this repository; obligations start only if a file is ever added
 | GSAP + standard plugins | GSAP Standard No-Charge licence (not MIT) | installed by the student; competing no-code animation builders need written consent |
 | Remotion | custom v4 licence (company/employee-size conditions) | optional adapter only, behind a separate company/project licence gate |
 | FFmpeg | LGPL 2.1+ baseline; GPL/nonfree optional components | binaries are never bundled; install instructions only |
-| faster-whisper, whisper.cpp | MIT | weights and conversions are separate and pinned independently |
+| faster-whisper | MIT | weights and conversions are separate and pinned independently |
 | ivrit.ai Whisper CT2 conversion (pinned revision) | Apache-2.0 per model-card declaration | not bundled; ONNX conversions have no redistribution clearance and must never ship |
-| Depth Anything V2 | Small: Apache-2.0; Base/Large/Giant: CC-BY-NC-4.0 | only the Small size is in scope; NC sizes are blocked by `scripts/gen_bom.py` |
 | Tencent Hunyuan 3D 2.1 | custom community licence (excludes EU, UK, South Korea) | not bundled; blocked by `scripts/gen_bom.py` |
 | Ultralytics (YOLO) | AGPL-3.0 | not used; weights blocked by `scripts/gen_bom.py` |
 | SDXL-Turbo | Stability AI Community License | not bundled; commercial eligibility unresolved |
@@ -42,6 +54,6 @@ redistributed by this repository; obligations start only if a file is ever added
 ## Never shipped (blocked by the BOM gate)
 
 Mixkit, ElevenLabs Music, Artlist and Suno files; Adobe and Apple fonts; FFmpeg binaries; ivrit.ai ONNX conversions and training
-data; Depth Anything V2 Base/Large/Giant; Hunyuan 3D 2.1; RVM weights; Ultralytics weights; owner or client footage,
+data; Hunyuan 3D 2.1; RVM weights; Ultralytics weights; owner or client footage,
 transcripts, memory, session logs and brand kits; any file whose licence is `unknown`. See `scripts/gen_bom.py` and
 `blueprint/SECURITY_AND_LICENSING.md` section 3.

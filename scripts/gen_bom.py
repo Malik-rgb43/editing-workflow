@@ -6,7 +6,7 @@ For every file that would ship (git view when available): path, size, sha256, de
 vs third-party vs generated, and the rule from licenses.toml that declared it. Writes docs/BOM.json and
 docs/BOM.md (deterministic: no timestamps). FAILS (exit 1) when any file is blocked or has no declared licence
 (SECURITY_AND_LICENSING.md section 3): Mixkit / ElevenLabs / Artlist / Suno files, Adobe or Apple fonts,
-FFmpeg binaries, ivrit.ai ONNX/weights/data, Depth Anything Base/Large/Giant, Hunyuan 3D 2.1, RVM weights,
+FFmpeg binaries, ivrit.ai ONNX/weights/data, Hunyuan 3D 2.1, RVM weights,
 Ultralytics/YOLO weights, SDXL-Turbo weights, the knowledge-pack folder, licences that are unknown,
 proprietary, non-commercial, GPL/AGPL or community-licence, third-party files without a source, and any
 video/audio/image/font/weights/archive/executable file that no rule explicitly allows.
@@ -61,7 +61,6 @@ BLOCK_RULES: list[tuple[str, re.Pattern[str], set[str] | None, str]] = [
     ("apple-font", re.compile(r"(?<![a-z])sf[-_ ]?(?:pro|compact|mono|arabic|hebrew)|san[-_ ]?francisco"), {"font"}, "Apple SF fonts are not redistributable"),
     ("ffmpeg-binary", re.compile(r"(?:^|/)(?:lib)?(?:ffmpeg|ffprobe|ffplay)(?:\.exe)?$|(?:^|/)(?:lib)?(?:avcodec|avformat|avutil|avfilter|avdevice|swresample|swscale|postproc)[-\d.]*\.(?:dll|so[.\d]*|dylib)$"), None, "FFmpeg binaries are never bundled (install instructions instead)"),
     ("ivrit-ai", re.compile(r"ivrit"), {"weights", "audio", "video", "archive"}, "ivrit.ai ONNX conversions / weights / training data have no redistribution clearance"),
-    ("depth-anything-nc", re.compile(r"depth[-_ ]?anything(?!.*(?:small|vits))"), {"weights", "archive"}, "Depth Anything V2 Base/Large/Giant (and unspecified sizes) are CC-BY-NC"),
     ("hunyuan3d", re.compile(r"hunyuan[-_ ]?3d"), {"weights", "archive", "executable", "binary"}, "Hunyuan 3D 2.1 community licence is not unrestricted"),
     ("hunyuan3d-code", re.compile(r"(?:^|/)hunyuan[-_ ]?3d[^/]*/"), None, "vendored Hunyuan 3D folder (community licence excludes EU, UK, South Korea)"),
     ("rvm-gpl", re.compile(r"(?<![a-z])rvm(?![a-z])|robust[-_ ]?video[-_ ]?matting"), {"weights", "archive", "executable", "binary"}, "RVM weights are GPL-3.0 (internal use only until resolved)"),

@@ -6,10 +6,10 @@
 | Field | Value |
 |---|---|
 | Stage | runs **after** wf-06/07 approved the **master**, **inside** wf-08 |
-| Owner skill | `multi-video-variants` (+ `render-qa-deliver`) |
+| Owner skill | `video-variants-exporter` (+ `render-qa-delivery`) |
 | Artifacts (exact files) | per ratio a **copy** of the project: `projects/<name>/hf_9x16/`, `hf_4x5/`, `hf_1x1/` (the master stays `hf/`); `_work/qa/<ratio>/<ver>/`; `_work/agents/<name>.progress.md`; `final/<name>_<platform>_<hook>_<aspect>.mp4` ×N; `final/manifest.json` |
 | Exit gate | **GV — every requested output is rendered from the frozen master, QA'd per output, and the manifest is consistent** |
-| Target time | **not measured** (the owner stated none for variants; E12 did not cover them) |
+| Target time | **not measured** (the author stated none for variants; E12 did not cover them) |
 | Paid steps | none by default; a hosted render of derivatives 💲 needs a dated estimate and approval |
 
 ## 1. Principle `[RULE-owner]` `[PROVEN-internal]`

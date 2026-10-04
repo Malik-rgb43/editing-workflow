@@ -9,7 +9,7 @@ Measures, per sampled frame and from the DECODED pixels (full range BT.709 deriv
   sky_chroma        mean chroma magnitude of a sky/neutral reference patch (--sky-roi)
 Regions are EXPLICIT rectangles (fractions x0,y0,x1,y1) or a faces.json from ``face_center`` (the skin ROI is then the central part of the
 nearest face box). Nothing is guessed: a field is ``null`` when its region was not given - and the gate treats null as "not measurable", never
-as a pass. The numeric targets (skin Y 46 %, hue 118, ...) are NAMED PRESETS from one reference scene (see skill color-correction-speaker),
+as a pass. The numeric targets (skin Y 46 %, hue 118, ...) are NAMED PRESETS from one reference scene (see skill speaker-color-correction),
 not universal; the judging is done by that skill's ``scripts/grade_gate.py`` (``gate measurements.json --preset ...``).
 This tool measures the file you point it at: use the CAMERA ORIGINAL for correction decisions and the RENDER for the final check.
 
@@ -55,6 +55,22 @@ def measure_region(frame, roi):
     return {"Y_pct": float(y.mean()) / 255.0 * 100.0, "cb": mcb, "cr": mcr, "chroma": math.hypot(mcb, mcr), "hue_deg": hue}
 
 
+SKIN_HUE_PLAUSIBLE = (70.0, 170.0)
+SKIN_CHROMA_MIN = 5.0
+
+
+def not_skin_reason(m):
+    """None when the region's mean colour could be skin at all, else why not. Deliberately WIDE (the gate band is 105-125 degrees): it only catches a
+    region that missed the face (a dark wall measured hue ~306 and chroma ~1 on real footage), never a merely miscoloured face; rejected samples
+    leave the evidence (the gate then reports fewer person frames) instead of counting as failed skin."""
+    lo, hi = SKIN_HUE_PLAUSIBLE
+    if m["chroma"] < SKIN_CHROMA_MIN:
+        return f"no colour in the region (chroma {m['chroma']:.1f} < {SKIN_CHROMA_MIN}): not skin - the region probably missed the face"
+    if not lo <= m["hue_deg"] <= hi:
+        return f"hue {m['hue_deg']:.0f} degrees is outside anything skin-like ({lo:.0f}-{hi:.0f}): the region probably missed the face"
+    return None
+
+
 def parse_roi(text):
     v = [float(x) for x in text.split(",")]
     if len(v) != 4 or not (0 <= v[0] < v[2] <= 1 and 0 <= v[1] < v[3] <= 1):
@@ -62,14 +78,24 @@ def parse_roi(text):
     return tuple(v)
 
 
-def face_roi(faces, t):
-    """Skin ROI from the nearest faces.json sample at time t: the central part of the face box (cx, cy, h_norm)."""
-    pool = [s for s in faces["samples"] if s.get("cx") is not None]
+FACE_MAX_GAP_S = 1.0
+
+
+def face_roi(faces, t, aspect=1.0, max_gap_s=FACE_MAX_GAP_S):
+    """Skin ROI from the nearest faces.json sample at time t: the central part of the face box (cx, cy, h_norm).
+
+    ``aspect`` = frame width / height: ``h_norm`` is a fraction of the HEIGHT, so the half-width (0.8 x the half-height in pixels) is converted to a
+    fraction of the WIDTH with it - without that the patch was 1.8x too wide on 16:9 and caught hair and background. A sample further than
+    ``max_gap_s`` from t is not used (the face may have moved): no ROI, and the frame counts as "no person" instead of being measured in the wrong place.
+    """
+    pool = [s for s in faces.get("samples", []) if s.get("cx") is not None and s.get("h_norm")]
     if not pool:
         return None
     s = min(pool, key=lambda q: abs(q["time_s"] - t))
+    if abs(s["time_s"] - t) > max_gap_s:
+        return None
     half_h = max(0.01, s["h_norm"] * 0.18)
-    half_w = half_h * 0.8
+    half_w = half_h * 0.8 / max(1e-6, aspect)
     cx, cy = s["cx"], s["cy"]
     return (max(0.0, cx - half_w), max(0.0, cy - half_h), min(1.0, cx + half_w), min(1.0, cy + half_h))
 
@@ -127,11 +153,14 @@ def main(argv=None) -> int:
             y, _, _ = rgb_to_ycc(fr.astype(np.float64))
             p1, p99 = (float(np.percentile(y, q)) / 255.0 * 100.0 for q in (1, 99))
             rec = {"t": round(t, 3), "frame": i, "person": False, "skin_Y": None, "skin_hue": None, "skin_chroma": None, "black_Y": None, "black_cb": None, "black_cr": None, "sky_chroma": None, "p1": round(p1, 2), "p99": round(p99, 2), "bright_sky": None}
-            roi = skin_fixed or (face_roi(faces, t) if faces else None)
+            roi = skin_fixed or (face_roi(faces, t, aspect=sw / sh) if faces else None)
             if roi:
                 m = measure_region(fr, roi)
-                if m:
+                why = not_skin_reason(m) if m else "empty region"
+                if m and why is None:
                     rec.update(person=True, skin_Y=round(m["Y_pct"], 2), skin_hue=round(m["hue_deg"], 2), skin_chroma=round(m["chroma"], 2))
+                elif m:
+                    rec["skin_rejected"] = why
             if black:
                 m = measure_region(fr, black)
                 if m:
@@ -152,7 +181,10 @@ def main(argv=None) -> int:
         print(f"color_scopes: INSUFFICIENT_EVIDENCE - measured {len(frames)} of {len(want)} requested samples", file=sys.stderr)
         return 2
     write_json_atomic(a.out, out)
-    print(json.dumps({"samples": len(frames), "out": a.out, "regions": {"skin": bool(skin_fixed or faces), "black": bool(black), "sky": bool(sky)}}, ensure_ascii=False))
+    rejected = sum(1 for f in frames if f.get("skin_rejected"))
+    if rejected:
+        print(f"color_scopes: {rejected} sample(s) had a region that does not look like skin (see skin_rejected): they count as 'no person'", file=sys.stderr)
+    print(json.dumps({"samples": len(frames), "skin_rejected": rejected, "out": a.out, "regions": {"skin": bool(skin_fixed or faces), "black": bool(black), "sky": bool(sky)}}, ensure_ascii=False))
     return 0
 
 

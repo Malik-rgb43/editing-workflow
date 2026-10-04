@@ -1,0 +1,39 @@
+{
+  "schema": "avc.hf-block/1",
+  "name": "notification-stack",
+  "title": "Notification stack",
+  "description": "Phone-style notification cards: each new one enters on TOP and pushes the older ones down, which fade a little.",
+  "duration_s": 4,
+  "size": [
+    1080,
+    1920
+  ],
+  "overlay": true,
+  "variables": [
+    {
+      "id": "items",
+      "type": "string",
+      "default": "[{\"app\":\"Messages\",\"title\":\"Dana\",\"body\":\"Are you coming tonight?\"},{\"app\":\"Mail\",\"title\":\"Invoice paid\",\"body\":\"The payment arrived.\"},{\"app\":\"Calendar\",\"title\":\"In 10 minutes\",\"body\":\"Client call\"}]"
+    },
+    {
+      "id": "gap_s",
+      "type": "number",
+      "default": 0.9
+    },
+    {
+      "id": "duration",
+      "type": "number",
+      "default": 4
+    }
+  ],
+  "replace": {},
+  "demo_assets": [],
+  "palette": [
+    "--hfb-accent",
+    "--hfb-card",
+    "--hfb-fg",
+    "--hfb-font",
+    "--hfb-muted"
+  ],
+  "license": "Apache-2.0 (written for this toolkit)"
+}

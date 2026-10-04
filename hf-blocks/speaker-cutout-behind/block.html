@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"text","type":"string","label":"Giant text behind the speaker","default":"FOCUS"},
+  {"id":"size","type":"number","label":"Font size in px (a 5-letter word at 230 px is about 860 px wide: shrink it for longer words)","default":230},
+  {"id":"dim","type":"number","label":"0..1 how much the plate is dimmed behind the text","default":0.45},
+  {"id":"duration","type":"number","label":"Seconds the beat lasts (must match the host data-duration)","default":3}
+]'>
+  <head>
+    <meta charset="UTF-8" />
+    <style>
+      /* Layer order, bottom to top: plate (the corrected A-roll) -> dim -> TEXT BEHIND -> cutout (the speaker, alpha) -> nothing else: captions and front UI belong to the page above.
+         The plate and the cutout must be the SAME frames on the SAME timeline (cut the cutout from the corrected plate: tools/cutout.py). Keep the text clear of the body:
+         at 1080x1920 the safe zone is x < 380 or x > 700 for y 300-680 (the body swallows the rest) - for a long word, put it above the head instead.
+         palette = CSS variables set on the host page: --hfb-fg, --hfb-accent */
+      #speaker-cutout-behind { position: absolute; inset: 0; overflow: hidden; background: #000; font-family: var(--hfb-font, sans-serif); }
+      #speaker-cutout-behind video { position: absolute; left: 0; top: 0; width: 100%; height: 100%; object-fit: cover; }
+      #speaker-cutout-behind .scb-dim { position: absolute; inset: 0; background: #000; opacity: 0; }
+      #speaker-cutout-behind .scb-text { position: absolute; left: 0; right: 0; top: 300px; text-align: center; color: var(--hfb-fg, #ffffff); font-size: 230px; font-weight: 900; line-height: 1; letter-spacing: -4px; opacity: 0; unicode-bidi: plaintext; white-space: nowrap; }
+      #speaker-cutout-behind .scb-text em { font-style: normal; color: var(--hfb-accent, #facc15); }
+    </style>
+  </head>
+  <body>
+    <div id="speaker-cutout-behind" data-composition-id="speaker-cutout-behind" data-width="1080" data-height="1920">
+      <video id="speaker-cutout-behind-plate" src="assets/video/plate.mp4" data-start="0" data-duration="3" data-media-start="0" muted playsinline></video>
+      <div class="scb-dim" id="speaker-cutout-behind-dim"></div>
+      <div class="scb-text" id="speaker-cutout-behind-text" dir="auto" data-layout-allow-occlusion></div>
+      <video id="speaker-cutout-behind-cutout" src="assets/video/cutout.webm" data-start="0" data-duration="3" data-media-start="0" muted playsinline></video>
+      <script>
+        (function () {
+          var v = window.__hyperframes.getVariables();
+          var D = Math.max(0.6, Number(v.duration) || 3);
+          var dim = Math.min(1, Math.max(0, Number(v.dim)));
+          if (isNaN(dim)) dim = 0.45;
+          var txt = document.getElementById("speaker-cutout-behind-text");
+          txt.textContent = String(v.text == null ? "" : v.text);
+          txt.style.fontSize = (Number(v.size) || 230) + "px";
+          var tl = gsap.timeline({ paused: true });
+          tl.fromTo("#speaker-cutout-behind-dim", { opacity: 0 }, { opacity: dim, duration: 0.4, ease: "power2.out" }, 0.1);
+          tl.fromTo("#speaker-cutout-behind-text", { opacity: 0, scale: 1.25, y: 40 }, { opacity: 1, scale: 1, y: 0, duration: 0.55, ease: "power3.out" }, 0.25);
+          tl.to("#speaker-cutout-behind-text", { opacity: 0, y: -30, duration: 0.35, ease: "power2.in" }, D - 0.45);
+          tl.to("#speaker-cutout-behind-dim", { opacity: 0, duration: 0.35, ease: "power2.in" }, D - 0.4);
+          window.__timelines = window.__timelines || {};
+          window.__timelines["speaker-cutout-behind"] = tl;
+        })();
+      </script>
+    </div>
+  </body>
+</html>

@@ -6,7 +6,7 @@
 | Field | Value |
 |---|---|
 | Stage | 7 of 9 — repeats until approval |
-| Owner skill | `revision-round` (+ [studio-review-loop.md](../techniques/studio-review-loop.md)) |
+| Owner skill | `revision-notes-handler` (+ [studio-review-loop.md](../techniques/studio-review-loop.md)) |
 | Artifacts (exact files) | the presentation message (file at once + numbered notes + the whole ledger + QA line + honest score + gaps), `hf/CHANGELOG.md` "## Round N (date)" (the person's notes numbered, in their words), `_work/notes/r<N>_n<k>.jpg` (a frame strip per note), `projects/<name>/tools/patch_r<N>.py` (patch script), new `hf/PROMPT.md` ledger rows, `hf/QA.md` |
 | Exit gate | **G7 — the person approves the preview (→ wf-08) or sends notes (→ this procedure, then back to wf-05/06)** |
 | Target time | present: **5 min**; a note round: **≤ 45 min with exactly ONE full render** (owner target) |
@@ -14,7 +14,7 @@
 
 ## 1. Present first (stage 7)
 
-**Deliver the file at once**, then the message below. For the owner the review happens **live in HyperFrames Studio** (`npx hyperframes preview --background`; a **local** server — for a remote client send the draft render or a screen recording instead). `[RULE-owner]` Ask one question: *fixes, or render the final?* **The final render happens only after the person approves.**
+**Deliver the file at once**, then the message below. For the author the review happens **live in HyperFrames Studio** (`npx hyperframes preview --background`; a **local** server — for a remote client send the draft render or a screen recording instead). `[RULE-owner]` Ask one question: *fixes, or render the final?* **The final render happens only after the person approves.**
 
 ```text
 Round <N> — <name>_v<N>: <path>   (Studio: <link or "local port">)
@@ -28,7 +28,7 @@ Honest score and open gaps; licence risks where relevant; the process and tools 
 One closing question.
 ```
 
-(In the owner's original the numbered lines are in Hebrew, e.g. `1. ✓ "המעבר ב-25 לא טוב" — סיבה: … עכשיו: … (24.6–25.4 / f738–762)`; the structure is the contract.) **Never present with a flagged frame or a failed gate; never present below the bar without listing the gaps; always write the honest score.** `[RULE-owner]` An `✗` is a numbered gap with its reason, never silent.
+(In the author's original the numbered lines are in Hebrew, e.g. `1. ✓ "המעבר ב-25 לא טוב" — סיבה: … עכשיו: … (24.6–25.4 / f738–762)`; the structure is the contract.) **Never present with a flagged frame or a failed gate; never present below the bar without listing the gaps; always write the honest score.** `[RULE-owner]` An `✗` is a numbered gap with its reason, never silent.
 
 ## 2. Entry gate
 
@@ -54,7 +54,7 @@ Goal: **≤ 45 min per round and exactly one full render per round** `[RULE-owne
 | 9 | **Present** with the §1 message. | message | — |
 | 10 | **Learn:** each note → the lessons inbox (grep first; raise the count of an existing line); in the retro count the full renders of the round (**target 1**) and the time (wf-09). | inbox lines | — |
 
-### 3.1 Diagnosis table (the owner says → the common cause that actually happened → where to look)
+### 3.1 Diagnosis table (the author says → the common cause that actually happened → where to look)
 
 | The person says | Common cause | Where to look |
 |---|---|---|
@@ -77,13 +77,13 @@ Goal: **≤ 45 min per round and exactly one full render per round** `[RULE-owne
 
 ### 3.3 The audio-only branch (remix + remux, no render)
 
-Edit the cue file (SFX gain, `DUCK`, `BED`) → `hf_mix --report` → `hf_deliver --skip-render` (remux onto the existing raw render). On OM **1.8 s** of machine time in E12 (a synthetic 30 s composition) and "≈ 2 min instead of 10+" in the owner's workflow `[MEASURED-lab]` `[PROVEN-internal]`. Do not chase loudness inside the composition (more gain once came out quieter). A **mixed** round (audio + picture) puts the audio into the same single full render. A project whose audio is composed inside the engine (no `mix.wav`) cannot change its mix without a render — build with `hf_mix`. `--skip-render` must be bound to the build hash: it once could remux a **stale picture** after a visual change (audit AQ014).
+Edit the cue file (SFX gain, `DUCK`, `BED`) → `hf_mix --report` → `hf_deliver --skip-render` (remux onto the existing raw render). On OM **1.8 s** of machine time in E12 (a synthetic 30 s composition) and "≈ 2 min instead of 10+" in the author's workflow `[MEASURED-lab]` `[PROVEN-internal]`. Do not chase loudness inside the composition (more gain once came out quieter). A **mixed** round (audio + picture) puts the audio into the same single full render. A project whose audio is composed inside the engine (no `mix.wav`) cannot change its mix without a render — build with `hf_mix`. `--skip-render` must be bound to the build hash: it once could remux a **stale picture** after a visual change (audit AQ014).
 
 ### 3.4 Studio-first numbers (E12, `[MEASURED-lab]`, OM, a synthetic 30 s composition, six notes, single pass)
 
 A full render per note: **430 s** · range drafts **161 s + one final full render 79 s = 240 s** · scene cache 226 s · an audio-only note 1.8 s · Studio hot reload detected an edit in 0.04–0.9 s (once it missed an edit; re-check that the change landed). Not measured: human review time and agent thinking time. Preview ≠ render: `<video>` layers differ by about one frame; keep the encoded check for render-only risks. Details: studio-review-loop.md.
 
-## 4. Client-revision theory (educators; `[SOURCED-unverified]`, recorded 2026-09; the owner's rules win)
+## 4. Client-revision theory (educators; `[SOURCED-unverified]`, recorded 2026-09; the author's rules win)
 
 Late revisions come from no buy-in, no clear definition, and no room to say "no". Show a high-fidelity, low-commitment reference **early** (a styleframe or one polished scene) and say "this is the time to destroy everything"; ask questions that are easy to answer "no" to ("would it be too much if…?"); translate "like/hate" into parameters (colour, texture, pace) and repeat what you heard; define **approval points** (where changes are welcome and where they cost money); collect all notes, settle contradictions between stakeholders, then fix; number versions V1/V2/V3 with documented notes.
 
@@ -114,7 +114,7 @@ Gate record → `hf/QA.md` "Gate log". Approval from anyone other than the perso
 | the person says "I told you" | the note was not logged in their words / no ledger row | add the row; show it in the message | step 5 |
 | a late "boring" polishes the same beat | polish instead of replace | choose a new beat from the menu | class "replace-concept" |
 | a render killed for one fix while reviewers ran | no wait | wait for **all** reviewers | step 8 |
-| the same note sent to three sessions | a global style rule | log it with a `global` tag; the owner session promotes it; **never message other sessions** | wf-09 |
+| the same note sent to three sessions | a global style rule | log it with a `global` tag; the author session promotes it; **never message other sessions** | wf-09 |
 | `--skip-render` shipped a stale picture | mix-only remux on changed visuals | bind raw to the build hash; one full render for mixed rounds | §3.3 |
 
 ## 8. Tool invocations
@@ -125,10 +125,10 @@ Gate record → `hf/QA.md` "Gate log". Approval from anyone other than the perso
 
 | Type | Delta |
 |---|---|
-| **talking-head** | audit **every** A-roll frame for centring after any camera note; a timed note about a transition → check the hidden-cut cover and pre-roll; "looks AI" → swap the B-roll beat (real footage / 3D / 2.5D / rebuilt UI); an SFX note → `hf_mix --report` and the audio-only branch; a bed "about 4 dB lower" is a mix note (remux) when the project was built with `hf_mix` |
+| **talking-head** | audit **every** A-roll frame for centring after any camera note; a timed note about a transition → check the hidden-cut cover and pre-roll; "looks AI" → swap the B-roll beat (real footage / 3D / rebuilt UI); an SFX note → `hf_mix --report` and the audio-only branch; a bed "about 4 dB lower" is a mix note (remux) when the project was built with `hf_mix` |
 | **testimonial** | a note that changes a claim goes through the **claims table** first; never alter a proof screenshot to satisfy a note; a re-order is logged with "still true in the new context" |
 | **ad-promo** | an offer/price/legal note updates the **copy source of truth** and every output (hook variants and ratios) — the manifest check (wf-08) catches a stale derivative |
-| **motion-graphics** | a camera/transition note adds a **row to the clean-smooth table** (so the next critic scores like the owner); a timed note at a seam → check exit = entry vector and the hero persistence |
+| **motion-graphics** | a camera/transition note adds a **row to the clean-smooth table** (so the next critic scores like the author); a timed note at a seam → check exit = entry vector and the hero persistence |
 | **ai-generated** | "looks AI" at a timestamp → replace the shot or cover it; a regenerated shot is a **new 💲 approval**; one grade + grain across new takes |
 | **podcast-clip** | a layout/speaker-switch note → re-check hysteresis; a clip that no longer stands alone → back to the selection table |
 

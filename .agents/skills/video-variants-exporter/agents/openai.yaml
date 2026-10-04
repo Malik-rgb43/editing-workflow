@@ -1,0 +1,5 @@
+interface:
+  display_name: "Video Variants Exporter"
+  short_description: "Deliver one approved video as several outputs (other aspect ratios, hook variants, platform versions, no-music/no-captio"
+policy:
+  allow_implicit_invocation: false

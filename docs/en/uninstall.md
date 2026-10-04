@@ -4,7 +4,7 @@
 
 <!-- step: uninstall-01 -->
 ## uninstall-01 - What is removed and what stays
-Removed: the skills copied by the installer (both hosts), the shared toolkit folder (`~/.avc/toolkit`) with its `.venv`/`node_modules`, per-route Python environments, the optional marked block in your agent instruction file, `toolkit.local.toml` if the installer wrote it, and the connectors the installer registered (`claude mcp remove ...`).
+Removed: the `editing-workflow` plugin (and the marketplace entry only if the installer added it), the skills copied by the installer (Codex, or both hosts with `--skills-via copy`), the shared toolkit folder (`~/.avc/toolkit`) with its `.venv`/`node_modules`, per-route Python environments, the optional marked block in your agent instruction file, `toolkit.local.toml` if the installer wrote it, and the connectors the installer registered (`claude mcp remove ...`).
 Stays: your video projects and work folder (`~/avc-work`), your own skills (even with a similar name), unrelated agent settings and servers, the toolkit **clone** (delete it yourself), accounts you signed in to, and the backups folder (`~/.avc/backups`) unless you ask to purge it.
 Files you edited inside installed skills are copied to the backups folder before removal; a file you added inside a skill folder keeps that folder alive.
 

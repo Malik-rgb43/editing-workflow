@@ -8,7 +8,7 @@
 
 **First the checks that cost seconds; only when they are clean, the checks that cost minutes; the full render happens once per round.** Fix and verify on **ranges**; render the whole film once. (Premium talking-head test #3 on OM: 23 full renders, about 9 needed, ≈ 2.3 h wasted.) `[RULE-owner]` `[PROVEN-internal]` (src: distilled/02 workflow §8)
 
-**A pass must mean the declared test actually ran on its required coverage** — never "zero findings" from an empty sample, a missing input, a disabled check or a crashed tool. This is the central finding of the QA research and of the E04 audit, where eight false-success paths were reproduced in the owner's own tools. `[MEASURED-lab]`
+**A pass must mean the declared test actually ran on its required coverage** — never "zero findings" from an empty sample, a missing input, a disabled check or a crashed tool. This is the central finding of the QA research and of the E04 audit, where eight false-success paths were reproduced in the author's own tools. `[MEASURED-lab]`
 
 ## 1. Status vocabulary and the result envelope (fail closed)
 
@@ -43,7 +43,7 @@ Envelope (TOOLS_SPEC §1): `{tool, version, input_sha256, decoded_frames, expect
 | 8 | rubric + critic | independent critic, per-type rubric ([critic-brief.md](../benchmarks/critic-brief.md)) | ~10 min | average < 4.0, any dimension < 3, any hard gate ≤ 2 (owner gate) | max 3 critic rounds, then present with open gaps |
 | 9 | concept fidelity | `hf/QA.md` — every ledger row ticked with evidence | minutes | any row not ok and not listed as a gap | |
 | 10 | delivery gate | `hf_deliver` verify on the **final file** + `qa delivery` + manifest | at the end of the render | length off by > 1 frame · −14 ± 0.5 LUFS · TP > −1 · black ≥ 2 frames · dead edge band · stale manifest | house preset; PASS ≠ release PASS (§4) |
-| 11 | the owner | the human | their time | their notes | |
+| 11 | the author | the human | their time | their notes | |
 
 Measured cost of **six notes** on a synthetic 30 s composition `[MEASURED-lab, OM, HyperFrames 0.8.98, single pass]`: a full render per note **430 s** vs range drafts **161 s + one final full render 79 s = 240 s** (a scene cache: 226 s); an audio-only note by remix + remux **1.8 s**; Studio hot reload detected an edit in 0.04–0.9 s. Not measured: human review time and agent thinking time. (src: E12 REPORT) Render settings on a 40 s heavy fixture `[MEASURED-lab, OM]`: 1 / 2 / 4 / 8 workers = 132.6 / 113.5 / 92.8 / 88.1 s; browser GPU −8 to −12 %; `--gpu` AMF encode and draft mode did not help; CPU use only 2–3 of 16 logical cores (capture is the bottleneck); a CSS-scaled 720p proxy −20 %. (src: E11 REPORT)
 
@@ -83,7 +83,7 @@ None of these is a perceptual or platform standard (QA research, 2026-10-01). Br
 
 ## 5. Review depth scales with length `[RULE-owner]`, resolved `[CONFLICT]`
 
-The original rule said 3–4 reviewers on every-frame sheets; after a 10 s test cost ~160 k tokens of review the owner's later rule governs: **< 20 s → self-review on the sheets** (`frame_qa` + `motion_qa` + the four axes); **≥ 20 s or a client delivery → ONE reviewer, continued between rounds** with the fix list only; first round of a project 2–4 reviewers over the whole film only if the film is long; later rounds only changed or flagged ranges; derivatives: axes 1 and 4 only. Automatic checks always come first (seconds, no tokens). The critic must be a **separate agent that did not build the film**; a fresh context of the same model gives process separation only, not independence. See [studio-review-loop.md](studio-review-loop.md) and [critic-brief.md](../benchmarks/critic-brief.md).
+The original rule said 3–4 reviewers on every-frame sheets; after a 10 s test cost ~160 k tokens of review the author's later rule governs: **< 20 s → self-review on the sheets** (`frame_qa` + `motion_qa` + the four axes); **≥ 20 s or a client delivery → ONE reviewer, continued between rounds** with the fix list only; first round of a project 2–4 reviewers over the whole film only if the film is long; later rounds only changed or flagged ranges; derivatives: axes 1 and 4 only. Automatic checks always come first (seconds, no tokens). The critic must be a **separate agent that did not build the film**; a fresh context of the same model gives process separation only, not independence. See [studio-review-loop.md](studio-review-loop.md) and [critic-brief.md](../benchmarks/critic-brief.md).
 
 ## 6. Positive controls (fixtures that must keep failing correctly)
 
@@ -101,7 +101,7 @@ Generate with FFmpeg only (no client media): black frame, one-frame flash, freez
 | QA said clean on a failed render | QA ran on a stale file | compare mtime with the render start; present only a file newer than the last patch | stale-file guard in `hf_deliver` and before every QA call |
 | `check` hangs > 10 min | leftover headless browser after a stop | kill **your own** process tree, rerun once | `timeout 900` |
 | a render ran after a failed `check` | pipe exit code | `pipefail` | §2 stage 2 |
-| the same video scored 21.5 then 18.5 (of 30) by the blind critic | reviewer variance | do not read a 3-point difference as a result; repeat | pre-declared bar; calibrate with the owner's past rejections |
+| the same video scored 21.5 then 18.5 (of 30) by the blind critic | reviewer variance | do not read a 3-point difference as a result; repeat | pre-declared bar; calibrate with the author's past rejections |
 | 4 agents × every frame × 4 rounds burned the quota | review not scaled to length | §5 | automatic checks first |
 
 (src: distilled/02 qa-and-benchmarks §1–§2, §8–§10; distilled/02 workflow §8; QA_AND_BENCHMARKS §1–§2; E04, E11, E12 reports — read 2026-10-02.)

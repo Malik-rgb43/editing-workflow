@@ -27,7 +27,7 @@ Four things setup guides blur: **native plugin** (runs inside an app) · **MCP t
 | native CLI/library (not MCP) | FFmpeg/ffprobe, faster-whisper, Blender headless `bpy` | process args/files | resource load, overwrite, parser surface |
 | local MCP (stdio) | Playwright MCP, filesystem reference server, Blender MCP | child process | runs with **your OS permissions**; annotations are hints, not a sandbox |
 | hosted MCP (HTTP/OAuth) | Higgsfield, ElevenLabs, Runway (two endpoints), Replicate, TwelveLabs, 21st.dev | HTTPS | account scope, uploads of client media, **spend** |
-| plugin + MCP bridge | Higgsfield After Effects / Premiere / Blender plugins | app plugin + bridge | executes editor operations; installer trust |
+| MCP bridge | Blender add-on (`mcp-for-blender`) | app add-on + local socket | executes Python inside Blender; localhost only |
 | REST/SDK only | Pexels, Iconify, YouTube, Drive | HTTPS | keys, provider terms |
 
 ## 2. The three shipped profiles
@@ -35,7 +35,7 @@ Four things setup guides blur: **native plugin** (runs inside an app) · **MCP t
 |---|---|---|---|
 | **Minimal (default)** | `{"mcpServers":{}}` | no `[mcp_servers]` tables | native files, scripts and FFmpeg cover many edits; a server is optional |
 | **Standard** | ONE isolated browser server; add a filesystem server only if the client lacks suitable file access | same browser server, narrow `enabled_tools` | reference inspection, local preview QA; Express docs only while developing Express add-ons |
-| **Pro** | Standard + one role-specific app bridge + one generation provider | same roles with per-server tool allowlists | advanced app control, cost-approved generation, optional archive analysis; load only the providers a task needs |
+| **Pro** | Standard + one generation provider | same roles with per-server tool allowlists | advanced app control, cost-approved generation, optional archive analysis; load only the providers a task needs |
 
 **Never turn the 44 matrix rows into a startup profile.** Library licence, asset licence, model-output permission, account scope and cost are separate decisions. Project instructions and `readOnlyHint` annotations are **not** operating-system sandboxes. No server is enabled by default except the empty Minimal profile.
 
@@ -75,7 +75,7 @@ An allowlist reduces what the client exposes; a malicious server process keeps i
 | Role | Candidates (tier opinion) | What to check first |
 |---|---|---|
 | generation, one provider | Higgsfield MCP (`https://mcp.higgsfield.ai/mcp`) · Replicate · Runway generation (`https://mcp.runwayml.com/mcp`, **distinct** from Runway Dev `https://dev.runwayml.com/mcp`) · ElevenLabs hosted OAuth server | **automated generation consumes credits even where web use is unlimited; sign-in ≠ spend authorisation** `[VERIFIED-external]`; training/retention terms; Hebrew unvalidated |
-| app bridge, one | Higgsfield After Effects / Premiere / Blender bridges | installer inspected; **duplicate the project before writes**; Adobe minimum-version conflict (help says 2024 / 24.0+, plugin page 2025+) `[CONFLICT]` unresolved |
+| app bridge, one | Blender add-on bridge | installer inspected; **duplicate the scene before writes** |
 | stock/icons/UI (REST first) | Pexels, Iconify (each set has its own licence), shadcn registries (component licences per registry) | provider terms; asset licence ≠ API access |
 | archive analysis, optional | TwelveLabs Jockey, Gemini video understanding, VideoDB | uploads leave the machine; client decision per client |
 | NLE hand-off, optional | CapCut × Codex plugin (OAuth; region limits; untested) | inspect the bundle before install |
@@ -89,7 +89,7 @@ One provider can cover most **cloud** stages (hosted providers document image, v
 | Playwright MCP 0.0.83 | execution (browser) | 25 tools, 21,382 B; `--isolated --headless --output-dir`; **origin allow/deny flags are not a security boundary** `[VERIFIED-external]`; never attach the signed-in browser profile; one browser server by default |
 | Chrome DevTools MCP 1.10.1 | execution (browser debug) | exposes browser data; do not run both browser servers |
 | Blender MCP (`mcp-for-blender`) | execution (**arbitrary Python**) | see section 6 |
-| Higgsfield / Runway / ElevenLabs / Replicate | execution + **spend** | behind `paid-generation-gate` |
+| Higgsfield / Runway / ElevenLabs / Replicate | execution + **spend** | behind `paid-spend-gate` |
 | Drive, Meta Marketing | execution on accounts | Drive broad scopes expose unrelated files; Meta Marketing tokens can change spend — enable one workspace/folder per project |
 
 ## 6. Blender MCP isolation (port 9876, no auth)
@@ -103,7 +103,7 @@ The add-on socket on **localhost:9876 has no authentication or encryption and ex
 |---|---|
 | Must (capability) | none required as MCP — FFmpeg + scripts + the repo's own tools |
 | Recommended | one isolated Playwright browser; shadcn registries (free); Pexels/Iconify via REST; local transcription (faster-whisper, library not MCP) |
-| Optional | Higgsfield MCP + bridges; ElevenLabs hosted OAuth; Replicate; Runway; 21st.dev Magic (paid account); Drive; TwelveLabs/Gemini |
+| Optional | Higgsfield MCP; ElevenLabs hosted OAuth; Replicate; Runway; 21st.dev Magic (paid account); Drive; TwelveLabs/Gemini |
 | Avoid / stale | ElevenLabs **local** MCP repo (archived 2026-08-20; hosted server replaces it); old Magic npm package (0.2.3 compatibility proxy, old keys reset); Luma legacy MCP (last commit 2025-04-18); the egoist FFmpeg wrapper (last commit 2025-03-29; direct FFmpeg covers it); **exposing Blender port 9876** |
 
 ## 9. Security rules (apply to every server)

@@ -1,0 +1,18 @@
+{"prompt":"I want a video about my new clinic","should_trigger":true,"route_instead":null}
+{"prompt":"יש לי סרטון חדש לעשות, תתחיל","should_trigger":true,"route_instead":null}
+{"prompt":"here is the brief: 30 s ad, Hebrew, film burn at 1-2 s","should_trigger":true,"route_instead":null}
+{"prompt":"תכין לי קונספט לסרטון על האפליקציה שלי","should_trigger":true,"route_instead":null}
+{"prompt":"I have footage and an idea, what do we do first","should_trigger":true,"route_instead":null}
+{"prompt":"הנה בריף עם 8 דברים ספציפיים שחייבים להופיע בסרטון","should_trigger":true,"route_instead":null}
+{"prompt":"make a launch video for my product, no reference","should_trigger":true,"route_instead":null}
+{"prompt":"בוא נתחיל פרויקט חדש","should_trigger":true,"route_instead":null}
+{"prompt":"I want a reel about my coaching service, five things must appear on screen","should_trigger":true,"route_instead":null}
+{"prompt":"יש לי קבצים מהצילום ורעיון לרילס, מאיפה מתחילים?","should_trigger":true,"route_instead":null}
+{"prompt":"the third caption is misspelled","should_trigger":false,"route_instead":"revision-notes-handler"}
+{"prompt":"render the approved draft for delivery","should_trigger":false,"route_instead":"render-qa-delivery"}
+{"prompt":"what is a LUFS","should_trigger":false,"route_instead":null}
+{"prompt":"תתרגם את הכתוביות לאנגלית","should_trigger":false,"route_instead":"hebrew-captions-transcription"}
+{"prompt":"הסרטון משעמם בדקה 20, תחליף את הקטע","should_trigger":false,"route_instead":"revision-notes-handler"}
+{"prompt":"analyse this reference reel and tell me how many cuts it has","should_trigger":false,"route_instead":"video-analysis"}
+{"prompt":"how much will six Seedance shots cost","should_trigger":false,"route_instead":"paid-spend-gate"}
+{"prompt":"תקן את הצבע של הדובר, העור נראה ורוד","should_trigger":false,"route_instead":"speaker-color-correction"}

@@ -1,6 +1,6 @@
 # Task evals: video-analysis
 
-Status: specified; deterministic oracles only. Model eval not run (decision default Q4). Fixtures are synthetic or rights-cleared (generate them with ffmpeg: hard cuts between `testsrc2`/`color` segments of known length, a sine+noise audio bed, a synthetic Hebrew sentence only if you own the recording). No client or reference-owner media. The owner's 20 hand-verified ads are private and are NOT a fixture of this skill.
+Status: specified; deterministic oracles only. Model eval not run (decision default Q4). Fixtures are synthetic or rights-cleared (generate them with ffmpeg: hard cuts between `testsrc2`/`color` segments of known length, a sine+noise audio bed, a synthetic Hebrew sentence only if you own the recording). No client or reference-owner media. The author's 20 hand-verified ads are private and are NOT a fixture of this skill.
 
 ## T1. Breakdown with a known cut count
 - **Setup:** a 30 s synthetic ad built from 25 segments (24 hard cuts at known frames, 30 fps), a music bed at about 120 BPM and two whoosh-like noise bursts; ground truth in `truth.json` (frames). Run the skill end to end.

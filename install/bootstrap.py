@@ -38,7 +38,7 @@ REPO = Path(__file__).resolve().parent.parent
 # Directories (relative to this repository) copied into the managed toolkit home. Skills are installed separately.
 TOOLKIT_INCLUDE = [
     "agent-content/playbooks", "agent-content/techniques", "agent-content/benchmarks", "agent-content/references",
-    "tools", "src", "contracts", "profiles", "templates", "fixtures",
+    "tools", "src", "contracts", "profiles", "templates", "fixtures", "hf-blocks",
     "docs/en", "docs/he", "docs/TOOLS.md", "docs/decisions",
     "pyproject.toml", "uv.lock", "package.json", "package-lock.json", "toolkit.toml",
     "AGENTS.md", "SYSTEM.md", "editing.md", "release-manifest.json", "LICENSE", "THIRD_PARTY_NOTICES.md",
@@ -49,7 +49,7 @@ EXCLUDE_NAMES = {"__pycache__", ".pytest_cache", ".venv", "node_modules", ".git"
                  "_work", "projects", ".avc", ".mypy_cache", ".ruff_cache"}
 EXCLUDE_SUFFIXES = (".pyc", ".pyo", ".tmp", ".part")
 GENERATED_DIRS = [".venv", "node_modules"]
-PATH_TOKEN_ROOTS = ("agent-content", "tools", "fixtures", "contracts", "profiles", "templates", "src", "integrations")
+PATH_TOKEN_ROOTS = ("agent-content", "tools", "fixtures", "contracts", "profiles", "templates", "src", "integrations", "hf-blocks")
 LEVELS = {"minimal": ["minimal"], "standard": ["minimal", "standard"], "pro": ["minimal", "standard", "pro"]}
 
 EXIT_OK, EXIT_USAGE, EXIT_REFUSED, EXIT_VERIFY, EXIT_PARTIAL, EXIT_LOCK = 0, 1, 2, 3, 4, 5
@@ -288,20 +288,36 @@ class Layout:
                 "claude_md": str(self.claude_md), "codex_md": str(self.codex_md), "work_root": str(self.work_root)}
 
 
+def ascii_fallback(name: str) -> Path:
+    """An ASCII-only folder that needs no admin rights, used when the home path has non-ASCII letters (Hebrew user names are common).
+    Windows: C:/<name>. macOS: /Users/Shared is writable by every user. Linux: /var/tmp survives reboots.
+    ``AVC_ASCII_BASE`` overrides the base folder (tests, unusual setups)."""
+    base = os.environ.get("AVC_ASCII_BASE")
+    if base:
+        return Path(base) / name
+    sysname = os_name()
+    if sysname == "windows":
+        return Path("C:/") / name
+    if sysname == "macos":
+        return Path("/Users/Shared") / name
+    return Path("/var/tmp") / name
+
+
 def default_work_root(h: Path) -> Path:
     env = os.environ.get("AVC_PATHS_WORK_ROOT") or os.environ.get("AVC_WORK_ROOT")  # canonical name per toolkit.toml, plus the short alias
     if env:
         return Path(env)
     if is_ascii_path(h):
         return h / "avc-work"
-    # Non-ASCII home: HyperFrames `init` needs an ASCII work root. Windows: C:\avc-work. macOS: /Users/Shared is writable by every user.
-    # Linux: /var/tmp survives reboots and is world-writable. Neither needs admin rights; the student may pass --work-root instead.
-    sysname = os_name()
-    if sysname == "windows":
-        return Path("C:/avc-work")
-    if sysname == "macos":
-        return Path("/Users/Shared/avc-work")
-    return Path("/var/tmp/avc-work")
+    # Non-ASCII home: HyperFrames `init` needs an ASCII work root. The student may pass --work-root instead.
+    return ascii_fallback("avc-work")
+
+
+def default_toolkit_home(state: Path) -> Path:
+    """The toolkit home holds node_modules (the HyperFrames engine). Under a non-ASCII path `hyperframes init` ends WITHOUT an error and
+    WITHOUT index.html (verified live 2026-10-03), so a non-ASCII default is replaced by an ASCII folder instead of only warning."""
+    home = state / "toolkit"
+    return home if is_ascii_path(home) else ascii_fallback("avc-toolkit")
 
 
 def make_layout(args) -> Layout:
@@ -309,11 +325,11 @@ def make_layout(args) -> Layout:
     if args.scope == "project":
         proj = Path(args.project_dir or os.getcwd()).resolve()
         state = Path(args.state_dir) if args.state_dir else proj / ".avc"
-        home = Path(args.home) if args.home else state / "toolkit"
+        home = Path(args.home) if args.home else default_toolkit_home(state)
         lay = Layout("project", proj, state, home, proj / ".claude" / "skills", proj / ".agents" / "skills", proj / "CLAUDE.md", proj / "AGENTS.md", None)
     else:
         state = Path(args.state_dir) if args.state_dir else h / ".avc"
-        home = Path(args.home) if args.home else state / "toolkit"
+        home = Path(args.home) if args.home else default_toolkit_home(state)
         lay = Layout("user", None, state, home, h / ".claude" / "skills", h / ".agents" / "skills", h / ".claude" / "CLAUDE.md", h / ".codex" / "AGENTS.md", None)
     lay.work_root = Path(args.work_root) if args.work_root else default_work_root(h)
     return lay
@@ -647,7 +663,7 @@ def render_block(lay: Layout, eol="\n") -> str:
             "AI Video Editing Toolkit is installed (managed by install/bootstrap.py; remove with `bootstrap.py uninstall`).",
             "Toolkit root: %s" % lay.toolkit_home,
             "Skills mention paths like agent-content/playbooks/..., tools/..., fixtures/...: they are relative to the toolkit root above.",
-            "Entry skill for any video request: course-router. Invariant rules: <toolkit root>/AGENTS.md.",
+            "Entry skill for any video request: video-request-router. Invariant rules: <toolkit root>/AGENTS.md.",
             "To connect a service the student asks for (for example ElevenLabs, Higgsfield, Tripo): run `python <toolkit root>/install/bootstrap.py add <name>` and show the sign-up links exactly as printed (a referral link is labelled; open nothing without a yes).",
             MD_END]
     return eol.join(body)
@@ -728,8 +744,7 @@ class Lock:
 
 # ----------------------------------------------------------------------------- plan
 # ----------------------------------------------------------------------------- hardware detection + automatic route choice
-# Nobody is asked about their hardware: the installer looks, picks the safest route that works everywhere (CPU) and only
-# LISTS accelerated routes whose probe succeeded. Accelerated routes are never installed automatically and never required.
+# Nobody is asked about their hardware: the installer looks and picks the one route that works everywhere (CPU).
 GPU_RULES = [("NVIDIA", ("nvidia", "geforce", "quadro", "rtx ", "gtx ", "tesla")), ("AMD", ("amd", "radeon", "advanced micro devices")),
              ("Intel", ("intel", "iris", "uhd graphics", "arc ")), ("Apple", ("apple",)),
              ("virtual", ("microsoft basic", "hyper-v", "vmware", "virtualbox", "qxl", "virtio", "parallels", "llvmpipe"))]
@@ -836,42 +851,13 @@ def platform_machine() -> str:
     return platform.machine()
 
 
-def probe_accelerators(hw: dict) -> list:
-    """Only probes relevant to detected vendors. state: pass | fail | not_run. Nothing here installs or downloads."""
-    out, vendors = [], set(hw.get("gpu_vendors", []))
-    if "NVIDIA" in vendors:
-        if which("nvidia-smi"):
-            p = run_cmd(["nvidia-smi", "-L"], timeout=20)
-            out.append({"route": "asr-cuda", "state": "pass" if p.ok and p.stdout.strip() else "fail", "evidence": (p.stdout or p.stderr or p.error or "").strip().splitlines()[0][:100] if (p.stdout or p.stderr or p.error) else "no output"})
-        else:
-            out.append({"route": "asr-cuda", "state": "not_run", "evidence": "NVIDIA GPU listed but nvidia-smi (driver tool) not found"})
-    if vendors & {"NVIDIA", "AMD", "Intel"} and os_name() in ("windows", "linux"):
-        if which("vulkaninfo"):
-            p = run_cmd(["vulkaninfo", "--summary"], timeout=40)
-            out.append({"route": "asr-vulkan", "state": "pass" if p.ok else "fail", "evidence": "vulkaninfo --summary exit %s" % p.returncode})
-        else:
-            out.append({"route": "asr-vulkan", "state": "not_run", "evidence": "vulkaninfo not found (a GPU being listed is not a working Vulkan driver)"})
-    if os_name() == "macos" and hw.get("arch") == "arm64":
-        out.append({"route": "asr-mlx", "state": "pass", "evidence": "Apple Silicon detected (hardware fact only; no Hebrew weights verified)"})
-    return out
-
-
-ROUTE_LABELS = {"asr-vulkan": "measured on ONE machine only (about 9.8x its own CPU run); build + driver flags may differ on yours",
-                "asr-cuda": "unmeasured", "asr-mlx": "unmeasured"}
-
-
-def choose_routes(hw: dict, probes: list) -> dict:
-    """Pure function. Baselines (CPU) are always chosen; an accelerated route is only LISTED when its probe passed, is labelled, and is never installed automatically."""
-    accel = [{"route": p["route"], "probe": p["state"], "evidence": p["evidence"], "label": ROUTE_LABELS.get(p["route"], "unmeasured"),
-              "how": "python install/bootstrap.py add whisper-cpp   (then follow its by-hand build/download steps; weights need your approval)"}
-             for p in probes if p["state"] == "pass"]
+def choose_routes(hw: dict) -> dict:
+    """Pure function. One transcription route (CPU) that works on every machine; nothing is probed, listed or offered beyond it."""
     return {
-        "asr": {"chosen": "asr-cpu", "why": "works on every machine (faster-whisper int8 on CPU); weights are NOT downloaded until you approve their size",
-                "accelerated_candidates": accel},
-        "matte": {"chosen": "native-cpu", "why": "`hyperframes remove-background` runs on the CPU everywhere with no extra install; faster routes are opt-in (`add matte-fast`, licence note) and are not recommended automatically",
-                  "accelerated_candidates": []},
+        "asr": {"chosen": "asr-cpu", "why": "works on every machine (faster-whisper int8 on CPU); weights are NOT downloaded until you approve their size"},
+        "matte": {"chosen": "native-cpu", "why": "`hyperframes remove-background` runs on the CPU everywhere with no extra install; a faster route is opt-in (`add matte-fast`, licence note) and is not recommended automatically"},
         "encoder": {"chosen": "libx264 (CPU)", "why": "verified by the real mini-encode; hardware encoders are never trusted from a list"},
-        "never_required": sorted({c["route"] for c in accel} | {"matte-fast"}),
+        "never_required": ["matte-fast"],
     }
 
 
@@ -922,6 +908,64 @@ def skill_status(name: str, files: dict, dest_dir: Path, manifest: dict, target:
     return {"status": "unchanged" if cur_same else "update", "dest": str(dest_dir)}
 
 
+# ----------------------------------------------------------------------------- skills as a Claude Code plugin
+PLUGIN_NAME = "editing-workflow"
+PLUGIN_ID = "editing-workflow@editing-workflow"  # <plugin>@<marketplace>, both named in .claude-plugin/marketplace.json
+PLUGIN_SOURCE = "Malik-rgb43/editing-workflow"  # the public repository that carries .claude-plugin/marketplace.json
+
+
+def plugin_mode(args, targets) -> bool:
+    """Claude Code gets the skills as a plugin (one place, updated by Claude Code, removed cleanly) unless the student asked for plain copies."""
+    return "claude" in targets and getattr(args, "skills_via", "plugin") == "plugin" and not args.skip_skills
+
+
+def copy_targets_for(args, targets) -> list:
+    """Targets that receive copied skill folders: Codex always, Claude only when it does not use the plugin."""
+    pm = plugin_mode(args, targets)
+    return [t for t in targets if not (t == "claude" and pm)]
+
+
+def plugin_state() -> dict:
+    """What Claude Code says about the plugin. ``available`` is False when `claude` cannot be asked (not on PATH or the call failed)."""
+    if not which("claude"):
+        return {"available": False, "why": "`claude` is not on PATH"}
+    lp = run_cmd(["claude", "plugin", "list", "--json"], timeout=60)
+    lm = run_cmd(["claude", "plugin", "marketplace", "list", "--json"], timeout=60)
+    if not lp.ok or not lm.ok:
+        return {"available": False, "why": ((lp.stderr or lp.error or lm.stderr or lm.error or "").strip()[:200]) or "claude plugin list failed"}
+    try:
+        plugins, markets = json.loads(lp.stdout or "[]"), json.loads(lm.stdout or "[]")
+    except ValueError:
+        return {"available": False, "why": "claude plugin list did not return JSON (old Claude Code?)"}
+    mine = [x for x in plugins if x.get("id") == PLUGIN_ID]
+    return {"available": True, "installed": bool(mine), "enabled": bool(mine and mine[0].get("enabled", True)), "version": (mine[0].get("version") if mine else None),
+            "marketplace": any(x.get("name") == PLUGIN_NAME for x in markets)}
+
+
+def plugin_stage(c: dict, args, dry: bool, manifest: dict) -> str:
+    if not plugin_mode(args, c["targets"]):
+        return "not used (skills are copied into the skills folder)" if "claude" in c["targets"] else "not used (Claude Code is not a target)"
+    src = getattr(args, "plugin_source", None) or PLUGIN_SOURCE
+    by_hand = "by hand: claude plugin marketplace add %s ; claude plugin install %s" % (src, PLUGIN_ID)
+    if args.offline:
+        return "deferred (offline); " + by_hand
+    st = plugin_state()
+    if not st["available"]:
+        return "not run: %s. %s" % (st["why"], by_hand)
+    if st["installed"]:
+        manifest.setdefault("plugin", {"id": PLUGIN_ID, "source": src, "marketplace_added_by_installer": False, "scope": "user"})
+        return "unchanged (already installed, version %s)" % st.get("version")
+    cmds = ([] if st["marketplace"] else [["claude", "plugin", "marketplace", "add", src]]) + [["claude", "plugin", "install", PLUGIN_ID, "--scope", "user"]]
+    if dry:
+        return "would run: " + " ; ".join(" ".join(x) for x in cmds)
+    for argv in cmds:
+        r = run_cmd(argv, timeout=300)
+        if not r.ok:
+            return "FAILED rc=%s: %s. %s" % (r.returncode, (r.stderr or r.error or r.stdout or "").strip()[-300:], by_hand)
+    manifest["plugin"] = {"id": PLUGIN_ID, "source": src, "marketplace_added_by_installer": not st["marketplace"], "scope": "user", "installed_at": now_utc()}
+    return "ok (skills appear as %s:<skill>; start a new Claude Code session)" % PLUGIN_NAME
+
+
 def mcp_row(e: dict, targets, lay: Layout, existing: dict, ctx: dict, mcp_scope: str) -> dict:
     m = e["mcp"]
     name = m.get("name", e["id"])
@@ -969,8 +1013,7 @@ def build_plan(args, repo=None) -> tuple:
         blockers.append("unknown --with option(s): %s. Known: %s" % (", ".join(unknown), ", ".join(known)))
     host = detect_host()
     hw = detect_hardware(lay.state_dir)
-    probes = probe_accelerators(hw)
-    routes = choose_routes(hw, probes)
+    routes = choose_routes(hw)
     hw_warn, hw_block = hardware_findings(hw)
     warnings += hw_warn
     blockers += hw_block
@@ -984,7 +1027,13 @@ def build_plan(args, repo=None) -> tuple:
     if not is_ascii_path(lay.work_root):
         blockers.append("work root %s is not ASCII-only; choose --work-root with ASCII characters only (e.g. C:\\avc-work or ~/avc-work)." % lay.work_root)
     if not is_ascii_path(lay.toolkit_home):
-        warnings.append("toolkit home %s is not ASCII-only; pass --home with an ASCII path to be safe with Node tooling." % lay.toolkit_home)
+        blockers.append("toolkit home %s is not ASCII-only: `hyperframes init` would silently create empty projects there. Omit --home (the installer then picks an ASCII folder) or pass an ASCII --home." % lay.toolkit_home)
+    elif not args.home and not is_ascii_path(lay.state_dir / "toolkit"):
+        warnings.append("Your state folder path has non-ASCII letters, so the toolkit folder is %s instead of %s (HyperFrames needs an ASCII path). Skills still go to your home folder." % (lay.toolkit_home, lay.state_dir / "toolkit"))
+    if plugin_mode(args, targets):
+        dup = sorted(n for n in skills if (lay.claude_skills / n / MARKER).is_file())
+        if dup:
+            warnings.append("%d skill folder(s) installed earlier by this toolkit still exist in %s (for example %s). With the plugin they would load twice; run `python install/bootstrap.py uninstall --yes` first, or install again with --skills-via copy." % (len(dup), lay.claude_skills, dup[0]))
     if lay.scope == "project" and lay.project_dir and (lay.project_dir == repo or repo in lay.project_dir.parents or lay.project_dir in repo.parents and lay.project_dir == repo):
         blockers.append("--scope project must point at your own video project folder, not at the toolkit repo itself (%s)." % repo)
     if args.scope == "project" and not args.project_dir:
@@ -1008,11 +1057,13 @@ def build_plan(args, repo=None) -> tuple:
     ff = ffmpeg_mini_encode()
 
     # skills
+    pm = plugin_mode(args, targets)
+    copy_targets = copy_targets_for(args, targets)
     skill_rows, n_bytes = [], 0
     for name, files in skills.items():
         row = {"name": name, "files": len(files), "bytes": sum(s for _p, s, _h in files.values()), "lint": lint_skill(name, files), "targets": {}}
         n_bytes += row["bytes"]
-        for t in targets:
+        for t in copy_targets:
             root = lay.claude_skills if t == "claude" else lay.codex_skills
             st = skill_status(name, files, root / name, manifest, t)
             row["targets"][t] = st
@@ -1059,23 +1110,26 @@ def build_plan(args, repo=None) -> tuple:
 
     plan = {
         "schema": 1, "command": "plan", "bootstrap_version": BOOTSTRAP_VERSION, "generated_at": now_utc(), "host": host,
-        "hardware": hw, "accelerator_probes": probes, "routes": routes,
+        "hardware": hw, "routes": routes,
         "questions": {"confirmation": "Shall I go ahead with this detected plan? (yes/no)",
                       "mode": "How do you want to work? LOCAL (everything runs on your computer, free: set up with --local), CONNECTED (you pick online services to connect, from a list), or BOTH? Ask this before the confirmation; it is a choice of how to work, not a question about hardware",
-                      "optional": "AFTER the install works: short optional yes/no questions about connections (reference videos, stock media, UI components, AI generation, 3D, video-editor bridges, faster transcription), one at a time, default no - see INSTALL.md install-10. Nothing is installed or spent without a yes",
+                      "optional": "AFTER the install works: short optional yes/no questions about connections (reference videos, stock media, UI components, AI generation, 3D, faster transcription), one at a time, default no - see INSTALL.md install-10. Nothing is installed or spent without a yes",
                       "hardware_questions": "none: hardware is detected, never asked"},
-        "selection": {"profile": args.profile, "engine": args.engine, "local": bool(args.local), "with": addons, "auto": auto_addons, "target": targets, "scope": lay.scope, "lang": lang,
+        "plugin": ({"used": True, "id": PLUGIN_ID, "source": getattr(args, "plugin_source", None) or PLUGIN_SOURCE, "scope": "user",
+                    "what": "Claude Code adds the %s plugin (its %d skills) from the GitHub repository; nothing is copied into %s. To copy plain skill folders instead use --skills-via copy." % (PLUGIN_NAME, len(skills), lay.claude_skills)}
+                   if pm else {"used": False}),
+        "selection": {"profile": args.profile, "engine": args.engine, "local": bool(args.local), "skills_via": "plugin" if pm else "copy", "with": addons, "auto": auto_addons, "target": targets, "scope": lay.scope, "lang": lang,
                       "install_missing": bool(args.install_missing), "memory_block": bool(args.write_memory_block), "mcp": not args.skip_mcp},
         "paths": lay.as_dict(), "prerequisites": prereqs, "ffmpeg_mini_encode": ff,
         "skills": skill_rows, "skills_total_bytes": n_bytes,
         "toolkit_home": {"dest": str(lay.toolkit_home), "files": len(toolkit), "bytes": sum(v[1] for v in toolkit.values()), "status": th_stat},
         "mcp": mcp_rows, "api_keys_presence_only": api_rows, "by_hand_plugins": manual_rows,
         "downloads": downloads, "network": network,
-        "cost": {"core": "none", "paid_actions_performed_by_installer": "none", "note": "Signing in to a provider is not spend authorisation; every generation goes through paid-generation-gate."},
+        "cost": {"core": "none", "paid_actions_performed_by_installer": "none", "note": "Signing in to a provider is not spend authorisation; every generation goes through paid-spend-gate."},
         "conflicts": conflicts, "warnings": warnings + skipped[:5], "blockers": blockers, "catalog_checked_at": cat.get("meta", {}).get("checked_at"),
         "needs_confirmation": True,
     }
-    ctx_obj = {"cat": cat, "lay": lay, "manifest": manifest, "skills": skills, "toolkit": toolkit, "targets": targets, "entries": entries,
+    ctx_obj = {"cat": cat, "lay": lay, "manifest": manifest, "skills": skills, "toolkit": toolkit, "targets": targets, "copy_targets": copy_targets, "entries": entries,
                "addons": addons + auto_addons, "mcp_scope": mcp_scope, "ctx": ctx, "plan": plan, "repo": repo, "existing_mcp": existing}
     return plan, ctx_obj
 
@@ -1094,11 +1148,13 @@ def render_plan(plan: dict, lang: str) -> str:
     if rt:
         o += ["", "## " + L("routes"), "  speech-to-text : %s  - %s" % (rt["asr"]["chosen"], rt["asr"]["why"]),
               "  speaker matte  : %s  - %s" % (rt["matte"]["chosen"], rt["matte"]["why"]), "  video encoder  : %s" % rt["encoder"]["chosen"]]
-        for c in rt["asr"]["accelerated_candidates"]:
-            o.append("  optional faster route (probe passed, NOT installed, never required): %s [%s]" % (c["route"], c["label"]))
     o += ["", "## " + L("selection"), "  profile=%s  engine=%s  with=%s  target=%s  scope=%s" % (s["profile"], s["engine"], ",".join(s["with"]) or "-", ",".join(s["target"]), s["scope"])]
     p = plan["paths"]
-    o += ["  toolkit home : %s" % p["toolkit_home"], "  skills       : claude=%s | codex=%s" % (p["claude_skills"], p["codex_skills"]), "  work root    : %s" % p["work_root"], "  state/backups: %s" % p["state_dir"]]
+    pl = plan.get("plugin") or {}
+    claude_where = ("PLUGIN %s (from %s)" % (pl["id"], pl["source"])) if pl.get("used") else p["claude_skills"]
+    o += ["  toolkit home : %s" % p["toolkit_home"], "  skills       : claude=%s | codex=%s" % (claude_where, p["codex_skills"]), "  work root    : %s" % p["work_root"], "  state/backups: %s" % p["state_dir"]]
+    if pl.get("used"):
+        o.append("  plugin       : %s" % pl["what"])
     o += ["", "## " + L("prereq")]
     for r in plan["prerequisites"]:
         flag = (L("ok") + " " + str(r["version"])) if r["found"] and r["ok"] else (L("missing") if not r["found"] else "FOUND-BUT-NOT-OK " + str(r.get("note", "")))
@@ -1211,7 +1267,7 @@ def cmd_apply(args) -> int:
             # 2 skills
             for name, files in c["skills"].items():
                 results["skills"][name] = {}
-                for t in c["targets"]:
+                for t in c["copy_targets"]:
                     root = lay.claude_skills if t == "claude" else lay.codex_skills
                     dest = root / name
                     stt = skill_status(name, files, dest, manifest, t)
@@ -1245,6 +1301,9 @@ def cmd_apply(args) -> int:
                         partial = True
                         results["skills"][name][t] = "FAILED: %s" % e
             stage(manifest, "skills", "partial" if partial else "ok")
+            results["stages"]["claude_plugin"] = plugin_stage(c, args, dry, manifest)
+            partial = partial or str(results["stages"]["claude_plugin"]).startswith("FAILED")
+            save()
 
             # memory block (optional)
             if args.write_memory_block:
@@ -1510,6 +1569,13 @@ def verify_summary(args, lay: Layout, manifest: dict, targets) -> dict:
     for m in manifest.get("mcp") or []:
         names = mcp_names(m["target"], lay, lay.project_dir if lay.scope == "project" else user_home())
         mcp_state.append({"name": m["name"], "target": m["target"], "present": (names is not None and m["name"] in names) if names is not None else None})
+    plug = None
+    if manifest.get("plugin"):
+        plug = plugin_state()
+        if plug.get("available") and not (plug["installed"] and plug["enabled"]):
+            problems.append("the %s plugin is not installed/enabled in Claude Code (run `claude plugin install %s`)" % (PLUGIN_NAME, PLUGIN_ID))
+        elif not plug.get("available"):
+            drift.append("could not ask Claude Code about the %s plugin: %s" % (PLUGIN_NAME, plug.get("why")))
     installed_ok = not problems and not lc["errors"] and ff["state"] == "pass" and core["work_root_ascii"] and core["work_root_exists"]
     states = read_json(lay.state_dir / "states.json", {}) or {}
     st = {
@@ -1530,7 +1596,7 @@ def verify_summary(args, lay: Layout, manifest: dict, targets) -> dict:
             highest = k
         else:
             break
-    return {"installed": True, "problems": problems, "drift": drift, "link_check": lc, "core": core, "mcp": mcp_state, "states": st, "highest_state": highest, "checked_at": now_utc(),
+    return {"installed": True, "problems": problems, "drift": drift, "plugin": plug, "link_check": lc, "core": core, "mcp": mcp_state, "states": st, "highest_state": highest, "checked_at": now_utc(),
             "note": "`claude doctor` diagnoses the Claude Code installation only; it does not prove video, font or GPU readiness."}
 
 
@@ -1564,7 +1630,7 @@ def cmd_status(args) -> int:
         emit("not installed (no manifest at %s)" % lay.manifest)
         return EXIT_VERIFY
     out = {"toolkit_version": m.get("toolkit_version"), "installed_at": m.get("installed_at"), "updated_at": m.get("updated_at"), "selection": m.get("selection"), "paths": m.get("paths"),
-           "skills": {n: sorted(v["targets"]) for n, v in (m.get("skills") or {}).items()}, "mcp": m.get("mcp", []), "stages": m.get("stages", {}), "last_run": m.get("last_run"),
+           "skills": {n: sorted(v["targets"]) for n, v in (m.get("skills") or {}).items()}, "plugin": m.get("plugin"), "mcp": m.get("mcp", []), "stages": m.get("stages", {}), "last_run": m.get("last_run"),
            "backups": [b["stamp"] for b in m.get("backups", [])][-5:]}
     emit(json.dumps(out, ensure_ascii=False, indent=2))
     return EXIT_OK
@@ -1623,7 +1689,7 @@ def cmd_add(args) -> int:
         r = {"id": e["id"], "kind": e["kind"], "name": e.get("name"), "role": e.get("role"), "cost": e.get("cost"), "gate": e.get("gate"), "terms": e.get("terms"),
              "security": e.get("security"), "license": e.get("license"), "actions": []}
         if e.get("gate"):
-            r["note"] = "Adding is free. Signing in is not spend authorisation: every generation goes through paid-generation-gate (dated estimate + your approval)."
+            r["note"] = "Adding is free. Signing in is not spend authorisation: every generation goes through paid-spend-gate (dated estimate + your approval)."
         r["signup"] = signup_options(ref, e["id"], getattr(args, "plain_links", False))
         k = e["kind"]
         if k == "mcp":
@@ -1871,8 +1937,23 @@ def cmd_uninstall(args) -> int:
     dry = bool(args.dry_run)
     stamp = ts_stamp()
     journal = Journal(lay, "uninstall-" + stamp, dry)
-    report = {"removed": [], "backed_up_modified": [], "kept": [], "mcp": [], "blocks": []}
+    report = {"removed": [], "backed_up_modified": [], "kept": [], "mcp": [], "blocks": [], "plugin": None}
     with Lock(lay, dry, args.break_lock):
+        pg = m.get("plugin")
+        if pg:
+            steps = [["claude", "plugin", "uninstall", pg.get("id", PLUGIN_ID), "--scope", pg.get("scope", "user"), "--yes"]]
+            if pg.get("marketplace_added_by_installer"):
+                steps.append(["claude", "plugin", "marketplace", "remove", PLUGIN_NAME])
+            if dry:
+                report["plugin"] = "would run: " + " ; ".join(" ".join(x) for x in steps)
+            elif not which("claude"):
+                report["plugin"] = "not removed: `claude` not on PATH. By hand: " + " ; ".join(" ".join(x) for x in steps)
+            else:
+                out = []
+                for argv in steps:
+                    r = run_cmd(argv, timeout=120)
+                    out.append("%s -> %s" % (" ".join(argv[:4]), "ok" if r.ok else "FAILED rc=%s %s" % (r.returncode, (r.stderr or r.error or "").strip()[:160])))
+                report["plugin"] = "; ".join(out)
         for name, sk in (m.get("skills") or {}).items():
             for t, info in (sk.get("targets") or {}).items():
                 d = Path(info["dir"])
@@ -2003,6 +2084,8 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--install-missing", action="store_true", help="run the exact winget/brew command for missing CLIs (never installs package managers; never sudo)")
     p.add_argument("--write-memory-block", action="store_true", help="add a marked block to the agent's user instruction file (CLAUDE.md / AGENTS.md); opt-in")
     p.add_argument("--plain-links", action="store_true", help="`add`: show only plain sign-up links, never referral links")
+    p.add_argument("--skills-via", choices=["plugin", "copy"], default="plugin", help="Claude Code skills: install the editing-workflow PLUGIN (default; Claude Code updates it and removes it cleanly) or COPY plain skill folders into ~/.claude/skills. Codex always gets copies")
+    p.add_argument("--plugin-source", help="marketplace source for --skills-via plugin (default: the public GitHub repository; a local checkout path works for development)")
     p.add_argument("--skip-mcp", action="store_true")
     p.add_argument("--skip-skills", action="store_true")
     p.add_argument("--skip-env", action="store_true", help="skip uv sync / npm ci / python-lib envs")

@@ -1,6 +1,6 @@
 # Detector thresholds, keyframe tiers and audio parameters
 
-Load when: tuning or porting the cut detector, choosing `--detail`, or arguing about why a count is off. Source: the owner's analyzer as documented in distilled 06 reference-analysis §1.2-§1.4 (checked 2026-10-01); `[PROVEN-internal]` unless stated; values are the owner's tuning on his data, not universal constants.
+Load when: tuning or porting the cut detector, choosing `--detail`, or arguing about why a count is off. Source: the author's analyzer as documented in distilled 06 reference-analysis §1.2-§1.4 (checked 2026-10-01); `[PROVEN-internal]` unless stated; values are the author's tuning on his data, not universal constants.
 
 **Hard rule: change a threshold only with a regression run.** Run `scripts/cut_regression.py` on a rights-cleared labelled set before and after; keep the change only if F1 does not drop below the recorded baseline for that set. Never tune by eye. Rejected ideas (owner, tested against his 20-ad ground truth): a zoom-compensated search (hurt punch-in cuts, no gain) and rejecting picture-in-picture swaps outright (hurt real jump cuts: they are flagged `check` instead).
 
@@ -24,7 +24,14 @@ Features: `luma`, `luma_std`, `sat`, `content` (mean of |dHue|+|dSat|+|dValue|/3
 | Holds | `motion < 0.25` for >= 1.0 s | static hold |
 | Stepped cadence | >= 25 % of frames repeat (content < 0.4) | repeated frames: measure cuts on unique pictures only |
 
-Ground truth of the owner's tuning: 20 hand-verified ads, 339 edit points; F1 0.89 (precision 0.87, recall 0.91), up from 0.86; regression videos kept: a 24-cut ad and a 5-cut avatar hook. **Limits that must be stated whenever a count is quoted:** (a) the set is the owner's private client work and was not reproduced in this research; (b) the automatic cut count was wrong in about 60 % of ad-promo videos (light leaks, flashes, whip pans, slides, PiP, motion blur): verify every suspicious transition on frames and record a corrected count; (c) kinetic type or a continuous-camera piece hides graphic transitions inside the move (one example read 108 cuts/min automatically vs 42 from the sheets); the owner decided not to chase it; (d) the 339-point labels may not be reusable for a distributed benchmark. Other detectors (PySceneDetect 0.7.1 content/adaptive/threshold, TransNetV2 as a second opinion) have no accuracy figure on this kind of material; T16 recommends scoring any candidate at exact frame and +/-1/+/-3 frames on a rights-cleared labelled set (`cut_regression.py` prints those tolerances).
+Ground truth of the author's tuning: 20 hand-verified ads, 339 edit points; F1 0.89 (precision 0.87, recall 0.91), up from 0.86; regression videos kept: a 24-cut ad and a 5-cut avatar hook. **Limits that must be stated whenever a count is quoted:** (a) the set is the author's private client work and was not reproduced in this research; (b) the automatic cut count was wrong in about 60 % of ad-promo videos (light leaks, flashes, whip pans, slides, PiP, motion blur): verify every suspicious transition on frames and record a corrected count; (c) kinetic type or a continuous-camera piece hides graphic transitions inside the move (one example read 108 cuts/min automatically vs 42 from the sheets); the author decided not to chase it; (d) the 339-point labels may not be reusable for a distributed benchmark. Other detectors (PySceneDetect 0.7.1 content/adaptive/threshold, TransNetV2 as a second opinion) have no accuracy figure on this kind of material; T16 recommends scoring any candidate at exact frame and +/-1/+/-3 frames on a rights-cleared labelled set (`cut_regression.py` prints those tolerances).
+
+## 2b. What the toolkit's port (`src/core/analysis.py`) changed, and the evidence (2026-10-03)
+1. **Neighbours are taken among frames that change** (content >= 0.4), as the stepped-cadence row above already demands. Before this, 24p-in-60p material (most frames repeat) turned ordinary new pictures into cuts: 4 false cuts in 0.25 s of one handheld shot.
+2. **A camera move must leave a small residual** once aligned (`MOVE_RESIDUAL = 4` grey levels at the 96-px thumbnail), not only a ratio < 0.5: two shots of the same beach aligned to a third of their difference and still differed by 7-10 levels; both real cuts were rejected as "camera move".
+3. A `check` point from a gradual stretch is placed on its strongest frame (a jump cut inside a moving stretch).
+
+Measured on two hand-labelled clips (frame zooms, tolerance +/-2 frames; the author's own edited reels, private, NOT in the repository and not reproducible by you): tuning clip, 14 cuts: F1 0.69 -> 0.89 (precision 0.67 -> 0.92, recall 0.71 -> 0.86); held-out clip, 9 cuts: unchanged (all 9 found, no false cut, before and after). 23 truth points is far below the 100 that `cut_regression.py` asks for a regression baseline: this is evidence that the changes help, not a measured accuracy. Re-score on your own labelled set.
 
 ## 3. Keyframe tiers (`--detail`)
 | tier | change_frac | min_gap s | max_gap s | per_sec | floor | cap | use |
@@ -37,7 +44,7 @@ Budget = min(cap, max(floor, floor + per_sec x duration)) frames. Per shot: a fr
 
 Zoom tool: every frame (or every Nth) of a window, tiles >= 280 px, at most 96 frames per call (`--step 2` on 60 fps), frame-accurate seek; zoom ONE instance of each distinct device (each transition type, caption entry and exit, hook, end card), 3-6 zooms per video, ranges under about 1 s.
 
-## 4. Audio parameters (owner's analyzer; AudioSet model labels are guesses)
+## 4. Audio parameters (author's analyzer; AudioSet model labels are guesses)
 | Stage | Method / parameters |
 |---|---|
 | Extraction | one decode to 16 kHz mono (speech) and 32 kHz mono (events/music); EBU R128 with true peak |

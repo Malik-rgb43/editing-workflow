@@ -1,7 +1,7 @@
 {
   "schema_version": "1",
   "name": "editing-workflow",
-  "version": "0.3.2",
+  "version": "0.4.0",
   "status": "released (public, Apache-2.0); scripts/release.py regenerates this file inside every archive with the file list and hashes",
   "licence": {
     "status": "Apache-2.0",
@@ -37,7 +37,6 @@
       "source": "REPO_ARCHITECTURE section 5 (research baselines; re-verify on the then-current versions)"
     },
     "gpu_routes": {
-      "amd-vulkan-asr": "measured on the reference machine only (E08)",
       "nvidia": "unmeasured",
       "apple": "unmeasured"
     },

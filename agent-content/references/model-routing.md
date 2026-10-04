@@ -16,7 +16,7 @@ refresh: "read-only: official price/terms pages, models_explore listing, show_pl
 | Source | `distilled/05-ai-generation-media-cost/models-and-routing.md` (T05 table, verdicts V01-V37), `credits-and-cost.md`; blueprint `MODEL_ROUTING.md` |
 | Scope / plan / region | USD before tax/FX/promotion; list price of the named route on 2026-10-01; Israeli eligibility, VAT, plan allotment **not checked** |
 | Confidence | prices and formulas with a V-id are `[VERIFIED-external]`; the rest `[SOURCED-unverified]`; every "suitability" statement is a test candidate, **not a measured winner** |
-| `expires` | 14 days (price rows) / 30 days (catalogue rows) after `checked_at`, or earlier on any provider announcement; `paid-generation-gate` must refuse a spend that depends on an expired row |
+| `expires` | 14 days (price rows) / 30 days (catalogue rows) after `checked_at`, or earlier on any provider announcement; `paid-spend-gate` must refuse a spend that depends on an expired row |
 | Non-spending refresh | open each provider's official price page and terms page in a browser; read the catalogue with `models_explore` (it returns **no prices**); read the balance and plan view; compare to the rows below; write the new `checked_at` per row. Never run a "test generation" to refresh |
 
 **Hard limits of this module.** No generation, latency, quality, identity, lip-sync, Hebrew or acceptance-rate measurement exists. Nothing here ranks models. A catalogue listing is not entitlement: the public API, CLI, MCP and web catalogues differ. (decision default Q3: **no Higgsfield plan-price promises**; the web-plan rates and unlimited fair-use rules were unresolved on 2026-10-01.)
@@ -44,7 +44,7 @@ Costs exclude tax, FX, retries, editing, storage and subscription allocation. `[
 | MR-13 | Apple local audio-video experiment | LTX Desktop 2.5 Fast after the hardware and licence gate | hosted approved plan | needs ≥ 15 GB **free** RAM (16 GB total is not enough) | gated weights; 2.5 local has no Retake/Extend |
 | MR-14 | local generation on the reference machine `[LOCAL-only]` | **no production default** | hosted quote or a separately approved lab probe | `[MEASURED-lab]` E10: Wan2.1 1.3B, 512², 33 frames @16 fps = **~669 s per output second** (~11 min), 18.4 GB RAM, GPU VAE crashed twice | one machine, one pass; do not promise free local generative video |
 
-Decision rules `[RULE-owner]` + `[SOURCED-unverified]`: **prompt first, then spend** (frame-level PROMPT.md approved; every paid action passes the gate; an explicit "generate" is approval within the balance and never covers on-screen facts or client approval of factual stills) · image-first, then animate · shortest viable shot; trim each generation to its clean 1.2-2.5 s window · ETA > 30 min per shot → propose 2.5D / animatic (see `three-d-routes.md`) · text, Hebrew text and Hebrew speech are added or validated outside generation · run ONE sample before a batch · a "best/ranked" claim without a reproducible measured test is discarded.
+Decision rules `[RULE-owner]` + `[SOURCED-unverified]`: **prompt first, then spend** (frame-level PROMPT.md approved; every paid action passes the gate; an explicit "generate" is approval within the balance and never covers on-screen facts or client approval of factual stills) · image-first, then animate · shortest viable shot; trim each generation to its clean 1.2-2.5 s window · ETA > 30 min per shot → do not start it: shorten the shot or quote a hosted route · text, Hebrew text and Hebrew speech are added or validated outside generation · run ONE sample before a batch · a "best/ranked" claim without a reproducible measured test is discarded.
 
 ## 3. Dated price rows (USD before tax/FX; observed 2026-10-01)
 Do not mix a direct vendor rate and an aggregator rate in one job. Every row below expires with the module.
@@ -80,7 +80,6 @@ Open weights are not free of conditions. Gate: exact **checkpoint** licence (nev
 | HunyuanVideo 1.5 | territory **excludes EU, UK, South Korea including use of outputs**; >100 M MAU separate; min 14 GB with offload | `[VERIFIED-external]` V26 |
 | CogVideoX | 2B Apache exception; other checkpoints need registration and extra permission above 1 M monthly visits | `[VERIFIED-external]` V27 |
 | Wan 2.2 / 2.1 | repo Apache-2.0; inspect each checkpoint; hosted Wan 2.6/2.7/3.0 are not proof of public weights | `[SOURCED-unverified]` |
-| Depth Anything V2 | Small Apache-2.0; Base/Large/Giant **CC-BY-NC 4.0** (see `licences-bom-rules.md`) | `[SOURCED-unverified]` |
 | SDXL-Turbo | Stability AI Community License (2024-07-05): registration + revenue conditions (~US$1 M, organisation revenue); owner eligibility unresolved | `[VERIFIED-external]` |
 
 Hardware facts: official LTX Desktop local on Windows/Linux needs **CUDA ≥ 16 GB VRAM** (the reference machine's config is API-only); Apple needs ≥ 15 GB free RAM; Wan2.1 1.3B vendor example 8.19 GB for 5 s at 480p on an RTX 4090 (not an AMD measurement). ComfyUI/ROCm support is a framework precondition, not proof for an one reference machine. `[VERIFIED-external]` V28-V31 (vendor figures).

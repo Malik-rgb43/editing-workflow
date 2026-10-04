@@ -4,13 +4,18 @@
 * Source files are COPIED (never moved or renamed) into ``source/`` and verified (size + SHA-256). A failed verification is
   reported and the tool exits non-zero (the original script once stopped on ``rmdir ... busy`` without copying).
 * ``hf/`` receives the BRIEF.md and DESIGN.md templates from ``agent-content/techniques/templates/`` (never overwritten if present).
-* ``--init-hyperframes`` runs ``npx hyperframes init`` in ``hf/`` (needs Node and the network; opt-in; only ever under an ASCII path:
-  ``init`` silently skips index.html under Hebrew paths).
+  ``--starter NAME`` (a folder under ``templates/starters/``, e.g. ``talking-head``) copies that starter's files instead (its BRIEF.md and a
+  DRAFT PROMPT.md with the house-preset defaults typed in and every open question marked ASK). A starter saves typing; the PROMPT stays
+  unapproved until the human approves it, and the intake ledger check fails until every ASK is answered.
+* ``--init-hyperframes`` runs the PINNED engine's ``init . --non-interactive`` in the still-empty ``hf/`` BEFORE the templates are written
+  (``init`` refuses a folder that already has files; found by a live run). It never downloads the engine, never runs ``npx hyperframes@latest``,
+  and refuses when the engine or the project sits under a non-ASCII path (``init`` then silently skips index.html).
 * The work root comes from --work-root, ``AVC_PATHS_WORK_ROOT`` or ``[paths] work_root`` in toolkit.toml. With none set the tool
   refuses and proposes an ASCII folder instead of guessing one.
 
 Usage:
-    python tools/new_project.py "<title>" [--work-root DIR] [--copy FILE_OR_DIR ...] [--slug name] [--init-hyperframes] [--json]
+    python tools/new_project.py "<title>" [--work-root DIR] [--copy FILE_OR_DIR ...] [--slug name] [--starter talking-head] [--init-hyperframes] [--json]
+    python tools/new_project.py --list-starters
 Exit: 0 created and verified, 2 refused / verification failed, 3 tool error.
 """
 
@@ -30,15 +35,52 @@ def default_proposal() -> str:
     return "C:\\avc-work" if os.name == "nt" else str(Path.home() / "avc-work")
 
 
+def _init_hyperframes(hf: Path) -> dict:
+    """Run ``hyperframes init . --non-interactive`` with the pinned engine in an EMPTY ``hf/``; report, never raise."""
+    from core import hf_engine
+    from core.procs import run
+
+    if any(hf.iterdir()):
+        return {"ok": (hf / "index.html").exists(), "exit": None, "index_html_created": (hf / "index.html").exists(), "why": "hf/ is not empty: init only runs in an empty folder"}
+    if not hf_engine.is_ascii_path(hf):
+        return {"ok": False, "exit": None, "index_html_created": False, "why": f"{hf} is not an ASCII path: init would silently skip index.html"}
+    eng = hf_engine.find()
+    if eng is None:
+        return {"ok": False, "exit": None, "index_html_created": False, "why": "HyperFrames engine not found (run `python install/bootstrap.py apply`, or install Node.js LTS)"}
+    prob = hf_engine.non_ascii_problem(eng)
+    if prob:
+        return {"ok": False, "exit": None, "index_html_created": False, "why": prob}
+    r = run(list(eng.argv) + ["init", ".", "--non-interactive"], cwd=hf, env=hf_engine.run_env(), timeout=300)
+    made = (hf / "index.html").exists()
+    return {"ok": r.returncode == 0 and made, "exit": r.returncode, "index_html_created": made}
+
+
+TEMPLATES = Path(__file__).resolve().parents[1] / "agent-content" / "techniques" / "templates"
+
+
+def starters() -> list[str]:
+    d = TEMPLATES / "starters"
+    return sorted(p.name for p in d.iterdir() if p.is_dir()) if d.is_dir() else []
+
+
 def main(argv=None) -> int:
+    if argv is None:
+        argv = sys.argv[1:]
+    if "--list-starters" in argv:
+        print("\n".join(starters()) or "no starters")
+        return 0
     ap = argparse.ArgumentParser(prog="new_project", description=__doc__.split("\n\n")[0])
     ap.add_argument("title")
+    ap.add_argument("--starter", help="copy a starter's BRIEF.md + DRAFT PROMPT.md (see --list-starters)")
     ap.add_argument("--work-root")
     ap.add_argument("--slug")
     ap.add_argument("--copy", nargs="*", default=[], help="source files/folders to COPY into source/")
     ap.add_argument("--init-hyperframes", action="store_true")
     ap.add_argument("--json", action="store_true")
     args = ap.parse_args(argv)
+    if args.starter and args.starter not in starters():
+        print(f"new_project: unknown starter {args.starter!r}; available: {', '.join(starters()) or 'none'}", file=sys.stderr)
+        return 2
 
     from core.config import load_config
     from core.envelope import sha256_file
@@ -60,11 +102,18 @@ def main(argv=None) -> int:
                 print(f"new_project: slug {pp.slug!r} already belongs to project {existing!r}; pass --slug to choose another", file=sys.stderr)
                 return 2
         pp.ensure()
-        tpl = Path(__file__).resolve().parents[1] / "agent-content" / "techniques" / "templates"
-        for name in ("BRIEF.md", "DESIGN.md"):
+        init = None
+        if args.init_hyperframes:
+            init = _init_hyperframes(pp.hf)
+        files = {name: TEMPLATES / name for name in ("BRIEF.md", "DESIGN.md")}
+        if args.starter:
+            files.update({f.name: f for f in (TEMPLATES / "starters" / args.starter).iterdir() if f.is_file()})
+        written = []
+        for name, src_tpl in files.items():
             dst = pp.hf / name
-            if (tpl / name).is_file() and not dst.exists():
-                shutil.copyfile(tpl / name, dst)
+            if src_tpl.is_file() and not dst.exists():
+                shutil.copyfile(src_tpl, dst)
+                written.append(name)
         (pp.hf / "fonts").mkdir(exist_ok=True)
         (pp.hf / "assets").mkdir(exist_ok=True)
         copied, failed = [], []
@@ -86,21 +135,13 @@ def main(argv=None) -> int:
                     copied.append({"file": str(f), "to": str(dst)})
                 else:
                     failed.append({"file": str(f), "why": "verification failed (size/hash differ)"})
-        init = None
-        if args.init_hyperframes:
-            from core.procs import run
-
-            npx = shutil.which("npx")
-            if not npx:
-                init = {"ok": False, "why": "npx not found (install Node.js LTS)"}
-            else:
-                r = run([npx, "hyperframes", "init", "."], cwd=pp.hf, timeout=300)
-                init = {"ok": r.returncode == 0 and (pp.hf / "index.html").exists(), "exit": r.returncode, "index_html_created": (pp.hf / "index.html").exists()}
-        report = {"slug": pp.slug, "title": args.title, "root": str(pp.root), "source": str(pp.source), "hf": str(pp.hf), "final": str(pp.final), "work": str(pp.work), "copied": copied, "failed": failed, "hyperframes_init": init}
+        report = {"slug": pp.slug, "title": args.title, "root": str(pp.root), "source": str(pp.source), "hf": str(pp.hf), "final": str(pp.final), "work": str(pp.work), "copied": copied, "failed": failed, "hyperframes_init": init,
+                  "starter": args.starter, "templates_written": written}
         if args.json:
             print(json.dumps(report, ensure_ascii=False, indent=2))
         else:
-            print(f"created {pp.root}\n  copied {len(copied)} file(s), {len(failed)} failed" + (f"\n  hyperframes init: {init}" if init else ""))
+            print(f"created {pp.root}\n  copied {len(copied)} file(s), {len(failed)} failed" + (f"\n  hyperframes init: {init}" if init else "")
+                  + (f"\n  starter {args.starter}: {', '.join(written) or 'nothing new'} (DRAFT: answer every ASK, then get approval)" if args.starter else ""))
         return 2 if failed or (init is not None and not init.get("ok")) else 0
     except ToolkitError as exc:
         print(f"new_project: {exc}", file=sys.stderr)

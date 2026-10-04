@@ -1,17 +1,17 @@
 # Technique: the frame-spec PROMPT.md
 
-> Status: specified, deterministic checks only; model eval not run (decision default Q4). Written 2026-10-02 from distilled/02 techniques §1 and workflow-end-to-end §5 (owner's method, rewritten and tightened; the worked example is **synthetic**).
-> Tags: `[RULE-owner]` the owner said it · `[PROVEN-internal]` worked in an owner-approved project · `[IDEA]` untested proposal · `[CONFLICT]` sources disagree · `[LOCAL-only]` true on the reference machine only.
+> Status: specified, deterministic checks only; model eval not run (decision default Q4). Written 2026-10-02 from distilled/02 techniques §1 and workflow-end-to-end §5 (author's method, rewritten and tightened; the worked example is **synthetic**).
+> Tags: `[RULE-owner]` the author said it · `[PROVEN-internal]` worked in an owner-approved project · `[IDEA]` untested proposal · `[CONFLICT]` sources disagree · `[LOCAL-only]` true on the reference machine only.
 > OM (the reference machine) = one Windows laptop; hardware details are intentionally not published.8.x.
 
 ## 0. What it is
 
 `hf/PROMPT.md` is a **production spec at frame level**: for every moment of the video it says what is seen, where (px), when (frames), how it moves (easing), what is heard, which transition carries it into the next moment, and which ledger line it satisfies. The code only renders the spec. Nothing in the spec is "about"; hex, px, frames and easing checkpoints are the contract. `[RULE-owner]`
 
-- **Gate:** the owner approves PROMPT.md before the first line of composition code, in every video type and **also in autonomous runs** (the agent drafts, the human approves; an agent never self-approves). Cost when skipped, measured on owner projects: a discarded ~1 h build (launch test, v1) and a reverse-engineered spec at the end (premium talking-head test #3). (src: distilled/02 workflow-end-to-end §5, 2026-10-02) `[RULE-owner]` `[PROVEN-internal]`
+- **Gate:** the author approves PROMPT.md before the first line of composition code, in every video type and **also in autonomous runs** (the agent drafts, the human approves; an agent never self-approves). Cost when skipped, measured on owner projects: a discarded ~1 h build (launch test, v1) and a reverse-engineered spec at the end (premium talking-head test #3). (src: distilled/02 workflow-end-to-end §5, 2026-10-02) `[RULE-owner]` `[PROVEN-internal]`
 - **Order of change, always:** ledger → PROMPT.md → code. Never code first. A later note becomes a new ledger line, then a changed range in `<structure>`, then a patch.
 - **One spec file:** `hf/PROMPT.md`. There is no SPEC.md. The ledger lives inside it (`<ledger>` block above the six frame blocks); see [concept-ledger.md](concept-ledger.md).
-- **Where the idea came from:** a public 7.5 s UI launch (226 frames, produced in about 15 minutes from a frame-level prompt) that the owner called perfect. Use it for **structure**, never copy its content. `[RULE-owner]` `[SOURCED-unverified for the public post]`
+- **Where the idea came from:** a public 7.5 s UI launch (226 frames, produced in about 15 minutes from a frame-level prompt) that the author called perfect. Use it for **structure**, never copy its content. `[RULE-owner]` `[SOURCED-unverified for the public post]`
 
 ### 0.1 Gold-standard beat shape (measured on frames of that reference; use as a rhythm template, not content)
 
@@ -26,21 +26,21 @@
 | reveal | 4.03–4.4 s | the card **becomes** the site, fullscreen | bass drop at 4.1 s |
 | pull back | 5.6–7.47 s | site shrinks to a screen on neutral grey | pad, fade |
 
-Principles to keep: a protagonist object that morphs (no cutting away); at most one punch-in, on the moment of action; a one-frame motif repeated twice as a structural marker; anticipation about 0.5 s before the reveal with the drop exactly on it; the ending shows the result in context with ≥ 1.5 s of quiet (the owner later asked for a natural ring-out instead of a hard stop in his own launch: music rings out to the last frame). Music is **not** beat-locked to every cut (17 % in the reference); sound effects are locked to **events**. (src: distilled/02 techniques §1.1; qa §3) `[PROVEN-internal]` `[CONFLICT-light]` on hard-stop vs ring-out: the owner's later rule wins.
+Principles to keep: a protagonist object that morphs (no cutting away); at most one punch-in, on the moment of action; a one-frame motif repeated twice as a structural marker; anticipation about 0.5 s before the reveal with the drop exactly on it; the ending shows the result in context with ≥ 1.5 s of quiet (the author later asked for a natural ring-out instead of a hard stop in his own launch: music rings out to the last frame). Music is **not** beat-locked to every cut (17 % in the reference); sound effects are locked to **events**. (src: distilled/02 techniques §1.1; qa §3) `[PROVEN-internal]` `[CONFLICT-light]` on hard-stop vs ring-out: the author's later rule wins.
 
 ## 1. Writing rules (every type)
 
 1. **Story first.** One sentence of what the viewer feels, then one screen or beat per sentence-sized idea. For launches a new screen every 2–6 s `[RULE-owner]`.
 2. **A concrete story object that changes** on every screen (an empty slot that turns green), never an abstraction (a dot on black).
 3. **One anchor**: a hero object that persists through the film (a card, a number, a phone). A key detail (price, name) gets a readable close-up ≥ 0.9 s.
-4. **Numbers are the contract**: hex, px, frames at the *delivery* fps, easing control points ("90 % by f12"), dB. If the source table is at another fps, convert and say so (the owner's own-signature table was measured at 60 fps; halve for 30 fps). `[RULE-owner]`
+4. **Numbers are the contract**: hex, px, frames at the *delivery* fps, easing control points ("90 % by f12"), dB. If the source table is at another fps, convert and say so (the author's own-signature table was measured at 60 fps; halve for 30 fps). `[RULE-owner]`
 5. **Sound is part of the spec**: every SFX with a time; music edited so the beat falls on an event; VO lines with start times; a keyword lands 0 to +7 frames after it is spoken.
 6. **A Banned list in every spec** (permanent items below + every owner note so far).
 7. **Every transition different.** Choose from the vocabulary (zoom-through into an object, shared element, 3D page fall-away, light-line bloom, match-move of a number, whip with blur, clip-path portal, push into a device).
 8. **Four approval stills before any full render** (`<start>`), named by frame.
 9. In HyperFrames the **paused GSAP timeline plays the role of `seek(t)`**: every style is a pure function of time.
 
-**Permanent Banned list** (union of the owner's lists; add each new note): crossfade · fade as a transition · bounce on text · glow on static text · small corner labels / "feature pills" that look like AI · the same transition trick twice · an empty screen (a dot or rings on black) · a static hold ≥ 1 s in promo and motion · template look · another brand's signature colour · stock UI kits · accent colour before the reveal (launch default) · a 3D object covering information such as a price · full-film `backdrop-filter` / large blur. (src: distilled/OWNER_STYLE §M) `[RULE-owner]`
+**Permanent Banned list** (union of the author's lists; add each new note): crossfade · fade as a transition · bounce on text · glow on static text · small corner labels / "feature pills" that look like AI · the same transition trick twice · an empty screen (a dot or rings on black) · a static hold ≥ 1 s in promo and motion · template look · another brand's signature colour · stock UI kits · accent colour before the reveal (launch default) · a 3D object covering information such as a price · full-film `backdrop-filter` / large blur. (src: distilled/OWNER_STYLE §M) `[RULE-owner]`
 
 ## 2. The skeleton (motion / launch / promo)
 
@@ -49,12 +49,12 @@ Copy this into `hf/PROMPT.md` and fill every bracket. Blocks keep their tag name
 ```text
 # PROMPT: <project> — "<title>" (<W×H>, <duration s>, <fps> fps, <N> frames)
 status: DRAFT vN | APPROVED   approved_sha256: <hash of this file when approved, else —>
-Owner notes this version answers: 1. … 2. …   (numbered, in the owner's words; later rounds override earlier tables)
+Owner notes this version answers: 1. … 2. …   (numbered, in the author's words; later rounds override earlier tables)
 
 <ledger> … see concept-ledger.md; one checkable line per concrete statement … </ledger>
 
 <inputs>
-Ask the owner for: [content per screen, numbers, VO lines, CTA text, music, logo files].
+Ask the author for: [content per screen, numbers, VO lines, CTA text, music, logo files].
 Defaults if skipped (a concrete default for EVERY item, so work never waits): […]
 Variant matrix (one row per output file, each row a ledger id): [file | ratio | variant | derived from]
 </inputs>
@@ -64,7 +64,7 @@ Format: <W×H @fps, N frames>; one continuous take OR cuts.
 Reference grammar: <ref-id / none> — what is borrowed (numbers) and what is not.
 Look: grounds (hex), the ONE accent (hex, meaning, first frame it may appear), neutrals, grain %, vignette.
 Type: families, sizes in px, tracking, line-height; exact copy of every text.
-Hero object: dimensions, perspective, orbit.  3D: which beats, which route, why (see 2-5d.md / three-d decisions).
+Hero object: dimensions, perspective, orbit.  3D: which beats, which route, why (see three-d decisions).
 Motion language: entrance curve + frames; exit curve + frames; blur policy; overshoot policy.
 Transitions: table, one per seam, each different.
 Banned: <permanent list + notes>.
@@ -136,11 +136,11 @@ Story in one sentence: <what the viewer feels; what the speaker promises>
 <start> snapshot times (output seconds) for look approval, then a full draft </start>
 ```
 
-Footage-specific pacing numbers live in the type skill (talking-head: a beat every 3–6 s that shows the sentence, owner "premium" bar; cutting numbers: minimum pause to cut 0.40 s tight / 0.60 s natural / 0.25 s aggressive, minimum shot 0.35 s, lead 0.08 s, tail 0.12 s, cut 0.06 s inside the silence — owner's earlier tool constants `[PROVEN-internal]` `[LOCAL-only]`).
+Footage-specific pacing numbers live in the type skill (talking-head: a beat every 3–6 s that shows the sentence, owner "premium" bar; cutting numbers: minimum pause to cut 0.40 s tight / 0.60 s natural / 0.25 s aggressive, minimum shot 0.35 s, lead 0.08 s, tail 0.12 s, cut 0.06 s inside the silence — author's earlier tool constants `[PROVEN-internal]` `[LOCAL-only]`).
 
 ## 4. Variant: AI-generated film (shot cards)
 
-Nothing is generated until the document is approved; approval of a **number** precedes any spend (💲 [paid-generation-gate]); images are approved before video; every frame is checked. Document sections (reconstructed from a 15-shot, 28.0 s plan; section order matters because later sections depend on earlier locks): 0 locked decisions (format, sound, ending, tools, generation length) · 1 materials found + problems in the brief (contradicting timings, slow opening, wording errors, platform policy, AI-label duty) · 2 three concepts (Proven written in full) + recommendation · 3 the contract: N shots on a frame/second table (length, generation length, clean window used) and an emotional/colour arc per chapter · 4 look bible (one-line idea, locked palette table, lens + movement dictionary, Banned) · 5 locks (character, environment, equipment; each with source references) · 6 reference pack ("references are not templates": light, lens, camera move, composition) · 7 global prompt blocks (STYLE PREFIX; a fixed closing BASE block; fixed request order Camera → Action → Light → Detail → BASE) · 8 **shot cards** · 9 the three clean-and-smooth tables per shot · 10 sound (music brief, SFX per frame, mix) · 11 assembly and post (fps check, windows, time-remap, one grade, grain, cover kit) · 12 production order with approval gates and **budget units, no prices** (model routes carry no price in the catalogue) · 13 risk register · 14 open questions with defaults.
+Nothing is generated until the document is approved; approval of a **number** precedes any spend (💲 [paid-spend-gate]); images are approved before video; every frame is checked. Document sections (reconstructed from a 15-shot, 28.0 s plan; section order matters because later sections depend on earlier locks): 0 locked decisions (format, sound, ending, tools, generation length) · 1 materials found + problems in the brief (contradicting timings, slow opening, wording errors, platform policy, AI-label duty) · 2 three concepts (Proven written in full) + recommendation · 3 the contract: N shots on a frame/second table (length, generation length, clean window used) and an emotional/colour arc per chapter · 4 look bible (one-line idea, locked palette table, lens + movement dictionary, Banned) · 5 locks (character, environment, equipment; each with source references) · 6 reference pack ("references are not templates": light, lens, camera move, composition) · 7 global prompt blocks (STYLE PREFIX; a fixed closing BASE block; fixed request order Camera → Action → Light → Detail → BASE) · 8 **shot cards** · 9 the three clean-and-smooth tables per shot · 10 sound (music brief, SFX per frame, mix) · 11 assembly and post (fps check, windows, time-remap, one grade, grain, cover kit) · 12 production order with approval gates and **budget units, no prices** (model routes carry no price in the catalogue) · 13 risk register · 14 open questions with defaults.
 
 **Shot card fields:** what is seen and why · references to attach · START image prompt (`[STYLE]` + scene + lock blocks + lens) · VIDEO prompt (model, mode, duration, sound off, start image only or start+end) in the fixed order · **clean window** (seconds actually used, 1.2–2.5 s) · transition to the next shot · sound at the shot · risk and fallback (for example a real-footage cut). (src: distilled/02 techniques §1.6) `[PROVEN-internal]`
 
@@ -262,12 +262,12 @@ Four approval stills BEFORE any full render: f40 (stack of chips, accent absent)
 
 | Symptom | Cause | Remedy | Prevention |
 |---|---|---|---|
-| owner rejects after a full build | spec skipped or never approved | stop; write the spec from the owner's notes; ask for approval | gate in wf-03; `approved_sha256` |
+| owner rejects after a full build | spec skipped or never approved | stop; write the spec from the author's notes; ask for approval | gate in wf-03; `approved_sha256` |
 | late "premium / 3D / pace" notes | those dimensions were not ledger lines in round 1 | add ledger rows now, re-plan | intake round 1 asks BAR, MOT, 3D, BROLL |
 | a ledger item was lost in the build | id never cited in `<structure>` | grep ids, add citations | `uniq -c` check before presenting |
 | camera glitches / text cut in a push-in | no camera table, no text-fit arithmetic | add the table; shrink text or scale | §2.2 table 1 |
 | scene logos never rendered after a re-cut | frame literals instead of word cues | anchor to cues | one cues.js; word-cue helper |
-| the critic passes what the owner rejects | critic unaware of past notes | give the critic the clean-smooth rule table and the Banned list | [critic-brief.md](../benchmarks/critic-brief.md) |
+| the critic passes what the author rejects | critic unaware of past notes | give the critic the clean-smooth rule table and the Banned list | [critic-brief.md](../benchmarks/critic-brief.md) |
 
 ## 8. Sources
 

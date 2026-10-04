@@ -1,5 +1,0 @@
-interface:
-  display_name: "Paid Generation Gate"
-  short_description: "Gate every paid action before it runs - AI image, video or audio generation, upscales, paid APIs, cloud renders, credit "
-policy:
-  allow_implicit_invocation: false

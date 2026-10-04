@@ -6,7 +6,7 @@
 
 ## 0. The problem it solves
 
-The owner's `caption_qa` counts bright text pixels in a caption band and reports a *pop* when the count falls by > 85 % between consecutive frames. It cannot see two caption plates **on top of each other** (the E04 fixture: two boxes overlapping for exactly frames 30–45 → `caption_qa` returned 0 findings), it assumed 30 fps (f25 at 25 fps printed as 0.83 s, really 1.00 s), it returned exit 0 on a missing input, and the appearance detection its docstring advertises was not implemented. (src: E04 report, distilled/02 qa §2.2, 2026-10-02) `[MEASURED-lab]`
+The author's `caption_qa` counts bright text pixels in a caption band and reports a *pop* when the count falls by > 85 % between consecutive frames. It cannot see two caption plates **on top of each other** (the E04 fixture: two boxes overlapping for exactly frames 30–45 → `caption_qa` returned 0 findings), it assumed 30 fps (f25 at 25 fps printed as 0.83 s, really 1.00 s), it returned exit 0 on a missing input, and the appearance detection its docstring advertises was not implemented. (src: E04 report, distilled/02 qa §2.2, 2026-10-02) `[MEASURED-lab]`
 
 Declared geometry fixes the overlap case **without sampling frames**: if the composition knows each caption's box and when it is active, an exact solver can say *which two captions overlap, from when to when*.
 
@@ -118,6 +118,6 @@ The research repo's own F08 results (E04 overlap found at frames 30–45 where `
 - Declared boxes ≠ rendered pixels; no renderer extractor exists; glyph reading, platform-safe-zone policy, rotation and arbitrary easing are not integrated.
 - A collision-free layout can still be illegible (contrast, size, bidi, look-alike letters).
 - WebVTT-style simultaneous cues are legal: temporal overlap alone is **not** an error; only **spatial** collision during overlap is.
-- The owner's heuristics near it (0.25 s per word, 0.9 s per card, rail ≤ y 1450) stay creative/house presets validated by playback; Netflix's Hebrew CPS profiles (17/13 adult/child, 20/17 SDH) are *optional named profiles*, not law for social word-pop captions. `[SOURCED-unverified]` (src: distilled/02 qa §8.5)
+- The author's heuristics near it (0.25 s per word, 0.9 s per card, rail ≤ y 1450) stay creative/house presets validated by playback; Netflix's Hebrew CPS profiles (17/13 adult/child, 20/17 SDH) are *optional named profiles*, not law for social word-pop captions. `[SOURCED-unverified]` (src: distilled/02 qa §8.5)
 
 (src: F08 REPORT; E04 REPORT; distilled/02 qa §2.2, §8.5; TOOLS_SPEC §2 — read 2026-10-02.)

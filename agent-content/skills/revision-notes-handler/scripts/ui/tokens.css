@@ -1,0 +1,24 @@
+/* Student-screen design system v1 (2026-10-04): "pro editing suite", black + gold (owner's call). Sources: 21st.dev Filmstrip Scrub
+   (monospace timecode chip, tick ruler), 21st.dev AI Approval (every final action states its consequence), UI/UX Pro Max colors.csv
+   "Luxury/Premium Brand" (stone blacks #0C0A09/#1C1917, gold #CA8A04 -> #A16207 on light for WCAG). Heebo (OFL, embedded subset): Hebrew first. */
+:root{color-scheme:dark light;
+ --bg:#0C0A09;--surface:#161311;--raised:#1F1B18;--sunken:#080706;--line:rgba(214,211,209,.12);--line-strong:rgba(214,211,209,.26);
+ --fg:#F5F0E8;--muted:#A8A29E;--pri:#D4A72C;--pri-h:#E8C35A;--pri-ink:#0C0A09;--pri-soft:rgba(212,167,44,.16);--acc:#D9C79A;--acc-soft:rgba(217,199,154,.18);
+ --ok:#4ADE80;--ok-soft:rgba(74,222,128,.12);--warn:#F87171;--r-sm:8px;--r:12px;--r-lg:16px;
+ --shadow:inset 0 1px 0 rgba(255,255,255,.04),0 10px 30px rgba(0,0,0,.45);--ease:cubic-bezier(.16,1,.3,1);
+ --mono:ui-monospace,"Cascadia Mono","SF Mono",Consolas,monospace;--sans:"Heebo UI",system-ui,"Segoe UI",sans-serif}
+@media (prefers-color-scheme:light){:root{--bg:#FAFAF9;--surface:#FFFFFF;--raised:#F5F5F4;--sunken:#F0EEEB;--line:#E7E5E4;--line-strong:#D6D3D1;
+ --fg:#0C0A09;--muted:#57534E;--pri:#A16207;--pri-h:#854D0E;--pri-ink:#FFFFFF;--pri-soft:rgba(161,98,7,.10);--acc:#78716C;--acc-soft:rgba(120,113,108,.16);
+ --ok:#15803D;--ok-soft:rgba(21,128,61,.10);--warn:#B91C1C;--shadow:0 1px 2px rgba(12,10,9,.06),0 10px 30px rgba(12,10,9,.07)}}
+*{box-sizing:border-box}
+body{margin:0;min-height:100dvh;overflow-x:clip;background:var(--bg);color:var(--fg);font:16px/1.55 var(--sans);-webkit-font-smoothing:antialiased}
+button,input,textarea,select{font:inherit;color:inherit}
+button{cursor:pointer;touch-action:manipulation;border:1px solid var(--line);background:var(--raised);border-radius:var(--r-sm);padding:8px 14px;min-height:40px;
+ transition:background-color .18s var(--ease),border-color .18s var(--ease),transform .12s var(--ease),box-shadow .18s var(--ease)}
+button:hover:not(:disabled){border-color:var(--line-strong)}button:active:not(:disabled){transform:scale(.98)}
+button:disabled{opacity:.45;cursor:default}
+:focus-visible{outline:2px solid var(--pri-h);outline-offset:2px}
+kbd{font:600 .74rem/1 var(--mono);border:1px solid var(--line-strong);border-bottom-width:2px;border-radius:6px;padding:3px 6px;background:var(--sunken);color:var(--muted);direction:ltr;display:inline-block}
+.svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+svg[hidden],path[hidden],[hidden]{display:none!important}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation-duration:.01ms!important}}

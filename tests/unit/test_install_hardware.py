@@ -38,27 +38,10 @@ HW_CASES = {
 def test_cpu_baseline_is_always_chosen_whatever_the_hardware(case):
     bs = load_bootstrap()
     hw = HW_CASES[case]
-    routes = bs.choose_routes(hw, [])  # no probe passed
+    routes = bs.choose_routes(hw)
     assert routes["asr"]["chosen"] == "asr-cpu" and routes["matte"]["chosen"] == "native-cpu" and routes["encoder"]["chosen"].startswith("libx264")
-    assert routes["asr"]["accelerated_candidates"] == []  # nothing recommended without a passing probe
-
-
-def test_accelerated_routes_are_listed_only_when_their_probe_passed_and_are_labelled_never_required():
-    bs = load_bootstrap()
-    probes = [{"route": "asr-cuda", "state": "pass", "evidence": "GPU 0"}, {"route": "asr-vulkan", "state": "fail", "evidence": "exit 1"},
-              {"route": "asr-mlx", "state": "not_run", "evidence": "x"}]
-    routes = bs.choose_routes(HW_CASES["windows-nvidia"], probes)
-    cands = routes["asr"]["accelerated_candidates"]
-    assert [c["route"] for c in cands] == ["asr-cuda"]
-    assert cands[0]["label"] == "unmeasured"
-    assert "asr-cuda" in routes["never_required"] and "matte-fast" in routes["never_required"]
-    assert routes["matte"]["accelerated_candidates"] == []  # matte accel is never recommended automatically (licence + unmeasured)
-
-
-def test_vulkan_label_says_measured_on_one_machine_only():
-    bs = load_bootstrap()
-    routes = bs.choose_routes(HW_CASES["windows-amd"], [{"route": "asr-vulkan", "state": "pass", "evidence": "ok"}])
-    assert "ONE" in routes["asr"]["accelerated_candidates"][0]["label"]
+    assert "accelerated_candidates" not in routes["asr"]  # one transcription route, nothing to offer on top
+    assert routes["never_required"] == ["matte-fast"]
 
 
 def test_hardware_findings_thresholds_are_labelled_as_not_measured():
@@ -92,19 +75,17 @@ def test_plan_detects_everything_and_asks_no_hardware_question(env):
     assert plan["selection"]["profile"] == "minimal" and plan["mcp"] == []  # neutral and free by default
     if env.bs.os_name() == "windows":
         assert [g["vendor"] for g in hw["gpus"]] == ["NVIDIA"]
-        assert {p["route"]: p["state"] for p in plan["accelerator_probes"]} == {"asr-cuda": "pass", "asr-vulkan": "not_run"}
-        assert [c["route"] for c in plan["routes"]["asr"]["accelerated_candidates"]] == ["asr-cuda"]
+    assert "accelerator_probes" not in plan  # no GPU route is probed or offered
 
 
-def test_probes_are_read_only_and_nothing_accelerated_is_installed(env):
+def test_a_detected_gpu_changes_nothing_that_is_installed(env):
     env.fake.gpu_text = "NVIDIA GeForce RTX 4070"
     env.fake.present |= {"nvidia-smi", "vulkaninfo", "powershell"}
     env.run("apply", "--yes", "--local", expect=0)
     cmds = [c[0] for c in env.fake.calls]
-    assert "whisper-cli" not in cmds
     pip = env.fake.actions("uv", "pip")
     assert len(pip) == 1 and "faster-whisper==1.2.1" in pip[0]  # the CPU route only
-    assert not [c for c in env.fake.calls if any("cuda" in a.lower() or "vulkan" in a.lower() or "whisper.cpp" in a.lower() for a in c) and c[0] not in ("vulkaninfo", "nvidia-smi")]
+    assert not [c for c in env.fake.calls if any("cuda" in a.lower() or "vulkan" in a.lower() or "whisper.cpp" in a.lower() for a in c) and c[0] not in ("vulkaninfo", "nvidia-smi")]  # no GPU runtime is installed
 
 
 def test_low_disk_blocks_and_auto_route_is_skipped(env, monkeypatch):
@@ -140,7 +121,8 @@ def test_defaults_carry_no_vendor_or_hardware_specific_choice(env):
 def test_add_list_shows_every_integration(env):
     rc, rows = env.json("add", "--list", repo=True, target=None, work=False)
     ids = {r["id"] for r in rows}
-    assert {"playwright", "higgsfield", "elevenlabs", "blender-mcp", "faster-whisper", "whisper-cpp", "yt-dlp"} <= ids
+    assert {"playwright", "higgsfield", "elevenlabs", "blender-mcp", "faster-whisper", "yt-dlp"} <= ids
+    assert "whisper-cpp" not in ids and "ivrit-ggml" not in ids
     assert next(r for r in rows if r["id"] == "luma-legacy-mcp")["avoid"] is True
 
 
@@ -173,7 +155,7 @@ def test_add_key_based_provider_never_registers_and_never_touches_the_key(env, m
     rc, out = env.json("add", "magic-21st", "--yes", target=None, work=False)
     assert rc == 0
     r = out["results"][0]
-    assert r["gate"] == "paid-generation-gate" and "not spend authorisation" in r["note"]
+    assert r["gate"] == "paid-spend-gate" and "not spend authorisation" in r["note"]
     assert r["env_var"]["name"] == "TWENTYFIRST_API_KEY" and r["env_var"]["present"] is True
     assert all(a["status"] == "manual" for a in r["actions"])
     assert not [c for c in env.fake.actions("claude", "mcp") if c[2] == "add"]
@@ -197,11 +179,9 @@ def test_add_requires_an_installed_toolkit_to_do_anything(env):
     assert rc == 2 and "not installed" in err
 
 
-def test_add_native_plugin_and_model_are_instructions_only(env):
+def test_add_model_is_instructions_only(env):
     env.run("apply", "--yes", expect=0)
     n = len(env.fake.calls)
-    rc, out = env.json("add", "nle-premiere", "--yes", target=None, work=False)
-    assert out["results"][0]["actions"][0]["status"] == "install by hand"
     rc, out = env.json("add", "ivrit-ct2", "--yes", target=None, work=False)
     assert out["results"][0]["actions"][0]["status"] == "never downloaded by the installer"
     assert not [c for c in env.fake.calls[n:] if c[0] in ("claude", "codex", "uv", "npm", "winget", "brew") and c[1:2] not in (["--version"], ["mcp"])]

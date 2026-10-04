@@ -2,16 +2,16 @@
 module: three-d-routes
 checked_at: 2026-10-02
 expires: "90 days (2026-12-31); hosted-generator prices and free tiers (checked 2026-09-27) expire in 30 days"
-confidence: "owner timings [PROVEN-internal][LOCAL-only]; E10 2.5D numbers [MEASURED-lab] (one machine, one pass); model/library licences [VERIFIED-external] or [SOURCED-unverified] per row; hosted prices documentation only"
+confidence: "owner timings [PROVEN-internal][LOCAL-only]; model/library licences [VERIFIED-external] or [SOURCED-unverified] per row; hosted prices documentation only"
 refresh: "free: read licence pages, Blender release notes, three.js changelog; one-second segment test on your own machine; never generate a paid model"
 ---
 
-# 3D, 2.5D and depth routes — dated reference
+# 3D routes — dated reference
 
 | Field | Value |
 |---|---|
-| Fact set | when 3D is worth it; Blender vs Three.js vs AI 3D vs 2.5D routing; Blender pipeline; timings; colour/alpha contract; model and asset licences; depth-model pins |
-| Versions / ids | Blender 5.2 (owner) vs pinned manual 4.5 LTS (do not carry 4.5 assumptions to 5.2) · three.js pinned `three@0.181.2` for the HyperFrames adapter · Depth Anything V2 Small `03876f8651c73a60fe4c2c48294e09fcb6838fcf` · MCP for Blender (`ahujasid`, MIT) |
+| Fact set | when 3D is worth it; Blender vs Three.js vs AI 3D routing; Blender pipeline; timings; colour/alpha contract; model and asset licences |
+| Versions / ids | Blender 5.2 (owner) vs pinned manual 4.5 LTS (do not carry 4.5 assumptions to 5.2) · three.js pinned `three@0.181.2` for the HyperFrames adapter · MCP for Blender (`ahujasid`, MIT) |
 | `checked_at` | **2026-10-02** (= research date; hosted prices dated **2026-09-27**; **must be refreshed before use**) |
 | Source | `distilled/04-…/three-d.md` (T11, owner tools); `distilled/03-…/e09-e12-final-results.md` (E10); `distilled/08-…/legal-and-licensing.md` §7 |
 | Scope / plan / region | the reference machine; students on NVIDIA or Apple have **no measured data here** |
@@ -25,13 +25,13 @@ refresh: "free: read licence pages, Blender release notes, three.js changelog; o
 | real product geometry, logo/text extrusion, exploded view, controlled relighting | **Blender** mesh + EEVEE preview; Cycles only when material quality needs it | reference/geometry/lighting correct; unique-frame ETA |
 | simple reusable prop/icon | owned asset or Poly Haven CC0; Blender alpha loop | provenance/licence, usable topology, seamless loop |
 | unique hero prop with no mesh | hosted generation **only if the student connected a generator (for example Tripo)**, with approval first; otherwise model it in Blender or use a CC0 asset (CPU image-to-3D is a local option only if the student chose local) | connected, exact terms, cleanup effort, accepted fidelity |
-| small motion from a still / depth illusion | static 2D, or **DA2-Small layered 2.5D** | holes/stretch/identity limits; depth once, cached |
+| small motion from a still | static 2D with a plain HyperFrames camera move (push-in or pan) | keep the move small; inspect edges |
 | data-driven, procedural, many instances, 3D UI with live HTML text, edited in rounds | **Three.js inside HyperFrames** | deterministic absolute-time seek; capture cost; one-second AMD segment test |
 | captured real location with novel camera | licensed existing splat (research only) | capture/data/software rights |
 
 **Three.js is better when** the scene is data-driven/procedural (globe with routes, charts, seeded particles), has many instances (`InstancedMesh`), is 3D UI with live text (Hebrew as an HTML/CSS layer above — **never `TextGeometry`**), is edited in rounds (colour/number/cue in seconds, not a 40-minute render), the camera must follow the VO or the DOM, or the palette must be exact (hex = hex, no AgX pastel). **Blender is better when** photorealism (glass, caustics, metal, skin, soft GI), a hero material on screen > 2 s, simulations (cloth, fluid, hair), an existing sprite sheet, or a look already approved in Blender. **Hybrid is usually best:** model + baked textures in Blender → GLB → `GLTFLoader` in the three adapter → live light/camera/colour in HyperFrames; entry condition: a one-second segment render in delivery mode with `--browser-gpu` on the target machine — blank frame or timeout → fall back to a Blender sprite. `[CONFLICT]` the older "always Blender" note vs the 2026-09-30 per-beat rule: the latest owner decision wins on taste; evidence on facts (no global Blender-only rule).
 
-**When 3D is worth it:** hero shot of a product without footage; icons/objects for explainers; 3D logo/text; impossible camera moves; a consistent turnaround as a reference for image-to-video (unverified as research); assets reused across many videos. **Not:** good stock exists; flat 2D style; no time for good lighting; software/process explanations (2D is faster and clearer); tight budget. Default: hybrid 2D/2.5D for messages and UI + **one** 3D moment (a 2-3 s alpha shot gives most of the effect in a 15-30 s reel). 3D must not hide information (prices): put the object inside the UI with a contact shadow. 3D costs ~2-3× per second vs 2D in agency terms (GBP 100-400 vs 40-120 per second, `[SOURCED-unverified]`); 3D with bad lighting looks cheaper than good 2D.
+**When 3D is worth it:** hero shot of a product without footage; icons/objects for explainers; 3D logo/text; impossible camera moves; a consistent turnaround as a reference for image-to-video (unverified as research); assets reused across many videos. **Not:** good stock exists; flat 2D style; no time for good lighting; software/process explanations (2D is faster and clearer); tight budget. Default: hybrid 2D for messages and UI + **one** 3D moment (a 2-3 s alpha shot gives most of the effect in a 15-30 s reel). 3D must not hide information (prices): put the object inside the UI with a contact shadow. 3D costs ~2-3× per second vs 2D in agency terms (GBP 100-400 vs 40-120 per second, `[SOURCED-unverified]`); 3D with bad lighting looks cheaper than good 2D.
 
 ## 2. Blender pipeline
 **Environment.** Headless `blender -b scene.blend -P setup.py -a` (animation) or `-f N` (one frame); scripts must not hard-code the engine identifier (it changed between 4.2 and 5.x): read the enum from `scene.render.bl_rna.properties['engine'].enum_items`; set `cycles.device='GPU'` and `compute_device_type='HIP'` via the add-on preferences; record scene/script/asset hashes, engine enum, fps, resolution, samples, seed, device, output transform. Node names are localised — look shader nodes up by **type**.
@@ -68,15 +68,8 @@ Hosted generators (prices 2026-09, USD before tax, stale-risk): Tripo free = **C
 | Sketchfab | CC-BY, CC-BY-NC, CC0, Standard | **reject NC**; CC-BY credit; check the NoAI tag; full licence fetch was blocked in the research |
 | BlenderKit (free) | Royalty-Free or CC0 | do not resell the model itself |
 
-## 6. Depth 2.5D (E10) `[MEASURED-lab][LOCAL-only]`
-**Why:** a still that must move; local text-to-video is too slow on this machine: Wan2.1 T2V-1.3B (fp16 + Q4 text encoder, stable-diffusion.cpp Vulkan with CPU offload) 512×512, 33 frames @16 fps (2.06 s), 20 steps → wall **1,380 s ≈ 669 s per output second (~11 min)**, peak RSS 18.4 GB; GPU VAE crashed twice (0xC0000409, even with tiling); text encode 119 s, weight load 45 s, sampling 446 s, CPU VAE decode 804 s. **2.5D** (DepthAnythingV2 Small CPU, 3 layers with inpainted occlusions, affine camera): **8.1-9.9 s total for a 2 s, 512 px clip** (depth ≈ 0.9 s); same layers through HyperFrames 13.3 s for 48 frames at 1080². **Gate `[RULE-owner]`: ETA > 30 min per shot → propose 2.5D/animatic.** For plain camera moves on stills 2.5D is ~80× cheaper than local Wan (different tasks, **not equivalent quality**). Artefacts: ghost edges/seam lines where depth quantile layers cut a person; newly exposed area 1.3-2.3%.
-
-**Models (immutable pins from T11; no weights downloaded by the research):** DA2-Small `depth_anything_v2_vits.pth` rev `03876f8651c73a60fe4c2c48294e09fcb6838fcf`, 99,218,434 bytes, **Apache-2.0**; DA2-Small HF `model.safetensors` rev `5426e4f0f36572d16453bbda7a8389317b1bef99`, 99,173,660 bytes; DA3-SMALL rev `e08cab65ca0ec38e7826075418411ab90cab4da3`, 137,248,940 bytes (Apache-2.0, secondary); converted GGUF q8_0 36,780,864 bytes (inherits Apache-2.0; a mixed GGUF collection's card is not a blanket grant). **Exclude DA2 Base/Large/Giant and DA3 large/giant (CC-BY-NC)** from the commercial route. Cache key = source + model + runtime + precision + preprocess hash. First camera move ≤ 2% of frame width (a proposal, not a proven threshold); if holes or distortion fail prefer a smaller move or static 2D. Author benchmark (q8_0 319 ms vs 417 ms PyTorch at 504×336 on a 9950X3D) is **not** a prediction for this machine.
-
-Proposed extras `[IDEA]`: DirectML ONNX venv (`onnxruntime-directml` 1.24.4, separate venv; DirectML is in maintenance mode); RIFE + Real-ESRGAN via ncnn-Vulkan/video2x for fps conversion/upscale (MIT/BSD; AMD OK).
-
-## 7. Output and QA gates
+## 6. Output and QA gates
 A sprite over text trips `text_occluded` in `check` (intended; mark it). Palette audit against `DESIGN.md` on every 3D render. One Blender job at a time through the render lock; benchmark one unit → ETA → go/no-go before any job > 10 minutes. Anything that spends credits needs approval with a dated estimate (see `cost-model.md`). Gaussian splats: research only (INRIA 3DGS software is non-commercial research; gsplat Apache-2.0 on CUDA; Spark 2.3 MIT WebGL2; scene rights separate) — not adopted.
 
 ## 8. Open
-Owner-machine Blender 5.2 timings with a fixed 1080p fixture; Cycles-HIP on the one reference machine; DA-Small speed on one reference machine via DirectML/Vulkan; whether Three.js WebGL stays stable on AMD in delivery mode; Hunyuan3D web free-tier terms; full Sketchfab licence text.
+Owner-machine Blender 5.2 timings with a fixed 1080p fixture; Cycles-HIP on the one reference machine; whether Three.js WebGL stays stable on AMD in delivery mode; Hunyuan3D web free-tier terms; full Sketchfab licence text.

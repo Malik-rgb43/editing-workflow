@@ -1,0 +1,37 @@
+{
+  "schema": "avc.hf-block/1",
+  "name": "film-burn",
+  "title": "Film burn",
+  "description": "A procedural film-burn / light-leak overlay for a transition: warm screen-blended gradients bloom to a washout at the peak and cool off. No stock clip.",
+  "duration_s": 1.0,
+  "size": [
+    1080,
+    1920
+  ],
+  "overlay": true,
+  "variables": [
+    {
+      "id": "peak",
+      "type": "number",
+      "default": 0.5
+    },
+    {
+      "id": "duration",
+      "type": "number",
+      "default": 1.0
+    },
+    {
+      "id": "intensity",
+      "type": "number",
+      "default": 0.9
+    }
+  ],
+  "replace": {},
+  "demo_assets": [],
+  "palette": [
+    "--hfb-burn-1",
+    "--hfb-burn-2",
+    "--hfb-burn-3"
+  ],
+  "license": "Apache-2.0 (written for this toolkit)"
+}

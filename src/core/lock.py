@@ -3,14 +3,14 @@
 Design (src: frontier F31 prototype, reproduced defects in blueprint TOOLS_SPEC section 2 ``render_lock`` row):
 
 * **Ownership is a kernel lock**, nothing else: ``msvcrt.locking`` (byte 0, non-blocking) on Windows, ``fcntl.flock`` on
-  POSIX, held on a file descriptor of ONE absolute, shared, persistent lock file. The OS releases it when the owner process
-  dies, however it dies. The file is never deleted or replaced.  Acquisition is atomic: there is no "read the owner file,
+  POSIX, held on a file descriptor of ONE absolute, shared, persistent lock file. The OS releases it when the author process
+  dies, however it dies. The file is never deleted or replaced.  Acquisition is atomic: there is no "read the author file,
   then write it" window, so two contenders can never both enter (fixes the reproduced read-before-write race).
 * **The sidecar JSON is advisory.** ``<lock>.owner.json`` carries pid + process start-time + token + job label +
   heartbeat for humans and status screens. It never decides ownership; an ancient/future/forged timestamp, a dead or
   recycled PID or a malformed file cannot make a live job lose its lock (fixes the reproduced "old timestamp steals a live
   lock").
-* **No automatic takeover while the owner's lifetime is uncertain.** There is nothing to take over: either the kernel
+* **No automatic takeover while the author's lifetime is uncertain.** There is nothing to take over: either the kernel
   grants the lock (the previous owner is gone) or it refuses (someone holds it - wait, or ask them).  When the state
   cannot be determined (permission error, network volume) the result is ``LockUncertain``, never "free".
 * **One stale constant.** ``STALE_AFTER_S`` (600 s = 10 min, the same "no progress for 10 minutes" rule ``render_watch`` uses,

@@ -1,6 +1,6 @@
 # Technique: the Studio-first review loop
 
-> Status: specified, deterministic checks only; model eval not run (decision default Q4). Written 2026-10-02 from the owner's review-loop decision (research program §6 T24 "Already decided", 2026-10-01), distilled/03 time-sinks §5 and §2.3, distilled/02 workflow §12, research E11/E12.
+> Status: specified, deterministic checks only; model eval not run (decision default Q4). Written 2026-10-02 from the author's review-loop decision (research program §6 T24 "Already decided", 2026-10-01), distilled/03 time-sinks §5 and §2.3, distilled/02 workflow §12, research E11/E12.
 > Tags: `[RULE-owner]` · `[PROVEN-internal]` · `[MEASURED-lab]` · `[SOURCED-unverified]` · `[CONFLICT]` · `[LOCAL-only]`.
 > OM (the reference machine) = one Windows laptop; hardware details are intentionally not published.8.98, ffmpeg 8.1. E11/E12 numbers: **one synthetic composition, single passes on a shared host**; human review time and agent thinking time were **not measured**.
 
@@ -8,12 +8,12 @@
 
 1. Review drafts **live in HyperFrames Studio** (`npx hyperframes preview --background`) instead of rendering a draft per round.
 2. Re-render only **the noted range plus its scene context** (`hf_segment`, snapped outward to whole scenes) — and only for render-only risks (below).
-3. **One** full-quality render, **only after the owner approves the preview**.
+3. **One** full-quality render, **only after the author approves the preview**.
 4. An **audio-only** change is a remix + remux, never a render.
 5. **Batch the notes** before any render ("collecting for 5 more minutes, then I fix and render — anything else?").
-6. Benchmark one unit → one-line ETA → if one shot's ETA is > 30 min, offer an alternative (2.5D) before starting.
+6. Benchmark one unit → one-line ETA → if one shot's ETA is > 30 min, offer an alternative (a shorter shot or a hosted quote) before starting.
 
-(The pack cites a memory file for this decision that is **not present**; the rule is recorded through the research program text — treat the wording as `[SOURCED-unverified]`, the decision itself as the owner's.)
+(The pack cites a memory file for this decision that is **not present**; the rule is recorded through the research program text — treat the wording as `[SOURCED-unverified]`, the decision itself as the author's.)
 
 ## 1. Why — measured
 
@@ -57,13 +57,13 @@ E12 measured, on a synthetic composition with HyperFrames 0.8.98 (baseline previ
 | 3D (`preserve-3d`) and a shader/grade | no deviation beyond the baseline | still verify on a range render the first time a 3D/shader beat appears `[PROVEN-internal]` owner traps |
 | `<video>` layers | preview frames differ from the render by **about one frame** | verify cuts only on a **render** (`hf_segment --qa`); snapshots do not sync video around cuts |
 | per-glyph `tl.set` | reveal and scrub-back consistent | keep the "spans directly under a flex parent" check |
-| `dir="rtl"` on the composition root | **did NOT produce a black render on 0.8.98** (frames matched the LTR control) | **`[CONFLICT]`** with the owner trap (black render on 0.8.x, issue #1934 closed without a visible fix commit). **Keep the owner's rule — never `dir="rtl"` on the root, `direction:rtl` only on text elements — and re-test per HyperFrames version before teaching it as universal.** |
+| `dir="rtl"` on the composition root | **did NOT produce a black render on 0.8.98** (frames matched the LTR control) | **`[CONFLICT]`** with the author trap (black render on 0.8.x, issue #1934 closed without a visible fix commit). **Keep the author's rule — never `dir="rtl"` on the root, `direction:rtl` only on text elements — and re-test per HyperFrames version before teaching it as universal.** |
 
 Owner-reported traps that need an encoded check even in the live flow (not re-measured here): last 8 columns black at width 1080 (author 1088, deliver 1080), a graded `<video>` whose first frames come ungraded (pre-roll 6 frames), render audio attenuated (mux `mix.wav`, measure the final), HDR source flips output (`--sdr`). Each is `[PROVEN-internal]` `[LOCAL-only]` until a pinned-version fixture reproduces it. (src: distilled/04 hyperframes-traps §0, §1)
 
 ## 4. Audio-only changes
 
-`hf_mix --report` → `hf_deliver --skip-render` (remux onto the existing raw render). ~1.8 s of machine time in E12, "≈ 2 min instead of 10+" in the owner's workflow. Caveats: `--skip-render` bypasses preflight and the freshness guard in the owner's original tool and can remux a **stale picture** after a visual change (audit AQ014) → the toolkit binds the raw render to the build hash and refuses a mismatch; a mixed round (audio + picture) puts the audio into the same single full render; a project whose audio is composed inside HyperFrames (no `mix.wav`) cannot change the mix without a render — build projects with `hf_mix`. Do not chase loudness inside the composition (more gain came out quieter when the renderer attenuated a clipping master). `[RULE-owner]` `[PROVEN-internal]`
+`hf_mix --report` → `hf_deliver --skip-render` (remux onto the existing raw render). ~1.8 s of machine time in E12, "≈ 2 min instead of 10+" in the author's workflow. Caveats: `--skip-render` bypasses preflight and the freshness guard in the author's original tool and can remux a **stale picture** after a visual change (audit AQ014) → the toolkit binds the raw render to the build hash and refuses a mismatch; a mixed round (audio + picture) puts the audio into the same single full render; a project whose audio is composed inside HyperFrames (no `mix.wav`) cannot change the mix without a render — build projects with `hf_mix`. Do not chase loudness inside the composition (more gain came out quieter when the renderer attenuated a clipping master). `[RULE-owner]` `[PROVEN-internal]`
 
 ## 5. Failure modes
 

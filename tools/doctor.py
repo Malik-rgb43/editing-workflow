@@ -259,11 +259,20 @@ def check_node():
         return c.set("not_run", "Node.js not found; only the HyperFrames engine needs it (the CPU QA path does not)", remediation="install Node.js LTS (nodejs.org, winget install OpenJS.NodeJS.LTS, brew install node)")
     r = _run([node, "--version"], 10)
     ver = r.stdout.strip()
+    from core import hf_engine
+
+    info = hf_engine.describe()
+    if info.get("found") and info.get("problem"):
+        return c.set("fail", f"node {ver}; {info['problem']}", observed=ver, executable=node, remediation="re-run `python install/bootstrap.py apply` (it chooses an ASCII toolkit folder when your home path has non-ASCII letters)")
+    if info.get("found") and info.get("source") == "toolkit":
+        hv, pin = info.get("version"), info.get("pinned")
+        drift = f"; installed {hv} differs from the pin {pin} (run `npm ci --ignore-scripts` in the toolkit folder)" if hv and pin and hv != pin else ""
+        return c.set("pass" if hv else "not_run", f"node {ver}; hyperframes v{hv} (pinned {pin}){drift}", observed=ver, executable=node)
     npx = shutil.which("npx")
     hf = _run([npx, "--no-install", "hyperframes", "--version"], 25) if npx else None
     hv = (hf.stdout.strip() if hf and hf.returncode == 0 else None)
-    return c.set("pass" if hv else "not_run", f"node {ver}; hyperframes {'v' + hv if hv else 'not installed locally (npx --no-install found nothing; nothing was downloaded)'}", observed=ver, executable=node,
-                 remediation=None if hv else "installed on demand by `python install/bootstrap.py apply` for profiles that render with HyperFrames")
+    return c.set("pass" if hv else "not_run", f"node {ver}; hyperframes {'v' + hv if hv else 'not installed locally (nothing was downloaded)'}", observed=ver, executable=node,
+                 remediation=None if hv else "installed by `python install/bootstrap.py apply` (it runs `npm ci --ignore-scripts` from package.json + package-lock.json)")
 
 
 def check_disk(work_root):
@@ -325,9 +334,6 @@ def check_asr_assets():
 
     for mod in ("faster_whisper", "onnxruntime", "numpy", "PIL", "cv2"):
         found.append(f"{mod}:{'yes' if iu.find_spec(mod) else 'no'}")
-    for exe in ("whisper-cli", "whisper-cpp", "main"):
-        if shutil.which(exe) and exe != "main":
-            found.append(f"{exe}:yes")
     return c.set("pass", "optional runtimes (find_spec only, nothing imported or downloaded): " + ", ".join(found))
 
 
@@ -361,12 +367,6 @@ def recommend(host, checks_by_id):
     rec = {"base": {"profile": "core-cpu", "evidence": "works everywhere with FFmpeg + Python; no key, GPU or account"}}
     gpus = {g["vendor"] for g in host["gpus"]}
     asr = {"profile": "asr-cpu", "evidence": "CPU route: always works; slower; no GPU needed", "fallback": None}
-    if host["apple_silicon"]:
-        asr = {"profile": "asr-cpu", "evidence": "Apple Silicon detected: MLX/CoreML routes exist but are UNMEASURED; CPU route used until verified", "optional_upgrade": "asr-mlx (unmeasured)"}
-    elif "nvidia" in gpus and shutil.which("nvidia-smi"):
-        asr = {"profile": "asr-cpu", "evidence": "NVIDIA GPU detected: CUDA route is UNMEASURED; CPU route used until verified", "optional_upgrade": "asr-cuda (unmeasured)"}
-    elif host["os"] == "Windows" and (gpus & {"amd", "intel"}):
-        asr = {"profile": "asr-cpu", "evidence": "AMD/Intel GPU on Windows: the Vulkan route measured ~9.8x faster than CPU on ONE machine only; CPU route used by default", "optional_upgrade": "asr-vulkan (measured on one machine; verify with a real run)"}
     rec["asr"] = asr
     rec["matte"] = {"profile": "matte-native-or-modnet-cpu", "evidence": "CPU route works everywhere; GPU/DirectML routes are opt-in and unmeasured on other machines"}
     enc = [k for k, v in checks_by_id.items() if k.startswith("encoder_") and v["state"] == "pass"]

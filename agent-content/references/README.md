@@ -41,7 +41,7 @@ Each module starts with a table that carries exactly these fields (the same keys
 | [matte-routes.md](matte-routes.md) | person-matte routes, measured speed, licence gates (decision default Q8) | 180 days |
 | [audio-mix.md](audio-mix.md) | loudness master, ducking numbers, mix chain, destination profiles | 180 days |
 | [colour-presets.md](colour-presets.md) | named colour presets, gate thresholds, HDR to SDR branch | 180 days |
-| [three-d-routes.md](three-d-routes.md) | Blender / Three.js / AI 3D / 2.5D routing, timings, licences | 90 days |
+| [three-d-routes.md](three-d-routes.md) | Blender / Three.js / AI 3D routing, timings, licences | 90 days |
 | [licences-bom-rules.md](licences-bom-rules.md) | what may be bundled, per-licence obligations, release gate, component table | before every release |
 | [glossary.md](glossary.md) | Hebrew/English vocabulary | none (stable) |
 

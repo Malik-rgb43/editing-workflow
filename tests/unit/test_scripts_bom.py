@@ -107,8 +107,6 @@ BLOCKED = [
     ("bin/ffprobe", "ffmpeg-binary"),
     ("bin/avcodec-61.dll", "ffmpeg-binary"),
     ("models/ivrit-whisper-large-v3-turbo.onnx", "ivrit-ai"),
-    ("models/depth_anything_v2_vitl.pth", "depth-anything-nc"),
-    ("models/Depth-Anything-V2-Base/model.safetensors", "depth-anything-nc"),
     ("models/hunyuan3d-2.1/shape.bin", "hunyuan3d"),
     ("models/rvm_mobilenetv3_fp32.pth", "rvm-gpl"),
     ("models/robust_video_matting.onnx", "rvm-gpl"),
@@ -135,8 +133,6 @@ def test_blocked_components_fail_even_when_a_rule_allows_the_class(root, path, r
     "path",
     [
         "assets/ding.wav",  # harmless owned-style audio with an explicit allow
-        "models/depth_anything_v2_vits.pth",  # Small (Apache-2.0) is allowed
-        "models/Depth-Anything-V2-Small/model.safetensors",
         "fonts/NotoSansHebrew-Regular.ttf",
         "docs/diagram.png",
         "src/ffmpeg_helpers.py",  # a source file that merely mentions ffmpeg is not a binary
@@ -348,5 +344,9 @@ def test_the_real_repository_licenses_toml_is_valid_and_has_no_blocked_rules():
     real = Path(__file__).resolve().parents[2] / "licenses.toml"
     rules = gen_bom.load_licenses(real)
     assert rules and all(r["origin"] in gen_bom.ORIGINS for r in rules)
-    # nothing third-party is declared today (and therefore nothing needs a register row)
-    assert [r for r in rules if r["origin"] == "third_party"] == []
+    # the ONLY third-party file allowed is the Heebo UI font subset (owner decision 2026-10-04): open licence, a source, its licence text beside it
+    third = [r for r in rules if r["origin"] == "third_party"]
+    assert len(third) == 1
+    r = third[0]
+    assert r["licence"] == "OFL-1.1" and "github.com/google/fonts" in r["source"]
+    assert sorted(r["globs"]) == ["**/scripts/ui/OFL-Heebo.txt", "**/scripts/ui/heebo-he-latin.woff2"]

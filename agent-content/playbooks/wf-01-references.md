@@ -6,7 +6,7 @@
 | Field | Value |
 |---|---|
 | Stage | 1 of 9 |
-| Owner skills | `reference-style-transfer` (a reference video to transfer), `video-analysis` (measurements, sheets, transcript, audio), `choice-board` (visual hesitation) |
+| Owner skills | `reference-style-matching` (a reference video to transfer), `video-analysis` (measurements, sheets, transcript, audio), `visual-choice-board` (visual hesitation) |
 | Artifacts (exact files) | `hf/STYLE_DNA.md` (+ 3 options, the chosen one marked) **or** `hf/references/MOODBOARD.md`; reference files under `hf/references/`; analysis folders under `_work/analysis/<ref-id>/` (`report.md`, `analysis.json`, `breakdown.md`, `metrics_override.json`) |
 | Exit gate | **G1 — the person picked an option and the time range that "is the style"** |
 | Target time | **15–30 min** (owner target). Analysis runtime is separate and measured only on OM: 9–23 min per video under load; a 140-video batch estimated at 4–5 h took about 9 h (CPU/RAM contention, 6 GB free) `[PROVEN-internal]` `[LOCAL-only]` |
@@ -24,7 +24,7 @@ Collect references at the level of the best in the world **before** designing, a
 | a reference was named, or the ledger says "none" | ledger rows REF / the answer | ask (wf-00 branch table) |
 | the person has the right to analyse the reference (their own file, a public link used for analysis only) | the person's statement; SOURCES.md row "reference only" | analyse a stills/metadata description instead; **never** reuse the reference's footage, frames, VO, music or logos |
 
-## 3. Path A — a reference video exists (`reference-style-transfer`)
+## 3. Path A — a reference video exists (`reference-style-matching`)
 
 | # | Step | Who | Evidence / output |
 |---|---|---|---|
@@ -69,7 +69,7 @@ Gate record → `hf/QA.md` "Gate log". **No reference analysed ⇒ `n/a` only if
 | Symptom | Cause | Remedy | Prevention |
 |---|---|---|---|
 | the build copies the "before" look | several looks, no range pinned | re-pin; rebuild the DNA | step 1 |
-| a cut count the owner disbelieves | the automatic count trusted | zoom at every suspicious transition; write the override | step 2 |
+| a cut count the author disbelieves | the automatic count trusted | zoom at every suspicious transition; write the override | step 2 |
 | a font "matches" but the keyword reads wrongly | identity guessed (L) | look-alike test at final size | step 3 |
 | the same notes arrive in three sessions | per-project fixes for global rules | log as a global style rule (wf-09) | README §global rules |
 | analysis queue blocks for hours | a very long source | trim before queueing; set concurrency by free RAM | step 2; wf-batch |
@@ -77,7 +77,7 @@ Gate record → `hf/QA.md` "Gate log". **No reference analysed ⇒ `n/a` only if
 
 ## 8. Tool invocations
 
-Skill `video-analysis` (its scripts; the toolkit's `benchmark` scorer for numbers) · `sheet` (stills at chosen times; side-by-side) · `transcribe` · `ffmpeg` (extract a still: `ffmpeg -ss <t> -i ref.mp4 -frames:v 1 px_<t>.png`) · `hyperframes snapshot --at … --describe false` (≤ 5 per call) · `render_lock run -- <heavy cmd>` · `ledger` (timing line). Style measurements from pixels use the analysis helper shipped with `reference-style-transfer`.
+Skill `video-analysis` (its scripts; the toolkit's `benchmark` scorer for numbers) · `sheet` (stills at chosen times; side-by-side) · `transcribe` · `ffmpeg` (extract a still: `ffmpeg -ss <t> -i ref.mp4 -frames:v 1 px_<t>.png`) · `hyperframes snapshot --at … --describe false` (≤ 5 per call) · `render_lock run -- <heavy cmd>` · `ledger` (timing line). Style measurements from pixels use the analysis helper shipped with `reference-style-matching`.
 
 ## 9. Per-type deltas
 
@@ -85,13 +85,13 @@ Skill `video-analysis` (its scripts; the toolkit's `benchmark` scorer for number
 |---|---|
 | talking-head | ASR (Hebrew) + energy + hidden source cuts + faceX per frame of the *reference's* speaker are not needed; the reference supplies caption/zoom/B-roll **grammar**; LUFS of the source measured at minute 0 |
 | testimonial | references: result-first openings, split-screen proof, lower-third; never copy a client's likeness or numbers |
-| ad-promo | a competitor-ad scan (public ad libraries) for hook patterns **as reference only**; a licence note per reference; the owner's signature + the upgrade |
+| ad-promo | a competitor-ad scan (public ad libraries) for hook patterns **as reference only**; a licence note per reference; the author's signature + the upgrade |
 | motion-graphics | the Higgsfield-style launch language is the taste reference: take "snap, then drift", the move catalogue, "the music is the SFX" — **not** a brand's signature colour (e.g. its lime); mixing three brands' languages reads as a template: one skeleton |
 | ai-generated | references: lighting, lens, camera move, composition — **not** characters or brand colours ("references are not templates"); a reference pack with what to take / not take |
 | podcast-clip | references per profile (dry conversation vs hyped/graphic); layout (TRACK/SPLIT/GRID) and title-bar patterns; n = 1 breakdowns only |
 
 ## 10. Time labels
 
-Owner target 15–30 min. Modelled: none. Measured on OM: analysis throughput numbers above (single loaded runs). The cut-detector's F1 on 20 hand-verified ads was 0.89 (owner's tool, after tuning; 339 edit points) — keep it as a regression bar, not a guarantee on new material.
+Owner target 15–30 min. Modelled: none. Measured on OM: analysis throughput numbers above (single loaded runs). The cut-detector's F1 on 20 hand-verified ads was 0.89 (author's tool, after tuning; 339 edit points) — keep it as a regression bar, not a guarantee on new material.
 
 (src: distilled/02 workflow §3; distilled/06 reference-analysis §1–§3; distilled/01 A6, C9 — read 2026-10-02.)

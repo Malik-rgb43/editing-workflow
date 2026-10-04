@@ -1,6 +1,6 @@
 # Visual review on four axes
 
-> Status: specified, deterministic checks only; model eval not run (decision default Q4). Written 2026-10-02 from the owner's `visual-review.md` (distilled/02 qa §3, rewritten) and the QA research critique (T13 OWNER_AUDIT). Added by the owner on 2026-09-29 after he found problems `frame_qa` cannot see ("designs that do not match the vision, clean animations, everything"). Runs **in addition to** `frame_qa` and `hyperframes check`.
+> Status: specified, deterministic checks only; model eval not run (decision default Q4). Written 2026-10-02 from the author's `visual-review.md` (distilled/02 qa §3, rewritten) and the QA research critique (T13 OWNER_AUDIT). Added by the author on 2026-09-29 after he found problems `frame_qa` cannot see ("designs that do not match the vision, clean animations, everything"). Runs **in addition to** `frame_qa` and `hyperframes check`.
 > Tags: `[RULE-owner]` · `[PROVEN-internal]` · `[CONFLICT]` · `[IDEA]` · `house preset`.
 > Used by: `agent-content/playbooks/wf-06-render-qa.md` stage 7. Reviewer role: [critic-brief.md](critic-brief.md) (this review is the *evidence* the critic builds on).
 
@@ -50,8 +50,8 @@ Every caption readable (contrast against the footage under it, size, not blurred
 
 ## 6. Limits (from the QA research; keep them in view)
 
-- The palette rules in the owner's original file ("gold the only accent, sky for info, paper/dark-glass surfaces") belong to **one project's DESIGN.md**; they are scoped brief inputs, not universal rules. The project's DESIGN.md governs.
-- The pixel margins are the owner's dated house policy, **not** the current universal platform protection (the Meta placement page could not be verified on 2026-10-01). `[SOURCED-unverified]` `[PERISHABLE]`
+- The palette rules in the author's original file ("gold the only accent, sky for info, paper/dark-glass surfaces") belong to **one project's DESIGN.md**; they are scoped brief inputs, not universal rules. The project's DESIGN.md governs.
+- The pixel margins are the author's dated house policy, **not** the current universal platform protection (the Meta placement page could not be verified on 2026-10-01). `[SOURCED-unverified]` `[PERISHABLE]`
 - "Sheets of every frame" is **not** evidence that a model inspected every frame at readable resolution; record the coverage actually inspected.
 - Continuing the same reviewer can anchor it to its earlier verdict; a final blinded audit is a separate step when stakes are high.
 - A reviewer is a model: it can nominate candidates; a human Hebrew reader is the authority on Hebrew copy, look-alike letters and reading comfort.

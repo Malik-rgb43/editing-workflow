@@ -1,12 +1,12 @@
 """hf_preflight - static lint of a HyperFrames project (seconds, not an 8-minute render). Run it before ANY check/render.
 
-Parses every HTML file with a real HTML parser (not regex over prose: E04-B06 - single vs double quotes changed the owner's verdict),
+Parses every HTML file with a real HTML parser (not regex over prose: E04-B06 - single vs double quotes changed the author's verdict),
 so attribute quoting, case and ordering never change the result. Output is a QA envelope; ``decoded_frames``/``expected_frames``
 count HTML FILES scanned (unit "files") so a project with nothing to scan can never pass.
 
 ERROR rules (exit 1):
   studio_id         data-hf-id present (Studio writes it into index.html; strip before patching or rendering - never render with it)
-  root_rtl          dir="rtl" (or direction:rtl CSS) on <html>, <body> or the root composition element (black render in the owner's tests;
+  root_rtl          dir="rtl" (or direction:rtl CSS) on <html>, <body> or the root composition element (black render in the author's tests;
                     E12 could not reproduce it on HyperFrames 0.8.98 - kept as a never-break rule, re-test per version)
   duplicate_id      the same id twice in one file (a duplicate id steals CSS)
   negative_start    a negative data-start (shifts every clip; use max(0, ...))

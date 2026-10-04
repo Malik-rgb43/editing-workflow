@@ -31,7 +31,6 @@ import json
 import os
 import re
 import shlex
-import shutil
 import sys
 import time
 from html.parser import HTMLParser
@@ -247,17 +246,21 @@ def main(argv=None) -> int:
         if args.render_cmd:
             cmd = shlex.split(args.render_cmd, posix=os.name != "nt")
         else:
-            npx = shutil.which("npx")
-            if not npx:
-                print("hf_segment: npx not found (install Node.js LTS)", file=sys.stderr)
+            from core import hf_engine
+
+            try:
+                cmd = hf_engine.command(["render", "-c", "index.seg.html", "--fps", fmt(fps), "--quality", args.quality, "--sdr", "--output", str(out)])
+            except hf_engine.EngineMissing as exc:
+                print(f"hf_segment: {exc}", file=sys.stderr)
                 return 2
-            cmd = [npx, "hyperframes", "render", "-c", "index.seg.html", "--fps", fmt(fps), "--quality", args.quality, "--sdr", "--output", str(out)]
             if args.workers:
                 cmd += ["--workers", str(args.workers)]
         t0 = time.time()
         try:
             with acquire(load_config().lock_path, job="segment render", timeout=args.lock_wait):
-                r = run(cmd, cwd=hf, env=dict(os.environ, FFMPEG_ENCODE_TIMEOUT_MS="3600000"), timeout=args.eta * 3)
+                from core import hf_engine as _hf
+
+                r = run(cmd, cwd=hf, env=_hf.run_env({"FFMPEG_ENCODE_TIMEOUT_MS": "3600000"}), timeout=args.eta * 3)
         except LockBusy as exc:
             print(f"hf_segment: {exc}", file=sys.stderr)
             return 75

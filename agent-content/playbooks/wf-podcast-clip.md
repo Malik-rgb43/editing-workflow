@@ -1,15 +1,15 @@
 # wf-podcast-clip — Clips from a long conversation (קליפים מפודקאסט)
 
-> Status: **provisional** — the owner has a selection method and measured ASR speeds but **no owner rubric** for this type; the type rubric in [../benchmarks/podcast-clip.rubric.md](../benchmarks/podcast-clip.rubric.md) is derived and weak. Specified, deterministic checks only; model eval not run (decision default Q4). Written 2026-10-02 from blueprint WORKFLOWS §7, distilled/02 podcast-clip notes, distilled/03 E08.
+> Status: **provisional** — the author has a selection method and measured ASR speeds but **no owner rubric** for this type; the type rubric in [../benchmarks/podcast-clip.rubric.md](../benchmarks/podcast-clip.rubric.md) is derived and weak. Specified, deterministic checks only; model eval not run (decision default Q4). Written 2026-10-02 from blueprint WORKFLOWS §7, distilled/02 podcast-clip notes, distilled/03 E08.
 > Legend: see [README.md](README.md). `[RULE-owner]` · `[PROVEN-internal]` · `[IDEA]` · `[CONFLICT]` · 💲 = paid step · OM = the reference machine (one Windows laptop; hardware details are intentionally not published).
 
 | Field | Value |
 |---|---|
 | Stage | a variant of stages 1–8 for one long source → N short clips |
-| Owner skill | `edit-talking-head` (cuts/captions), `hebrew-captions-asr`, `render-qa-deliver`; selection is this playbook |
+| Owner skill | `talking-head-editor` (cuts/captions), `hebrew-captions-transcription`, `render-qa-delivery`; selection is this playbook |
 | Artifacts (exact files) | `projects/<name>/_work/proxy.mp4` (low-res proxy), `_work/transcript.json` (whole episode), `_work/selection.md` (the selection table), `_work/reframe_plan.json` (per clip: mode per span), one `projects/<name>_clip<k>/` per chosen clip, `final/<name>_clip<k>_<platform>_<aspect>.mp4` |
 | Exit gate | **GP — chosen clips only are built; each passes the stand-alone gate and wf-06; the rubric result is labelled provisional** |
-| Target time | **not measured** — clip lengths seen by the owner ran from 54 s to 3.3 min (a range, not a target) |
+| Target time | **not measured** — clip lengths seen by the author ran from 54 s to 3.3 min (a range, not a target) |
 | Paid steps | optional hosted reframe 💲 (Higgsfield reframe): dated estimate + approval; the core path uses local face tracking (free) |
 
 ## 1. Principle
@@ -28,7 +28,7 @@
 
 | # | Step | Who | Evidence |
 |---|---|---|---|
-| 1 | **Minute 0, in parallel (see the schedule in [wf-00-intake.md](wf-00-intake.md)):** make a **low-resolution proxy** and extract audio; start the **whole-episode ASR** in the background under `render_lock` (heavy job). E08: whisper.cpp with Vulkan was 9.78x faster than the CPU on a 614 s corpus on OM (single pass; other GPUs unmeasured). The owner's "x2.3" figure equals **0.435 audio-seconds per wall-second** — compare in the same unit (timing-ledger rule). | agent | `_work/proxy.mp4`, `_work/transcript.json`, a ledger row with units |
+| 1 | **Minute 0, in parallel (see the schedule in [wf-00-intake.md](wf-00-intake.md)):** make a **low-resolution proxy** and extract audio; start the **whole-episode ASR** in the background under `render_lock` (heavy job). E08: CTranslate2 int8 on CPU ran 0.84 audio-s per wall-s on a 614 s corpus on OM (single pass; other hardware unmeasured). The author's "x2.3" figure equals **0.435 audio-seconds per wall-second** — compare in the same unit (timing-ledger rule). | agent | `_work/proxy.mp4`, `_work/transcript.json`, a ledger row with units |
 | 2 | **Segment the transcript** into candidate spans (topic shifts, question → answer pairs, story arcs). Do not cut on silence alone. | agent | `_work/candidates.json` |
 | 3 | **Score each candidate** with the selection table (§4); apply the **stand-alone gate**: a score below 4 of 10 on stand-alone = **reject**. Show the top candidates with start/end timestamps and a one-line reason. | agent | `_work/selection.md` |
 | 4 | **The person chooses** the clips (and may reorder, trim or reject). Nothing is edited before this. | person | the choice recorded in `selection.md` |
@@ -50,7 +50,7 @@
 | energy / clarity | audio clean, speaker present, no long off-topic tangent | 0–10 | informational |
 | risk | any statement that is a medical/legal/financial claim, a third party's private detail, or a rights problem? | flag | a flag blocks until the person decides |
 
-The score is the **agent's proposal**; the person's pick wins (owner taste rules). Weights are `[IDEA]` — the owner's selection was by judgement, not by a weighted formula.
+The score is the **agent's proposal**; the person's pick wins (owner taste rules). Weights are `[IDEA]` — the author's selection was by judgement, not by a weighted formula.
 
 ## 5. Reframe modes `[RULE-owner]` (thresholds are house heuristics)
 
@@ -67,7 +67,7 @@ Switching rules:
 - After a switch, the next switch is not allowed for at least the hysteresis time.
 - A person's override beats the automatic choice; record it in `reframe_plan.json` (`override: true`).
 
-Numbers: hysteresis and dead zone are the owner's values (dated 2026-09 in the source), not measured on a corpus; limit: tested on one kind of two-person conversation only.
+Numbers: hysteresis and dead zone are the author's values (dated 2026-09 in the source), not measured on a corpus; limit: tested on one kind of two-person conversation only.
 
 ## 6. Dry vs hyped profile
 
@@ -111,7 +111,7 @@ Gate record → each clip's `hf/QA.md` "Gate log".
 
 ## 10. Tool invocations
 
-`transcribe` (whole episode, proxy audio) · `source_cuts` · `face_center source|audit` · `camera_path` · `hf_preflight` · `hf_segment` (when a cut-out is needed) · `hf_deliver` · `frame_qa` · `caption_qa` · `motion_qa` · `sheet` · `ledger` · `render_lock`. A hosted reframe 💲 goes through paid-generation-gate. Flags are schematic; see `docs/TOOLS.md`.
+`transcribe` (whole episode, proxy audio) · `source_cuts` · `face_center source|audit` · `camera_path` · `hf_preflight` · `hf_segment` (when a cut-out is needed) · `hf_deliver` · `frame_qa` · `caption_qa` · `motion_qa` · `sheet` · `ledger` · `render_lock`. A hosted reframe 💲 goes through paid-spend-gate. Flags are schematic; see `docs/TOOLS.md`.
 
 ## 11. Per-type deltas
 

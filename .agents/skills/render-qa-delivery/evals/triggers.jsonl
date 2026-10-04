@@ -1,0 +1,17 @@
+{"prompt": "render the final", "should_trigger": true, "route_instead": null}
+{"prompt": "תריץ בדיקה לפני רינדור", "should_trigger": true, "route_instead": null}
+{"prompt": "run QA on this render, every frame", "should_trigger": true, "route_instead": null}
+{"prompt": "תכין את הקבצים הסופיים למסירה", "should_trigger": true, "route_instead": null}
+{"prompt": "deliver the 9:16 version with the correct loudness", "should_trigger": true, "route_instead": null}
+{"prompt": "בדוק את כל הפריימים של הרינדור", "should_trigger": true, "route_instead": null}
+{"prompt": "present the draft to the client", "should_trigger": true, "route_instead": null}
+{"prompt": "מה עם הרינדור?", "should_trigger": true, "route_instead": null}
+{"prompt": "the render is taking forever, what is it doing and how long is left", "should_trigger": true, "route_instead": null}
+{"prompt": "בדוק שאין פס שחור בצד ימין של הסרטון הסופי", "should_trigger": true, "route_instead": null}
+{"prompt": "check the final file is -14 LUFS and the true peak is under -1", "should_trigger": true, "route_instead": null}
+{"prompt": "choose a font for the intro", "should_trigger": false, "route_instead": null}
+{"prompt": "write the script for the reel", "should_trigger": false, "route_instead": null}
+{"prompt": "generate the hook with AI", "should_trigger": false, "route_instead": "ai-generated-video-editor"}
+{"prompt": "מה המחיר של Higgsfield", "should_trigger": false, "route_instead": "paid-spend-gate"}
+{"prompt": "I have six notes from the client on the draft, handle them", "should_trigger": false, "route_instead": "revision-notes-handler"}
+{"prompt": "תעשה גרסאות של הסרטון ל-1:1 ול-16:9", "should_trigger": false, "route_instead": "video-variants-exporter"}

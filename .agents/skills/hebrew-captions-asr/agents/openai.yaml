@@ -1,5 +1,0 @@
-interface:
-  display_name: "Hebrew Captions Asr"
-  short_description: "Transcribe Hebrew speech and build burned-in Hebrew captions: ASR route per hardware, word timestamps, proofreading, RTL"
-policy:
-  allow_implicit_invocation: false

@@ -5,7 +5,7 @@ baked plate is deterministic, previewable and cacheable. This tool applies a LUT
 re-encodes at near-lossless quality (CRF 12, H.264, yuv420p, audio copied), optionally with a PRE-ROLL (extra frames before the in-point so
 the layer is ready when the composition reaches it; house value 6 frames), and writes a ``<out>.grade.json`` sidecar that records exactly what
 was applied (provenance). Run it from the CAMERA ORIGINAL, not a compressed rough cut. Colour targets are a named preset
-(see skill color-correction-speaker), not universal numbers.
+(see skill speaker-color-correction), not universal numbers.
 
 Verification (fail-closed): the output must probe, have the same resolution and the expected frame count (source frames in range + pre-roll),
 otherwise exit 2 and the output is deleted.

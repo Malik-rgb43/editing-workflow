@@ -12,7 +12,7 @@ A **native plugin** runs inside an app. An **MCP transport** is how an agent tal
 |---|---|---|---|
 | **Minimal** (default) | no MCP server | no `[mcp_servers]` table | the core path: skills, FFmpeg, engine, QA tools |
 | **Standard** (`--profile standard` or later `add playwright`) | one isolated browser server (`avc-playwright`, pinned `@playwright/mcp@0.0.83`, headless, output under the work root) | the same server, narrow `enabled_tools` | reference capture and local preview QA |
-| **Pro** | Standard, then ONE bridge and ONE generation provider added later with `add <id>` | same roles with allow-lists | cost-approved generation, app control |
+| **Pro** | Standard, then ONE generation provider added later with `add <id>` | same roles with allow-lists | cost-approved generation, app control |
 Templates without secrets: [.mcp.json.example](../../.mcp.json.example) and [.codex/config.toml.example](../../.codex/config.toml.example). Playwright alone costs 25 tools = 21,382 B of tool schema (E06, measured on one machine; bytes are not tokens): never load the whole catalogue at startup.
 
 <!-- step: integrations-03 -->
@@ -63,13 +63,12 @@ Templates without secrets: [.mcp.json.example](../../.mcp.json.example) and [.co
 | `gemini-vision` | api | frame description; default OFF in the toolkit | optional | free-tier/paid (provider quota) | env var GEMINI_API_KEY | unverified | PRIVACY: `hyperframes snapshot` sends frames to Gemini unless `--describe false`. The toolkit always passes --describe false (<= 5 timestamps per call). Client footage never goes to a hosted analysis route without an explicit per-client decision. |
 
 ### Local ASR / matte routes and models
+What each local model replaces, the exact download source and size, and the gaps (no local Hebrew voice, no local video generation): [local-vs-paid.md](local-vs-paid.md).
 
 | id | kind | role | profile / add-on | cost | auth | verified | notes |
 |---|---|---|---|---|---|---|---|
 | `faster-whisper` | python-lib | local Hebrew/English transcription on any CPU (measured baseline on the reference machine only) | optional / add faster-whisper | free (local compute) | none | verified | separate environment under <state>/venvs/asr-cpu; weights are NOT downloaded by the installer |
 | `ivrit-ct2` | model | Hebrew ASR weights for faster-whisper | optional / add ivrit-ct2 | free (download only) | none | verified | never auto-downloaded; the student approves the size first; pin the revision hash |
-| `whisper-cpp` | cli | fast local ASR; Vulkan route measured about 9.8x its CPU run on the reference machine only (E08) | optional / add whisper-cpp | free | none | verified | Vulkan on the reference GPU's driver needs GGML_VK_DISABLE_COOPMAT=1 [LOCAL-only]; otherwise it crashes. NVIDIA/Apple routes are UNMEASURED. |
-| `ivrit-ggml` | model | Hebrew ASR weights for the whisper.cpp routes | optional / add ivrit-ggml | free (download only) | none | verified | never auto-downloaded; pin the revision hash |
 | `matte-fast` | python-lib | speaker cut-out (alpha) for text-behind-speaker; measured only on the reference machine (E09) | optional / add matte-fast | free (local compute) | none | unverified | no pip_spec is pinned here on purpose: the route is installed by the toolkit's own `cutout` tool after the licence gate; the installer only reports it |
 
 ### Optional CLIs and native apps/plugins
@@ -78,8 +77,6 @@ Templates without secrets: [.mcp.json.example](../../.mcp.json.example) and [.co
 |---|---|---|---|---|---|---|---|
 | `higgsfield-cli` | cli | official Claude Code route to Higgsfield per the vendor help centre | optional / add higgsfield-cli | paid (credits) | none | verified | `higgsfield auth login` opens a browser: the student signs in by hand |
 | `blender` | cli | 3D scenes for motion graphics; headless `bpy` is preferred for deterministic batch work | optional / add blender | free | none | verified | Exact version matters for the opt-in `blender` profile (research host: Blender 5.2). macOS build is Apple Silicon only (macOS 13+) per the download page. |
-| `nle-premiere` | native-plugin | opt-in NLE bridge; executes editor operations | optional / add nle-premiere | app licence + generation credits | none | unverified | inspect the installer before running it; duplicate the project before any write; Adobe minimum-version conflict (help says 2024/24.0+, plugin page says 2025+) is unresolved; installation UNMEASURED |
-| `nle-ae` | native-plugin | opt-in NLE bridge | optional / add nle-ae | app licence + generation credits | none | unverified | same as nle-premiere; duplicate the project before writes |
 | `gh` | cli | optional: clone private forks, open issues | optional / add gh | free | none | mixed | `gh auth login` is the student's own sign-in |
 | `yt-dlp` | cli | fetch a reference video the student is entitled to analyse | optional / add yt-dlp | free | none | verified | parses untrusted remote content; keep it updated (yt-dlp -U) |
 
@@ -104,7 +101,7 @@ The agent checks **presence only** (the variable exists: yes/no). It never asks 
 
 <!-- step: integrations-05 -->
 ## integrations-05 - Cost classes and the spend gate
-`free` (local compute) - `free-tier` (a free quota with terms) - `paid` (credits or metered). Everything that can generate paid output (Higgsfield, ElevenLabs, 21st.dev, the Premiere/After Effects bridges) names `paid-generation-gate`: a dated estimate, your explicit approval, a retry cap, a provenance record. Signing in is not approval. Higgsfield's automated generation consumes plan credits even where its website use is "unlimited". Credits are never converted into client fees. Prices and model ids live in dated reference modules, not here.
+`free` (local compute) - `free-tier` (a free quota with terms) - `paid` (credits or metered). Everything that can generate paid output (Higgsfield, ElevenLabs, 21st.dev) names `paid-spend-gate`: a dated estimate, your explicit approval, a retry cap, a provenance record. Signing in is not approval. Higgsfield's automated generation consumes plan credits even where its website use is "unlimited". Credits are never converted into client fees. Prices and model ids live in dated reference modules, not here.
 
 ## Sign-up and referral links
 Paid services (Higgsfield, ElevenLabs, 21st.dev, 3D generation with Tripo) have sign-up links in `integrations/referrals.toml`. Some of them are **referral links**: signing up through one supports this project at no extra cost to you. `bootstrap.py add <id>` prints the referral link next to the plain link and says which is which; you choose, or skip if you already have an account (`--plain-links` shows plain links only). The referral counts once, at sign-up; it changes nothing about how the connector or API is used afterwards, and the installer never opens a link by itself.

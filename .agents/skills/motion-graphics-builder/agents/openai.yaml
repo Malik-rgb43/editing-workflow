@@ -1,0 +1,5 @@
+interface:
+  display_name: "Motion Graphics Builder"
+  short_description: "Design, build and review a motion-graphics piece in HyperFrames/GSAP: product or app launch, feature announcement, kinet"
+policy:
+  allow_implicit_invocation: false

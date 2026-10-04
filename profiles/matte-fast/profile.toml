@@ -7,10 +7,10 @@ checked_at = "2026-10-02"
 expires = "2027-03-31"
 
 [install]
-python_extras = ["matte", "opencv"]    # matte: ONNX Runtime + matting wrapper dependencies; opencv: prep/assembly
+python_extras = ["matte-ort"]          # pyproject extra: onnxruntime (+ scipy, numba); used by `tools/cutout.py --route onnx`
 python_env = "separate venv: onnxruntime-directml replaces onnxruntime (1.24.4 measured); never mix with the asr environments"
 runtime = "ONNX Runtime 1.24.4 DirectML EP, OpenCV 5.0 (measured)"
-decision_default = "Q8: MODNet (Apache-2.0) and the native HyperFrames remove-background fallback ship in the repo; RVM (GPL-3.0) is an OPTIONAL, USER-INSTALLED PLUGIN, internal use only"
+decision_default = "Q8: the native HyperFrames remove-background is the default route; MODNet (Apache-2.0) is supported through --route onnx with weights the STUDENT downloads (nothing is in the repo); RVM (GPL-3.0) is an OPTIONAL, USER-INSTALLED tool whose alpha enters through --route external, internal use only"
 needs_account = false
 needs_api_key = false
 spends_money = false
@@ -19,8 +19,8 @@ spends_money = false
 name = "MODNet"
 licence = "Apache-2.0"
 bundle_safe = true
-bytes = "unmeasured"
-source = "research E09; weights provenance to be recorded by the BOM before bundling"
+bytes = 25888640
+source = "https://huggingface.co/Xenova/modnet file onnx/model.onnx (tagged apache-2.0; the official MODNet repository states code and models are Apache-2.0) - read 2026-10-03; not bundled"
 
 [[install.models]]
 name = "RVM (Robust Video Matting)"
@@ -32,11 +32,13 @@ bytes = "unmeasured"
 
 [[install.models]]
 name = "native HyperFrames remove-background (u2net_human_seg)"
-licence = "per HyperFrames / model terms (not separately reviewed)"
-role = "fallback; first use installs ONNX Runtime"
+licence = "rembg code MIT; the weights' own licence not separately reviewed"
+role = "default route of tools/cutout.py; HyperFrames downloads the model itself on first use"
+bytes = 175997641
+source = "https://github.com/danielgatis/rembg/releases/download/v0.0.0/u2net_human_seg.onnx (the URL inside HyperFrames 0.8.98) - size read 2026-10-03"
 
 [download_sizes]
-models = "unmeasured (not recorded by the research)"
+models = "MODNet onnx 25,888,640 B; u2net_human_seg 175,997,641 B (read from the hosts 2026-10-03); RVM not measured (not distributed)"
 onnxruntime_directml = "unmeasured"
 source = "research/experiments/E09 (timings only)"
 
@@ -51,12 +53,12 @@ machine = "the reference machine (one Windows laptop; hardware details not publi
 fixture = "20 s, 600 frames, 1080p30 public interview clip (hard cuts, two people in a wide shot)"
 results = "native HyperFrames u2net 367.0 s; RVM CPU 128.2 s; RVM DirectML + OpenCV 72.4 s (5.1x faster than native); + linear alpha interpolation every 2nd frame 49.5 s (7.4x); MODNet DirectML 108.0 s, MODNet CPU 278.1 s; MediaPipe 47.1 s (F1 0.54); SAM2-tiny 810 s; RVM half-fps hold rejected (chamfer 18 px); BiRefNet-lite CPU 28.5 s per frame"
 quality = "compared with a sparse BiRefNet proxy on 14 frames - a proxy, not ground truth; no human review; fast gestures untested"
-cache = "key = source-packet hash + model + params: cold 104.4 s, identical request 36.1 s; seek-range keys fragile - use frame-indexed or decoded-content keys"
+cache = "research: key = source-packet hash + model + params: cold 104.4 s, identical request 36.1 s; seek-range keys fragile. tools/cutout.py keys by the DECODED content of each shot segment + route + model hash (+ engine version on the native route)"
 not_tested = ["fast-motion clips", "human review", "alpha ground truth", "peak VRAM", "thermals", "NVIDIA", "Apple"]
 
 [states]
 unsupported_when = ["no DirectML-capable GPU for the fast route (the CPU route and the native fallback stay available)"]
-missing_when = ["ONNX Runtime / OpenCV extras not installed", "MODNet weights not present", "RVM plugin not installed (that is normal: it is optional)"]
+missing_when = ["the matte-ort extra (ONNX Runtime) is not installed", "no MODNet .onnx file given", "RVM not installed (that is normal: it is optional)"]
 error_when = ["a real tiny matte of the bundled fixture fails, returns an empty or constant alpha, or the alpha is one frame late"]
 note = "unsupported != missing != error; a missing RVM plugin is never an error"
 

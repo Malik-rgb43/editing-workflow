@@ -1,0 +1,53 @@
+{
+  "schema": "avc.hf-block/1",
+  "name": "caption",
+  "title": "Word-timed caption",
+  "description": "Captions that show a few words at a time and light up the word being spoken. Works for Hebrew (RTL set on the text, never on the root) and English.",
+  "duration_s": 3,
+  "size": [
+    1080,
+    1920
+  ],
+  "overlay": true,
+  "variables": [
+    {
+      "id": "words",
+      "type": "string",
+      "default": "[{\"w\":\"Hello\",\"start\":0.2,\"end\":0.6},{\"w\":\"and\",\"start\":0.6,\"end\":0.9},{\"w\":\"welcome\",\"start\":0.9,\"end\":1.5},{\"w\":\"to\",\"start\":1.5,\"end\":1.7},{\"w\":\"the\",\"start\":1.7,\"end\":1.9},{\"w\":\"show\",\"start\":1.9,\"end\":2.5}]"
+    },
+    {
+      "id": "rtl",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "id": "chunk",
+      "type": "number",
+      "default": 3
+    },
+    {
+      "id": "size",
+      "type": "number",
+      "default": 88
+    },
+    {
+      "id": "bottom",
+      "type": "number",
+      "default": 340
+    },
+    {
+      "id": "duration",
+      "type": "number",
+      "default": 3
+    }
+  ],
+  "replace": {},
+  "demo_assets": [],
+  "palette": [
+    "--hfb-accent",
+    "--hfb-caption-bg",
+    "--hfb-fg",
+    "--hfb-font"
+  ],
+  "license": "Apache-2.0 (written for this toolkit)"
+}

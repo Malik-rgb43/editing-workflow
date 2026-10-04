@@ -1,6 +1,6 @@
 # Rubric: testimonial (customer reviews, student success stories)
 
-> Status: the owner's `testimonial.rubric.md` (criteria T1–T8, gates T1, T2, T5) **mapped into the six dimensions** of QA_AND_BENCHMARKS §6. Specified; model eval not run (decision default Q4); not calibrated against human raters. Written 2026-10-02 from distilled/02 qa §6.2 and video-types §4.
+> Status: the author's `testimonial.rubric.md` (criteria T1–T8, gates T1, T2, T5) **mapped into the six dimensions** of QA_AND_BENCHMARKS §6. Specified; model eval not run (decision default Q4); not calibrated against human raters. Written 2026-10-02 from distilled/02 qa §6.2 and video-types §4.
 > Tags: `[RULE-owner]` · `[PROVEN-internal]` · `[SOURCED-unverified]` · `[IDEA]` · `house preset`.
 > Companion files: [critic-brief.md](critic-brief.md) · [visual-review-4-axis.md](visual-review-4-axis.md) · [bands.json](bands.json) · [briefs/B05.md](briefs/B05.md).
 
@@ -36,7 +36,7 @@ T1 hook → meaning/story · T2 proof density → integrity/continuity (+ meanin
 
 ## 5. Numeric reference (informational)
 
-`bands.json` → `types.testimonial`: market (10, 9 × 16:9): 47.0 s, 19.7 cuts/min, 2.37 s median shot, −14.15 LUFS, music ratio 0.59; owner (10, 9:16): 54.55 s, 6.75 cuts/min, 4.85 s median shot, −18.6 LUFS, music 0.20 — the owner's real testimonials were selfie UGC with no lower-third, end card, B-roll, punch-in, music or SFX; whether that slowness is intentional authenticity is an **open owner decision**. Keep the owner's signature (fixed captions, split-screen proof) and add the upgrade.
+`bands.json` → `types.testimonial`: market (10, 9 × 16:9): 47.0 s, 19.7 cuts/min, 2.37 s median shot, −14.15 LUFS, music ratio 0.59; owner (10, 9:16): 54.55 s, 6.75 cuts/min, 4.85 s median shot, −18.6 LUFS, music 0.20 — the author's real testimonials were selfie UGC with no lower-third, end card, B-roll, punch-in, music or SFX; whether that slowness is intentional authenticity is an **open owner decision**. Keep the author's signature (fixed captions, split-screen proof) and add the upgrade.
 
 ## 6. Critic notes
 

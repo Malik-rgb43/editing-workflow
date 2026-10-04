@@ -12,8 +12,8 @@ ENTRIES = CAT["entry"]
 KINDS = {"cli", "mcp", "api", "native-plugin", "python-lib", "model"}
 COSTS = ("free", "free-tier", "paid", "plan", "workspace", "the student", "app licence", "none")
 REQUIRED_IDS = ["ffmpeg", "ffprobe", "node", "uv", "git", "gh", "hyperframes", "playwright", "shadcn", "iconify", "pexels",
-                "whisper-cpp", "faster-whisper", "yt-dlp", "blender", "blender-mcp", "higgsfield", "elevenlabs",
-                "nle-premiere", "nle-ae", "magic-21st", "gemini-vision"]
+                "faster-whisper", "yt-dlp", "blender", "blender-mcp", "higgsfield", "elevenlabs",
+                "magic-21st", "gemini-vision"]
 
 
 def test_ids_unique_and_required_entries_present():
@@ -33,7 +33,7 @@ def test_entry_schema(e):
     assert str(e["cost"]).startswith(COSTS), e["cost"]
     assert e.get("checked", e.get("mcp", {}).get("checked", "2026-10-02")) == "2026-10-02" or True
     if e["cost"].startswith("paid") and e["kind"] in ("mcp", "api", "cli") and not e.get("avoid"):
-        assert e.get("gate") == "paid-generation-gate", "anything that can generate paid output must name the gate"
+        assert e.get("gate") == "paid-spend-gate", "anything that can generate paid output must name the gate"
     if e["kind"] in ("cli",) and not e.get("managed_by") and not e.get("host"):
         assert e.get("binary")
         assert e.get("install"), "a cli entry must carry per-OS install info"
@@ -140,7 +140,7 @@ def test_install_md_has_no_hardware_menu_and_only_uses_real_flags_and_ids():
     for flag in set(re.findall(r"(--[a-z][a-z\-]+)", text)):
         assert flag in helptext or flag in foreign, flag
     known = {e["id"] for e in ENTRIES} | {a for e in ENTRIES for a in e.get("addons", [])}
-    for ident in ("playwright", "higgsfield", "elevenlabs", "blender", "whisper-cpp", "matte-fast", "stock-media", "yt-dlp"):
+    for ident in ("playwright", "higgsfield", "elevenlabs", "blender", "matte-fast", "stock-media", "yt-dlp"):
         assert ident in known, ident
 
 

@@ -1,7 +1,7 @@
 ---
 module: hebrew-rtl-captions
 checked_at: 2026-10-02
-expires: "180 days (2027-03-31); re-test the engine rows on every HyperFrames/After Effects/Premiere version change"
+expires: "180 days (2027-03-31); re-test the engine rows on every HyperFrames version change"
 confidence: "typography numbers [MEASURED-lab] on one model reviewer's static-image review (no human panel, no physical phone); owner rules [RULE-owner]; Unicode/HTML rules [VERIFIED-external]"
 refresh: "re-run the font look-alike test and the fixture strings on the pinned build; check font licence headers at the pinned google/fonts commit; all local and free"
 ---
@@ -57,7 +57,7 @@ Setup: 12 specimens at 1080×1920, sizes 66/54/42 px, line-height 1.45, `font-sy
 
 Licence limits: Adobe Fonts allow finished video but font files must not be shipped or transferred (web-kit link only; the render needs network; cached livetype files are encrypted — do not copy); SF Pro is Apple-licensed (UI mock-ups only); a brand display font licensed for personal use only cannot be used for client work. OFL look-alikes exist for commercial display faces. See `licences-bom-rules.md`.
 
-## 3. Sizes, position, fit (1080×1920) — house values `[PROVEN-internal]` from the owner's own deliveries
+## 3. Sizes, position, fit (1080×1920) — house values `[PROVEN-internal]` from the author's own deliveries
 | Item | Value | Status |
 |---|---|---|
 | word-pop cue | 1-3 words, 0.35-0.7 s per caption, one line | `[PROVEN-internal]` |
@@ -84,7 +84,7 @@ Stroke/shadow widths were **not** tested in E03; a shadow alone inherits the bac
 | easing | `cubic-bezier(0.22,1,0.36,1)` family; blur-out-up for words | `[PROVEN-internal]` |
 | backdrop-filter | `visibility:hidden` outside each element's window; never alive the whole film | 4.3 fps vs ~19 `[PROVEN-internal]` |
 
-Timing source: ivrit-ai ASR with word timestamps (see `asr-routes.md`); native Whisper median drift ~90 ms (73 ms after a global monotone snap) in the owner's history — **not reproduced by the research**; if drift is audible, shift by a constant offset. Proofreading: read the transcript, fix names/brands/terms by hand, run several passes and a majority vote for contested words, then do not flip-flop. Three real spelling errors were found in the owner's earlier ads (use them as a QA-checklist reminder, not as a statistic). `[PROVEN-internal]`
+Timing source: ivrit-ai ASR with word timestamps (see `asr-routes.md`); native Whisper median drift ~90 ms (73 ms after a global monotone snap) in the author's history — **not reproduced by the research**; if drift is audible, shift by a constant offset. Proofreading: read the transcript, fix names/brands/terms by hand, run several passes and a majority vote for contested words, then do not flip-flop. Three real spelling errors were found in the author's earlier ads (use them as a QA-checklist reminder, not as a statistic). `[PROVEN-internal]`
 
 ## 5. Caption mode per video type
 | Type | Mode / style | Position | Colour |
@@ -117,13 +117,10 @@ Niqqud attaches to a base letter (a grapheme cluster): never split by code unit 
 |---|---|---|
 | HyperFrames | root `dir=rtl`: see rule 2; 1080-wide encoder band blackens the right 8 columns (in RTL the right edge is where each line starts — first letters can clip): 1088 canvas + crop | `[PROVEN-internal]` |
 | `check` text_occluded | transparent full-frame cutout → `data-layout-allow-occlusion` on **every** text element incl. nested spans | `[PROVEN-internal]` |
-| After Effects numbers | "40 000" renders "000 40" (space between digit groups is bidi class WS; LRE/PDF ignored in that build). Fixes: merge digit groups into **one token**; NBSP (U+00A0) or comma (class CS) as the thousands separator; LRM-fence digit runs (the owner's regex strips ALL whitespace inside a numeric match — "40 50" would become "4050": use explicit semantic tokens) | `[PROVEN-internal]`; Adobe documents Hebrew/mixed-number support in AE's Universal Text Engine → `[CONFLICT]`: treat as a versioned regression fixture (AE version, composer, font, string) |
-| After Effects performance | `applyPreset` places keys at the current comp time, not the in-point (remap by rebuilding keys); don't set `comp.time` per layer; memoize font→PostScript; skip `sourceRectAtTime` for short lines (`maxChars ≈ (W·0.9)/(F·0.58)`; shrink if width > ~92% of comp); one undo group per build | `[PROVEN-internal]` |
-| Premiere | 2021 announcement documents a universal text engine and RTL controls; **current panel locations and SRT/MOGRT/Media Encoder correctness not established**; three smoke tests proposed: native text, imported SRT, AE-authored MOGRT | `[SOURCED-unverified]` / `[IDEA]` |
 | TikTok Hebrew audience | RTL template is for Arabic-region only per TikTok docs; keep 140 px on both sides | `[CONFLICT]` resolved conservatively |
 
 ## 8. Caption QA (student tool names)
-`hf_preflight` (static: Studio ids, root RTL, stale grids, duplicate ids, media in 3D, caption below y 1450 warning — can be bypassed by alternative caption representations) · `caption_qa --band <top>:1450` (frames where caption text vanishes in ONE frame; the owner's version assumes 1080×1920 and 30 fps, only detects disappearance, can be fooled by coloured/dark text — **run it only with the format check**) · `frame_qa` (every frame: black < luma 6, single-frame pops, flashes, static holds > 1.0 s, hard cuts) · 4-axis visual review on contact sheets (the critic passed drafts the owner rejected: a human gate stays) · `hyperframes snapshot --at … --describe false` (proves the font loaded; fallback = serif/monospace look; does not sync video around cuts). A gate that cannot run reports `not_run`, never PASS.
+`hf_preflight` (static: Studio ids, root RTL, stale grids, duplicate ids, media in 3D, caption below y 1450 warning — can be bypassed by alternative caption representations) · `caption_qa --band <top>:1450` (frames where caption text vanishes in ONE frame; the author's version assumes 1080×1920 and 30 fps, only detects disappearance, can be fooled by coloured/dark text — **run it only with the format check**) · `frame_qa` (every frame: black < luma 6, single-frame pops, flashes, static holds > 1.0 s, hard cuts) · 4-axis visual review on contact sheets (the critic passed drafts the author rejected: a human gate stays) · `hyperframes snapshot --at … --describe false` (proves the font loaded; fallback = serif/monospace look; does not sync video around cuts). A gate that cannot run reports `not_run`, never PASS.
 
 ## 9. Conflicts and open items
-`[CONFLICT]` root RTL (E12) · numbers in AE (Adobe docs vs internal note) · TikTok RTL template · reels sound-on/off · testimonial exit. Open: human-reader legibility study, a physical-phone check, stroke widths, animated and recompressed output, Hebrew TTS listening (availability lists only), E03's single-model scoring. TTS routes (Azure he-IL-Hila/Avri, Google he-IL Chirp 3 HD, Eleven v3/v4 list Hebrew; Multilingual v2 and Flash v2.5 do not; OpenAI TTS lists Hebrew but is English-optimised) are `[VERIFIED-external]` availability only — **never listened to**; require native listening review and consent/provenance.
+`[CONFLICT]` root RTL (E12) · TikTok RTL template · reels sound-on/off · testimonial exit. Open: human-reader legibility study, a physical-phone check, stroke widths, animated and recompressed output, Hebrew TTS listening (availability lists only), E03's single-model scoring. TTS routes (Azure he-IL-Hila/Avri, Google he-IL Chirp 3 HD, Eleven v3/v4 list Hebrew; Multilingual v2 and Flash v2.5 do not; OpenAI TTS lists Hebrew but is English-optimised) are `[VERIFIED-external]` availability only — **never listened to**; require native listening review and consent/provenance.

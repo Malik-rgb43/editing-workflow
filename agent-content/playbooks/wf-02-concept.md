@@ -6,15 +6,15 @@
 | Field | Value |
 |---|---|
 | Stage | 2 of 9 |
-| Owner skill | `video-intake` (concept step) + the **type skill** (`edit-talking-head`, `edit-testimonial`, `edit-ad-promo`, `edit-motion-graphics`, `edit-ai-generated`; podcast: this repo's `wf-podcast-clip`) |
+| Owner skill | `video-brief-intake` (concept step) + the **type skill** (`talking-head-editor`, `testimonial-editor`, `ad-promo-editor`, `motion-graphics-builder`, `ai-generated-video-editor`; podcast: this repo's `wf-podcast-clip`) |
 | Artifacts (exact files) | `hf/CONCEPT.md` (three concepts, the recommendation, `chosen:` with the person's mix), `hf/SCRIPT.md` (the script with ranked hooks, **or** the paper edit / **text of the cut**, with an `approved:` line), optional `_work/concept/stills/` (4 key stills) or an animatic, new `A` rows in `hf/PROMPT.md` `<ledger>` |
 | Exit gate | **G2 — the person picked; the cut text/script is approved with no picture render** |
 | Target time | **20–40 min** (owner target) |
-| Paid steps | generated stills/animatic for a visual concept 💲 — only with a dated estimate and approval (`paid-generation-gate`); the default is a quick HyperFrames mock + `snapshot --describe false` (free) |
+| Paid steps | generated stills/animatic for a visual concept 💲 — only with a dated estimate and approval (`paid-spend-gate`); the default is a quick HyperFrames mock + `snapshot --describe false` (free) |
 
 ## 1. Purpose
 
-Decide **what the film is** before anything is specified frame by frame. **The chosen concept is the contract** — a limiting tool means *search another route* (Blender, Three.js, 21st-style UI components, 2.5D, AI + motion) before dropping the idea; a dropped idea is presented with an alternative. `[RULE-owner]` (src: distilled/02 workflow §1 principles)
+Decide **what the film is** before anything is specified frame by frame. **The chosen concept is the contract** — a limiting tool means *search another route* (Blender, Three.js, 21st-style UI components, AI + motion) before dropping the idea; a dropped idea is presented with an alternative. `[RULE-owner]` (src: distilled/02 workflow §1 principles)
 
 ## 2. Entry gate
 
@@ -33,7 +33,7 @@ Decide **what the film is** before anything is specified frame by frame. **The c
 | 4 | **Visual concept → 4 key stills** (hook, reveal/peak, a mid-transition, end card) from a quick HF mock + `snapshot --describe false` (≤ 5 timestamps per call), **or an animatic** (stills + timecodes + audio cues). Paid generation only with an estimate 💲. | agent | `_work/concept/stills/*.png` |
 | 5 | **Present** the options/cut text; record the person's pick and approval; add `A` rows. **No render** — an audio-only cut file is allowed. | **human approves** | message id; `approved:` line in `SCRIPT.md` |
 
-Measured on the owner's tests: an **audio-only cut shown before building visuals** would have saved the 3–4 h restructure; the timing and ordering of cuts are decided **here**, not after the build. `[PROVEN-internal]`
+Measured on the author's tests: an **audio-only cut shown before building visuals** would have saved the 3–4 h restructure; the timing and ordering of cuts are decided **here**, not after the build. `[PROVEN-internal]`
 
 ## 4. Exit gate G2
 
@@ -76,7 +76,7 @@ Measured on the owner's tests: an **audio-only cut shown before building visuals
 
 ## 8. Tool invocations
 
-`transcribe` (done in wf-00/01) · `source_cuts` · `aroll_cut` (proposes an `edit.json` + `src_cuts.json` from words + energy snapping — `tools/aroll_cut.py`: a PROPOSAL for the paper-edit approval, never an auto-cut) · `ffmpeg` (a 30 s audio-only cut: concatenate the kept audio ranges) · `sheet` · `hyperframes snapshot --at … --describe false` · `choice-board` (skill) when a visual hesitation appears · `ledger` (timing line).
+`transcribe` (done in wf-00/01) · `source_cuts` · `aroll_cut` (proposes an `edit.json` + `src_cuts.json` from words + energy snapping — `tools/aroll_cut.py`: a PROPOSAL for the paper-edit approval, never an auto-cut) · `ffmpeg` (a 30 s audio-only cut: concatenate the kept audio ranges) · `sheet` · `hyperframes snapshot --at … --describe false` · `visual-choice-board` (skill) when a visual hesitation appears · `ledger` (timing line).
 
 ## 9. Time labels
 

@@ -5,7 +5,7 @@ Two commands:
   verify <file>   Delivery gate on the file you will actually ship (QA envelope, fail-closed): audio present, duration (vs
                   --expected-duration), integrated loudness and true peak (house preset v1: -14 LUFS +-1.0, TP <= -1.0 dBTP; override
                   with --lufs/--tp/--lufs-tol; numeric 0.0 is a value, a missing measurement is INSUFFICIENT_EVIDENCE - E04-B04/B05),
-                  black segments, and dead edge columns (the encoder can blacken the last 8 columns of a 1080-wide canvas; the owner's
+                  black segments, and dead edge columns (the encoder can blacken the last 8 columns of a 1080-wide canvas; the author's
                   rule is a 1088 canvas with data-deliver-width=1080 - re-verify per HyperFrames version). Measured on THE FILE, never
                   on the mix (the renderer attenuated audio ~11.5 dB once; not reproduced since).
   render <hf-dir> Strip Studio's data-hf-id (backup kept) -> hf_preflight (abort on errors unless --force) -> `npx hyperframes render`
@@ -230,14 +230,18 @@ def cmd_render(a) -> int:
         if a.render_cmd:
             cmd = shlex.split(a.render_cmd, posix=os.name != "nt")
         else:
-            npx = shutil.which("npx")
-            if not npx:
-                print("hf_deliver: npx not found (install Node.js LTS)", file=sys.stderr)
-                return 2
+            from core import hf_engine
+
             # No GPU flags by default: the same command must work on every machine (ADR 0002). Add `--browser-gpu`/`--gpu` via --render-cmd
-            # only after `doctor recommend` showed a working GPU route on this machine.
-            cmd = [npx, "hyperframes", "render", ".", "--quality", "draft" if a.draft else "delivery", "--sdr", "-o", str(raw)]
-        env = dict(os.environ, FFMPEG_ENCODE_TIMEOUT_MS="3600000")
+            # only after `doctor recommend` showed a working GPU route on this machine. The engine is the PINNED one (never an npx download).
+            try:
+                cmd = hf_engine.command(["render", ".", "--quality", "draft" if a.draft else "delivery", "--sdr", "-o", str(raw)])
+            except hf_engine.EngineMissing as exc:
+                print(f"hf_deliver: {exc}", file=sys.stderr)
+                return 2
+        from core import hf_engine as _hf
+
+        env = _hf.run_env({"FFMPEG_ENCODE_TIMEOUT_MS": "3600000"})
         try:
             with acquire(cfg.lock_path, job=f"render {tag}", timeout=a.lock_wait):
                 r = run(cmd, cwd=hf, env=env, timeout=a.eta * 3, log_path=work / f"{tag}_render.log")

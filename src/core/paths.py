@@ -11,7 +11,7 @@ What this module guarantees (each point is a regression test in tests/unit/test_
 3. **No unchecked recursive delete.** ``safe_rmtree`` is the only deletion helper. It needs an explicit ``allowed_root``
    that carries the ``.avc-managed`` marker, the target must be strictly inside it, must not be a link/junction, must
    not be the current directory or one of its ancestors, and must pass the forbidden-root test. This replaces the
-   owner's ``export_kit`` pattern ``rmtree(OUT)`` on an unchecked ``--out`` (src: blueprint TOOLS_SPEC section 2).
+   author's ``export_kit`` pattern ``rmtree(OUT)`` on an unchecked ``--out`` (src: blueprint TOOLS_SPEC section 2).
 4. **Long paths.** ``fs_path`` adds the Windows ``\\\\?\\`` prefix for long paths; use it for raw ``os``/``open`` calls.
 5. **Project model.** ``projects/<slug>/{source,hf,final,_work}``; the folder name is an ASCII slug, the Hebrew display
    title is stored separately in ``project.json`` (UTF-8 without BOM).

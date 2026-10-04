@@ -54,7 +54,7 @@
     },
     "route": {
       "type": "string",
-      "description": "OS/device route, e.g. cpu, vulkan, cuda, mlx"
+      "description": "OS/device route, e.g. cpu"
     },
     "model": {
       "type": "object",

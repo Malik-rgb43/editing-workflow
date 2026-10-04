@@ -3,7 +3,7 @@
 Usage: python scripts/scan_private.py [--root DIR] [--denylist FILE] [--require-denylist] [--json] [--strict] [--no-git]
 
 Two independent parts (never merged into one silent PASS):
-  1. built-in patterns: user-home paths (Windows/macOS/Linux), the owner's course path, the
+  1. built-in patterns: user-home paths (Windows/macOS/Linux), the author's course path, the
      ``knowledge-pack`` folder, personal e-mail addresses, owner lab paths, ``brain/Clients`` style paths;
   2. the client-name denylist, loaded from a LOCAL, git-ignored file (default
      scripts/private_denylist.txt; override with --denylist or env AVC_PRIVATE_DENYLIST). A committed
@@ -71,7 +71,7 @@ PATTERNS: list[tuple[str, re.Pattern[str], str, str]] = [
         "owner-course-path",
         re.compile(r"[A-Za-z]:[\\/]+[^\s\"'`]*קורס"),
         "FAIL",
-        "path into the owner's course folder",
+        "path into the author's course folder",
     ),
     (
         "knowledge-pack",

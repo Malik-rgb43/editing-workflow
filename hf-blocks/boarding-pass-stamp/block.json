@@ -1,0 +1,80 @@
+{
+  "schema": "avc.hf-block/1",
+  "name": "boarding-pass-stamp",
+  "title": "Boarding pass with stamp",
+  "description": "A boarding-pass card that flies in, then a stamp slams onto it and the card shakes once.",
+  "duration_s": 3.5,
+  "size": [
+    1080,
+    1920
+  ],
+  "overlay": false,
+  "variables": [
+    {
+      "id": "from_code",
+      "type": "string",
+      "default": "TLV"
+    },
+    {
+      "id": "to_code",
+      "type": "string",
+      "default": "JFK"
+    },
+    {
+      "id": "from_city",
+      "type": "string",
+      "default": "Tel Aviv"
+    },
+    {
+      "id": "to_city",
+      "type": "string",
+      "default": "New York"
+    },
+    {
+      "id": "passenger",
+      "type": "string",
+      "default": "A. TRAVELLER"
+    },
+    {
+      "id": "flight",
+      "type": "string",
+      "default": "LY001"
+    },
+    {
+      "id": "gate",
+      "type": "string",
+      "default": "B12"
+    },
+    {
+      "id": "seat",
+      "type": "string",
+      "default": "7A"
+    },
+    {
+      "id": "stamp",
+      "type": "string",
+      "default": "APPROVED"
+    },
+    {
+      "id": "stamp_at",
+      "type": "number",
+      "default": 1.6
+    },
+    {
+      "id": "duration",
+      "type": "number",
+      "default": 3.5
+    }
+  ],
+  "replace": {},
+  "demo_assets": [],
+  "palette": [
+    "--hfb-accent",
+    "--hfb-card",
+    "--hfb-fg",
+    "--hfb-font",
+    "--hfb-muted",
+    "--hfb-stamp"
+  ],
+  "license": "Apache-2.0 (written for this toolkit)"
+}

@@ -1,6 +1,7 @@
 """apply: copies skills + toolkit home, idempotency, update + backup + rollback, partial failure, offline, dry-run, Hebrew path."""
 import json
 import os
+from pathlib import Path
 
 from test_install_support import *  # noqa: F401,F403
 
@@ -145,15 +146,45 @@ def test_install_missing_without_package_manager_only_prints(env):
 def test_hebrew_and_spaces_in_home_path_round_trip(env, monkeypatch):
     heb = env.tmp / "דנה כהן with space"
     heb.mkdir()
+    ascii_base = env.tmp / "ascii-base"
+    ascii_base.mkdir()
     monkeypatch.setenv("AVC_USER_HOME", str(heb))
+    monkeypatch.setenv("AVC_ASCII_BASE", str(ascii_base))  # never let a test write to C:/ or /var/tmp
     rc, out = env.json("apply", "--yes")
     assert rc == 0, out
     assert (heb / ".claude" / "skills" / "alpha-skill" / "SKILL.md").is_file()
     m = json.loads((heb / ".avc" / "install-manifest.json").read_text(encoding="utf-8"))
-    assert "דנה" in m["paths"]["toolkit_home"]  # UTF-8 survives the manifest round trip
+    # The engine folder must be ASCII (HyperFrames `init` silently writes nothing under Hebrew letters); the manifest still lives under the home.
+    th = Path(m["paths"]["toolkit_home"])
+    assert th == ascii_base / "avc-toolkit" and th.joinpath("tools").is_dir()
+    assert str(th).isascii()
     env.run("verify", expect=0)
     env.run("uninstall", "--yes", expect=0)
     assert not (heb / ".claude" / "skills" / "alpha-skill").exists()
+    assert not th.joinpath("tools").exists()
+
+
+def test_ascii_home_keeps_toolkit_under_state(env, monkeypatch):
+    monkeypatch.setenv("AVC_ASCII_BASE", str(env.tmp / "unused"))
+    rc, out = env.json("apply", "--yes")
+    assert rc == 0, out
+    m = json.loads((env.state / "install-manifest.json").read_text(encoding="utf-8"))
+    assert Path(m["paths"]["toolkit_home"]) == env.state / "toolkit"
+
+
+def test_ascii_fallback_folders(env, monkeypatch):
+    monkeypatch.setenv("AVC_ASCII_BASE", str(env.tmp / "base"))
+    monkeypatch.delenv("AVC_PATHS_WORK_ROOT", raising=False)
+    monkeypatch.delenv("AVC_WORK_ROOT", raising=False)
+    assert env.bs.default_work_root(Path("/x/דנה")) == env.tmp / "base" / "avc-work"
+    assert env.bs.default_toolkit_home(Path("/x/דנה/.avc")) == env.tmp / "base" / "avc-toolkit"
+    assert env.bs.default_toolkit_home(env.tmp / ".avc") == env.tmp / ".avc" / "toolkit"
+
+
+def test_explicit_non_ascii_home_is_a_blocker(env):
+    bad = env.tmp / "דנה"
+    rc, out, err = env.run("plan", "--home", str(bad), "--json")
+    assert "not ASCII-only" in (out + err)
 
 
 def test_symlinks_in_source_are_skipped_not_followed(env):

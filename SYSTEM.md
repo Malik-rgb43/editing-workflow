@@ -3,27 +3,28 @@
 
 Every skill, workflow and tool in one place. Skills are specified with deterministic checks only; model evaluation has not been run (decision default Q4). Nothing here grants permission: user and project restrictions on spend, installs and publication always win.
 
-## Skills (17)
+## Skills (18)
 
 | skill | kind | version | what it is for |
 |---|---|---|---|
-| `choice-board` | process | 0.1.0 | Build one interactive HTML board that shows every option of a visual taste choice (fonts, caption animations, easings, palettes, transitions, layouts, hook variants) on the user's real text and still, and read the click… |
-| `color-correction-speaker` | process | 0.1.0 | Colour-correct footage of a person (talking head, interview, UGC, speaker outdoors) from the CAMERA ORIGINAL with scopes, a numeric fit, a subject matte and a baked plate, then gate the render. |
-| `course-router` | router | 0.1.0 | Choose the one skill that owns a video request and hand it an explicit artifact. |
-| `edit-ad-promo` | type | 0.1.0 | Script, edit or review a paid-social ad, sponsored post or brand promo for a business, product, app or store (Meta, Instagram, TikTok, 15-60 s): exact offer and CTA, ranked hooks, hook variants, end card, blocking compl… |
-| `edit-ai-generated` | type | 0.1.0 | Plan, prompt, cut and review a video built mainly from AI-generated shots (Higgsfield, Kling, Veo, Seedance, Hailuo, Runway, still-to-video): AI explainers, spec commercials, narrative skits, character or X-ray comedy. |
-| `edit-motion-graphics` | type | 0.1.0 | Design, build and review a motion-graphics piece in HyperFrames/GSAP: product or app launch, feature announcement, kinetic typography, logo reveal, UI explainer, animated screenshots. |
-| `edit-talking-head` | type | 0.1.0 | Edit a talking-head / speaker-to-camera video (expert, coach, service provider, agent) from raw or rough-cut footage into a premium vertical reel: whole-sentence cuts, face-centred zooms, full-bleed B-roll, cutout, capt… |
-| `edit-testimonial` | type | 0.1.0 | Edit a customer testimonial, client review, student success story or case-study video from consented interview, Zoom or selfie footage into a short, honest, result-first cut with original proof and accessible captions. |
-| `hebrew-captions-asr` | process | 0.1.0 | Transcribe Hebrew speech and build burned-in Hebrew captions: ASR route per hardware, word timestamps, proofreading, RTL and mixed English/number lines, caption font, entrance and exit animation, safe zone, caption QA. |
-| `multi-video-variants` | process | 0.1.0 | Deliver one approved video as several outputs (other aspect ratios, hook variants, platform versions, no-music/no-captions versions) or run several videos in parallel, with one shared mix, strict naming and a manifest t… |
-| `paid-generation-gate` | gate | 0.1.0 | Gate every paid action before it runs - AI image, video or audio generation, upscales, paid APIs, cloud renders, credit purchases, trials that need a card. |
-| `reference-style-transfer` | gate | 0.1.0 | Make the user's footage, script or topic in the style of a reference video: measure it into a Style DNA card, map it onto the user's material, offer three ways to apply it (Faithful / Elevated / Twist); grammar, never a… |
-| `render-qa-deliver` | process | 0.1.0 | Run the cheap-first render, QA and delivery pipeline for a HyperFrames video: preflight, range renders, one full render, final-file loudness and mux, every-frame QA, visual review, manifest, timing ledger. |
-| `revision-round` | process | 0.1.0 | Use when the user sends notes, complaints or timestamped fixes on an existing draft or delivered video - boring, looks AI, too static, the caption at 0:12 is late, change the font, make the globe bigger, music too loud. |
-| `seedance-prompting` | tool | 0.1.0 | Write shot-by-shot, about 15-second Seedance 2.x prompts from a script, scene or beat: cinematic film or a short single shot, with camera, lens, light and sound per shot. |
-| `video-analysis` | tool | 0.1.0 | Turn a video the user sends or links (file, or YouTube/TikTok/Instagram URL) or a folder of clips into measurements (cuts, pacing, per-frame data), keyframe sheets, a Hebrew transcript and sound analysis (SFX, BPM, key,… |
-| `video-intake` | gate | 0.1.0 | Turn a new video idea, brief or list of specifics into a checkable Concept Ledger and ask questions until every parameter is precise, before any concept, prompt or build. |
+| `ad-promo-editor` | type | 0.1.0 | Script, edit or review a paid-social ad, sponsored post or brand promo for a business, product or app (Meta, TikTok, 15-60 s): exact offer and CTA, ranked hooks, hook variants, end card, blocking compliance table, licen… |
+| `ai-generated-video-editor` | type | 0.1.0 | Plan, prompt, cut and review a video built mainly from AI-generated shots (Higgsfield, Kling, Veo, Seedance, Hailuo, Runway, still-to-video): AI explainers, spec commercials, narrative skits, character or X-ray comedy. |
+| `hebrew-captions-transcription` | process | 0.1.0 | Transcribe Hebrew speech and build burned-in Hebrew captions: ASR route per hardware, word timestamps, proofreading, RTL and mixed English/number lines, caption font, entrance and exit animation, safe zone, caption QA. |
+| `image-prompt-writer` | tool | 0.1.0 | Write copy-ready text-to-image prompts for the stills-first stage of a video: keyframes, start frames, hero frames, character and location sheets, B-roll stills, thumbnails; one STYLE PREFIX per film, no text inside the… |
+| `motion-graphics-builder` | type | 0.1.0 | Design, build and review a motion-graphics piece in HyperFrames/GSAP: product or app launch, feature announcement, kinetic typography, logo reveal, UI explainer, animated screenshots. |
+| `paid-spend-gate` | gate | 0.1.0 | Gate every paid action before it runs - AI image, video or audio generation, upscales, paid APIs, cloud renders, credit purchases, trials that need a card. |
+| `reference-style-matching` | gate | 0.1.0 | Make the user's footage, script or topic in the style of a reference video: measure it into a Style DNA card, map it onto the user's material, offer three ways to apply it (Faithful / Elevated / Twist); grammar, never a… |
+| `render-qa-delivery` | process | 0.1.0 | Run the cheap-first render, QA and delivery pipeline for a HyperFrames video: preflight, range renders, one full render, final-file loudness and mux, every-frame QA, visual review, manifest, timing ledger. |
+| `revision-notes-handler` | process | 0.1.0 | Use when the user sends notes, complaints or timestamped fixes on an existing draft or delivered video - boring, looks AI, too static, the caption at 0:12 is late, change the font, make the globe bigger, music too loud. |
+| `speaker-color-correction` | process | 0.1.0 | Colour-correct footage of a person (talking head, interview, UGC, speaker outdoors) from the CAMERA ORIGINAL with scopes, a numeric fit, a subject matte and a baked plate, then gate the render. |
+| `talking-head-editor` | type | 0.1.0 | Edit a talking-head / speaker-to-camera video (expert, coach, service provider) from raw or rough-cut footage into a premium vertical reel: whole-sentence cuts, face-centred zooms, full-bleed B-roll, cutout, captions. |
+| `testimonial-editor` | type | 0.1.0 | Edit a customer testimonial, client review, student success story or case-study video from consented interview, Zoom or selfie footage into a short, honest, result-first cut with original proof and accessible captions. |
+| `video-analysis` | tool | 0.1.0 | Turn a video the user sends or links (file or URL) or a folder of clips into measurements (cuts, pacing, per-frame data), keyframe sheets, a Hebrew transcript and sound analysis (SFX, BPM, key, beats, song ID). |
+| `video-brief-intake` | gate | 0.1.0 | Turn a new video idea, brief or list of specifics into a checkable Concept Ledger and ask questions until every parameter is precise, before any concept, prompt or build. |
+| `video-prompt-writer` | tool | 0.1.0 | Write shot-by-shot, about 15-second Seedance 2.x prompts from a script, scene or beat: cinematic film or a short single shot, with camera, lens, light and sound per shot. |
+| `video-request-router` | router | 0.1.0 | Choose the one skill that owns a video request and hand it an explicit artifact. |
+| `video-variants-exporter` | process | 0.1.0 | Deliver one approved video as several outputs (other aspect ratios, hook variants, platform versions, no-music/no-captions versions) or run several videos in parallel, with one shared mix, strict naming and a manifest t… |
+| `visual-choice-board` | process | 0.1.0 | Build one interactive HTML board that shows every option of a visual taste choice (fonts, caption animations, easings, palettes, transitions, layouts, hook variants) on the user's real text and still, and read the click… |
 
 ## Playbooks and workflows (13)
 
@@ -41,9 +42,8 @@ Every skill, workflow and tool in one place. Skills are specified with determini
 - `agent-content/playbooks/wf-podcast-clip.md` - wf-podcast-clip — Clips from a long conversation (קליפים מפודקאסט)
 - `agent-content/playbooks/wf-variants.md` - wf-variants — Ratios, hook variants and platform versions (גרסאות)
 
-## Techniques (10)
+## Techniques (9)
 
-- `agent-content/techniques/2-5d.md` - Technique: 2.5D (depth parallax on a still)
 - `agent-content/techniques/caption-collision.md` - Technique: caption collision detection (the F08 affine box solver)
 - `agent-content/techniques/cheap-first-qa.md` - Technique: cheap-first QA (the gate stack)
 - `agent-content/techniques/clean-smooth-motion.md` - Technique: clean and smooth motion
@@ -67,7 +67,7 @@ Every skill, workflow and tool in one place. Skills are specified with determini
 
 ## References (dated, volatile facts live here) (13)
 
-- `agent-content/references/asr-routes.md` - Hebrew ASR routes — dated reference
+- `agent-content/references/asr-routes.md` - Hebrew ASR route — dated reference
 - `agent-content/references/audio-mix.md` - Audio mix, ducking and loudness — dated reference
 - `agent-content/references/colour-presets.md` - Colour presets, gates and the HDR branch — dated reference
 - `agent-content/references/cost-model.md` - Cost model — formulas, worksheet, scenarios — dated reference
@@ -79,20 +79,27 @@ Every skill, workflow and tool in one place. Skills are specified with determini
 - `agent-content/references/mcp-profiles.md` - MCP and integration profiles — dated reference
 - `agent-content/references/model-routing.md` - Model routing (AI generation) — dated reference
 - `agent-content/references/platform-specs.md` - Platform specs, delivery presets and AI-disclosure — dated reference
-- `agent-content/references/three-d-routes.md` - 3D, 2.5D and depth routes — dated reference
+- `agent-content/references/three-d-routes.md` - 3D routes — dated reference
 
-## Tools (24)
+## Tools (33)
 
 | tool | purpose | usage |
 |---|---|---|
+| `tools/analyze.py` | analyze - turn a video into what a model can read: per-frame measurements, edit points, contact sheets, a transcript and a sound analysis (contract: video-analysis/references/output-contract.md). | python tools/analyze.py <video\|folder> --out analysis/<name> [--detail quick\|standard\|full] [--asr auto\|always\|never] [--model-dir DIR \| --allow-download] [--language he] [--exclude end_card:42.1-45 ...] [--private] [--force] [--timeout 3600] python tools/analyze.py --check python tools/analyze.py <URL> --download --out analysis      (needs yt-dlp; downloads ONLY that URL; ask the user first) |
 | `tools/aroll_cut.py` | aroll_cut - propose a paper edit for a talking-head A-roll: whole sentences, in-points in the SILENCE before each sentence. | python tools/aroll_cut.py <words.json> <audio-or-video> -o <dir> [--keep 1,3-5] [--gap 0.7] [--fps 30] |
 | `tools/camera_path.py` | camera_path - a SMOOTHED speaker-centring camera path (zoom + pan) from faces.json, plus a GSAP rig. Never a per-frame face follow. | python tools/camera_path.py <faces.json> --zoom 2.0:6.0:1.25 [--zoom 8.0:11.5:1.4] -o <dir> [--ease 0.45] [--duration 30] |
 | `tools/caption_qa.py` | caption_qa - find caption text that vanishes (or pops in) within ONE frame, and check caption timelines for collisions. | python tools/caption_qa.py <video> [--roi 0,0.55,1,1] [--luma 200] [--min-frac 0.0008] [--entrance warning\|error\|off] [--cues cues.json --canvas 1080x1920 --rail-bottom 1450 --overlap-px2 16] [--json-out r.json] python tools/caption_qa.py --cues-only cues.json --canvas 1080x1920        (timeline check without a video; frames evidence = n/a) |
+| `tools/color_check.py` | color_check - measure the FINAL render for the colour gate: skin, black, sky and highlight numbers every N seconds, in the shape grade_gate.py judges. | python tools/color_check.py <final.mp4> -o measurements.json (--faces faces.json \| --skin-roi x0,y0,x1,y1) [--step 2] [--ignore 43-46.5 ...] [--black-roi x0,y0,x1,y1] [--sky-roi x0,y0,x1,y1] [--width 270] |
+| `tools/color_fit.py` | color_fit - fit a small, named grade to a NAMED colour preset from sampled frames of the CAMERA ORIGINAL (two stages, few free parameters). | python tools/color_fit.py <video> --at 2,9,16 -o grade.json [--preset speaker-plate-v1] [--preset-file presets.json] [--stage global\|subject] [--fixed global.json] (--faces faces.json \| --skin-roi x0,y0,x1,y1) [--neutral-roi ...] [--black-roi ...] [--sky-roi ...] [--width 270] [--sheet before_after.jpg] [--max-nfev 600] |
+| `tools/color_render.py` | color_render - bake a fitted grade into the A-roll as a FILE: two 65^3 LUTs (GLOBAL and SUBJECT) blended by a soft person matte, one ffmpeg run. | python tools/color_render.py <camera-original> --params grade.json -o hf/assets/video/aroll.mp4 [--matte matte.mp4] [--from 12.0 --to 18.0] [--matte-offset S] [--fps 30] [--size 1080x1920] [--canvas 1088x1920] [--crf 11] [--preroll-frames 6] [--matte-blur 3] [--matte-erode 1] [--subject-everywhere] [--threads N] [--timeout 3600] |
 | `tools/color_scopes.py` | color_scopes - numeric colour measurements of sampled frames, in the shape the colour gate expects (measurements.json). | python tools/color_scopes.py <video> -o measurements.json [--every 2.0 \| --times 1.5,4,9] [--skin-roi 0.4,0.2,0.6,0.4] [--faces faces.json] [--black-roi x0,y0,x1,y1] [--sky-roi x0,y0,x1,y1] [--max-width 640] [--timeout 900] |
+| `tools/cutout.py` | cutout - cut the speaker out of a clip as a transparent video (WebM VP9 alpha or ProRes 4444), ONLY for the beats that put graphics behind the speaker. | python tools/cutout.py <clip> -o hf/assets/video/speaker.webm [--from 12.0 --to 18.0] [--route native\|onnx\|external] [--cut-at 14.2,16.0 \| --cuts src_cuts.json] [--model m.onnx] [--stride 1] [--alpha-from alpha.mp4] [--erode 4] [--blur 1.8] [--quality fast\|balanced\|best] [--cache-dir DIR] [--no-cache] [--timeout 7200] |
 | `tools/doctor.py` | doctor - health check AND hardware auto-detection. Decides the safest working profile for THIS machine (no questions asked). | python tools/doctor.py [report\|recommend\|smoke] [--json] [--work-root DIR] [--out report.json] |
 | `tools/face_center.py` | face_center - where is the speaker's face, and is it centred? (`source` measures, `audit` judges) | python tools/face_center.py source <video> -o faces.json [--model yunet.onnx] [--every 5] [--max-width 480] [--min-coverage 0.5] [--timeout 900] python tools/face_center.py audit <faces.json> [--tol 0.08] [--min-run 6] [--json-out r.json] |
 | `tools/frame_qa.py` | frame_qa - decode EVERY frame of a video and flag black frames, flashes, one-frame pops, holds and hard cuts. | python tools/frame_qa.py <video> [--black-mean 4] [--flash-mean 250] [--pop-diff 25] [--hold-frames 8] [--cut-diff 40] [--allow-black-edge 0] [--timeout 900] [--max-width 320] [--json-out report.json] |
+| `tools/frames.py` | frames - the zoom tool of video-analysis: EVERY frame (or every Nth) of a short window around a moment, on one labelled sheet with tiles >= 280 px. | python tools/frames.py <video> --at <seconds> [--pad 0.25] [--step 1] [--tile 280] [--cols 6] --out analysis/<video> |
 | `tools/grade_bake.py` | grade_bake - bake a colour grade into the A-roll as a FILE with FFmpeg ("grade = file, not attribute"). | python tools/grade_bake.py <source> -o <out.mp4> [--lut grade.cube] [--eq brightness=0.03:contrast=1.05:saturation=1.1:gamma=1.0] [--colorbalance "rs=0.02:bs=-0.02"] [--ss 12.0 --to 18.0] [--preroll-frames 6] [--crf 12] [--preset medium] |
+| `tools/hf_blocks.py` | hf_blocks - the studio's own HyperFrames block library: list, add to a project, feed with real data, and ADMIT (verify in an empty project). | python tools/hf_blocks.py <list\|add\|levels\|caption-words\|verify> ...      (details below) |
 | `tools/hf_deliver.py` | hf_deliver - preflight -> render under the lock -> stale-file guard -> mux the mix / two-pass loudnorm -> verify the FINAL file. | python tools/hf_deliver.py verify <video> [--expected-duration S] [--lufs -14] [--lufs-tol 1.0] [--tp -1.0] [--edge-samples 12] [--json-out r.json] python tools/hf_deliver.py render <hf-dir> --name NAME [--platform ig] [--hook A] [--aspect 9x16] [--mix assets/mix.wav] [--draft] [--skip-render] [--force] [--eta 600] [--render-cmd "npx hyperframes render . ..."] [--lock-wait 0] |
 | `tools/hf_mix.py` | hf_mix - premix voice-over + music bed + SFX from ONE cue file into a master WAV (two-pass loudnorm), and report what it measured. | python tools/hf_mix.py <cues.json> -o <mix.wav> [--report] [--lufs-tol 1.0] [--no-duck] |
 | `tools/hf_preflight.py` | hf_preflight - static lint of a HyperFrames project (seconds, not an 8-minute render). Run it before ANY check/render. | python tools/hf_preflight.py <hf-project-dir \| file.html> [--strict] [--rail-bottom 1450] [--canvas-height 1920] [--json-out r.json] [--human] |
@@ -101,14 +108,16 @@ Every skill, workflow and tool in one place. Skills are specified with determini
 | `tools/ledger.py` | ledger - read and summarise the per-project timing ledger (JSONL, one line per stage). | python tools/ledger.py summarize <ledger.jsonl>... [--project NAME] [--json] python tools/ledger.py demo <ledger.jsonl>          (writes 3 sample lines; used by tests) |
 | `tools/motion_qa.py` | motion_qa - camera-motion stutter detector (pan/zoom jerk) with an explicit coverage statement. | python tools/motion_qa.py <video> [--max-width 480] [--accel-px 2.5] [--sigma 6] [--reversal-px 1.5] [--max-unmeasured 0.3] [--min-points 12] [--min-inliers 30] [--timeout 900] [--json-out report.json] |
 | `tools/motion_scan.py` | motion_scan - flag B-roll that is "boring/static": windows >= N seconds with almost no temporal change. | python tools/motion_scan.py <video> [--window 1.5] [--min-ti 1.0] [--severity warning\|error] [--json-out r.json] |
-| `tools/new_project.py` | new_project - scaffold ``<work_root>/projects/<slug>/{source,hf,final,_work}`` under an ASCII work root. | python tools/new_project.py "<title>" [--work-root DIR] [--copy FILE_OR_DIR ...] [--slug name] [--init-hyperframes] [--json] |
+| `tools/new_project.py` | new_project - scaffold ``<work_root>/projects/<slug>/{source,hf,final,_work}`` under an ASCII work root. | python tools/new_project.py "<title>" [--work-root DIR] [--copy FILE_OR_DIR ...] [--slug name] [--starter talking-head] [--init-hyperframes] [--json] python tools/new_project.py --list-starters |
+| `tools/prep.py` | prep - minute-0 preparation of a project: every slow measurement runs in the background while the brief is still being written. | python tools/prep.py <project-root> [--main FILE] [--steps sheet,asr,cuts,faces,scopes,refs] [--language he] [--model-dir DIR] [--face-model yunet.onnx] [--lock-wait 900] [--step-timeout 1800] [--force] [--plan] [--json] |
 | `tools/qa_delivery.py` | qa_delivery - the delivery evidence gate: may THIS file be delivered? (aggregates the gate reports, fail-closed) | python tools/qa_delivery.py run <video> [--captions] [--expected-duration S] [--human-approved "words" --attested-by NAME] [--out-dir DIR] [--max-age-min 120] python tools/qa_delivery.py aggregate <contract.json> <report.json>... |
 | `tools/render_lock.py` | render_lock - the machine-wide single-heavy-job lock (kernel lock; replaces the original file-timestamp lock). | python tools/render_lock.py status [--json] python tools/render_lock.py run --job "render v3" [--wait 600] [--timeout 5400] -- <command> [args...] |
 | `tools/render_watch.py` | render_watch - wrap ANY heavy command with progress parsing, an ETA, a heartbeat file and a stall watchdog. | python tools/render_watch.py [--status _work/render.status.json] [--heartbeat 60] [--stall 600] [--timeout 5400] [--eta-after 60] [--job "render v3"] [--lock-wait 0] [--no-lock] -- <command> [args...] |
 | `tools/seg_diff.py` | seg_diff - prove that a re-render (a fix) changed NOTHING outside the range you meant to change. | python tools/seg_diff.py <before.mp4> <after.mp4> [--exclude 10.0:12.5 ...] [--min-ssim 0.995] [--json-out r.json] |
 | `tools/sheet.py` | sheet - contact sheet with the frame number and real timestamp burned into every tile. | python tools/sheet.py <video> -o sheet.jpg [--every 15 \| --count 24 \| --times 1.5,3.0,9.25] [--cols 6] [--tile-width 240] |
 | `tools/source_cuts.py` | source_cuts - find the hidden cuts inside a rough-cut source video and the frame ranges a cover (B-roll / zoom) must hide. | python tools/source_cuts.py <video> [-o src_cuts.json] [--margin 6] [--min-diff 18] [--sigma 6] [--timeout 900] |
-| `tools/transcribe.py` | transcribe - word-level speech-to-text (Hebrew first) with route auto-selection and a CPU route that always works. | python tools/transcribe.py <audio-or-video> -o words.json [--language he] [--model-dir DIR \| --allow-download] [--revision SHA] [--route auto\|faster-whisper\|whisper-cpp] [--vad] [--beam 5] [--threads N] python tools/transcribe.py --check          (which routes are usable on this machine; imports nothing heavy beyond find_spec) |
+| `tools/transcribe.py` | transcribe - word-level speech-to-text (Hebrew first) with route auto-selection and a CPU route that always works. | python tools/transcribe.py <audio-or-video> -o words.json [--language he] [--model-dir DIR \| --allow-download] [--revision SHA] [--vad] [--beam 5] [--threads N] python tools/transcribe.py --check          (which routes are usable on this machine; imports nothing heavy beyond find_spec) |
+| `tools/ui.py` | ui - search and READ shadcn-registry components as source (nothing is installed), with the licence tier of each registry next to every hit. | python tools/ui.py registries [--query text] [--tier ok\|restricted\|excluded\|unknown] [--json] python tools/ui.py search "<english description>" [--registry @magicui ...] [--limit 20] [--json]     (default: the ok-tier registries) python tools/ui.py view @registry/item [--source] [--save DIR] [--json] python tools/ui.py add-command @registry/item                                                         (prints the command, runs nothing) common: [--offline] [--cache-dir DIR] [--timeout 20] |
 
 ## Ideal pipeline
 

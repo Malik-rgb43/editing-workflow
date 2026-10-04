@@ -3,7 +3,7 @@
 > Dated 2026-10-02 · evidence state **sourced** (owner timings measured at small sizes; no controlled benchmark) · expires 2026-12-31. **unsupported ≠ missing ≠ error.**
 
 ## What it installs
-Nothing by itself: this profile **records and checks** a student-installed Blender (the **exact version is written down** — the owner runs 5.2, the research's pinned manual is 4.5 LTS; engine identifiers and APIs changed between 4.2 and 5.x, so scripts read enums instead of hard-coding them and look shader nodes up by type, not by name). It enables the 3D routes of `agent-content/references/three-d-routes.md`: headless `blender -b -P script.py` for sprite sheets and plates, and an **optional** live bridge (MCP for Blender). No Python extra group is defined; Blender uses its own bundled Python (a small Pillow-based packing helper runs in system Python).
+Nothing by itself: this profile **records and checks** a student-installed Blender (the **exact version is written down** — the author runs 5.2, the research's pinned manual is 4.5 LTS; engine identifiers and APIs changed between 4.2 and 5.x, so scripts read enums instead of hard-coding them and look shader nodes up by type, not by name). It enables the 3D routes of `agent-content/references/three-d-routes.md`: headless `blender -b -P script.py` for sprite sheets and plates, and an **optional** live bridge (MCP for Blender). No Python extra group is defined; Blender uses its own bundled Python (a small Pillow-based packing helper runs in system Python).
 
 ## Download size and source
 Blender download size: **`unmeasured`** (not recorded). The installer shows it before downloading.

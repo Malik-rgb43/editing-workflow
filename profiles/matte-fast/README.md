@@ -3,18 +3,18 @@
 > Dated 2026-10-02 · evidence state **measured, the reference machine only** · expires 2027-03-31 or on a model/licence/runtime change. **unsupported ≠ missing ≠ error.**
 
 ## What it installs
-Person matte (cutout) tooling for the student tool `cutout`: **ONNX Runtime with DirectML** and **OpenCV** (Python extras **`matte`** and **`opencv`**; names assumed, `pyproject.toml` is authoritative), in a **separate virtual environment** (`onnxruntime-directml` replaces `onnxruntime`; do not mix with the ASR environments). Routes:
+Person matte (cutout) tooling for `tools/cutout.py`: **ONNX Runtime** (Python extra **`matte-ort`** in `pyproject.toml`; on Windows with a GPU `onnxruntime-directml` can replace `onnxruntime`), in a **separate virtual environment** (do not mix with the ASR environment). Routes:
 
 | Route | Where it lives | Licence |
 |---|---|---|
-| **MODNet** | shipped in the repo (bundle-safe) | Apache-2.0 |
-| native HyperFrames `remove-background` (u2net) | fallback; first use installs ONNX Runtime | per HyperFrames/model terms |
+| **MODNet** (`--route onnx --model <file>`) | NOT in the repo: you download `onnx/model.onnx` (25,888,640 bytes) from huggingface.co/Xenova/modnet | Apache-2.0 |
+| native HyperFrames `remove-background` (u2net, `--route native`, the default) | HyperFrames downloads `u2net_human_seg.onnx` (175,997,641 bytes) on first use | rembg code MIT; weights not separately reviewed |
 | **RVM** (fastest measured) | **optional, user-installed plugin — internal use only** | **GPL-3.0** |
 
 **RVM is never copied into the student download and never imported into repo code** (decision default Q8). A missing RVM plugin is normal, not an error.
 
 ## Download size and source
-Model files and `onnxruntime-directml`: **`unmeasured`** — the research recorded timings, not sizes. The installer shows real sizes before downloading.
+Read from the hosts on 2026-10-03: MODNet onnx 25,888,640 bytes; u2net_human_seg 175,997,641 bytes. ONNX Runtime wheel size: not recorded (pip shows it). Full table with sources: `docs/en/local-vs-paid.md`.
 
 ## Hardware
 Fast route: a DX12 GPU for DirectML (measured: one reference machine; the GPU stayed nearly idle — 258 MB dedicated, 3D engine 5-11%). CPU route: any machine. NVIDIA and Apple figures are **sourced only** (RVM README: 172 FPS RTX 3090 HD FP16; 104 FPS GTX 1080 Ti FP32; the CoreML export has no dynamic resolution) and were never measured here.

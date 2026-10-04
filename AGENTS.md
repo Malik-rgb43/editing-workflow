@@ -12,12 +12,12 @@ The toolkit must work on every computer and for every student with no author-spe
 Follow [INSTALL.md](INSTALL.md) exactly: tell the student what is downloaded and which questions they will be asked, get ONE confirmation, install, then ask the optional connection questions one at a time (default no). Sign-up links for paid services are shown as the installer prints them: a referral link is always labelled and disclosed, the plain link is shown beside it, nothing is opened without the student's yes, and no referral parameter is ever added to MCP / API / CLI calls.
 
 ## Entry point for any video request
-Use the skill **`course-router`**. It picks the ONE owning skill or workflow (intake, type skills, captions, render/QA/delivery, revision rounds, `paid-generation-gate`, ...). Do not start building before it routed. A project that already has `PROMPT.md` is resumed, never restarted.
+Use the skill **`video-request-router`**. It picks the ONE owning skill or workflow (intake, type skills, captions, render/QA/delivery, revision rounds, `paid-spend-gate`, ...). Do not start building before it routed. A project that already has `PROMPT.md` is resumed, never restarted.
 
 ## Never-break rules
 1. **Intake until precise.** No reference given -> ask for one. Ask in rounds until every parameter is checkable.
 2. **PROMPT.md is approved by the human before the first line of code** - also in autonomous runs (the agent drafts, the human approves).
-3. **Paid action = prior approval with a dated estimate** (`paid-generation-gate`). Signing in to a provider is not spend authorisation. No paid retry, no implicit fallback to a paid route, no trials started on the user's behalf.
+3. **Paid action = prior approval with a dated estimate** (`paid-spend-gate`). Signing in to a provider is not spend authorisation. No paid retry, no implicit fallback to a paid route, no trials started on the user's behalf.
 4. **One heavy job at a time** (render, check, Blender, ASR, matte) under the render lock (`tools/render_lock.py`). No heavy sub-agents during a render.
 5. **One full render per round.** Studio first (`hyperframes preview` / snapshots), range renders next (`tools/hf_segment.py`), ONE full render last.
 6. **Every-frame QA on the FINAL render** (`tools/frame_qa.py`, `tools/caption_qa.py`, loudness on the shipped file via `tools/hf_deliver.py verify`, aggregated by `tools/qa_delivery.py`). A gate that cannot run reports `not_run` / `INSUFFICIENT_EVIDENCE`, never PASS.

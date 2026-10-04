@@ -47,7 +47,6 @@ refresh: "n/a — add terms when a lesson introduces them; keep Hebrew and Engli
 | אזור בטוח / סייף זון | safe zone | areas of 9:16 free of platform UI (house numbers, to be proven on devices) |
 | מאטה / חיתוך דובר | matte / cutout | alpha mask or transparent layer of the speaker |
 | תיקון צבע / גריידינג | colour correction / grading | correct first (from the camera original), grade second |
-| 2.5D | 2.5D | depth-layered parallax animation of a still |
 | רימאקס (החלפת אודיו בלי רינדור) | remux | replace the audio without re-rendering the picture |
 
 ## 2. Process and files · תהליך וקבצים
@@ -63,7 +62,7 @@ refresh: "n/a — add terms when a lesson introduces them; keep Hebrew and Engli
 | יומן עלויות וזמנים | ledger | per-project timing and credit record |
 | רשימת חומרים (BOM) | bill of materials | file-level list of everything shipped, with licences |
 | סקיל | skill | a folder with `SKILL.md` that an agent loads when triggered; procedure data, not permission |
-| פרופיל | profile | an optional install bundle (e.g. `asr-vulkan`) with its own manifest |
+| פרופיל | profile | an optional install bundle (e.g. `asr-cpu`) with its own manifest |
 | בדיקת תקינות (doctor) | doctor | health check that runs real tiny jobs |
 
 ## 3. Hebrew typography and RTL · עברית ו-RTL
@@ -91,7 +90,7 @@ refresh: "n/a — add terms when a lesson introduces them; keep Hebrew and Engli
 | תמונה לווידאו | image-to-video (i2v) | animate an approved still |
 | קרדיטים | credits | a vendor's wallet; never converted to dollars or client fees |
 | אישור עלות | cost approval | prior approval with a **dated** estimate before any paid action |
-| שער 30 דקות | 30-minute gate | local job ETA over 30 min → propose 2.5D/animatic |
+| שער 30 דקות | 30-minute gate | local job ETA over 30 min → propose a shorter shot or a hosted quote |
 | unlim | unlim | a free-trial "unlimited" flag; the user's call, never added silently |
 | MCP | MCP | Model Context Protocol server exposing tools to an agent |
 | שרת תיעוד מול שרת הרצה | docs-only vs execution server | the first only returns documentation; the second changes files, accounts or spend |
@@ -118,5 +117,5 @@ refresh: "n/a — add terms when a lesson introduces them; keep Hebrew and Engli
 | לא ייעוץ משפטי | not legal advice | every legal page says so, with date and jurisdiction |
 
 ## 8. Evidence tags · תגיות ראיות
-`[VERIFIED-external]` confirmed against a primary source and re-checked · `[SOURCED-unverified]` one source, not re-checked · `[MEASURED-lab]` measured in the research (the reference machine unless stated) · `[IDEA]` untested proposal · `[RULE-owner]` a rule from the toolkit author's practice (taste; a student's own brief, `DESIGN.md` or `toolkit.toml` overrides it - see `docs/decisions/0002-universal-by-default.md`; "the owner" in these files always means the toolkit author, never the student) · `[PROVEN-internal]` worked in an owner-approved project · `[LOCAL-only]` true only on one machine · `[CONFLICT]` sources disagree.
+`[VERIFIED-external]` confirmed against a primary source and re-checked · `[SOURCED-unverified]` one source, not re-checked · `[MEASURED-lab]` measured in the research (the reference machine unless stated) · `[IDEA]` untested proposal · `[RULE-owner]` a rule from the toolkit author's practice (taste; a student's own brief, `DESIGN.md` or `toolkit.toml` overrides it - see `docs/decisions/0002-universal-by-default.md`; "the author" in these files always means the toolkit author, never the student) · `[PROVEN-internal]` worked in an owner-approved project · `[LOCAL-only]` true only on one machine · `[CONFLICT]` sources disagree.
 **unsupported ≠ missing ≠ error** — a profile that cannot run on this machine is `unsupported`; a profile that is not installed is `missing`; something that tried and failed is `error`. None of them invalidates the core.

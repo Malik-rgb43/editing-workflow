@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"words","type":"string","label":"Words: JSON array of {w, start, end} in seconds from the start of THIS block (tools/hf_blocks.py caption-words words.json --from T --to T)","default":"[{\"w\":\"Hello\",\"start\":0.2,\"end\":0.6},{\"w\":\"and\",\"start\":0.6,\"end\":0.9},{\"w\":\"welcome\",\"start\":0.9,\"end\":1.5},{\"w\":\"to\",\"start\":1.5,\"end\":1.7},{\"w\":\"the\",\"start\":1.7,\"end\":1.9},{\"w\":\"show\",\"start\":1.9,\"end\":2.5}]"},
+  {"id":"rtl","type":"boolean","label":"Right-to-left text (Hebrew)","default":false},
+  {"id":"chunk","type":"number","label":"Words shown at a time","default":3},
+  {"id":"size","type":"number","label":"Font size in px","default":88},
+  {"id":"bottom","type":"number","label":"Distance of the caption block from the bottom edge, px","default":340},
+  {"id":"duration","type":"number","label":"Seconds the block lasts (must match the host data-duration)","default":3}
+]'>
+  <head>
+    <meta charset="UTF-8" />
+    <style>
+      /* Word-timed captions: a chunk of N words appears, the word being spoken lights up. RTL (Hebrew) is set on the TEXT element only - never on the composition root.
+         The font comes from the page: define @font-face in the host page and set --hfb-font (a file in hf/fonts/, never a font by name).
+         palette = CSS variables set on the host page: --hfb-fg, --hfb-accent, --hfb-caption-bg */
+      #caption { position: absolute; inset: 0; overflow: hidden; font-family: var(--hfb-font, sans-serif); }
+      #caption .cp-chunk { position: absolute; left: 70px; right: 70px; display: flex; flex-wrap: wrap; justify-content: center; gap: 0 26px; opacity: 0; padding: 14px 30px; border-radius: 28px; background: var(--hfb-caption-bg, rgba(0, 0, 0, 0.55)); }
+      #caption .cp-word { position: relative; display: inline-block; font-weight: 800; color: var(--hfb-fg, #ffffff); unicode-bidi: plaintext; }
+      #caption .cp-hl { position: absolute; left: 0; top: 0; color: var(--hfb-accent, #facc15); opacity: 0; white-space: nowrap; }
+    </style>
+  </head>
+  <body>
+    <div id="caption" data-composition-id="caption" data-width="1080" data-height="1920">
+      <script>
+        (function () {
+          var v = window.__hyperframes.getVariables();
+          var D = Math.max(0.5, Number(v.duration) || 3);
+          var size = Number(v.size) || 88, bottom = Number(v.bottom) || 340, n = Math.max(1, Math.round(Number(v.chunk) || 3));
+          var rtl = v.rtl === true || v.rtl === "true";
+          var words;
+          try { words = JSON.parse(v.words); } catch (e) { words = []; }
+          words = (Array.isArray(words) ? words : []).filter(function (w) { return w && typeof w.w === "string" && isFinite(w.start) && isFinite(w.end); })
+            .map(function (w) { return { w: w.w, start: Math.max(0, +w.start), end: Math.max(+w.start, +w.end) }; });
+          var root = document.getElementById("caption");
+          var tl = gsap.timeline({ paused: true });
+          for (var c = 0; c * n < words.length; c++) {
+            var group = words.slice(c * n, c * n + n);
+            var next = words[c * n + n];
+            var t0 = group[0].start, t1 = Math.min(D, next ? Math.max(group[group.length - 1].end, Math.min(next.start, group[group.length - 1].end + 0.35)) : group[group.length - 1].end + 0.35);
+            var el = document.createElement("div");
+            el.className = "cp-chunk"; el.id = "caption-chunk-" + c; el.style.bottom = bottom + "px"; el.style.fontSize = size + "px"; el.style.lineHeight = "1.25";
+            if (rtl) { el.style.direction = "rtl"; }
+            group.forEach(function (w, k) {
+              var s = document.createElement("span");
+              s.className = "cp-word"; s.id = "caption-word-" + c + "-" + k;
+              s.textContent = w.w;
+              var hl = document.createElement("span");
+              hl.className = "cp-hl"; hl.id = "caption-hl-" + c + "-" + k; hl.textContent = w.w;
+              s.appendChild(hl);
+              el.appendChild(s);
+            });
+            root.appendChild(el);
+            tl.fromTo("#caption-chunk-" + c, { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.14, ease: "power2.out" }, t0);
+            group.forEach(function (w, k) {
+              tl.set("#caption-hl-" + c + "-" + k, { opacity: 1 }, w.start);
+              tl.set("#caption-hl-" + c + "-" + k, { opacity: 0 }, Math.max(w.start + 0.02, w.end));
+            });
+            tl.to("#caption-chunk-" + c, { opacity: 0, duration: 0.1, ease: "none" }, Math.max(t0 + 0.2, t1 - 0.1));
+          }
+          if (!words.length) { tl.to("#caption", { opacity: 1, duration: D }, 0); } // an empty list still has to give the timeline a length
+          window.__timelines = window.__timelines || {};
+          window.__timelines["caption"] = tl;
+        })();
+      </script>
+    </div>
+  </body>
+</html>

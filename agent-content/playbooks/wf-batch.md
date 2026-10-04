@@ -6,11 +6,11 @@
 | Field | Value |
 |---|---|
 | Stage | wraps stages 0–9 for N videos; not a stage of its own |
-| Owner skill | `course-router` (routes), `multi-video-variants` (shared design), `render-qa-deliver` (queue) |
+| Owner skill | `video-request-router` (routes), `video-variants-exporter` (shared design), `render-qa-delivery` (queue) |
 | Artifacts (exact files) | `projects/<name>_<k>/` one folder **per video**; `projects/<batch>/_shared/` (assets and design built once); `projects/<batch>/BATCH.md` (the table of videos, owner agent, state, deadline); `_work/agents/<agent>.progress.md` per agent; the machine-wide lock |
 | Exit gate | **GB — every video has its own G0–G9 record; shared assets are verified once; no two heavy jobs overlapped** |
 | Target time | **not measured** (no owner target; E12 covers a single project only) |
-| Paid steps | one approval **per batch of generations** with a dated estimate (see paid-generation-gate); a batch never inherits approval from one clip to the next |
+| Paid steps | one approval **per batch of generations** with a dated estimate (see paid-spend-gate); a batch never inherits approval from one clip to the next |
 
 ## 1. Principle `[RULE-owner]`
 
@@ -51,7 +51,7 @@
 | caps | ≤ 4 agents, each ≤ 2 sub-agents (usage-limit stops of several hours were seen when more ran; owner experience, no measured threshold) |
 | stopping | kill the **process tree** (the agent's headless browser and encoder children included), then check `render_lock status`; a stale lock is cleared only by the tool, never by deleting its file |
 | other sessions | **never message other Claude sessions**; if another session is active on the machine, queue behind its lock and tell the person |
-| money | an agent never spends; paid steps stay with the orchestrator and the person (paid-generation-gate) |
+| money | an agent never spends; paid steps stay with the orchestrator and the person (paid-spend-gate) |
 
 ## 5. Token and attention budget `[IDEA]`
 
@@ -68,7 +68,7 @@
 
 | Step | Rule |
 |---|---|
-| transcribe the whole source **once** (proxy audio, whole-file pass; E08: whisper.cpp with Vulkan was 9.78x faster than the CPU on one 614 s corpus on OM — single pass, one corpus, no repeat; limit: other GPUs unmeasured) | one transcript feeds every clip |
+| transcribe the whole source **once** (proxy audio, whole-file pass; E08: CTranslate2 int8 on CPU ran 0.84 audio-s per wall-s on one 614 s corpus on OM — single pass; other hardware unmeasured) | one transcript feeds every clip |
 | the person **picks** the clips from a selection table before any editing (see [wf-podcast-clip.md](wf-podcast-clip.md)) | no clip is built that nobody chose |
 | shared design in `_shared/`; each clip is a project or a sub-composition with its own ledger, own render, own QA | clips differ in content, not in house style |
 | ONE render queue; clips render in the planned order | E11: two workers were faster than one by 14 % and eight by 34 % **on one 3-minute render on OM** (132.6 → 113.5 → 92.8 → 88.1 s for 1/2/4/8 workers); this is a single measurement, not a batch schedule |

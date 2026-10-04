@@ -8,7 +8,7 @@ expires = "2026-12-31"
 
 [install]
 python_extras = ["asr-cpu"]            # uv optional-dependency group (pyproject owned by the core agent)
-python_env = "separate environment from asr-vulkan / matte routes (torch pins differ)"
+python_env = "separate environment from the matte route (torch pins can differ)"
 runtime = "faster-whisper 1.2.1 (MIT) + CTranslate2 4.7.1 measured (docs 4.8.2), CPU int8, forced language he"
 system_tools = []
 needs_account = false
@@ -37,7 +37,7 @@ state = "measured"
 machine = "the reference machine (one Windows laptop; hardware details not published)"
 e08 = "68 FLEURS he_il clips, 614.22 s: CT2 int8 plain 731.384 s whole-wrapper (0.840 audio-s per wall-s), 206/1161 word edits, WER 17.743%, CER 8.028%; with Silero VAD serial 1147.038 s, WER 19.380%; parallel 4x2 770.860 s"
 e02 = "5 clips, 38.58 s: CT2 first 57.899 s, warm 54.645 s; with VAD warm 49.216 s; import 34.521 s, model load 8.411 s"
-negative_controls = "3 s digital silence and 3 s seeded noise produced non-empty Hebrew text without VAD (CT2 and whisper.cpp); empty with VAD"
+negative_controls = "3 s digital silence and 3 s seeded noise produced non-empty Hebrew text without VAD (CT2); empty with VAD"
 not_tested = ["cloud ASR", "diarization", "spontaneous speech", "accents", "noisy scenes", "phone microphones", "word-timing ground truth", "human correction time", "long recordings", "NVIDIA", "Apple"]
 
 [states]

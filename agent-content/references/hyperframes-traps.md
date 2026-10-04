@@ -19,7 +19,7 @@ refresh: "run the regression fixtures in section 4 on the pinned build (local, f
 | `expires` | see front matter |
 | Non-spending refresh | build the fixtures in section 4 in an ASCII directory (e.g. `<ASCII work root>/lab/<name>`), run on the pinned build, record settings and result; promote a trap to "current limitation" only after a reproducer; retire a workaround only after the paired fixture passes |
 
-**Wording rule for lessons:** "reported on the owner's 2026-09-28 setup; regression pending on the pinned build". Never "HyperFrames cannot …".
+**Wording rule for lessons:** "reported on the author's 2026-09-28 setup; regression pending on the pinned build". Never "HyperFrames cannot …".
 
 ## 0. Never-break rules (owner) — keep them even when a trap does not reproduce
 1. **ASCII work root.** `npx hyperframes init` silently skips `index.html` under a path with Hebrew characters (`lint`, `check`, `render` work there). Use the scaffold tool, which inits in an ASCII temp directory and moves the project; verify `index.html` exists. `[PROVEN-internal]` `[LOCAL-only]` (0.8.79, never reported upstream; not a general Unicode finding).

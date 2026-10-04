@@ -1,5 +1,0 @@
-interface:
-  display_name: "Edit Ai Generated"
-  short_description: "Plan, prompt, cut and review a video built mainly from AI-generated shots (Higgsfield, Kling, Veo, Seedance, Hailuo, Run"
-policy:
-  allow_implicit_invocation: false

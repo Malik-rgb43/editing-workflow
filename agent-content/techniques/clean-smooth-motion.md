@@ -1,21 +1,21 @@
 # Technique: clean and smooth motion
 
-> Status: specified, deterministic checks only; model eval not run (decision default Q4). Written 2026-10-02 from distilled/02 techniques §2–§3, distilled/04 motion-design §1–§6, distilled/OWNER_STYLE (owner's doctrine, rewritten).
+> Status: specified, deterministic checks only; model eval not run (decision default Q4). Written 2026-10-02 from distilled/02 techniques §2–§3, distilled/04 motion-design §1–§6, distilled/OWNER_STYLE (author's doctrine, rewritten).
 > Tags: `[RULE-owner]` · `[PROVEN-internal]` · `[MEASURED-lab]` · `[SOURCED-unverified]` · `[IDEA]` · `[CONFLICT]` · `[LOCAL-only]`.
 > OM (the reference machine) = one Windows laptop; hardware details are intentionally not published.
 
 ## 0. The doctrine in one paragraph
 
-**Clean and smooth means continuity, not slowness.** The eye must never jump: not in position, direction, speed, colour or in the object it is following. Pace stays dense (an event about every 0.5 s in a launch piece). The doctrine grew from nine rounds of timestamped owner notes on one motion launch (the critic had passed a 4.11 draft whose four transitions the owner then rejected), and every rule below traces to one note. **Put the rules into the PROMPT and the first build, not into a fix round.** `[RULE-owner]` `[PROVEN-internal]` (src: distilled/02 techniques §2, 2026-10-02)
+**Clean and smooth means continuity, not slowness.** The eye must never jump: not in position, direction, speed, colour or in the object it is following. Pace stays dense (an event about every 0.5 s in a launch piece). The doctrine grew from nine rounds of timestamped owner notes on one motion launch (the critic had passed a 4.11 draft whose four transitions the author then rejected), and every rule below traces to one note. **Put the rules into the PROMPT and the first build, not into a fix round.** `[RULE-owner]` `[PROVEN-internal]` (src: distilled/02 techniques §2, 2026-10-02)
 
-Applies to every motion / launch / promo piece with camera moves, UI and numbers. In the speaker-video work the owner uses the same phrase for a related thing: no frozen moment, no stall between two stitched tweens, glides instead of jumps, one continuous push per A-roll piece, verified with `motion_qa`. Calm brand films are the opposite register (see §6).
+Applies to every motion / launch / promo piece with camera moves, UI and numbers. In the speaker-video work the author uses the same phrase for a related thing: no frozen moment, no stall between two stitched tweens, glides instead of jumps, one continuous push per A-roll piece, verified with `motion_qa`. Calm brand films are the opposite register (see §6).
 
 ## 1. The 19 rules
 
 | # | Rule (wording ours) | How to check before a render | Born from (owner note) |
 |---|---|---|---|
 | C1 | **One camera path per scene.** A monotone spline baked per frame; never stitch tweens with different eases, never overlap two camera tweens, no whip blur inside a scene. | camera table has one row-set per scene; lint: overlapping tweens on the camera node = error | "camera has glitches" (a `power1.in` overlapped by `power2.inOut` plus blur) |
-| C2 | **Direction continues through a cut.** Exit vector = entry vector: moving left → the next shot keeps moving left; a push-in → the next scene keeps growing (enters 0.8 → 1, not 1.45 → 1). Only where relevant. | seam table row per cut | the owner's tip; found at two seams |
+| C2 | **Direction continues through a cut.** Exit vector = entry vector: moving left → the next shot keeps moving left; a push-in → the next scene keeps growing (enters 0.8 → 1, not 1.45 → 1). Only where relevant. | seam table row per cut | the author's tip; found at two seams |
 | C3 | **No fast reversal.** Zoom-in then zoom-out needs ≥ 1 s per move and a range ≤ 1.3×; after a close-up glide sideways instead of pulling back. | camera table: duration and ratio per move | a 1.86 → 1.06 zoom in 0.65 s |
 | C4 | **A push that is too short is a jump.** Push ≥ 1.2–1.6 s, starting before the event, not with it. | camera table | a 0.7 s push starting with the checkout entrance |
 | C5 | **Text is never cut** by the frame edge, a camera move or another element. Check every camera key (text box × scale inside frame and safe zone). | arithmetic per key; snapshots at keys | a line cut in the push-in (3 rounds) |
@@ -34,11 +34,11 @@ Applies to every motion / launch / promo piece with camera moves, UI and numbers
 | A1 | **Check every VO line phonetically before the mix** when it has a brand name or a heteronym: spell a brand with letter phonemes and 0.12–0.18 s gaps; check "live / read / lead / close". | back-transcribe and diff (see audio rules in the type skills) | "live" said as "liv"; a spelled brand run together |
 | A2 | **No captions in a launch or motion piece with big on-screen type**; no small corner labels. | ledger line CAP = none | "delete the captions" |
 
-(The owner's session inventory says "20 rules"; the technique note's table has these 19.) `[PROVEN-internal]`
+(The author's session inventory says "20 rules"; the technique note's table has these 19.) `[PROVEN-internal]`
 
-## 2. Snap, then drift (the launch grammar the owner likes)
+## 2. Snap, then drift (the launch grammar the author likes)
 
-Measured on frames of eight official launch films of one AI-video company (2026-09-27, owner's analysis; third-party brand intent is `[SOURCED-unverified]`). Take the **grammar**, not the costume (never copy a brand's signature colour).
+Measured on frames of eight official launch films of one AI-video company (2026-09-27, author's analysis; third-party brand intent is `[SOURCED-unverified]`). Take the **grammar**, not the costume (never copy a brand's signature colour).
 
 | Element | Spec |
 |---|---|
@@ -52,22 +52,22 @@ Measured on frames of eight official launch films of one AI-video company (2026-
 | pacing | 21–35 cuts/min, median shot 1.1–1.7 s, a visual event every 0.3–1 s; section openings on the beat ±2 f; structure: hook 2–8 s → brand reveal on the drop → 3–7 "ask → work → reveal" cycles → payoff → 2.5–3 s end card |
 | sound | "the music is the SFX": one dominant track (110–170 BPM); section cut 0 to −1 frame before the hit; **take something away 4–12 frames before a big hit** (bass gap, low-pass, 100–175 ms of silence); a transition leads the drop by 3–4 frames; a riser ends exactly on the flash; SFX start 1–3 frames **before** the picture |
 
-**Precedence `[RULE-owner]`:** "clean and smooth" beats the 2–10-frame entrance numbers wherever the owner will judge "smooth"; fast snaps stay only in punch-ins. Originals are mastered loud (−7 to −9 LUFS, TP up to +2.7): do not copy; deliver −14 LUFS / TP ≤ −1 (house preset). (src: distilled/02 techniques §3; distilled/04 motion-design §1–§2)
+**Precedence `[RULE-owner]`:** "clean and smooth" beats the 2–10-frame entrance numbers wherever the author will judge "smooth"; fast snaps stay only in punch-ins. Originals are mastered loud (−7 to −9 LUFS, TP up to +2.7): do not copy; deliver −14 LUFS / TP ≤ −1 (house preset). (src: distilled/02 techniques §3; distilled/04 motion-design §1–§2)
 
 ## 3. Numbers, conversions and the house curve
 
-- **House entrance curve:** the owner's `cubic-bezier(0.22, 1, 0.36, 1)` over 14–17 frames is named `owner.enter`; its "Apple" label is not independently established. `power3.out` is the closest stock ease. `[RULE-owner]` `[SOURCED-unverified]` on the label.
-- **Frames ↔ seconds:** seconds = frames / fps. 14–17 f = 0.467–0.567 s at 30 fps and 0.233–0.283 s at 60 fps. The owner's own-signature table was measured at 60 fps (halve for 30). Always write the PROMPT at the delivery fps.
+- **House entrance curve:** the author's `cubic-bezier(0.22, 1, 0.36, 1)` over 14–17 frames is named `owner.enter`; its "Apple" label is not independently established. `power3.out` is the closest stock ease. `[RULE-owner]` `[SOURCED-unverified]` on the label.
+- **Frames ↔ seconds:** seconds = frames / fps. 14–17 f = 0.467–0.567 s at 30 fps and 0.233–0.283 s at 60 fps. The author's own-signature table was measured at 60 fps (halve for 30). Always write the PROMPT at the delivery fps.
 - **Tempo:** at 120 BPM in 4/4 a beat is 0.5 s = 15 f and a bar is 2.0 s = 60 f at 30 fps; at 130 BPM a beat is 0.4615 s and a bar 1.8462 s. Check the actual track and meter; keep deliberate off-beat moments.
 - **Speed ladder (vendor numbers, `[SOURCED-unverified]`):** fast 0.15–0.3 s, medium 0.3–0.5 s, slow 0.5–0.8 s, very slow 0.8–2.0 s; exits faster than entrances (card 0.4 s in, 0.25 s out); total stagger < 0.5 s.
 - **Owner motion tokens (proposal `[IDEA]`, not an owner decision):** three durations (fast 0.25 / base 0.6 / slow 1.2 s), three eases (enter, move, exit), a stagger base, overlap offsets of 2–4 frames at 30 fps. Put the chosen values in DESIGN.md.
 - **Blur:** blur only the snaps (slam, whip, hard cut, spin, scale punch), one to three per composition; never blur travel under about one element-width per frame, text meant to be read at that moment, or slow drifts. Peak blur in a cut: text 10 px (20 px makes letters illegible), full-frame surfaces 18–20 px, both sides of a cut the same. Never blur a camera move inside a scene (C1). `[SOURCED-unverified]` (vendor) + `[RULE-owner]`.
 - **Baked springs instead of stateful spring libraries** (they cannot be sought): zeta 1.0 = critically damped house settle (no overshoot); 0.80–0.85 = "alive, not bouncy"; 0.60–0.70 = playful only; < 0.55 do not. Apply overshooting curves to transforms only, never to opacity or colour. `[SOURCED-unverified]`
-- **Transition choice `[CONFLICT]`:** the vendor motion guidance recommends one primary transition (60–70 % of changes) plus accents and uses crossfade as a staple; the owner bans crossfade, fade-as-transition and the same trick twice, and wants every seam different. **The owner's rule governs for his launch and promo work**; the vendor numbers (durations by energy: calm 0.5–0.8 s, medium 0.3–0.5 s, high 0.15–0.3 s) and the principle "cut at peak velocity, match direction and speed on both sides" remain useful. Never fade out then fade in (it renders as a jump cut with a dip).
+- **Transition choice `[CONFLICT]`:** the vendor motion guidance recommends one primary transition (60–70 % of changes) plus accents and uses crossfade as a staple; the author bans crossfade, fade-as-transition and the same trick twice, and wants every seam different. **The author's rule governs for his launch and promo work**; the vendor numbers (durations by energy: calm 0.5–0.8 s, medium 0.3–0.5 s, high 0.15–0.3 s) and the principle "cut at peak velocity, match direction and speed on both sides" remain useful. Never fade out then fade in (it renders as a jump cut with a dip).
 
 ## 4. Helpers (contracts, not owner code)
 
-The owner's motion kit (`spline`, `cam`, `swapWhole`, `digits`, `wordsSwap`, `revealThrough`, whip, counters, sprites) is `[LOCAL-only]`. A student project needs equivalents with these **contracts**; if the repo `templates/` ships them, use those, otherwise build and test them in an empty project first (`hyperframes check` must pass).
+The author's motion kit (`spline`, `cam`, `swapWhole`, `digits`, `wordsSwap`, `revealThrough`, whip, counters, sprites) is `[LOCAL-only]`. A student project needs equivalents with these **contracts**; if the repo `templates/` ships them, use those, otherwise build and test them in an empty project first (`hyperframes check` must pass).
 
 | Helper | Contract |
 |---|---|
@@ -96,14 +96,14 @@ All seek-safe: pure functions of time, no `onUpdate` for visible state, no rando
 `[RULE-owner]` `[MEASURED-lab for the 10 s take, OM]`: the speaker camera is **never static and never chases**. Open with a push-in; punch-in on emphasis words, punch-out on a new sentence, every 2–4 s; the face is centred at every zoom.
 
 - **Rig:** an outer `#zoom` (scale about the frame centre, eased; no linear start/stop segments) wrapping an inner `#pan` (x = 540 − faceX, from a smoothed path) walked by **one** proxy tween. Plate and cutout share the rig.
-- **Never follow the raw per-frame face x.** On a 10 s take with the speaker swaying between x 400 and 608, per-frame follow reached 2,782 px/s² peak acceleration (the owner's "the camera moves in stutters"); the smoothed path (median filter, zero-phase Gaussian σ 0.6 s, per segment, never gliding across a hidden cut) gave 139 px/s² (20× calmer), 0 reversals, face within 30 px of the centre. `camera_path` ok = acceleration ≤ 400 px/s² and face within 45 px. `motion_qa` default flag: |acceleration| > 1500 px/s² or a pan reversal above 60 px/s. These are heuristics, not perception standards; non-rigid graphics can read as jitter (confirm on frames). (src: distilled/02 qa §2.3–§2.4)
+- **Never follow the raw per-frame face x.** On a 10 s take with the speaker swaying between x 400 and 608, per-frame follow reached 2,782 px/s² peak acceleration (the author's "the camera moves in stutters"); the smoothed path (median filter, zero-phase Gaussian σ 0.6 s, per segment, never gliding across a hidden cut) gave 139 px/s² (20× calmer), 0 reversals, face within 30 px of the centre. `camera_path` ok = acceleration ≤ 400 px/s² and face within 45 px. `motion_qa` default flag: |acceleration| > 1500 px/s² or a pan reversal above 60 px/s. These are heuristics, not perception standards; non-rigid graphics can read as jitter (confirm on frames). (src: distilled/02 qa §2.3–§2.4)
 - **Face-centred zoom:** with transform-origin at the face x, x-shift = 540 − faceX; with origin at the frame centre, x-shift = scale·(540 − faceX); the minimum scale so no edge shows is 540/faceX (a zoom about the centre enlarges any face offset: a face at x ≈ 465 gave a 110 px error at scale 1.37). Audit the **whole film** after every render (`face_center audit`, tolerance 30 px), not only the touched section; audit hits are candidates (the mask also fires on bright graphics and B-roll people).
 - **Behind-speaker graphics** live in the clear side zones (x < 380 or x > 700, y 300–680); every "behind" event needs a camera pull-back (scale 0.72–0.8) or the body swallows it; a dimmed/blurred plate exposes the matte, so dim above the cutout below the chest and blur ≤ 3 px; halo choke on the matte (erode ×2 + 1.3 px blur on alpha).
 - **Joins:** a cut between two similar framings of the same speaker reads as a glitch → cover it (film burn, zoom-through) or change scale by ≥ 15 %. Every graded A-roll piece starts **6 frames early** under the layer above (first frames may render ungraded or frozen).
 
 ## 6. Calm and brand films: the opposite register
 
-For clinic or brand films the owner rejected a designed "trailer" mix: ONE continuous uniform music bed (the window with the lowest standard deviation of 1 s-LUFS, starting on a beat, fade in, ring out), diegetic foley only for visible actions (events ≈ −7 LU, continuous machines ≈ −13 LU under the music), no risers or impacts unless asked, 3 s-LUFS steps < ~2 LU across the film, natural colour, no AI upscale. Vendor doctrine ("no motion over bad motion", no lazy breathing) agrees with calm; the owner's "camera always moving" is a **style option for the energetic launch register, not a universal law** `[CONFLICT]` (resolution: owner for launches, stillness allowed where the brief is calm). (src: distilled/04 motion-design §6; OWNER_STYLE)
+For clinic or brand films the author rejected a designed "trailer" mix: ONE continuous uniform music bed (the window with the lowest standard deviation of 1 s-LUFS, starting on a beat, fade in, ring out), diegetic foley only for visible actions (events ≈ −7 LU, continuous machines ≈ −13 LU under the music), no risers or impacts unless asked, 3 s-LUFS steps < ~2 LU across the film, natural colour, no AI upscale. Vendor doctrine ("no motion over bad motion", no lazy breathing) agrees with calm; the author's "camera always moving" is a **style option for the energetic launch register, not a universal law** `[CONFLICT]` (resolution: owner for launches, stillness allowed where the brief is calm). (src: distilled/04 motion-design §6; OWNER_STYLE)
 
 ## 7. Hebrew and Latin kinetic type
 
@@ -132,6 +132,6 @@ Logical order always; never reverse strings; isolate Latin brands, numbers and c
 | hero vanishes and returns | fade instead of match-move | persist the hero through the cut | T1 seam column |
 | black frame at a scene boundary | clip rounding or clip ended at the reveal | frame-exact timing + overlap | T6, §4.1 |
 | a number flashes an intermediate value | per-digit roll with stagger | whole swap | N1 |
-| critic passes a draft the owner rejects | critic not briefed with the owner's rules | add §1 table and the Banned list to the critic brief | [critic-brief.md](../benchmarks/critic-brief.md) |
+| critic passes a draft the author rejects | critic not briefed with the author's rules | add §1 table and the Banned list to the critic brief | [critic-brief.md](../benchmarks/critic-brief.md) |
 
 (src: distilled/02 techniques §2; distilled/04 motion-design; distilled/01 owner-taste; all read 2026-10-02.)

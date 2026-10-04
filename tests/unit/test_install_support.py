@@ -76,6 +76,8 @@ class FakeRun:
         self.present = set(present if present is not None else
                            {"git", "ffmpeg", "ffprobe", "node", "npm", "uv", "claude", "codex", "winget", "brew"})
         self.mcp = set(mcp_existing or [])
+        self.plugins = {}  # id -> enabled
+        self.markets = {}  # name -> source
         self.fail = fail or (lambda argv: False)
         self.gpu_text = ""  # what the GPU listing command returns on this fake machine
 
@@ -99,6 +101,8 @@ class FakeRun:
                                           "format": {"duration": "1.000000"}}))
         if name in ("git", "node", "npm", "uv", "claude", "codex") and ("--version" in argv or "-v" in argv):
             return P(argv, 0, "%s 99.1.0\n" % name)
+        if name == "claude" and argv[1:2] == ["plugin"]:
+            return self._plugin(argv, P)
         if len(argv) >= 3 and argv[1:3] == ["mcp", "list"]:
             return P(argv, 0, "".join("%s: x - Connected\n" % n for n in sorted(self.mcp)))
         if len(argv) >= 3 and argv[1:3] == ["mcp", "add"]:
@@ -122,6 +126,28 @@ class FakeRun:
             return P(argv, 0, "ok")
         return P(argv, 0)
 
+    def _plugin(self, argv, P):
+        sub = argv[2:4]
+        if sub[:1] == ["list"]:
+            return P(argv, 0, json.dumps([{"id": i, "version": "0.4.0", "scope": "user", "enabled": en} for i, en in sorted(self.plugins.items())]))
+        if sub == ["marketplace", "list"]:
+            return P(argv, 0, json.dumps([{"name": n, "source": "github", "repo": src} for n, src in sorted(self.markets.items())]))
+        if sub == ["marketplace", "add"]:
+            self.markets["editing-workflow"] = argv[4]
+            return P(argv, 0)
+        if sub == ["marketplace", "remove"]:
+            self.markets.pop(argv[4], None)
+            return P(argv, 0)
+        if sub[:1] == ["install"]:
+            if "editing-workflow" not in self.markets:
+                return P(argv, 1, "", "marketplace not found")
+            self.plugins[argv[3]] = True
+            return P(argv, 0)
+        if sub[:1] == ["uninstall"]:
+            self.plugins.pop(argv[3], None)
+            return P(argv, 0)
+        return P(argv, 0)
+
     @staticmethod
     def _mcp_name(argv):
         i = 3
@@ -141,7 +167,7 @@ class FakeRun:
 
     def actions(self, first, second=None):
         """Like commands() but without read-only probes (--version / -version / mcp list)."""
-        return [c for c in self.commands(first, second) if not (set(c[1:2]) & {"--version", "-version", "-v"}) and c[1:3] != ["mcp", "list"]]
+        return [c for c in self.commands(first, second) if not (set(c[1:2]) & {"--version", "-version", "-v"}) and c[1:3] != ["mcp", "list"] and c[1:4] not in (["plugin", "list", "--json"], ["plugin", "marketplace", "list"])]
 
 
 def install_fakes(monkeypatch, bs, **kw) -> FakeRun:
@@ -175,6 +201,8 @@ class Env(SimpleNamespace):
             argv += ["--repo", str(self.repo)]
         if target and "--target" not in argv:
             argv += ["--target", target]
+        if "--skills-via" not in argv:
+            argv += ["--skills-via", "copy"]  # most tests exercise the copy route; plugin tests pass --skills-via plugin
         if work and "--work-root" not in argv:
             argv += ["--work-root", str(self.tmp / "work")]
         argv += tail

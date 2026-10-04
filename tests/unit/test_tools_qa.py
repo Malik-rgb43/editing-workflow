@@ -98,7 +98,7 @@ class TestCaptionQa:
         assert rc == 1
         f = next(x for x in d["findings"] if x["code"] == "caption_vanish")
         assert f["frame"] == 25
-        assert f["timecode"] == "00:00:01.000"  # 25 / 25 fps = 1.000 s (the owner's tool printed 0.83 s)
+        assert f["timecode"] == "00:00:01.000"  # 25 / 25 fps = 1.000 s (the author's tool printed 0.83 s)
 
     def test_appearance_is_reported_E04_B03(self, e04_set):
         rc, d, _ = run_tool("caption_qa", e04_set["caption_appear_30"])

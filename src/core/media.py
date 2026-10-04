@@ -25,7 +25,7 @@ from .errors import DecodeError
 from .ffprobe import MediaInfo, find_ffmpeg, probe
 from .procs import ManagedProcess, spawn
 
-__all__ = ["FrameReader", "read_audio_samples", "PIX_FMT_CHANNELS"]
+__all__ = ["FrameReader", "read_audio_samples", "read_frame_at", "PIX_FMT_CHANNELS"]
 
 PIX_FMT_CHANNELS = {"gray": 1, "rgb24": 3, "bgr24": 3}
 
@@ -193,3 +193,32 @@ def read_audio_samples(path: str | os.PathLike[str], *, sample_rate: int = 48000
     if usable <= 0:
         raise DecodeError("audio decode produced no samples (no audio stream?)")
     return np.frombuffer(data[:usable], dtype="<i2").reshape(-1, channels)
+
+
+def read_frame_at(path: str | os.PathLike[str], t: float, *, width: int | None = None, info: MediaInfo | None = None, timeout_s: float = 60.0, ffmpeg: str | None = None) -> Any:
+    """Decode ONE frame at ``t`` seconds as an RGB ``numpy.uint8`` array ``(h, w, 3)``, optionally scaled to ``width`` (aspect kept, even height).
+
+    Raises ``DecodeError`` when FFmpeg fails, times out, or returns fewer bytes than one full frame (never a partial or empty array).
+    """
+    import numpy as np
+
+    from .procs import run
+
+    mi = info or probe(os.fspath(path))
+    w, h = mi.first_video.display_size
+    if w <= 0 or h <= 0:
+        raise DecodeError("video geometry unknown")
+    if width and width < w:
+        sw = max(2, int(width) - int(width) % 2)
+        sh = max(2, int(round(h * sw / w / 2.0)) * 2)
+    else:
+        sw, sh = int(w), int(h)
+    cmd = [find_ffmpeg(ffmpeg), "-hide_banner", "-nostdin", "-v", "error", "-ss", f"{max(0.0, float(t)):.6f}", "-i", os.fspath(path), "-map", "0:v:0", "-an", "-frames:v", "1",
+           "-vf", f"scale={sw}:{sh}:flags=bilinear", "-f", "rawvideo", "-pix_fmt", "rgb24", "pipe:1"]
+    r = run(cmd, timeout=timeout_s, decode_stdout=False)
+    if r.timed_out:
+        raise DecodeError(f"frame decode of {os.fspath(path)!r} at {t}s timed out")
+    need = sw * sh * 3
+    if r.returncode != 0 or len(r.stdout_bytes) < need:
+        raise DecodeError(f"no frame at {t}s (exit {r.returncode}, {len(r.stdout_bytes)} of {need} bytes): {(r.stderr.strip().splitlines() or ['(no message)'])[-1]}")
+    return np.frombuffer(r.stdout_bytes[:need], dtype=np.uint8).reshape(sh, sw, 3)

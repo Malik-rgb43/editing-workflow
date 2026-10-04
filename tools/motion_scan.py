@@ -3,7 +3,7 @@
 Uses FFmpeg's ``siti`` filter (ITU-T P.910 spatial / temporal information) per frame. Temporal information (TI) is the standard deviation of
 the frame-to-frame luma change, so a locked-off still scores ~0 and an active shot scores much higher. A window of ``--window`` seconds
 (default 1.5) whose mean TI is below ``--min-ti`` is reported as ``static`` (warning by default, ``--severity error`` to gate): "looks static /
-boring" was the owner's most repeated B-roll note, and the rule is "replace the beat, don't polish it".
+boring" was the author's most repeated B-roll note, and the rule is "replace the beat, don't polish it".
 
 Limits: TI measures pixel change, not interest: a slow cinematic push can be intended. ``--min-ti`` is a starting preset (unmeasured as a
 quality threshold; calibrate on footage you accept). Time = frame / rational fps. Fail-closed like every QA tool.

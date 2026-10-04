@@ -1,0 +1,38 @@
+{
+  "schema": "avc.hf-block/1",
+  "name": "voice-orb",
+  "title": "Voice orb",
+  "description": "A glowing orb that pulses with the voice: its size and glow follow a loudness envelope (30 values per second) and two rings expand outward. Pure function of time, so it seeks anywhere.",
+  "duration_s": 3,
+  "size": [
+    1080,
+    1920
+  ],
+  "overlay": false,
+  "variables": [
+    {
+      "id": "levels",
+      "type": "string",
+      "default": ""
+    },
+    {
+      "id": "size",
+      "type": "number",
+      "default": 420
+    },
+    {
+      "id": "duration",
+      "type": "number",
+      "default": 3
+    }
+  ],
+  "replace": {},
+  "demo_assets": [],
+  "palette": [
+    "--hfb-accent",
+    "--hfb-accent-2",
+    "--hfb-orb-core",
+    "--hfb-orb-glow"
+  ],
+  "license": "Apache-2.0 (written for this toolkit)"
+}

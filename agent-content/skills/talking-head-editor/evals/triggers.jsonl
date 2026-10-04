@@ -1,0 +1,18 @@
+{"prompt":"edit this selfie-style explainer into a premium reel with B-roll and captions","should_trigger":true,"route_instead":null}
+{"prompt":"תערוך את הסרטון של הדובר עם בי-רול ומושן","should_trigger":true,"route_instead":null}
+{"prompt":"turn this coach's rough cut into a 45 s Instagram reel with zooms and Hebrew captions","should_trigger":true,"route_instead":null}
+{"prompt":"יש לי פוטג' של סוכן נסיעות מדבר למצלמה, תעשה לזה רילס פרימיום","should_trigger":true,"route_instead":null}
+{"prompt":"add B-roll and punch-in zooms to the speaker video, keep the face centred","should_trigger":true,"route_instead":null}
+{"prompt":"תוסיף כתוביות וזומים לדובר ותשים גרפיקה מאחוריו","should_trigger":true,"route_instead":null}
+{"prompt":"premium talking head edit from the 4K camera original, silences cut only","should_trigger":true,"route_instead":null}
+{"prompt":"סרטון תדמית של נותן שירות - הוא מדבר למצלמה והוא מסביר איך הוא עובד","should_trigger":true,"route_instead":null}
+{"prompt":"tutorial video where I talk to camera, cut it tight and add motion graphics","should_trigger":true,"route_instead":null}
+{"prompt":"טוקינג הד של מומחה, תחתוך שתיקות ותוסיף בי-רול בכל 4 שניות","should_trigger":true,"route_instead":null}
+{"prompt":"cut the speaker out and put big text behind him on the key sentence","should_trigger":true,"route_instead":null}
+{"prompt":"edit a customer review video where the client praises our course","should_trigger":false,"route_instead":"testimonial-editor"}
+{"prompt":"make a 3D product launch animation with no person in it","should_trigger":false,"route_instead":"motion-graphics-builder"}
+{"prompt":"generate a video of a person talking with AI, no footage exists","should_trigger":false,"route_instead":"ai-generated-video-editor"}
+{"prompt":"תתרגם את הסרטון לאנגלית ותוסיף כתוביות באנגלית","should_trigger":false,"route_instead":null}
+{"prompt":"תתקן צבע, העור של הדובר נראה ורוד","should_trigger":false,"route_instead":"speaker-color-correction"}
+{"prompt":"write a paid Meta ad with three hook variants and a CTA end card","should_trigger":false,"route_instead":"ad-promo-editor"}
+{"prompt":"תמלל לי את ההקלטה של הפודקאסט עם חותמות זמן","should_trigger":false,"route_instead":"hebrew-captions-transcription"}

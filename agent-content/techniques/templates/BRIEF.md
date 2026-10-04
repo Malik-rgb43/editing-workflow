@@ -6,7 +6,7 @@ RULES (agent-content/playbooks/wf-00-intake.md):
    The only spec is hf/PROMPT.md (its <ledger> block holds every checkable line). There is no SPEC.md.
  - Every value below must come from the person's message, the files, or a default marked (D) in the ledger.
    Never invent a brand, price, claim, logo or colour.
- - The frontmatter keys are the ones the HyperFrames skills read on the owner's builds (workflow / flow / storyboard / type ...).
+ - The frontmatter keys are the ones the HyperFrames skills read on the author's builds (workflow / flow / storyboard / type ...).
    Verify the key names on the installed HyperFrames skill version; keys it does not know are ignored.
  - Dates, prices and model ids do not belong here (perishable) — they go in dated reference modules.
 -->

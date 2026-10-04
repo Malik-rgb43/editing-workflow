@@ -6,7 +6,7 @@
 | Field | Value |
 |---|---|
 | Stage | 8 of 9 |
-| Owner skills | `render-qa-deliver`; `multi-video-variants` when more than one output |
+| Owner skills | `render-qa-delivery`; `video-variants-exporter` when more than one output |
 | Artifacts (exact files) | `final/<name>_<platform>_<hook>_<aspect>.mp4` (the person's exact name wins), `final/manifest.json`, `_work/delivered/v<N>/` (previous deliveries moved here), `_work/qa/final/` (QA envelopes **on the final file**), `_work/timing_ledger.jsonl` |
 | Exit gate | **G8 — `hf_deliver` PASS on the FINAL file, QA stage 6 on the final file, manifest consistent** |
 | Target time | **15 min** of agent work (owner target) + the one final render (8–13 min on OM for a premium 40 s; 4–21 observed) |
@@ -55,7 +55,7 @@
 
 ### 4.1 Safe zones (house policy, dated; `[SOURCED-unverified]` `[PERISHABLE]`)
 
-The owner's table, checked 2026-09 (re-check the platform pages; the Meta placement page could not be verified on 2026-10-01; TikTok and Google publish contextual templates). Values are canvas pixels of margin where no key text, logo, price or CTA may sit. The full per-platform module is `agent-content/references/platform-specs.md` (another owner; this table is repeated only so the gate is runnable).
+The author's table, checked 2026-09 (re-check the platform pages; the Meta placement page could not be verified on 2026-10-01; TikTok and Google publish contextual templates). Values are canvas pixels of margin where no key text, logo, price or CTA may sit. The full per-platform module is `agent-content/references/platform-specs.md` (another owner; this table is repeated only so the gate is runnable).
 
 | Platform / ratio | Canvas | Top | Bottom | Left | Right | Logo bug |
 |---|---|---|---|---|---|---|
@@ -145,7 +145,7 @@ Gate record → `hf/QA.md` "Gate log". **Mux PASS ≠ release PASS.**
 |---|---|
 | **talking-head** | 9:16, 30 fps (a 60 fps source is down-converted), `--sdr`, 1088 canvas; `face_center audit` and `motion_qa` on the final; the name from the ledger |
 | **testimonial** | a 30–45 s social cut and a 60–90 s long cut (+ an optional ad cut 15–30 s); consent and proof-match recorded in the delivery message; PII blurred in anything shared |
-| **ad-promo** | 15 s + 30 s × 3 hooks (`_meta_hookA_…`, `_tiktok_hookA_…`), "no music"/"no captions" rows; TP gate (owner's own ads had 7 of 10 at ≥ 0 dBTP); the licence rows and an ad-use statement for every music/SFX file; a TikTok cut has no Meta chevron; WhatsApp availability is region-gated — confirm in the ads manager |
+| **ad-promo** | 15 s + 30 s × 3 hooks (`_meta_hookA_…`, `_tiktok_hookA_…`), "no music"/"no captions" rows; TP gate (author's own ads had 7 of 10 at ≥ 0 dBTP); the licence rows and an ad-use statement for every music/SFX file; a TikTok cut has no Meta chevron; WhatsApp availability is region-gated — confirm in the ads manager |
 | **motion-graphics** | 16:9 **master first**, then 9:16 and 1:1 as re-layouts (one agent per ratio on a copy); same `cues`/mix; the three tables inherited |
 | **ai-generated** | native fps of the takes; disclosure reminder; the spend log reconciled with approvals; an end card with brand/CTA; no black tail |
 | **podcast-clip** | one file per approved clip; naming with the episode and clip index; per-clip loudness |

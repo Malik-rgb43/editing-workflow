@@ -1,12 +1,12 @@
 # Rubric: podcast-clip (a long episode or interview → short vertical clips)
 
-> Status: **provisional and weakly grounded.** The owner has **no** podcast-clip skill, rubric, benchmark JSON or delivered project (a short playbook, research notes and 17 of 20 reference breakdowns only; his rule is to build a type skill when a real project arrives). This rubric is derived by this repo from the playbook, the research layout/profile notes and the general six-dimension rubric. Specified; model eval not run (decision default Q4); not calibrated. Written 2026-10-02. Everything below is `[IDEA]` or `[SOURCED-unverified]` unless marked otherwise. **Do not present borrowed numbers as measured for this type.**
+> Status: **provisional and weakly grounded.** The author has **no** podcast-clip skill, rubric, benchmark JSON or delivered project (a short playbook, research notes and 17 of 20 reference breakdowns only; his rule is to build a type skill when a real project arrives). This rubric is derived by this repo from the playbook, the research layout/profile notes and the general six-dimension rubric. Specified; model eval not run (decision default Q4); not calibrated. Written 2026-10-02. Everything below is `[IDEA]` or `[SOURCED-unverified]` unless marked otherwise. **Do not present borrowed numbers as measured for this type.**
 > Tags: `[RULE-owner]` · `[PROVEN-internal]` · `[SOURCED-unverified]` · `[IDEA]` · `house preset`.
 > Companion files: [critic-brief.md](critic-brief.md) · [visual-review-4-axis.md](visual-review-4-axis.md) · [bands.json](bands.json) (podcast bands are `null`/unmeasured) · `agent-content/playbooks/wf-podcast-clip.md`.
 
 ## 1. How to score
 
-Score only what was seen/heard on stated evidence; `not_observed` ≠ 3; `N/A` needs a reason; 1–5 with anchors at 1/3/5; **severe failures listed separately and blocking** (a clip that depends on missing context; a quote cut so the speaker says the opposite; a face covered by a caption; a sponsor read left in). Release rule used here (the owner's general gate, no type-specific calibration): average of scored dimensions ≥ 4.0, no dimension < 3, hard gates ≥ 3, no severe failure, automatic QA all `PASS` with coverage, max 3 critic rounds. Because the rubric is derived, **a critic score is an opinion, not a measurement**; the human selection table approval is the real gate.
+Score only what was seen/heard on stated evidence; `not_observed` ≠ 3; `N/A` needs a reason; 1–5 with anchors at 1/3/5; **severe failures listed separately and blocking** (a clip that depends on missing context; a quote cut so the speaker says the opposite; a face covered by a caption; a sponsor read left in). Release rule used here (the author's general gate, no type-specific calibration): average of scored dimensions ≥ 4.0, no dimension < 3, hard gates ≥ 3, no severe failure, automatic QA all `PASS` with coverage, max 3 critic rounds. Because the rubric is derived, **a critic score is an opinion, not a measurement**; the human selection table approval is the real gate.
 
 Two style profiles exist; the brief names which one applies and the rubric scores *within* it (the dry profile contradicts the SFX policy of the talking-head type — switch by profile, not by habit):
 
@@ -37,7 +37,7 @@ Two style profiles exist; the brief names which one applies and the rubric score
 
 | Gate | Predicate | Evidence |
 |---|---|---|
-| **PC-G1 stands alone** | the clip is understandable with no context; the **selection table score ≥ 4/10 else rejected** (the owner's earlier clipper-research gate) | the selection table the person approved *before* editing (timecode, title, score, hook) |
+| **PC-G1 stands alone** | the clip is understandable with no context; the **selection table score ≥ 4/10 else rejected** (the author's earlier clipper-research gate) | the selection table the person approved *before* editing (timecode, title, score, hook) |
 | **PC-G2 hook in 3 s** | a hook or title bar names the payoff within the first 3 s | frame strip 0–4 s |
 | **PC-G3 face and caption safety** | no caption over a mouth or face; layout matches the number of speakers; switches obey the hysteresis | `face_center audit` (single-speaker TRACK crops) + frame review; shot-length list |
 | **PC-G4 permission** | everyone in the clip consented to this use; no sponsor read | consent record path; transcript check |
@@ -45,7 +45,7 @@ Two style profiles exist; the brief names which one applies and the rubric score
 
 ## 4. Numeric reference
 
-**None measured.** `bands.json` → `types.podcast-clip` has `null` bands (no benchmark JSON exists for the type); the two reference breakdowns above are n = 1 examples, not distributions. Clip lengths seen in the owner's own examples: 54 s to 3.3 min (he is **not** limited to 60 s). Hebrew ASR on CPU was ≈ 2.3× real time in the owner's report (a one-hour episode ≈ 2.3 h) and **9.78×** faster on the Vulkan route in a 614 s read-speech test on the reference machine (single pass) — plan the full-episode ASR at minute 0 (`wf-podcast-clip`).
+**None measured.** `bands.json` → `types.podcast-clip` has `null` bands (no benchmark JSON exists for the type); the two reference breakdowns above are n = 1 examples, not distributions. Clip lengths seen in the author's own examples: 54 s to 3.3 min (he is **not** limited to 60 s). Hebrew ASR on CPU was ≈ 2.3× real time in the author's report (a one-hour episode ≈ 2.3 h) and 0.84 audio-s per wall-s (CTranslate2 int8 CPU) in a 614 s read-speech test on the reference machine (single pass) — plan the full-episode ASR at minute 0 (`wf-podcast-clip`).
 
 ## 5. Critic notes
 

@@ -1,0 +1,22 @@
+{"prompt": "write an image prompt for the opening frame of this shot", "should_trigger": true, "route_instead": null}
+{"prompt": "I need a text to image prompt for a keyframe of the courier on the platform", "should_trigger": true, "route_instead": null}
+{"prompt": "make me a character sheet prompt: front, three quarter and side", "should_trigger": true, "route_instead": null}
+{"prompt": "תכין לי פרומפט לתמונה לשוט הפתיחה", "should_trigger": true, "route_instead": null}
+{"prompt": "פרומפט לגיליון דמות עם שלוש זוויות", "should_trigger": true, "route_instead": null}
+{"prompt": "I need start frame stills for each of the six video shots", "should_trigger": true, "route_instead": null}
+{"prompt": "write the location sheet prompt for the rain-soaked alley, five views", "should_trigger": true, "route_instead": null}
+{"prompt": "give me a prompt for a thumbnail image with one big focal point", "should_trigger": true, "route_instead": null}
+{"prompt": "תכתוב לי פרומפט לתמונה של B-roll של חדר ישיבות", "should_trigger": true, "route_instead": null}
+{"prompt": "create a hero frame prompt that locks the look of the whole film", "should_trigger": true, "route_instead": null}
+{"prompt": "בוא נכין תמונת פתיחה לכל שוט לפני שמייצרים וידאו", "should_trigger": true, "route_instead": null}
+{"prompt": "turn this shot card into an image prompt with the style prefix", "should_trigger": true, "route_instead": null}
+{"prompt": "write the Seedance prompt for this 15 second scene", "should_trigger": false, "route_instead": "video-prompt-writer"}
+{"prompt": "how much will generating these stills cost", "should_trigger": false, "route_instead": "paid-spend-gate"}
+{"prompt": "approve the budget and run the generation", "should_trigger": false, "route_instead": "paid-spend-gate"}
+{"prompt": "plan the whole AI film from the script", "should_trigger": false, "route_instead": "ai-generated-video-editor"}
+{"prompt": "fix the skin colour in my footage", "should_trigger": false, "route_instead": "speaker-color-correction"}
+{"prompt": "retouch this photo of me", "should_trigger": false, "route_instead": null}
+{"prompt": "תכין לי פרומפט לוידאו של 15 שניות", "should_trigger": false, "route_instead": "video-prompt-writer"}
+{"prompt": "כמה זה יעלה לייצר את התמונות", "should_trigger": false, "route_instead": "paid-spend-gate"}
+{"prompt": "I am torn between three looks for the film", "should_trigger": false, "route_instead": "visual-choice-board"}
+{"prompt": "תקן לי את הצבע של העור בסרטון", "should_trigger": false, "route_instead": "speaker-color-correction"}

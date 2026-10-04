@@ -3,7 +3,7 @@
 #
 # Rules encoded here (src: blueprint MCP_PROFILES s2/s4/s7, SECURITY_AND_LICENSING s6, COST_MODEL s7; 2026-10-02):
 #  * NO secret ever lives in this file - only the NAME of an environment variable (api.env_var / mcp.env_var).
-#  * "cost" = free | free-tier | paid. Anything that can generate paid output goes through the paid-generation-gate skill.
+#  * "cost" = free | free-tier | paid. Anything that can generate paid output goes through the paid-spend-gate skill.
 #  * status = "verified" means the command/URL was read on an official page on `checked`; otherwise "unverified" and the
 #    bootstrap prints the command but does not rely on it. confidence = high | medium | low.
 #  * profiles: core (always) | minimal | standard | pro | optional.  addons: opt-in names for `bootstrap.py add <id|addon>` (also accepted by --with).
@@ -29,7 +29,7 @@ summary = "Minimal + ONE isolated browser server for reference inspection and lo
 [profiles.pro]
 title = "Pro"
 mcp = ["playwright"]
-summary = "Same as Standard; bridges and providers are added one at a time later with `bootstrap.py add <id>` (nothing is registered until the student asks)."
+summary = "Same as Standard; providers are added one at a time later with `bootstrap.py add <id>` (nothing is registered until the student asks)."
 
 # ============================================================================= CORE CLIs
 [[entry]]
@@ -469,7 +469,7 @@ role = "optional UI component search/generation; shadcn registries are the free 
 addons = ["ui-21st"]
 profiles = ["optional"]
 cost = "paid (account/quota; plan not measured)"
-gate = "paid-generation-gate"
+gate = "paid-spend-gate"
 terms = "credit the component source in the project README"
 license = "generated code per 21st.dev terms"
 security = "API key = secret: env var; old Magic keys were reset; the legacy @21st-dev/magic 0.2.3 package is only a compatibility proxy - do not follow old guides"
@@ -505,7 +505,7 @@ doctor = { smoke = "presence-only check of TWENTYFIRST_API_KEY (name chosen by u
   checked = "2026-10-02"
   confidence = "medium"
 
-# ============================================================================= GENERATION PROVIDERS (Pro; every spend goes through paid-generation-gate)
+# ============================================================================= GENERATION PROVIDERS (Pro; every spend goes through paid-spend-gate)
 [[entry]]
 id = "higgsfield"
 kind = "mcp"
@@ -514,7 +514,7 @@ role = "image/video/audio generation and presets; OAuth connector"
 addons = ["provider-higgsfield"]
 profiles = ["optional"]
 cost = "paid (plan credits; automated generation consumes credits even where web use is unlimited)"
-gate = "paid-generation-gate"
+gate = "paid-spend-gate"
 terms = "API terms may allow training on content unless the workspace opts out - check before client footage"
 license = "proprietary service"
 security = "sign-in is NOT spend authorisation; uploads leave the machine; never log a token"
@@ -558,7 +558,7 @@ addons = ["provider-higgsfield"]
 profiles = ["optional"]
 binary = "higgsfield"
 cost = "paid (credits)"
-gate = "paid-generation-gate"
+gate = "paid-spend-gate"
 license = "MIT"
 security = "`higgsfield auth login` opens a browser: the student signs in by hand"
 doctor = { smoke = ["higgsfield", "--version"] }
@@ -589,7 +589,7 @@ role = "TTS / voice / transcription (Hebrew ASR is listed for Scribe; unmeasured
 addons = ["provider-elevenlabs"]
 profiles = ["optional"]
 cost = "paid (credits/plan)"
-gate = "paid-generation-gate"
+gate = "paid-spend-gate"
 terms = "voice cloning needs consent/provenance; workspace-scope mutations possible"
 license = "proprietary service"
 security = "OAuth only (no API key in this route). AVOID the archived local repo `elevenlabs-mcp` (read-only since 2026-08-20) and old guides that use ELEVENLABS_API_KEY with uvx"
@@ -624,7 +624,7 @@ doctor = { smoke = "client status 'connected' after OAuth; non-generating tool l
   checked = "2026-10-02"
   confidence = "medium"
 
-# ============================================================================= 3D / NLE bridges (opt-in, unmeasured)
+# ============================================================================= 3D (opt-in, unmeasured)
 [[entry]]
 id = "blender"
 kind = "cli"
@@ -701,38 +701,6 @@ notes = "Prefer native headless bpy for deterministic batch jobs. Do NOT use the
   checked = "2026-10-02"
   confidence = "medium"
 
-[[entry]]
-id = "nle-premiere"
-kind = "native-plugin"
-name = "Premiere Pro agent bridge (Higgsfield plugin, pr_* tools)"
-role = "opt-in NLE bridge; executes editor operations"
-addons = ["nle-premiere"]
-profiles = ["optional"]
-cost = "app licence + generation credits"
-gate = "paid-generation-gate"
-security = "inspect the installer before running it; duplicate the project before any write; Adobe minimum-version conflict (help says 2024/24.0+, plugin page says 2025+) is unresolved; installation UNMEASURED"
-doctor = { smoke = "none - student installs by hand; verify with a read-only pr_* call such as pr_get_project_info" }
-install_by_hand = "Student downloads the plugin from the vendor's official page and installs it themselves; the agent never runs an installer it has not shown the student first."
-status = "unverified"
-checked = "2026-10-02"
-confidence = "low"
-
-[[entry]]
-id = "nle-ae"
-kind = "native-plugin"
-name = "After Effects agent bridge (Higgsfield plugin, ae_* tools)"
-role = "opt-in NLE bridge"
-addons = ["nle-ae"]
-profiles = ["optional"]
-cost = "app licence + generation credits"
-gate = "paid-generation-gate"
-security = "same as nle-premiere; duplicate the project before writes"
-doctor = { smoke = "none - student installs by hand; verify with a read-only ae_* call such as ae_get_composition_info" }
-install_by_hand = "Same as nle-premiere."
-status = "unverified"
-checked = "2026-10-02"
-confidence = "low"
-
 # ============================================================================= ASR / MATTE routes (separate Python envs per route)
 [[entry]]
 id = "faster-whisper"
@@ -762,62 +730,14 @@ addons = ["asr-cpu"]
 profiles = ["optional"]
 cost = "free (download only)"
 license = "Apache-2.0 (verified on the model page 2026-10-02)"
-download_size = "about 1.5 GB [unverified - read the Hugging Face file list before approving]"
+download_size = "model.bin 1,617,884,968 bytes (1,621,667,540 bytes for all files) - read from the Hugging Face API on 2026-10-03"
+revision = "72ad623a37947395efcc3933132353790e5a12f5"
 source_url = "https://huggingface.co/ivrit-ai/whisper-large-v3-turbo-ct2"
 status = "verified"
 checked = "2026-10-02"
-confidence = "medium"
+confidence = "high"
 security = "never auto-downloaded; the student approves the size first; pin the revision hash"
 doctor = { smoke = "file presence + sha256 recorded by the transcribe tool" }
-
-[[entry]]
-id = "whisper-cpp"
-kind = "cli"
-name = "whisper.cpp (CPU / Vulkan / CUDA / CoreML builds)"
-role = "fast local ASR; Vulkan route measured about 9.8x its CPU run on the reference machine only (E08)"
-addons = ["asr-vulkan", "asr-cuda", "asr-mlx"]
-profiles = ["optional"]
-binary = "whisper-cli"
-cost = "free"
-license = "MIT"
-security = "Vulkan on the reference GPU's driver needs GGML_VK_DISABLE_COOPMAT=1 [LOCAL-only]; otherwise it crashes. NVIDIA/Apple routes are UNMEASURED."
-doctor = { smoke = ["whisper-cli", "--help"] }
-notes = "Input must be 16 kHz 16-bit mono WAV (ffmpeg -ar 16000 -ac 1 -c:a pcm_s16le). The newest tagged release (v1.9.4) lists no prebuilt assets; prebuilt zips live on nightly b#### pre-releases and v1.9.2. Hebrew weights: ivrit-ai/whisper-large-v3-turbo-ggml (Apache-2.0, file ggml-model.bin)."
-  [entry.install.windows]
-  manual = "Download a prebuilt whisper-bin-x64.zip from https://github.com/ggml-org/whisper.cpp/releases (nightly or v1.9.2) or build: cmake -B build -DGGML_VULKAN=1 && cmake --build build -j --config Release. Student approves the download."
-  status = "verified"
-  source = "https://github.com/ggml-org/whisper.cpp ; https://api.github.com/repos/ggml-org/whisper.cpp/releases"
-  checked = "2026-10-02"
-  confidence = "medium"
-  [entry.install.macos]
-  command = "brew install whisper.cpp"
-  status = "verified"
-  source = "https://formulae.brew.sh/formula/whisper.cpp"
-  checked = "2026-10-02"
-  confidence = "medium"
-  [entry.install.linux]
-  manual = "Build from source: cmake -B build && cmake --build build -j --config Release (add -DGGML_CUDA=1 or -DGGML_VULKAN=1 for GPU)"
-  status = "verified"
-  source = "https://github.com/ggml-org/whisper.cpp"
-  checked = "2026-10-02"
-  confidence = "medium"
-
-[[entry]]
-id = "ivrit-ggml"
-kind = "model"
-name = "ivrit-ai/whisper-large-v3-turbo-ggml (Hebrew ASR weights, whisper.cpp)"
-role = "Hebrew ASR weights for the whisper.cpp routes"
-addons = ["asr-vulkan", "asr-cuda", "asr-mlx"]
-profiles = ["optional"]
-cost = "free (download only)"
-license = "Apache-2.0 (verified on the model page 2026-10-02)"
-download_size = "about 1.6 GB [unverified]"
-source_url = "https://huggingface.co/ivrit-ai/whisper-large-v3-turbo-ggml"
-status = "verified"
-checked = "2026-10-02"
-confidence = "medium"
-security = "never auto-downloaded; pin the revision hash"
-doctor = { smoke = "file presence" }
 
 [[entry]]
 id = "matte-fast"

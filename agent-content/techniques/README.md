@@ -1,6 +1,6 @@
 # agent-content/techniques — named procedures
 
-> Status: specified, deterministic checks only; model eval not run (decision default Q4). Written 2026-10-02 from the owner's techniques and the research experiments. Tags: `[RULE-owner]` · `[PROVEN-internal]` · `[MEASURED-lab]` · `[IDEA]` · `[CONFLICT]`; OM = the reference machine (the only measured one).
+> Status: specified, deterministic checks only; model eval not run (decision default Q4). Written 2026-10-02 from the author's techniques and the research experiments. Tags: `[RULE-owner]` · `[PROVEN-internal]` · `[MEASURED-lab]` · `[IDEA]` · `[CONFLICT]`; OM = the reference machine (the only measured one).
 
 | Technique | Used in | One line |
 |---|---|---|
@@ -9,7 +9,6 @@
 | [screenshot-rebuild.md](screenshot-rebuild.md) | wf-04, wf-05 | rebuild a UI screenshot identically in code, then animate it (and when not to) |
 | [concept-ledger.md](concept-ledger.md) | wf-00, wf-03, wf-06, wf-07 | one checkable line per concrete statement; dimension codes; a reference checker |
 | [question-bank.md](question-bank.md) | wf-00, wf-01 | Hebrew + English intake questions by category; 3–4 per round; recommended default first |
-| [2-5d.md](2-5d.md) | wf-04, wf-05 | depth parallax on a still (Depth Anything V2 Small); the 30-minute gate; E10 numbers with limits; licence caveat |
 | [caption-collision.md](caption-collision.md) | wf-05, wf-06 | the exact affine box solver for caption overlap (ADOPT-scoped) |
 | [cheap-first-qa.md](cheap-first-qa.md) | wf-06, wf-08 | the gate stack, statuses, house thresholds, blind spots, positive controls |
 | [studio-review-loop.md](studio-review-loop.md) | wf-06, wf-07 | review live in Studio; range renders only for render-only risks; E12 numbers |

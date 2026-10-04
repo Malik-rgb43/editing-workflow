@@ -26,7 +26,7 @@ status: DRAFT | APPROVED   approved_with: PROMPT.md sha256 <first 12 chars>   da
 | keyword colour (optional) | `<hex>` | one keyword group per frame; ≥ 4.5:1 against the footage under it (see audit) | measured per shot |
 | alert (optional) | `<hex>` | only the problem word, once per event | — |
 
-Proportion guide (owner's example, a premium talking-head: 60 % footage, 30 % ink/glass, 10 % accent; blue and semantic colours < 5 %) — keep the *idea* (one dominant, one supporting, one accent), not the numbers.
+Proportion guide (author's example, a premium talking-head: 60 % footage, 30 % ink/glass, 10 % accent; blue and semantic colours < 5 %) — keep the *idea* (one dominant, one supporting, one accent), not the numbers.
 Forbidden here: `<e.g. pink/magenta/violet anywhere including 3D and light leaks — an owner preference; any hue outside the table>`.
 Exceptions (written, with frames): real footage; third-party logo tiles; one film-burn transition if requested; `<other>`.
 Token file (optional): `hf/data/palette.json` with the same table.
@@ -75,7 +75,7 @@ Token file (optional): `hf/data/palette.json` with the same table.
 | Token | Value |
 |---|---|
 | durations | fast `<s>` · base `<s>` · slow `<s>` (proposal: 0.25 / 0.6 / 1.2 s — not an owner decision) |
-| enter | `<ease>` over `<frames>` (owner's `cubic-bezier(0.22,1,0.36,1)`, 14–17 f, or snap `expo.out` 4–10 f) |
+| enter | `<ease>` over `<frames>` (author's `cubic-bezier(0.22,1,0.36,1)`, 14–17 f, or snap `expo.out` 4–10 f) |
 | move | `<ease>` |
 | exit | `<ease>` — always shorter than the entrance (3–7 f with blur, then cut) |
 | stagger | `<s>` (total < 0.5 s) |

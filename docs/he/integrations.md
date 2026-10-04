@@ -63,13 +63,12 @@
 | `gemini-vision` | api | frame description; default OFF in the toolkit | optional | free-tier/paid (provider quota) | env var GEMINI_API_KEY | unverified | PRIVACY: `hyperframes snapshot` sends frames to Gemini unless `--describe false`. The toolkit always passes --describe false (<= 5 timestamps per call). Client footage never goes to a hosted analysis route without an explicit per-client decision. |
 
 ### מסלולי תמלול והפרדת רקע מקומיים ומודלים
+מה כל מודל מקומי מחליף, מקור ההורדה המדויק והגודל, והפערים (אין קול עברי מקומי, אין יצירת וידאו מקומית): [local-vs-paid.md](local-vs-paid.md).
 
 | מזהה | סוג | תפקיד | פרופיל / הוספה | עלות | אימות | נבדק | הערות |
 |---|---|---|---|---|---|---|---|
 | `faster-whisper` | python-lib | local Hebrew/English transcription on any CPU (measured baseline on the reference machine only) | optional / add faster-whisper | free (local compute) | none | verified | separate environment under <state>/venvs/asr-cpu; weights are NOT downloaded by the installer |
 | `ivrit-ct2` | model | Hebrew ASR weights for faster-whisper | optional / add ivrit-ct2 | free (download only) | none | verified | never auto-downloaded; the student approves the size first; pin the revision hash |
-| `whisper-cpp` | cli | fast local ASR; Vulkan route measured about 9.8x its CPU run on the reference machine only (E08) | optional / add whisper-cpp | free | none | verified | Vulkan on the reference GPU's driver needs GGML_VK_DISABLE_COOPMAT=1 [LOCAL-only]; otherwise it crashes. NVIDIA/Apple routes are UNMEASURED. |
-| `ivrit-ggml` | model | Hebrew ASR weights for the whisper.cpp routes | optional / add ivrit-ggml | free (download only) | none | verified | never auto-downloaded; pin the revision hash |
 | `matte-fast` | python-lib | speaker cut-out (alpha) for text-behind-speaker; measured only on the reference machine (E09) | optional / add matte-fast | free (local compute) | none | unverified | no pip_spec is pinned here on purpose: the route is installed by the toolkit's own `cutout` tool after the licence gate; the installer only reports it |
 
 ### כלי שורת פקודה, אפליקציות ותוספים אופציונליים
@@ -78,8 +77,6 @@
 |---|---|---|---|---|---|---|---|
 | `higgsfield-cli` | cli | official Claude Code route to Higgsfield per the vendor help centre | optional / add higgsfield-cli | paid (credits) | none | verified | `higgsfield auth login` opens a browser: the student signs in by hand |
 | `blender` | cli | 3D scenes for motion graphics; headless `bpy` is preferred for deterministic batch work | optional / add blender | free | none | verified | Exact version matters for the opt-in `blender` profile (research host: Blender 5.2). macOS build is Apple Silicon only (macOS 13+) per the download page. |
-| `nle-premiere` | native-plugin | opt-in NLE bridge; executes editor operations | optional / add nle-premiere | app licence + generation credits | none | unverified | inspect the installer before running it; duplicate the project before any write; Adobe minimum-version conflict (help says 2024/24.0+, plugin page says 2025+) is unresolved; installation UNMEASURED |
-| `nle-ae` | native-plugin | opt-in NLE bridge | optional / add nle-ae | app licence + generation credits | none | unverified | same as nle-premiere; duplicate the project before writes |
 | `gh` | cli | optional: clone private forks, open issues | optional / add gh | free | none | mixed | `gh auth login` is the student's own sign-in |
 | `yt-dlp` | cli | fetch a reference video the student is entitled to analyse | optional / add yt-dlp | free | none | verified | parses untrusted remote content; keep it updated (yt-dlp -U) |
 
@@ -104,7 +101,7 @@
 
 <!-- step: integrations-05 -->
 ## integrations-05 - סוגי עלות ושער ההוצאות
-‏`free` (חישוב מקומי) - ‏`free-tier` (מכסה חינמית עם תנאים) - ‏`paid` (קרדיטים או חיוב לפי שימוש). כל מה שיכול לייצר פלט בתשלום (‏Higgsfield, ‏ElevenLabs, ‏21st.dev, גשרי Premiere/After Effects) מפנה אל `paid-generation-gate`: הערכת עלות מתוארכת, אישור מפורש שלך, תקרת ניסיונות ורשומת מקור. כניסה אינה אישור. יצירה אוטומטית ב-Higgsfield צורכת קרדיטים של התוכנית גם כשהשימוש באתר "בלתי מוגבל". קרדיטים לעולם לא מומרים לתשלום מלקוח. מחירים ומזהי מודלים נמצאים במודולי ייחוס מתוארכים, לא כאן.
+‏`free` (חישוב מקומי) - ‏`free-tier` (מכסה חינמית עם תנאים) - ‏`paid` (קרדיטים או חיוב לפי שימוש). כל מה שיכול לייצר פלט בתשלום (‏Higgsfield, ‏ElevenLabs, ‏21st.dev, גשרי Premiere/After Effects) מפנה אל `paid-spend-gate`: הערכת עלות מתוארכת, אישור מפורש שלך, תקרת ניסיונות ורשומת מקור. כניסה אינה אישור. יצירה אוטומטית ב-Higgsfield צורכת קרדיטים של התוכנית גם כשהשימוש באתר "בלתי מוגבל". קרדיטים לעולם לא מומרים לתשלום מלקוח. מחירים ומזהי מודלים נמצאים במודולי ייחוס מתוארכים, לא כאן.
 
 ## לינקי הרשמה והפניה
 לשירותים בתשלום (‏Higgsfield, ‏ElevenLabs, ‏21st.dev, ויצירת תלת-ממד עם Tripo) יש לינקי הרשמה בקובץ `integrations/referrals.toml`. חלק מהם הם **לינקי הפניה**: הרשמה דרכם תומכת בפרויקט הזה, בלי עלות נוספת עבורך. ‏`bootstrap.py add <id>` מדפיס את לינק ההפניה לצד הלינק הרגיל ואומר איזה הוא איזה; אתה בוחר, או מדלג אם כבר יש לך חשבון (‏`--plain-links` מציג לינקים רגילים בלבד). ההפניה נספרת פעם אחת, בהרשמה; היא לא משנה דבר באופן שבו המחבר או ה-API עובדים אחר כך, וההתקנה אף פעם לא פותחת לינק בעצמה.

@@ -8,13 +8,13 @@ Cause: on Windows `python` can be a Store stub (exit code 9009); macOS `python3`
 
 <!-- step: troubleshooting-02 -->
 ## troubleshooting-02 - PowerShell, CMD and Git Bash behave differently
-* PowerShell 5.1 has no `&&`: send one command per line. Use double quotes around every path (works in PowerShell, CMD and bash). In bash on Windows, paths like `/c` can be rewritten to `C:/`; keep paths ASCII and use `MSYS_NO_PATHCONV=1` if a flag value is mangled. [measured by the owner]
+* PowerShell 5.1 has no `&&`: send one command per line. Use double quotes around every path (works in PowerShell, CMD and bash). In bash on Windows, paths like `/c` can be rewritten to `C:/`; keep paths ASCII and use `MSYS_NO_PATHCONV=1` if a flag value is mangled. [measured by the author]
 * "running scripts is disabled on this system" when `npx` runs: PowerShell blocks the `npx.ps1` shim. Either call `npx.cmd`, or let **you** relax it for your own account (`Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`). This is a system security setting: the agent never changes it for you.
 * Use `python install/bootstrap.py run -- ...` for toolkit commands: it sets `PYTHONPATH`, UTF-8 and the work root identically in every shell.
 
 <!-- step: troubleshooting-03 -->
 ## troubleshooting-03 - Hebrew letters in paths
-* `npx hyperframes init` **silently skips `index.html`** under a path with Hebrew letters (`lint`, `check`, `render` still work). Always create projects under the ASCII work root; never rename your source folders. [measured: owner's report on HyperFrames 0.8.79; not re-measured on the pinned build]
+* `npx hyperframes init` **silently skips `index.html`** under a path with Hebrew letters (`lint`, `check`, `render` still work). Always create projects under the ASCII work root; never rename your source folders. [measured: author's report on HyperFrames 0.8.79; not re-measured on the pinned build]
 * A Hebrew Windows user name (`C:\Users\<Hebrew name>\`) is fine for Python and FFmpeg but not for engine projects: the installer warns and defaults the work root to `C:\avc-work`; you can pass `--work-root "C:\avc-work"` (ASCII only; a non-ASCII value is refused) and `--home "C:\avc\toolkit"` for the toolkit folder.
 * Hebrew text in a *file name* of your own footage is fine for FFmpeg; copy it to the work root before the engine uses it.
 * Console shows `????`: `chcp 65001` in CMD, or use Windows Terminal. The installer writes UTF-8 (no BOM) everywhere; the display is the problem, not the files.
@@ -29,17 +29,13 @@ Cause: on Windows `python` can be a Store stub (exit code 9009); macOS `python3`
 ## troubleshooting-05 - NVENC / QSV are listed but do not work
 A hardware encoder in the `ffmpeg -encoders` list only means it was compiled in. On the the reference machine's AMD machine NVENC and QSV were **listed but failed to initialise**; AMF H.264/HEVC worked [measured]. The toolkit chooses encoders by a **real mini-encode**, never by the list, and falls back to CPU `libx264`. NVIDIA and Apple hardware encoders are **unmeasured**. Do not "fix" it by installing drivers for the agent's sake: report `doctor` output.
 
-<!-- step: troubleshooting-06 -->
-## troubleshooting-06 - Speech recognition on the GPU (Vulkan) crashes
-The optional fast route you can add with `add whisper-cpp` (whisper.cpp + Vulkan, about 9.8x its own CPU run on the reference machine only) needs the environment variable `GGML_VK_DISABLE_COOPMAT=1` on the reference GPU's driver, otherwise it crashed [measured, local-only; your driver may differ]. PowerShell: `$env:GGML_VK_DISABLE_COOPMAT = "1"`; bash: `export GGML_VK_DISABLE_COOPMAT=1`. Use 8 threads (16 was slower). If it still fails, use the CPU route (installed automatically by the installer): slower but the supported baseline that works everywhere. CUDA and Apple routes are unmeasured. HyperFrames' own `transcribe` defaults to an English model: for Hebrew use the toolkit's ASR route with ivrit-ai weights.
-
 <!-- step: troubleshooting-07 -->
 ## troubleshooting-07 - Skills are not discovered
 1. Restart the agent session after install (skills are read at start).
 2. Right place? Claude Code: `~/.claude/skills/<name>/SKILL.md` (user) or `<project>/.claude/skills/` (project). Codex: `~/.agents/skills/` or `<repo>/.agents/skills/`; `~/.codex/skills` is not used [documented]. Run `python install/bootstrap.py verify`: it lists missing or modified skill files.
 3. You installed with `--scope project`? Then only sessions started inside that project folder see them.
 4. Folder name must equal the `name:` in `SKILL.md` front matter (the installer's plan lints this). A same-named skill of yours wins - see `plan` "conflicts"; use `--force` only after reading what gets backed up.
-5. Ask the agent "which skills do you have about video editing?"; `course-router` should be listed. Still nothing: send `verify --json`.
+5. Ask the agent "which skills do you have about video editing?"; `video-request-router` should be listed. Still nothing: send `verify --json`.
 
 <!-- step: troubleshooting-08 -->
 ## troubleshooting-08 - A connector (MCP server) does not connect
@@ -57,7 +53,7 @@ Applies to Higgsfield, ElevenLabs. In your agent run `/mcp`, pick the server, au
 
 <!-- step: troubleshooting-10 -->
 ## troubleshooting-10 - Port conflicts
-Blender's connector listens on `localhost:9876` and has **no authentication**: if the port is taken, find the owner (Windows `netstat -ano | findstr 9876`, macOS/Linux `lsof -i :9876`) and close that program; never forward the port and never expose it to a network. The engine's preview server prints the address it uses; if a port is busy, stop the old preview before starting another (one heavy job at a time).
+Blender's connector listens on `localhost:9876` and has **no authentication**: if the port is taken, find the author (Windows `netstat -ano | findstr 9876`, macOS/Linux `lsof -i :9876`) and close that program; never forward the port and never expose it to a network. The engine's preview server prints the address it uses; if a port is busy, stop the old preview before starting another (one heavy job at a time).
 
 <!-- step: troubleshooting-11 -->
 ## troubleshooting-11 - `npm ci` or the engine fails

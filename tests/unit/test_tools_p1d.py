@@ -58,8 +58,9 @@ def test_known_patches_are_measured_and_the_gate_input_shape_is_complete(tmp_pat
     d = tmp_path / "צבע 'x' 🎬"
     d.mkdir()
     v = d / "card.mkv"
-    # left half mid-gray (the "skin" ROI), bottom-right near-black (black patch), top-right neutral light grey (sky patch)
+    # mid-gray card; a skin-tone box under the skin ROI, bottom-right near-black (black patch), top-right neutral light grey (sky patch)
     ff("-f", "lavfi", "-i", "color=c=0x808080:size=320x240:rate=10:duration=3", "-vf",
+       "drawbox=x=32:y=72:w=96:h=96:color=0xD09A7C:t=fill,"
        "drawbox=x=160:y=120:w=160:h=120:color=0x050505:t=fill,drawbox=x=160:y=0:w=160:h=120:color=0xE0E0E0:t=fill", "-c:v", "ffv1", v)
     out = d / "m.json"
     p = run(v, "-o", out, "--every", "1.0", "--skin-roi", "0.1,0.3,0.4,0.7", "--black-roi", "0.6,0.6,0.9,0.9", "--sky-roi", "0.6,0.1,0.9,0.4")
@@ -67,10 +68,15 @@ def test_known_patches_are_measured_and_the_gate_input_shape_is_complete(tmp_pat
     m = json.loads(out.read_text(encoding="utf-8"))
     assert m["expected_samples"] == 3 and len(m["frames"]) == 3 and len(m["source_sha256"]) == 64
     f = m["frames"][0]
-    assert f["person"] is True and f["skin_Y"] == pytest.approx(50.2, abs=1.0) and f["skin_chroma"] < 1.0
+    assert f["person"] is True and 40 < f["skin_Y"] < 80 and f["skin_chroma"] >= 5 and 70 <= f["skin_hue"] <= 170, f
     assert f["black_Y"] < 3.0 and abs(f["black_cb"]) < 1.0 and f["sky_chroma"] < 1.0 and f["bright_sky"] is True
     assert f["p1"] < 5 and f["p99"] > 85  # the black and light patches define the extremes
     assert [x["t"] for x in m["frames"]] == [0.0, 1.0, 2.0]
+    # a skin ROI that missed the face (here: plain grey) is rejected as skin, not measured as a failed skin tone
+    p = run(v, "-o", out, "--every", "1.0", "--skin-roi", "0.05,0.75,0.45,0.95")
+    assert p.returncode == 0 and "does not look like skin" in p.stderr
+    f = json.loads(out.read_text(encoding="utf-8"))["frames"][0]
+    assert f["person"] is False and f["skin_rejected"]
 
 
 @pytest.mark.ffmpeg

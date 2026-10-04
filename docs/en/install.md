@@ -10,13 +10,14 @@
 | Right after the scan | "How do you want to work: **local**, **connected** or **both**?" (a choice of working style, never a question about your hardware) | no default: you choose |
 | Once, before anything is installed | "Shall I go ahead with this plan? (yes/no)" after the agent has told you what is downloaded for your choice | you decide |
 | Before the browser download | "HyperFrames needs its own small headless Chrome. Download it? (yes/no)" | you decide |
-| After the install works | **local:** the free local extras, one at a time. **Connected:** a list of services to pick from (voice and AI generation, stock media, UI components, 3D, video-editor bridges) | nothing is connected unless you pick it (silence = no) |
+| After the install works | **local:** the free local extras, one at a time. **Connected:** a list of services to pick from (voice and AI generation, stock media, UI components, 3D) | nothing is connected unless you pick it (silence = no) |
 Nothing is installed or connected silently, and nothing costs money unless you sign up to a paid service yourself.
 
 ## What is downloaded
 | What | From where | Why |
 |---|---|---|
-| the video skills, playbooks and tools | copied from the folder you downloaded, no network | the editing know-how |
+| the video skills, as the Claude Code plugin `editing-workflow` | Claude Code fetches it from this repository's public GitHub page (`claude plugin marketplace add`, `claude plugin install`); `--skills-via copy` copies plain folders instead | the editing know-how |
+| the playbooks and tools (the toolkit folder) | copied from the folder you downloaded, no network | what the skills read and run |
 | Python packages (numpy, Pillow, OpenCV ...) | pypi.org, via `uv sync` | the quality-check tools |
 | **HyperFrames 0.8.98** (the render engine) | the official npm package of HeyGen, via `npm ci --ignore-scripts`; nothing of it is stored in this repository | renders your video from HTML/CSS/GSAP |
 | HyperFrames' headless Chrome | Chrome-for-Testing hosts, only after your yes | rendering |
@@ -49,8 +50,7 @@ The installer picks the safest setup that works on every computer:
 * **Speech-to-text**: a local CPU route (`asr-cpu`, faster-whisper int8) is available and is installed **only if you choose local** in the next step. Model weights are never downloaded until you approve their size.
 * **Speaker cut-out**: the engine's own CPU route - nothing extra to install.
 * **Video encoder**: CPU `libx264`, proven by the real mini-encode.
-* **Faster GPU routes** (CUDA, Vulkan, Apple): offered inside the local choice as an *optional* question **only if their probe passed**, labelled "unmeasured" or "measured on one machine only".
-* Connectors, providers, Blender, Premiere/After Effects: not installed by the install; they are your choice in install-05 and install-10.
+* Connectors, providers, Blender: not installed by the install; they are your choice in install-05 and install-10.
 
 <!-- step: install-05 -->
 ## install-05 - How do you want to work: local, connected or both?
@@ -62,11 +62,11 @@ Whatever you choose, the base install is the same (skills, tools, HyperFrames, q
 
 <!-- step: install-06 -->
 ## install-06 - You confirm once
-The agent tells you, in at most 15 lines: what it detected; **what is downloaded for the way of working you chose** (the table above); what changes on your computer (skills, the toolkit folder `~/.avc/toolkit`, an ASCII work folder, a short removable note in your agent's instruction file); the cost (none); which questions you will be asked; how to undo. Then **one question**: "Shall I go ahead with this plan? (yes/no)".
+The agent tells you, in at most 15 lines: what it detected; **what is downloaded for the way of working you chose** (the table above); what changes on your computer (the plugin, the toolkit folder `~/.avc/toolkit`, an ASCII work folder, a short removable note in your agent's instruction file); the cost (none); which questions you will be asked; how to undo. Then **one question**: "Shall I go ahead with this plan? (yes/no)".
 
 <!-- step: install-07 -->
 ## install-07 - The installation runs (HyperFrames is installed here)
-`bootstrap.py apply --yes`: toolkit folder, skills (a **backup** is taken before anything is replaced; a skill of yours with the same name is skipped unless you allow `--force`), the marked note, ASCII work folder + `toolkit.local.toml`, `uv sync --no-dev`, **the HyperFrames engine** (`npm ci --ignore-scripts` from `package.json` + `package-lock.json`, version 0.8.98), the CPU speech-to-text environment (only if you chose local; weights are never downloaded), and a link check. Safe to run again: finished work is skipped. A failed stage never needs manual cleanup.
+`bootstrap.py apply --yes`: toolkit folder, skills (Claude Code: the `editing-workflow` plugin; Codex: copied folders - a **backup** is taken before anything is replaced and a skill of yours with the same name is skipped unless you allow `--force`), the marked note, ASCII work folder + `toolkit.local.toml`, `uv sync --no-dev`, **the HyperFrames engine** (`npm ci --ignore-scripts` from `package.json` + `package-lock.json`, version 0.8.98), the CPU speech-to-text environment (only if you chose local; weights are never downloaded), and a link check. Safe to run again: finished work is skipped. A failed stage never needs manual cleanup.
 
 <!-- step: install-08 -->
 ## install-08 - Missing tools
@@ -74,7 +74,7 @@ If the plan lists a missing tool, it shows the exact command for your OS and whe
 
 <!-- step: install-09 -->
 ## install-09 - HyperFrames: browser and check
-HyperFrames renders in a headless Chrome. The agent asks before downloading it, then runs `hyperframes browser ensure` and `hyperframes doctor --json`. "Docker" and "whisper-cpp" showing "not found" is fine; they are optional. HyperFrames is developed by HeyGen: https://github.com/heygen-com/hyperframes. Your projects live under an English-only work folder, because `hyperframes init` skips files under paths with Hebrew letters.
+HyperFrames renders in a headless Chrome. The agent asks before downloading it, then runs `hyperframes browser ensure` and `hyperframes doctor --json`. "Docker" showing "not found" is fine; it is optional. HyperFrames is developed by HeyGen: https://github.com/heygen-com/hyperframes. Your projects live under an English-only work folder, because `hyperframes init` skips files under paths with Hebrew letters.
 
 <!-- step: install-10 -->
 ## install-10 - What to connect
@@ -87,7 +87,6 @@ After the install works the agent asks, **one choice at a time**. Nothing is pre
   | Stock media | Pexels, Iconify | free tier |
   | UI components | shadcn; 21st.dev | free; paid |
   | 3D | Blender connector (the default 3D builder); optional AI model generation with Tripo, used only if you connect it | Blender free; generation paid |
-  | Video editors | Premiere Pro, After Effects bridges | your Adobe licence |
   For each service you pick, the agent explains what it is and what it costs, then shows you the **sign-up link**. Some sign-up links are referral links: they are labelled "referral link", the plain link is shown beside them, and you may choose either or skip. The agent opens nothing without your yes.
 * **Connect more later - just write it.** In any later conversation say "connect ElevenLabs" (or any service); the agent runs `add` and shows you the sign-up link the same way.
 
@@ -95,12 +94,12 @@ After the install works the agent asks, **one choice at a time**. Nothing is pre
 ## install-11 - Things only you do (when you add something)
 * **Sign in to connectors** (Higgsfield, ElevenLabs): in your agent type `/mcp`, choose the server, finish the browser sign-in.
 * **API keys** (Pexels, 21st.dev): create the key on the vendor's site and save it as a *user environment variable* with the exact name from the catalogue. Windows: Start -> "Edit environment variables for your account" -> New. macOS: add `export NAME=...` to `~/.zshrc` with a text editor. Never paste a key in chat or use the agent's `!` shell prefix for it. Restart the agent afterwards.
-* **Native plugins** (Premiere / After Effects bridges, the Blender add-on): you download and install them from the vendor.
+* **Native plugins** (the Blender add-on): you download and install them from the vendor.
 Signing in spends nothing. Spending always goes through the spend gate.
 
 <!-- step: install-12 -->
 ## install-12 - Verify and restart your agent
-`python install/bootstrap.py verify` re-checks every installed file against the manifest, runs the link check, repeats the FFmpeg mini-encode and prints the five states. `claude doctor` only diagnoses the Claude Code installation - it is not proof that video works. Then **restart your agent session** and ask "which skills do you have about video?" - `course-router` must be listed.
+`python install/bootstrap.py verify` re-checks every installed file against the manifest, runs the link check, repeats the FFmpeg mini-encode and prints the five states. `claude doctor` only diagnoses the Claude Code installation - it is not proof that video works. Then **restart your agent session** and ask "which skills do you have about video?" - `video-request-router` must be listed.
 
 <!-- step: install-13 -->
 ## install-13 - First render

@@ -1,6 +1,6 @@
 # Output contract: `analysis/<video>/` (schema_version 1.0.0)
 
-Load when: running or porting the `analyze` tool, writing any of the JSON files by hand, reading a `validate_analysis.py` report, or handing an analysis to another skill (`reference-style-transfer`, `benchmark`). The checker is `scripts/validate_analysis.py`; every rule below is enforced there unless marked "declared".
+Load when: running or porting the `analyze` tool, writing any of the JSON files by hand, reading a `validate_analysis.py` report, or handing an analysis to another skill (`reference-style-matching`, `benchmark`). The checker is `scripts/validate_analysis.py`; every rule below is enforced there unless marked "declared".
 
 `<video>` = a slug of the file stem + `-` + first 6 hex of the source sha256 (batch mode: one folder per video under the parent `--out`). A re-run with the same hash may reuse the folder; `--force` recomputes. The source file is never written to; sidecar files live only inside the analysis folder.
 
@@ -21,10 +21,10 @@ All JSON: UTF-8 (no BOM required, tolerated), strict (no NaN/Infinity, no duplic
 | `schema_version` | `"1.0.0"` |
 | `tool` | `{name, version, detail: quick|standard|full}` |
 | `input` | `name`, `sha256`, `sha256_after` (must be equal: inputs are read-only), `size_bytes`, `duration_s` > 0, `fps_num`, `fps_den` (positive ints), `width`, `height`, `rotation`, `vfr` (bool), `frames_expected` (within 2 of duration x fps unless `vfr`), `has_audio` (bool), `private` (bool, default false: confidential material) |
-| `environment` | `os`, `ffmpeg`, `asr_route` (`cpu-ct2`, `cpu-whispercpp`, `vulkan-whispercpp`, `cuda`, `mlx`, `cloud:<name>`, `none`), `env` (map; record `GGML_VK_DISABLE_COOPMAT` on the Vulkan route), plus free-form cpu/gpu/ram. A route that was not detected is `none`, never guessed |
+| `environment` | `os`, `ffmpeg`, `asr_route` (`cpu-ct2`, `cloud:<name>`, `none`), `env` (map), plus free-form cpu/gpu/ram. A route that was not detected is `none`, never guessed |
 | `coverage` | `mode`: `full` (every frame decoded: `frames_decoded == frames_expected`) or `sampled` (anything less; then no cut count or pacing may be presented as measured fact), `frames_decoded` > 0, `frames_expected`, `pts_policy` (`decoder_pts`), `excluded[]` = `{kind: end_card|watermark|intro, start_s, end_s, reason}` (platform watermarks, end cards and jingles are excluded from statistics and listed) |
 | `edit_points[]` | `id` (unique), `t_s`, `frame` (consistent with `t_s` at the fps), `kind`: `cut` (hard cut or transition counted as an edit) \| `transition` \| `check` (jump cut vs graphic swap: numbers cannot tell), `type`: `hard, whip, slide, dissolve, flash, dip_black, glitch, fast_transition, unknown`, `confidence`: `auto` \| `verified` (confirmed on frames) \| `corrected` (added or retyped after reading frames), `note`. Ordered, at least 1 frame apart: a transition is ONE edit point and its frames are not shots |
-| `pacing` | `edit_points` (= number of `cut`+`transition` entries), `cuts_per_min` (= that count / minutes, to 0.05), `median_shot_s` (from the edit points), `mean_shot_s`, `shortest_shot_s`, `longest_shot_s`, `first_cut_s`; optional `override: {cuts_per_min, note}` when frames show the automatic count is wrong (the equivalent of the owner's `metrics_override.json`) |
+| `pacing` | `edit_points` (= number of `cut`+`transition` entries), `cuts_per_min` (= that count / minutes, to 0.05), `median_shot_s` (from the edit points), `mean_shot_s`, `shortest_shot_s`, `longest_shot_s`, `first_cut_s`; optional `override: {cuts_per_min, note}` when frames show the automatic count is wrong (the equivalent of the author's `metrics_override.json`) |
 | `holds[]`, `stepped_cadence` | static holds (`motion < 0.25` for >= 1.0 s) and repeated-frame cadence (24p in 60p, 12 fps AI footage, stop-motion): cuts are then measured on unique pictures |
 | `per_frame` | `{file: "frames.csv", columns[], rows}`; recommended columns `frame,t_s,luma,luma_std,sat,content,hist,motion,black,white,cut` |
 | `review` (stage `reviewed`) | `reviewed_by` (`model`/`human`), `sheets_viewed[]` (must include every keyframe/overview sheet), `audio_images_viewed[]` (every audio image), `zoom_count`, `corrections[]` = `{edit_point, action: removed|added|retyped, reason}`. **Declared by the reader**: the script checks completeness, not that anyone looked |
@@ -33,7 +33,7 @@ All JSON: UTF-8 (no BOM required, tolerated), strict (no NaN/Infinity, no duplic
 
 ## sheets/index.json
 `{schema_version, sheets: [{file: "sheets/<name>", kind: keyframes|overview|audio|zoom, t_start_s, t_end_s, tiles, tile_px, frames?: [{frame, t_s, label}]}]}`.
-Rules: real JPEG/PNG (magic bytes), not empty, inside `sheets/`; at least one keyframes/overview sheet; an audio image when the input has audio; in `full` mode the keyframe sheets must reach every part of the video within 2.5 s (the `standard` max gap) except listed exclusions; tiles under 160 px are warned (models misread them; the owner's defaults: 16:9 3x3 of 460 px, 9:16 4x2 of 280 px, about 1.1-1.3 MP per sheet; zoom sheets keep tiles >= 280 px).
+Rules: real JPEG/PNG (magic bytes), not empty, inside `sheets/`; at least one keyframes/overview sheet; an audio image when the input has audio; in `full` mode the keyframe sheets must reach every part of the video within 2.5 s (the `standard` max gap) except listed exclusions; tiles under 160 px are warned (models misread them; the author's defaults: 16:9 3x3 of 460 px, 9:16 4x2 of 280 px, about 1.1-1.3 MP per sheet; zoom sheets keep tiles >= 280 px).
 
 ## transcript.json
 `{schema_version, status, language, reason?, asr: {route, model, model_revision, vad, device, language_forced}, segments[], words[], burned_captions[]?, qa?}`.

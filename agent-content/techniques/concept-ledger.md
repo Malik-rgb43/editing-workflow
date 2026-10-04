@@ -1,14 +1,14 @@
 # Technique: the Concept Ledger
 
-> Status: specified, deterministic checks only; model eval not run (decision default Q4). Written 2026-10-02 from distilled/02 workflow-end-to-end §2 (the owner's `video-concept-intake` method) and distilled/01 rules-and-gates A1–A14, B8. The checker at the end was run by the author on the worked example in [frame-spec-prompt.md](frame-spec-prompt.md) (it found five uncited ids and two missing blocking dimensions in the first draft of that example — which is why it is here).
+> Status: specified, deterministic checks only; model eval not run (decision default Q4). Written 2026-10-02 from distilled/02 workflow-end-to-end §2 (the author's `video-concept-intake` method) and distilled/01 rules-and-gates A1–A14, B8. The checker at the end was run by the author on the worked example in [frame-spec-prompt.md](frame-spec-prompt.md) (it found five uncited ids and two missing blocking dimensions in the first draft of that example — which is why it is here).
 > Tags: `[RULE-owner]` · `[PROVEN-internal]` · `[IDEA]` · `[CONFLICT]`.
 > Not to be confused with the **timing ledger** (the `ledger` tool, see [timing-ledger.md](timing-ledger.md)): this is the *concept* ledger.
 
 ## 0. Why it exists
 
-The owner's rule: "if I write a concept and specify things, it should come out exactly; if there is no reference video, ask questions until everything is precise." `[RULE-owner]` (owner, 2026-09-29; src: distilled/01 rules-and-gates A1). The ledger turns every concrete thing a person said into **one checkable line** that survives all the way to the presentation message, where each line is ticked with evidence. Measured cost of not having it: a 30 s film grew to 51 s then 45 s (~35 min of re-cutting); a "premium" bar asked after spec approval forced a ~40 min rebuild; "film burn at 1–2 s" was verified by the owner, not by the agent. (src: distilled/02 workflow §2.5) `[PROVEN-internal]`
+The author's rule: "if I write a concept and specify things, it should come out exactly; if there is no reference video, ask questions until everything is precise." `[RULE-owner]` (owner, 2026-09-29; src: distilled/01 rules-and-gates A1). The ledger turns every concrete thing a person said into **one checkable line** that survives all the way to the presentation message, where each line is ticked with evidence. Measured cost of not having it: a 30 s film grew to 51 s then 45 s (~35 min of re-cutting); a "premium" bar asked after spec approval forced a ~40 min rebuild; "film burn at 1–2 s" was verified by the author, not by the agent. (src: distilled/02 workflow §2.5) `[PROVEN-internal]`
 
-The ledger lives **inside `hf/PROMPT.md`** as a `<ledger>` block above the six frame blocks. There is no separate LEDGER file; `hf/CONCEPT.md` holds the concept options and the chosen direction, `hf/BRIEF.md` is five lines. `[RULE-owner]` (the owner retired the second spec file)
+The ledger lives **inside `hf/PROMPT.md`** as a `<ledger>` block above the six frame blocks. There is no separate LEDGER file; `hf/CONCEPT.md` holds the concept options and the chosen direction, `hf/BRIEF.md` is five lines. `[RULE-owner]` (the author retired the second spec file)
 
 ## 1. Format
 
@@ -47,7 +47,7 @@ The ledger lives **inside `hf/PROMPT.md`** as a `<ledger>` block above the six f
 | STR | structure: silence-cut only vs rebuild (footage) | **yes for footage** | round 1 |
 | TON | energy/tone | **yes** | round 2 |
 | HOOK | what is said/seen at 0–3 s | recommended | round 2 |
-| BAR | quality level (the owner's: "a premium edit worth ₪500–700", per video up to one minute — a stated target, **not a measured market rate**) | **yes — round 1** | round 1 |
+| BAR | quality level (the author's: "a premium edit worth ₪500–700", per video up to one minute — a stated target, **not a measured market rate**) | **yes — round 1** | round 1 |
 | CTA | what the viewer does at the end, the exact line | **yes** | round 4 |
 | LOOK | palette / grade | recommended | round 3 |
 | TYPE | caption/title fonts | recommended | round 3 |
@@ -164,7 +164,7 @@ Limits: it does not verify that a cited id is *realised*; it does not parse stru
 
 | Symptom | Cause | Remedy | Prevention |
 |---|---|---|---|
-| the owner finds a missing detail at review | a concrete statement never became a row | add the row, trace it into structure | parse the message into rows at wf-00 step 2 |
+| the author finds a missing detail at review | a concrete statement never became a row | add the row, trace it into structure | parse the message into rows at wf-00 step 2 |
 | a locked row was edited in place | no strike-through discipline | restore, add a new row with the time | rule 5 |
 | "locked" rows with vague specs | the proposal was never confirmed | mark `default`, ask | rule 3 |
 | presentation lists only this round's rows | partial ledger | always list the whole ledger | wf-07 message format |

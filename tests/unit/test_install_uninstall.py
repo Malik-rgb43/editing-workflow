@@ -88,7 +88,7 @@ def test_memory_block_is_opt_in_idempotent_preserving_and_removed_on_uninstall(e
     env.run("apply", "--yes", "--write-memory-block", target="claude", expect=0)
     text = md.read_bytes().decode("utf-8")
     assert text.startswith("# my rules\r\nbe nice\r\n") and text.count(env.bs.MD_BEGIN) == 1 and "\r\n" in text
-    assert str(env.state / "toolkit") in text and "course-router" in text
+    assert str(env.state / "toolkit") in text and "video-request-router" in text
     once = md.read_bytes()
     env.run("apply", "--yes", "--write-memory-block", target="claude", expect=0)
     assert md.read_bytes() == once  # idempotent

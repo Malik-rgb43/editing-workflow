@@ -7,7 +7,7 @@
 
 ## AGENT SAFETY RULES (read first, they override everything below)
 1. **Secrets.** Never ask the student to type or paste an API key, password, token or OAuth code into the chat. Never write one into a file of this repo, a command line, a log or a screenshot. Give the student the exact *place* (OS environment variable, `/mcp` OAuth screen, the vendor's own CLI sign-in, OS keychain) and let THEM do it in their own terminal or browser. If a key appears in the chat anyway: do not use it, do not repeat it, tell the student to revoke it.
-2. **Money.** Install = free. Do not start a trial, buy a plan, top up credits, click "upgrade", or call any paid API. Signing in to a provider is not spend authorisation: every later generation goes through the `paid-generation-gate` skill (dated estimate + explicit approval).
+2. **Money.** Install = free. Do not start a trial, buy a plan, top up credits, click "upgrade", or call any paid API. Signing in to a provider is not spend authorisation: every later generation goes through the `paid-spend-gate` skill (dated estimate + explicit approval).
 3. **Package managers.** Never install Scoop, Chocolatey, Homebrew, WSL or Docker yourself. If `winget`/`brew` is missing, explain and let the student decide. Never run `sudo`. Run a `winget`/`brew` install only for a tool the plan listed, with the exact command shown in the plan, after the student's confirmation (`--install-missing`).
 4. **No wildcard permissions, no settings edits.** Do not use `--dangerously-skip-permissions`, do not add `Bash(*)`-style allow rules, do not edit `settings.json`, `.claude.json` or `config.toml` by hand. The only agent-config changes allowed are the ones `bootstrap.py` makes through the clients' own CLI (`claude mcp add`, `codex mcp add`) and the marked memory block shown in the plan.
 5. **Never overwrite** a skill that already exists under the same name unless the student says so; the installer backs up and refuses by itself (`conflict-foreign`). Do not delete anything by hand - use `bootstrap.py uninstall` / `rollback`.
@@ -57,8 +57,7 @@ The installer already detected the machine; you only explain it in the student's
 | Rendering | HyperFrames runs on this computer in every mode | needs Node >= 22, FFmpeg and its headless Chrome |
 | Local speech-to-text | the CPU route (`asr-cpu`, faster-whisper int8) is **available**, and installed only if the student chooses LOCAL in install-05; weights are not downloaded until they approve the size | works on every machine |
 | Speaker matte | the engine's native CPU route | nothing extra to install |
-| Faster routes (CUDA / Vulkan / Apple) | shown as "optional faster route" **only if its probe passed**; labelled `unmeasured` or "measured on one machine only"; never installed automatically | offered inside LOCAL (install-10) |
-| Connectors, providers, Blender, Premiere / After Effects | **not installed by `apply`** | the student's choice in install-05 and install-10 |
+| Connectors, providers, Blender | **not installed by `apply`** | the student's choice in install-05 and install-10 |
 Do not offer a menu of profiles or GPU routes. Use `--profile minimal --engine hyperframes`, target and scope auto/`user`. Use `--scope project --project-dir "<folder>"` only if the student asks for a project-only install.
 
 <!-- step: install-05 -->
@@ -79,12 +78,13 @@ Say it in the student's language, in plain words, in this order (at most 15 line
 2. **What gets downloaded for the way of working they chose** (from the plan's "Downloads and network" section, run `plan` again with `--local` if they chose local; say "size not measured" when the plan says so):
    | What | From where | Why |
    |---|---|---|
-   | the video skills (`<N>` of them), playbooks, tools | copied from this folder, no network | the editing know-how |
+   | the video skills (`<N>` of them) as the Claude Code **plugin** `editing-workflow` | `claude plugin marketplace add` + `claude plugin install` from this repository's public GitHub page (Claude Code updates and removes it; use `--skills-via copy` for plain skill folders instead; Codex always gets copies) | the editing know-how |
+   | playbooks, tools (the toolkit folder) | copied from this folder, no network | what the skills read and run |
    | Python packages (numpy, Pillow, OpenCV ...) via `uv sync` | pypi.org | the quality-check tools |
    | **HyperFrames 0.8.98** via `npm ci --ignore-scripts` | the official npm package of HeyGen | the engine that renders the video; nothing of it is stored in this repository |
    | **only if they chose LOCAL:** the speech-to-text environment (`asr-cpu`) | pypi.org | Hebrew transcription on this computer; the model **weights are not downloaded** until the student approves their size |
    | missing tools the plan listed (FFmpeg, Node, uv ...) | winget / brew, only with the student's yes | prerequisites |
-3. **What changes on the computer:** skills in `~/.claude/skills` and/or `~/.agents/skills`; the toolkit folder `~/.avc/toolkit`; an ASCII work folder; a short removable "toolkit location" block in the agent's instruction file; nothing else, no global settings.
+3. **What changes on the computer:** the `editing-workflow` plugin in Claude Code (user scope) and/or skills in `~/.agents/skills` (Codex; with `--skills-via copy` also `~/.claude/skills`); the toolkit folder `~/.avc/toolkit`; an ASCII work folder; a short removable "toolkit location" block in the agent's instruction file; nothing else, no global settings.
 4. **Cost: none.** No account, key or payment is needed for this install.
 5. **Questions they will be asked:** this ONE confirmation now, then (after the install) either the free local extras (local) or the list of services to connect (connected), one choice at a time. "No" or silence = nothing is added. They are never asked about hardware.
 6. **How to undo:** `uninstall` removes exactly what was installed.
@@ -97,7 +97,7 @@ Then ask exactly: "Shall I go ahead with this plan? (yes/no)" (the plan you show
 <PY> install/bootstrap.py apply --yes --write-memory-block [--local] [--install-missing]
 ```
 * `--local` only if the student chose local or both in install-05. `--dry-run` first if the student is nervous (prints the same stages, changes nothing). Add `--target`/`--scope` only when the student asked.
-* Stages (each prints one line): toolkit home -> skills (per host, backup before replace, foreign same-name skills skipped) -> marked memory block -> ASCII work root + `toolkit.local.toml` -> missing CLIs (only with `--install-missing`) -> `uv sync --no-dev` -> **HyperFrames engine: `npm ci --ignore-scripts` in the toolkit home, from `package.json` + `package-lock.json` (HyperFrames 0.8.98, downloaded from the official npm package; no HyperFrames files live in this repository)** -> CPU speech-to-text environment (only with `--local`; weights never downloaded) -> post-install link check. No connector is registered.
+* Stages (each prints one line): toolkit home -> skills (Codex: copied per host, backup before replace, foreign same-name skills skipped; Claude Code: the `claude_plugin` stage, which reports `ok`, `unchanged`, `deferred`, `not run` with the by-hand commands, or `FAILED`) -> marked memory block -> ASCII work root + `toolkit.local.toml` -> missing CLIs (only with `--install-missing`) -> `uv sync --no-dev` -> **HyperFrames engine: `npm ci --ignore-scripts` in the toolkit home, from `package.json` + `package-lock.json` (HyperFrames 0.8.98, downloaded from the official npm package; no HyperFrames files live in this repository)** -> CPU speech-to-text environment (only with `--local`; weights never downloaded) -> post-install link check. No connector is registered.
 * Exit codes: `0` ok - `1` usage (forgot `--yes`) - `2` refused (blocker/conflict policy) - `3` verification failed - `4` partial (read the failing line, fix, **re-run the same command**; finished stages are unchanged) - `5` lock held.
 * The engine stage prints `skipped: npm not on PATH` when Node is missing: install Node LTS first (install-08) and re-run the same command. Offline or flaky network: add `--offline` (network stages print `deferred`), tell the student, re-run later without it. `--engine none` skips HyperFrames (the student then cannot render compositions: say so).
 * Never kill it mid-way "to be safe": files are replaced atomically, the manifest is saved after each stage and a journal records every change for `rollback`.
@@ -113,7 +113,7 @@ HyperFrames renders in a headless Chrome. It is a **separate download**, so ask 
 <PY> install/bootstrap.py run -- npx hyperframes browser ensure
 <PY> install/bootstrap.py run -- npx hyperframes doctor --json
 ```
-`browser ensure` finds a Chrome or downloads one. Gate on the **payload** of `doctor --json` (it always exits 0): `Node.js`, `FFmpeg`, `FFprobe` and `Chrome` must be ok. `Docker` and `whisper-cpp` showing "not found" are **optional and fine**; never install Docker for the student. Official docs and source of the engine: https://github.com/heygen-com/hyperframes (read-only for you; do not clone it into the toolkit). Optional, only if the student asks: HyperFrames' own agent skills (`npx skills add heygen-com/hyperframes`) are a third-party installer: show the command, explain it, and let the student run it themselves.
+`browser ensure` finds a Chrome or downloads one. Gate on the **payload** of `doctor --json` (it always exits 0): `Node.js`, `FFmpeg`, `FFprobe` and `Chrome` must be ok. `Docker` showing "not found" is **optional and fine**; never install Docker for the student. Official docs and source of the engine: https://github.com/heygen-com/hyperframes (read-only for you; do not clone it into the toolkit). Optional, only if the student asks: HyperFrames' own agent skills (`npx skills add heygen-com/hyperframes`) are a third-party installer: show the command, explain it, and let the student run it themselves.
 `hyperframes init` must never run under a path with Hebrew letters (it silently skips `index.html`): projects live under the ASCII work root only.
 
 <!-- step: install-10 -->
@@ -125,7 +125,6 @@ Start after the install works. What you ask depends on install-05. **Everything 
 |---|---|---|
 | "Do you want to give me links of reference videos (YouTube, TikTok, Instagram) to analyse?" | `yt-dlp` | a small downloader tool is installed |
 | "Do you want a faster cut-out of people from the background?" | `matte-fast` | a local Python environment (licence note shown) |
-| "Faster transcription on your graphics card?" - **only if the plan showed an optional faster route whose probe passed** | `asr-vulkan` / `asr-cuda` / `asr-mlx` | the student approves the model size before any weights download |
 | "Do you make 3D (objects, 3D text)? Blender builds it for free; Three.js needs nothing to install" | `blender` | Blender and its add-on are installed by the student; the Blender socket has **no authentication**: keep it on localhost. Blender is the default 3D builder; Three.js runs inside HyperFrames when they choose it |
 
 **If they chose CONNECTED (or both) - show this list and let them pick what to connect now (any number, or none):**
@@ -137,8 +136,7 @@ Start after the install works. What you ask depends on install-05. **Everything 
 | UI components | shadcn | free | `ui-shadcn` | nothing |
 | | 21st.dev | paid | `ui-21st` | create the account and key |
 | 3D | Blender connector (the default 3D builder); optional AI 3D generation (Tripo) | Blender free; generation paid | `blender` | install Blender by hand; sign up to Tripo only if they want AI-generated models: **Tripo is used only if connected, otherwise 3D is built with Blender (or Three.js if they choose it)** |
-| Video editors | Premiere Pro, After Effects bridges | their Adobe licence | `nle-premiere` / `nle-ae` | download and install the plugin from the vendor |
-For each service they pick: say in one sentence what it is and what it costs, run `add <id>` (read-only plan) and show it, then `add <id> --yes` for the safe part. `add` prints the **sign-up links**: a referral link is labelled with the one-line disclosure, the plain link is shown beside it, the student chooses or skips, you open nothing without their yes (rule 12). Every generation still goes through `paid-generation-gate`.
+For each service they pick: say in one sentence what it is and what it costs, run `add <id>` (read-only plan) and show it, then `add <id> --yes` for the safe part. `add` prints the **sign-up links**: a referral link is labelled with the one-line disclosure, the plain link is shown beside it, the student chooses or skips, you open nothing without their yes (rule 12). Every generation still goes through `paid-spend-gate`.
 
 **Connecting more later - the student only has to write it.** When, in any later conversation, the student writes "connect <service>" or "I want <service>", run `<PY> install/bootstrap.py add <service>` from the toolkit (the memory block in their instruction file says so), show the sign-up links exactly as printed, and continue as above. Playwright (a browser the agent can drive) is set up by the first repository (`claude-code-setup`); add a second copy only if the student skipped it (`--profile standard`).
 
@@ -147,7 +145,7 @@ For each service they pick: say in one sentence what it is and what it costs, ru
 * **Agent sign-in** (Claude/Codex) already exists - you are running.
 * **Connectors with sign-in (OAuth)**: Higgsfield, ElevenLabs. Tell the student to open `/mcp` in their agent, choose the server and finish the browser sign-in. You wait.
 * **API keys** (Pexels, 21st.dev): the student creates the key on the vendor's site and stores it as a user environment variable with the exact name from the catalogue (`PEXELS_API_KEY`, `TWENTYFIRST_API_KEY`). Windows: Start -> "Edit environment variables for your account" -> New (user variable). macOS: add `export NAME=...` to `~/.zshrc` with a text editor. **Not in chat, not with the `!` shell prefix** (that puts the text into the session). Restart the agent afterwards. You may check presence only: `add <id>` shows `present: true/false` (name + yes/no, never the value).
-* **Native plugins** (Premiere / After Effects bridges, the Blender add-on): the student downloads and installs them; you only show the vendor page and the verification step in the catalogue.
+* **Native plugins** (the Blender add-on): the student downloads and installs them; you only show the vendor page and the verification step in the catalogue.
 * After any sign-in nothing is spent. Mark it: `<PY> install/bootstrap.py mark authorised_account --student-confirmed --provider <id>` only after the student says it worked.
 
 <!-- step: install-12 -->
@@ -155,7 +153,7 @@ For each service they pick: say in one sentence what it is and what it costs, ru
 ```text
 <PY> install/bootstrap.py verify
 ```
-Re-hashes every installed file against the manifest, runs the link check (skills must keep working after being copied out of the repo), re-runs the FFmpeg mini-encode and prints the five states. `claude doctor` only checks the Claude Code installation; it says nothing about video readiness - do not use it as proof. Then the **student restarts the agent session** (skills and MCP servers are read at start). In the new session ask: "which skills do you have about video editing?" - `course-router` must be among them. If not: [troubleshooting](docs/en/troubleshooting.md) "skills not discovered". Optional deep check: `verify --strict` (warnings count as failures).
+Re-hashes every installed file against the manifest, runs the link check (skills must keep working after being copied out of the repo), re-runs the FFmpeg mini-encode and prints the five states. `claude doctor` only checks the Claude Code installation; it says nothing about video readiness - do not use it as proof. Then the **student restarts the agent session** (skills and MCP servers are read at start). In the new session ask: "which skills do you have about video editing?" - `video-request-router` must be among them. If not: [troubleshooting](docs/en/troubleshooting.md) "skills not discovered". Optional deep check: `verify --strict` (warnings count as failures).
 
 <!-- step: install-13 -->
 ## install-13 - First render (fixture, free, local)
@@ -174,14 +172,14 @@ Always report all five states with evidence; `not_run` is not a pass:
 | 2 | authorised account | the student signed in by hand and confirmed (`mark authorised_account`) |
 | 3 | first render | the fixture MP4 exists and ffprobe confirms it (`mark first_render`) |
 | 4 | inspection passed | the QA envelope says `PASS` with decoded = expected frames (`mark inspection_passed`) |
-| 5 | ready for paid generation | a provider is signed in, a budget was approved, `paid-generation-gate` is installed (`mark paid_generation_ready --student-confirmed`) |
+| 5 | ready for paid generation | a provider is signed in, a budget was approved, `paid-spend-gate` is installed (`mark paid_generation_ready --student-confirmed`) |
 Connections are added **one at a time**, when the student says yes in install-10 or asks later:
 ```text
 <PY> install/bootstrap.py add --list            # every integration: kind, cost, auth
 <PY> install/bootstrap.py add <id>              # read-only plan: what it does, cost, where credentials go, sign-up links, by-hand steps
 <PY> install/bootstrap.py add <id> --yes        # only the safe, non-spending part (register a no-secret connector, create a route env, with --install-missing a package-manager command)
 ```
-`<id>` is an integration id or add-on name from the catalogue (for example `playwright`, `higgsfield`, `elevenlabs`, `blender`, `whisper-cpp`, `matte-fast`, `stock-media`, `yt-dlp`). `add` never reads or stores a key, never signs in, never downloads model weights, never spends. Close with: "tell me the video you want (a clip, a reference link, or an idea)" - the `course-router` skill takes it from there.
+`<id>` is an integration id or add-on name from the catalogue (for example `playwright`, `higgsfield`, `elevenlabs`, `blender`, `matte-fast`, `stock-media`, `yt-dlp`). `add` never reads or stores a key, never signs in, never downloads model weights, never spends. Close with: "tell me the video you want (a clip, a reference link, or an idea)" - the `video-request-router` skill takes it from there.
 
 <!-- step: install-15 -->
 ## install-15 - When something fails
@@ -198,11 +196,12 @@ Read a secret - ask for one - set a persistent environment variable - edit your 
 ## Where things land (layout decision, documented)
 | Item | Location (user scope) | Why |
 |---|---|---|
-| Skills (Claude Code) | `~/.claude/skills/<name>/` | discovery path verified 2026-10-02 (https://code.claude.com/docs/en/skills) |
+| Skills (Claude Code, default) | the plugin `editing-workflow@editing-workflow` (Claude Code keeps its own cache; skills are named `editing-workflow:<skill>`) | plugin manifest rules read 2026-10-03 (https://code.claude.com/docs/en/plugins-reference); one `claude plugin list --json` call shows it |
+| Skills (Claude Code, `--skills-via copy`) | `~/.claude/skills/<name>/` | discovery path verified 2026-10-02 (https://code.claude.com/docs/en/skills); never use both: the skills would load twice |
 | Skills (Codex) | `~/.agents/skills/<name>/` | documented user path (learn.chatgpt.com/docs/build-skills); `~/.codex/skills` is not used |
 | Shared toolkit home | `~/.avc/toolkit/` (managed copy of this repository's playbooks, techniques, benchmarks, references, tools, src, contracts, profiles, templates, fixtures, docs, integrations and install) | skills mention `agent-content/...` and `tools/...`: these are **relative to the toolkit home**, recorded in each skill's `.avc-managed.json` and in the memory block |
 | HyperFrames engine | `~/.avc/toolkit/node_modules/` (from `package.json` + `package-lock.json`) | downloaded from the official npm package; never committed to this repository |
 | Installer state | `~/.avc/install-manifest.json`, `~/.avc/backups/<UTC stamp>/`, `~/.avc/states.json` | exact update, rollback, uninstall |
 | Work root | `~/avc-work` (or `C:\avc-work` when the home path is not ASCII) | ASCII-only: `hyperframes init` silently skips `index.html` under Hebrew paths |
 | Per-machine config | `~/.avc/toolkit/toolkit.local.toml` | the documented override file of `toolkit.toml` |
-Project scope (`--scope project --project-dir "<folder>"`) uses `<folder>/.claude/skills`, `<folder>/.agents/skills` and `<folder>/.avc/` instead. [CONFLICT] the research blueprint (distilled 07 section 10) lists "skills installer into global ~/.claude/skills" as an anti-pattern; the owner's one-link directive (2026-10-02) wins, mitigated by backups, a manifest, refusal on same-named skills, `--scope project`, and exact uninstall.
+Project scope (`--scope project --project-dir "<folder>"`) uses `<folder>/.claude/skills`, `<folder>/.agents/skills` and `<folder>/.avc/` instead. [CONFLICT] the research blueprint (distilled 07 section 10) lists "skills installer into global ~/.claude/skills" as an anti-pattern; the author's one-link directive (2026-10-02) wins, mitigated by backups, a manifest, refusal on same-named skills, `--scope project`, and exact uninstall.

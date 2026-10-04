@@ -19,7 +19,7 @@ refresh: "re-run the 600-frame fixture locally on the pinned build; read the mod
 | `expires` | see front matter |
 | Non-spending refresh | local fixture re-run (free); `onnxruntime` model files and licences re-read; no cloud |
 
-## 1. Decision for the student repository (default if the owner does not decide: Q8)
+## 1. Decision for the student repository (default if the author does not decide: Q8)
 - **Ship in the repo:** MODNet (Apache-2.0, "bundle-safe") and the native HyperFrames `remove-background` fallback.
 - **RVM (GPL-3.0) is an optional, user-installed plugin, internal-use only** until the GPL question is resolved with counsel. It is never copied into the student download and never imported into repo code (link to install instructions; the student installs it themselves). See `licences-bom-rules.md`.
 - Profile mapping: `matte-fast` (RVM + DirectML/ORT + OpenCV, **internal-only note**; MODNet bundle-safe). *unsupported ≠ missing ≠ error*: a machine without DirectML reports `unsupported` for the fast route and falls back to the native route; the core is never invalidated.

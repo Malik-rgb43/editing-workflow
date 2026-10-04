@@ -7,7 +7,7 @@
 
 ## 0. Why
 
-Every video writes its own timing ledger so the student (and the course) can see **where time and credits actually went** instead of trusting the owner's modelled budgets. The biggest measured waste was work that should not have happened (≈ 14 of ~23 full renders in one premium test), not slow tools — a ledger makes that visible: *full renders per round (target 1)*, queue wait, setup, human active vs blocked time, retries, credits. `[PROVEN-internal]` (src: distilled/03 §0)
+Every video writes its own timing ledger so the student (and the course) can see **where time and credits actually went** instead of trusting the author's modelled budgets. The biggest measured waste was work that should not have happened (≈ 14 of ~23 full renders in one premium test), not slow tools — a ledger makes that visible: *full renders per round (target 1)*, queue wait, setup, human active vs blocked time, retries, credits. `[PROVEN-internal]` (src: distilled/03 §0)
 
 **Unknown = `null`, never `0`.** An unmeasured GPU use or an unavailable price is `null`; "zero metered cash" is not "zero total cost".
 
@@ -19,7 +19,7 @@ One **JSONL** file per project and immutable attempt: `projects/<name>/_work/tim
 
 **Duration fields (seconds):** `queue`, `install`, `download`, `import`, `load`, `decode`, `infer`, `encode`, `upload`, `remote_queue`, `remote_compute`, `poll`, `qa`, `human_active`, `human_wait`, `correction`, `retry`.
 
-**Throughput fields:** `audio_seconds`, `wall_seconds`, `throughput = audio_seconds / wall_seconds` (**audio-seconds per wall-second**, never "×N real time" — the owner's "x2.3 real time" was ambiguous), `processing_ratio = wall_seconds / audio_seconds`, `output_frames`, `inference_frames`, `output_seconds`, `accepted_seconds`, `seconds_per_frame`, `seconds_per_output_second`, WER/CER/timestamp error where measured, a quality acceptance flag.
+**Throughput fields:** `audio_seconds`, `wall_seconds`, `throughput = audio_seconds / wall_seconds` (**audio-seconds per wall-second**, never "×N real time" — the author's "x2.3 real time" was ambiguous), `processing_ratio = wall_seconds / audio_seconds`, `output_frames`, `inference_frames`, `output_seconds`, `accepted_seconds`, `seconds_per_frame`, `seconds_per_output_second`, WER/CER/timestamp error where measured, a quality acceptance flag.
 
 **Cost fields:** pricing date/currency/plan, charged units, minimum/rounding rules, credits consumed, tokens and cache tokens, actual charge or `null`, rejected attempts, energy/labour if measured. Credits, API dollars and invoice cash are **separate wallets**.
 
@@ -48,12 +48,12 @@ One **JSONL** file per project and immutable attempt: `projects/<name>/_work/tim
 ## 3. ETA and heartbeat (feeds the long-job protocol)
 
 - After **one representative unit**: `ETA = fixed_startup + remaining_units × warm_median`, with an uncertainty range from the samples, thermal state and contention. Do not benchmark a short easy unit and extrapolate over a different scene complexity.
-- A heartbeat at a bounded interval carries: completed units, current phase, elapsed, ETA range, resource reservation, cancellation state (a heartbeat is not an extra model call). The owner's protocol: ≈ every 5 minutes, status line to the person every 5–10 minutes.
+- A heartbeat at a bounded interval carries: completed units, current phase, elapsed, ETA range, resource reservation, cancellation state (a heartbeat is not an extra model call). The author's protocol: ≈ every 5 minutes, status line to the person every 5–10 minutes.
 - Existing minimal precedent: `render_lock.log` (JSONL `job, project, wait_s, run_s, end`).
 
 ## 4. Resource admission (proposal, **unmeasured** policy `[IDEA]`)
 
-For a 32 GB machine: keep 8 GB OS/UI headroom; admit ≤ 24 GB summed predicted working set (tightened by measured free memory); default **one heavy compute job**; ≤ 8 physical-core compute threads pending E11-style tuning; GPU reservation includes compositor/UI margin (the one reference machine's 8 GB is nominal, not free); stop admission before paging/VRAM eviction; cold unknown jobs run alone; reserve before spawning, release on **process termination** (not tool timeout). Authoring/research agents may run in parallel with file hand-off; heavy jobs go through the lock. The owner's data show 2× slowdowns and silent stalls when heavy jobs overlap (a Blender run beside a render: 11.5 → 21.5 min on OM). (src: T24 TIMING_LEDGER_SPEC; distilled/03 §0, §8)
+For a 32 GB machine: keep 8 GB OS/UI headroom; admit ≤ 24 GB summed predicted working set (tightened by measured free memory); default **one heavy compute job**; ≤ 8 physical-core compute threads pending E11-style tuning; GPU reservation includes compositor/UI margin (the one reference machine's 8 GB is nominal, not free); stop admission before paging/VRAM eviction; cold unknown jobs run alone; reserve before spawning, release on **process termination** (not tool timeout). Authoring/research agents may run in parallel with file hand-off; heavy jobs go through the lock. The author's data show 2× slowdowns and silent stalls when heavy jobs overlap (a Blender run beside a render: 11.5 → 21.5 min on OM). (src: T24 TIMING_LEDGER_SPEC; distilled/03 §0, §8)
 
 ## 5. What to extract per project (the retro numbers)
 
@@ -68,13 +68,13 @@ For a 32 GB machine: keep 8 GB OS/UI headroom; admit ≤ 24 GB summed predicted 
 | Stage | Current (min) | Target (min) | Label |
 |---|---:|---:|---|
 | intake | 5 | 5 | planning assumption |
-| ASR | 1.533 | 1.533 | 40 × 2.3 / 60; the measured fast route (whisper.cpp Vulkan, 9.78× the same build on CPU on OM, 614 s read-speech corpus, single pass) would be ≈ 0.12 min inference-only — cold start unmeasured |
+| ASR | 1.533 | 1.533 | 40 × 2.3 / 60 |
 | matte | 35 | 6.364 + H | 35 × 10/55 (matte only 8 s + 2 s handles of a 55 s plate); H = range decode/seek + state warm-up + refinement + extra QA, unmeasured |
 | colour | 3 | 3 | internal baseline |
 | asset search | 5 | 5 | planning |
 | authoring | 15 | 15 | planning |
 | human review | 10 | 10 | planning |
-| draft renders | 60 | **0** | owner's review-loop decision (Studio) |
+| draft renders | 60 | **0** | author's review-loop decision (Studio) |
 | final render | 10 | 10 | modelled median |
 | QA | 5 | 5 | planning |
 | **total** | **149.533** | **60.897 + H** (conservative **89.533 = −40.12 %**) | the ≥ 50 % target holds only if H ≤ 13.87 min **and** quality passes; NVIDIA and Apple cells unmeasured |

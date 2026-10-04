@@ -1,0 +1,39 @@
+{
+  "schema": "avc.hf-block/1",
+  "name": "task-steps",
+  "title": "Task steps",
+  "description": "A card with a title and a list of steps that tick off one after another (box fills, check mark draws, text dims). Hebrew or English text.",
+  "duration_s": 4,
+  "size": [
+    1080,
+    1920
+  ],
+  "overlay": false,
+  "variables": [
+    {
+      "id": "title",
+      "type": "string",
+      "default": "Today"
+    },
+    {
+      "id": "steps",
+      "type": "string",
+      "default": "[\"Record\",\"Cut\",\"Colour\",\"Publish\"]"
+    },
+    {
+      "id": "duration",
+      "type": "number",
+      "default": 4
+    }
+  ],
+  "replace": {},
+  "demo_assets": [],
+  "palette": [
+    "--hfb-accent",
+    "--hfb-card",
+    "--hfb-fg",
+    "--hfb-font",
+    "--hfb-muted"
+  ],
+  "license": "Apache-2.0 (written for this toolkit)"
+}

@@ -70,16 +70,16 @@ Gate record → `hf/QA.md` "Gate log". **An approval from a chat that is not the
 
 ## 7. Tool invocations
 
-`ledger` reference checker ([concept-ledger.md](../techniques/concept-ledger.md) §5) · `hyperframes snapshot --at … --describe false` (≤ 5 per call) · `sheet` · `sha256sum` · `grep` for vague words and hex audit · `choice-board` (skill). **Not yet:** `hf_preflight`, `render_lock`-guarded renders, `hf_deliver` — they come after approval.
+`ledger` reference checker ([concept-ledger.md](../techniques/concept-ledger.md) §5) · `hyperframes snapshot --at … --describe false` (≤ 5 per call) · `sheet` · `sha256sum` · `grep` for vague words and hex audit · `visual-choice-board` (skill). **Not yet:** `hf_preflight`, `render_lock`-guarded renders, `hf_deliver` — they come after approval.
 
 ## 8. Per-type deltas
 
 | Type | What the spec adds |
 |---|---|
-| **talking-head** | an **edit spec with timecodes** per range: shot, cut, zoom or punch-in, caption, B-roll beat (chosen by the sentence's meaning), SFX, music; hidden-cut covers (≥ 6 f each side) from `source_cuts`; the camera plan (one smoothed path, **never per-frame face-follow**); the colour plan (the camera original found? `color-correction-speaker`); the cutout beats; pre-roll 6 f on every graded A-roll start; captions (mode, font, rail ≤ y 1450); no AI-looking stills of people |
+| **talking-head** | an **edit spec with timecodes** per range: shot, cut, zoom or punch-in, caption, B-roll beat (chosen by the sentence's meaning), SFX, music; hidden-cut covers (≥ 6 f each side) from `source_cuts`; the camera plan (one smoothed path, **never per-frame face-follow**); the colour plan (the camera original found? `speaker-color-correction`); the cutout beats; pre-roll 6 f on every graded A-roll start; captions (mode, font, rail ≤ y 1450); no AI-looking stills of people |
 | **testimonial** | the claims table (spoken number ↔ proof ↔ timestamp); the soundbite paper edit; the lower-third (once, 1–4 s); split-screen proof layout (screenshot ≈ top 40 %); the consent record path; reorders logged with "still true in new context" |
 | **ad-promo** | the offer ×3 (voice, super, end card) with exact copy; CTA on screen ≥ 6 s; end card 2–3 s (logo, offer, contact, Meta chevron only on Meta cuts); safe-zone overlay stills (hook, price, end card); hook variants as composition variables; the licence row per music/SFX file; compliance rows (claims, before/after, reviews) |
-| **motion-graphics** | the **three tables**; the Banned list incl. accent-before-reveal; transition table with a different technique per seam; the music edit plan (take-away 4–12 f, drop on the reveal, ring-out); synthesised SFX with times; the VO lexicon; per-beat 3D decision with a reason (Blender for photoreal hero objects; Three.js for procedural/data-driven/many instances/editable 3D UI; 2.5D when ETA > 30 min — [2-5d.md](../techniques/2-5d.md)) |
+| **motion-graphics** | the **three tables**; the Banned list incl. accent-before-reveal; transition table with a different technique per seam; the music edit plan (take-away 4–12 f, drop on the reveal, ring-out); synthesised SFX with times; the VO lexicon; per-beat 3D decision with a reason (Blender for photoreal hero objects; Three.js for procedural/data-driven/many instances/editable 3D UI) |
 | **ai-generated** | **shot cards** (what is seen and why; references; START image prompt; VIDEO prompt in the fixed order Camera → Action → Light → Detail → BASE; the clean window; the transition; the sound; risk + fallback); a STYLE PREFIX; character/environment locks; a budget in **units, no prices** until the estimate; the `AIDISC` plan |
 | **podcast-clip** | one edit spec per approved clip (title bar text, layout TRACK/SPLIT/GRID, switch points with ≥ 1.5 s hysteresis, caption colours per speaker, B-roll only for a concrete reference) |
 

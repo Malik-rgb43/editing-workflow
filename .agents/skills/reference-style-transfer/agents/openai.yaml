@@ -1,5 +1,0 @@
-interface:
-  display_name: "Reference Style Transfer"
-  short_description: "Make the user's footage, script or topic in the style of a reference video: measure it into a Style DNA card, map it ont"
-policy:
-  allow_implicit_invocation: false

@@ -1,0 +1,5 @@
+interface:
+  display_name: "Image Prompt Writer"
+  short_description: "Write copy-ready text-to-image prompts for the stills-first stage of a video: keyframes, start frames, hero frames, char"
+policy:
+  allow_implicit_invocation: false

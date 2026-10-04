@@ -1,7 +1,7 @@
 # ADR 0005 - Who owns what: `claude-code-setup` prepares Claude Code, `editing-workflow` owns editing
 
 - Status: accepted (owner directive, 2026-10-03). **Supersedes ADR 0003** (installer and catalogue in the setup repository, editing repository fetched at a pinned tag).
-- Context: the first split put the installer, the MCP / CLI / API catalogue and the install questions in `claude-code-setup`, and the skills and tools in `editing-workflow`. In practice almost everything the installer does is about editing (hardware detection for transcription and rendering, the editing skills, the HyperFrames engine, editing MCP servers, paid providers). Claude Code itself needs only three things. The owner asked for the split to follow that line.
+- Context: the first split put the installer, the MCP / CLI / API catalogue and the install questions in `claude-code-setup`, and the skills and tools in `editing-workflow`. In practice almost everything the installer does is about editing (hardware detection for transcription and rendering, the editing skills, the HyperFrames engine, editing MCP servers, paid providers). Claude Code itself needs only three things. The author asked for the split to follow that line.
 
 ## Decision
 | | `claude-code-setup` (repository 1) | `editing-workflow` (repository 2) |

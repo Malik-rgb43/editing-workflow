@@ -2,9 +2,9 @@
 
 Python 3.12, standard library only. Every script has a `Usage:` docstring, answers `--help` instantly, exits non-zero on failure
 and is fail-closed: a gate that cannot run reports `NOT_RUN`, never `PASS`. Nothing here calls a model, uses the network, spends
-money or uploads anything (decision default Q4: no model evaluation without the owner's approval; money rule: free and local only).
+money or uploads anything (decision default Q4: no model evaluation without the author's approval; money rule: free and local only).
 
-Status of this directory (2026-10-02): the scripts and their unit tests (`tests/unit/test_scripts_*.py`) were run on the owner's
+Status of this directory (2026-10-02): the scripts and their unit tests (`tests/unit/test_scripts_*.py`) were run on the author's
 one reference machine only. macOS and Linux are covered by the CI lane in `.github/workflows/ci.yml`, which has **not run yet**.
 
 ## Quick start
@@ -23,8 +23,8 @@ All checks accept `--root DIR` and `--json`. Output is UTF-8; matched private/se
 |---|---|
 | `check_skills.py` | every `agent-content/skills/*/SKILL.md`: portable frontmatter keys, `name == folder`, kebab-case, description <= 1024 chars (warn > 500, warn on workflow-summary wording, Hebrew triggers and NOT-for expected), body <= 300 lines (warn > 180), reference links resolve, every reference has a `load when` line, `evals/triggers.jsonl` (>= 8 positive incl. Hebrew, >= 4 negative incl. Hebrew), `evals/tasks.md` (>= 3 tasks), `metadata.version` quoted semver, no private paths/secrets |
 | `scan_secrets.py` | key/token/private-key patterns and secret-bearing file names; allowlist `scripts/secrets_allowlist.txt` |
-| `scan_private.py` | private paths (Windows/macOS/Linux user homes, the owner's course folder), the private research-material folder, personal e-mail addresses, plus a client-name denylist from the LOCAL, git-ignored `scripts/private_denylist.txt` (example: `private_denylist.example.txt`). Without a denylist that part is `NOT_RUN` (never silently PASS); `--require-denylist` makes it a FAIL (release builds) |
-| `gen_bom.py` | file-level bill of materials (`docs/BOM.json`, `docs/BOM.md`) from the actual tree and `licenses.toml`; fails on blocked components (Mixkit/Eleven/Artlist/Suno, Adobe/Apple fonts, FFmpeg binaries, ivrit.ai ONNX, Depth Anything Base/Large/Giant, Hunyuan 3D 2.1, RVM, Ultralytics, ...) and on any file without a declared licence; optional register reconciliation; `--update-notices` refreshes the generated block of `THIRD_PARTY_NOTICES.md` |
+| `scan_private.py` | private paths (Windows/macOS/Linux user homes, the author's course folder), the private research-material folder, personal e-mail addresses, plus a client-name denylist from the LOCAL, git-ignored `scripts/private_denylist.txt` (example: `private_denylist.example.txt`). Without a denylist that part is `NOT_RUN` (never silently PASS); `--require-denylist` makes it a FAIL (release builds) |
+| `gen_bom.py` | file-level bill of materials (`docs/BOM.json`, `docs/BOM.md`) from the actual tree and `licenses.toml`; fails on blocked components (Mixkit/Eleven/Artlist/Suno, Adobe/Apple fonts, FFmpeg binaries, ivrit.ai ONNX, Hunyuan 3D 2.1, RVM, Ultralytics, ...) and on any file without a declared licence; optional register reconciliation; `--update-notices` refreshes the generated block of `THIRD_PARTY_NOTICES.md` |
 | `build_agent_adapters.py` | generates `.claude/skills/<name>/` and `.agents/skills/<name>/` as byte-identical copies of `agent-content/skills/<name>/` (+ a never-hand-edit marker and a Codex `agents/openai.yaml` stub with implicit invocation disabled); `--check` is the package-parity gate |
 | `gen_system_md.py` | `SYSTEM.md` catalogue from skills/playbooks/techniques/benchmarks/references frontmatter and tool docstrings |
 | `gen_tools_md.py` | `docs/TOOLS.md` from `tools/*.py` `Usage:` docstrings (parsed with `ast`, never executed) |

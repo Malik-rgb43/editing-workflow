@@ -6,15 +6,15 @@
 | Field | Value |
 |---|---|
 | Stage | 6 of 9 |
-| Owner skill | `render-qa-deliver` (+ [cheap-first-qa.md](../techniques/cheap-first-qa.md), [studio-review-loop.md](../techniques/studio-review-loop.md), [visual-review-4-axis.md](../benchmarks/visual-review-4-axis.md), [critic-brief.md](../benchmarks/critic-brief.md)) |
+| Owner skill | `render-qa-delivery` (+ [cheap-first-qa.md](../techniques/cheap-first-qa.md), [studio-review-loop.md](../techniques/studio-review-loop.md), [visual-review-4-axis.md](../benchmarks/visual-review-4-axis.md), [critic-brief.md](../benchmarks/critic-brief.md)) |
 | Artifacts (exact files) | `_work/drafts/<name>_draft_<aspect>.mp4` (the **one** full render of the round — never in `final/`), `_work/qa/<ver>/` (frame sheets, QA envelopes, `review_*.md`, `critic<N>/report.json`), `hf/QA.md` (ledger ticks with evidence + the gate log), `_work/timing_ledger.jsonl` lines, `_work/STATE.md` |
 | Exit gate | **G6 — 0 flags; no blocker/major; rubric ≥ 4.0 with no dimension < 3; every hard gate ≥ 3; every ledger row ticked** |
 | Target time | **30–45 min** (owner target); the machine stages are measured on OM (§3) |
-| Paid steps | none by default. A paid API critic or hosted render 💲 needs a dated estimate and approval (`paid-generation-gate`); **no automatic escalation to a second paid provider** |
+| Paid steps | none by default. A paid API critic or hosted render 💲 needs a dated estimate and approval (`paid-spend-gate`); **no automatic escalation to a second paid provider** |
 
 ## 1. Principle
 
-**Cheap first, minutes last: seconds-level checks first; verify on ranges; render the whole film ONCE per round.** (23 full renders in one 40 s premium test, about 9 needed, ≈ 2.3 h wasted.) **A pass must mean the declared test ran on its coverage** — never "zero findings" from an empty sample, a missing input, a disabled check or a crashed tool; those are `not_run` / `unsupported` / `INSUFFICIENT_EVIDENCE` / `error` and they **block**. `[RULE-owner]` `[MEASURED-lab]` (E04 reproduced eight false-success paths in the owner's own tools).
+**Cheap first, minutes last: seconds-level checks first; verify on ranges; render the whole film ONCE per round.** (23 full renders in one 40 s premium test, about 9 needed, ≈ 2.3 h wasted.) **A pass must mean the declared test ran on its coverage** — never "zero findings" from an empty sample, a missing input, a disabled check or a crashed tool; those are `not_run` / `unsupported` / `INSUFFICIENT_EVIDENCE` / `error` and they **block**. `[RULE-owner]` `[MEASURED-lab]` (E04 reproduced eight false-success paths in the author's own tools).
 
 ## 2. Entry gate (stage 0 — readiness)
 
@@ -64,7 +64,7 @@ Thresholds are **house presets** (`bands.json` → `qa_tool_thresholds`). Every 
 ### 3.3 Stages 7–8 — review and critic
 
 1. **Four axes** ([visual-review-4-axis.md](../benchmarks/visual-review-4-axis.md)) on the `frame_qa` sheets. **Scale to the film: under 20 s a self-review; 20 s or more or a client delivery → ONE reviewer, continued between rounds; derivatives axes 1 and 4 only** (4 agents × every frame × 4 rounds burned the quota in two sessions) `[CONFLICT]` resolved to the later rule.
-2. **Independent critic** per the type rubric ([critic-brief.md](../benchmarks/critic-brief.md)): a separate agent that did not build the film; given the owner's past notes; coverage declared; **round ≥ 2 reviews changed ranges only**; max 3 rounds then present with open gaps.
+2. **Independent critic** per the type rubric ([critic-brief.md](../benchmarks/critic-brief.md)): a separate agent that did not build the film; given the author's past notes; coverage declared; **round ≥ 2 reviews changed ranges only**; max 3 rounds then present with open gaps.
 3. **Concept-fidelity gate:** fill `hf/QA.md` for **every ledger row** — `| ID | check result | at (s/frame) | evidence | ok / x / n/a / not_run |` using the check kinds in [concept-ledger.md](../techniques/concept-ledger.md) §2. An `x` is fixed, or listed as a numbered gap with the reason — never silent.
 4. **Wait for ALL reviewers** before any patch or render (a render was killed because it started for one fix while two reviewers were still running). A critic that finds something new that a static check could have found ⇒ **add that check to stage 1**.
 5. **One fix round:** merge all reports into one numbered list in `CHANGELOG.md` (an intent change goes to PROMPT.md first); ONE patch; stages 1–4 on touched ranges; **one** more full render; QA and review only on the corrected ranges (the same reviewers verify their own findings).
@@ -74,7 +74,7 @@ Thresholds are **house presets** (`bands.json` → `qa_tool_thresholds`). Every 
 **The person must never have to ask "what about the render?"** — if they did, that is a protocol failure, logged in the retro.
 
 1. **Benchmark one unit** (a segment, one scene, one second of image-to-video, one frame of matte); the rate comes from that. Do not benchmark a short easy unit and extrapolate over a different scene complexity.
-2. **One-line ETA in chat before starting**, e.g. `full render: about 11 min (1520 frames, 2.3 fps), done at 14:32`. An ETA above **30 min for one shot** → propose an alternative **before** starting (2.5D instead of local image-to-video: 17 min for 2 s on OM). ETA formula: `fixed startup + remaining units × warm median` with a range.
+2. **One-line ETA in chat before starting**, e.g. `full render: about 11 min (1520 frames, 2.3 fps), done at 14:32`. An ETA above **30 min for one shot** → propose an alternative **before** starting (a shorter shot or a hosted quote instead of local image-to-video: 17 min for 2 s on OM). ETA formula: `fixed startup + remaining units × warm median` with a range.
 3. **`timeout` on every command:** `check` 900 s; a render **3× the ETA**.
 4. **Background with a log and a state line:** run detached, output to `_work/<job>.log`, and a line in `_work/STATE.md` (what runs, which file will result, the next step) so "continue" after an interruption is one step.
 5. **Heartbeat** about every 5 minutes (tail the log / a monitor); with the person present, a status line every 5–10 minutes (`render 62 % (940/1520), about 4 min left`).
@@ -113,7 +113,7 @@ Gate record → `hf/QA.md` "Gate log". **`PASS` from `hf_deliver` proves mux, lo
 | a full render was wasted | a note arrived mid-render; a render started while reviewers ran | collect notes; wait for reviewers | §3.3 step 4 |
 | `check` hangs > 10 min | a leftover headless browser after a stop | kill your own tree, rerun once | `timeout 900` |
 | a tool exits 0 though nothing was checked | missing input / empty decode | explicit statuses | E04 positive controls |
-| the critic passes what the owner rejects | not briefed with the owner's past notes; anchored | add the clean-smooth table; blinded audit | critic-brief |
+| the critic passes what the author rejects | not briefed with the author's past notes; anchored | add the clean-smooth table; blinded audit | critic-brief |
 | session usage limit stopped work | too many parallel agents | resume from `STATE.md` | ≤ 4 agents, ≤ 2 sub-agents each |
 
 ## 8. Per-type deltas (type-specific QA)
@@ -122,7 +122,7 @@ Gate record → `hf/QA.md` "Gate log". **`PASS` from `hf_deliver` proves mux, lo
 |---|---|
 | **talking-head** | `face_center audit` 0 ranges (tolerance 30 px, whole film); `motion_qa` 0 ranges; `color_check`; `source_cuts` before the build and a cover check; the assembled-VO `join_diff`; `caption_qa --band <top>:1450`; caption-vs-mouth and overlay-vs-face overlap per frame; a stock audit (foreign text/locale; a stranger under "I" is a credibility gate) |
 | **testimonial** | the claims table: every spoken number is on screen and every proof matches; consent record; no altered screenshots; the opening is the result; `caption_qa`; noise/mix listening |
-| **ad-promo** | mute test; safe-zone overlay snapshots at hook, offer and end card; the offer ×3; music/SFX licence rows; `hf_deliver` TP gate (the owner's own ads had 7 of 10 at ≥ 0 dBTP); compliance rows; hook variants checked per output |
+| **ad-promo** | mute test; safe-zone overlay snapshots at hook, offer and end card; the offer ×3; music/SFX licence rows; `hf_deliver` TP gate (the author's own ads had 7 of 10 at ≥ 0 dBTP); compliance rows; hook variants checked per output |
 | **motion-graphics** | the **three tables** are the QA checklist; snapshots of **every** transition; a beat test (hit offsets in frames); event gaps ≤ the ledger value; `motion_qa` candidates confirmed on frames (UI builds read as jitter); no accent before its frame |
 | **ai-generated** | every take at 1× and on frames at every transformation (hands, bones, text, product); `TAKES.md` windows used; native fps preserved; one look; the disclosure row; spend log matches the approvals |
 | **podcast-clip** | the stand-alone gate per clip; face/caption safety per layout switch; hysteresis ≥ 1.5 s; per-speaker levels |

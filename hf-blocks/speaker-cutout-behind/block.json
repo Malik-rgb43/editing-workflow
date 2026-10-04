@@ -1,0 +1,48 @@
+{
+  "schema": "avc.hf-block/1",
+  "name": "speaker-cutout-behind",
+  "title": "Speaker cutout with text behind",
+  "description": "Layering for a beat that puts graphics behind the speaker: plate video, dim, giant text, then the speaker cutout (alpha) on top.",
+  "duration_s": 3,
+  "size": [
+    1080,
+    1920
+  ],
+  "overlay": false,
+  "variables": [
+    {
+      "id": "text",
+      "type": "string",
+      "default": "FOCUS"
+    },
+    {
+      "id": "size",
+      "type": "number",
+      "default": 230
+    },
+    {
+      "id": "dim",
+      "type": "number",
+      "default": 0.45
+    },
+    {
+      "id": "duration",
+      "type": "number",
+      "default": 3
+    }
+  ],
+  "replace": {
+    "plate": "assets/video/plate.mp4",
+    "cutout": "assets/video/cutout.webm"
+  },
+  "demo_assets": [
+    "assets/video/plate.mp4",
+    "assets/video/cutout.webm"
+  ],
+  "palette": [
+    "--hfb-accent",
+    "--hfb-fg",
+    "--hfb-font"
+  ],
+  "license": "Apache-2.0 (written for this toolkit)"
+}

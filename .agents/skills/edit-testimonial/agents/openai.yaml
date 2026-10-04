@@ -1,5 +1,0 @@
-interface:
-  display_name: "Edit Testimonial"
-  short_description: "Edit a customer testimonial, client review, student success story or case-study video from consented interview, Zoom or "
-policy:
-  allow_implicit_invocation: false

@@ -19,7 +19,7 @@ refresh: "read-only: open each official help page (URLs below), compare, and run
 | `expires` | see front matter; also expires on any announced policy change |
 | Non-spending refresh | open the URLs in section 3; for gaps (marked **gap**) check yourself and write the date; perform the device overlay test (section 7); no uploads of unreleased client work |
 
-**Keep three things apart** (and in three places): (a) the **house export preset** = the owner's choice; (b) each platform's **documented maximum/recommendation** = dated, with source; (c) the **route** = organic, auction ad, Spark, Sponsored Content, API/web, Studio. One "limit map" per platform erases real boundaries: LinkedIn organic allows 60 fps while LinkedIn ads say "less than 30 FPS"; X web allows 16 GB while Media Studio allows 8 GB. A documentary maximum is **not** an acceptance guarantee; a recommended bitrate is not a rejection threshold. `[VERIFIED-external]`
+**Keep three things apart** (and in three places): (a) the **house export preset** = the author's choice; (b) each platform's **documented maximum/recommendation** = dated, with source; (c) the **route** = organic, auction ad, Spark, Sponsored Content, API/web, Studio. One "limit map" per platform erases real boundaries: LinkedIn organic allows 60 fps while LinkedIn ads say "less than 30 FPS"; X web allows 16 GB while Media Studio allows 8 GB. A documentary maximum is **not** an acceptance guarantee; a recommended bitrate is not a rejection threshold. `[VERIFIED-external]`
 
 ## 1. House delivery preset v1 `[RULE-owner]` (decision default Q5: a named preset, not a platform law)
 | Aspect | Canvas | Use |
@@ -31,10 +31,10 @@ refresh: "read-only: open each official help page (URLs below), compare, and run
 
 H.264, SDR, yuv420p, AAC 48 kHz 320 k. **30 fps** default; AI-generated video keeps the generation's native fps; 60 only when the source is truly 60 (a 60 fps source shown at 30 is rendered at 30). Social renders use `--sdr` (an HDR source such as an iPhone or generated clip otherwise exports HEVC 10-bit and platform colours wash out) `[PROVEN-internal]`. Master loudness **−14 LUFS integrated, true peak ≤ −1 dBTP** (mix intermediate −1.5), always **measured on the final file** — see `audio-mix.md`. Each ratio is designed separately, never a blind crop. Finals folder = finals + `manifest.json` (which source hash each file was rendered from). Naming: `<name>_9x16.mp4`, `_4x5`, `_1x1`, `_16x9`; hook variants `<name>_<platform>_hookA_9x16.mp4`.
 
-Width-1080 encoder trap `[PROVEN-internal]`, `[LOCAL-only: HyperFrames 0.8.x on Windows]`: the encoder blackened the last 8 columns (x 1072-1079) of 1080-wide renders; the owner authors the root at **1088** with `data-deliver-width="1080"` and crops. **Not re-tested on 0.8.98 — re-verify per version** (see `hyperframes-traps.md`).
+Width-1080 encoder trap `[PROVEN-internal]`, `[LOCAL-only: HyperFrames 0.8.x on Windows]`: the encoder blackened the last 8 columns (x 1072-1079) of 1080-wide renders; the author authors the root at **1088** with `data-deliver-width="1080"` and crops. **Not re-tested on 0.8.98 — re-verify per version** (see `hyperframes-traps.md`).
 
 ## 2. House safe zones v1 `[RULE-owner]`, per-platform inputs `[SOURCED-unverified]`
-**Teach as a conservative union validated only by the owner's own deliveries; the overlay exercise (section 7) is how a student proves or corrects it.**
+**Teach as a conservative union validated only by the author's own deliveries; the overlay exercise (section 7) is how a student proves or corrects it.**
 
 | Ratio / canvas | Key text, CTA, logo, price, number must stay inside | Caption rail |
 |---|---|---|
@@ -42,7 +42,7 @@ Width-1080 encoder trap `[PROVEN-internal]`, `[LOCAL-only: HyperFrames 0.8.x on 
 | 16:9, 1920×1080 | x ≤ 1824 (right margin 96); bottom 162; top 54; left 96 | — (a stricter limit for one project is a project choice written in its `DESIGN.md`) |
 | 4:5 and 1:1 | 54 px each side | — |
 
-Owner's per-platform inputs behind the 9:16 union (px margins, "checked 2026-09" by the owner; **research could not verify any video safe-zone rectangle**): Meta Reels/Stories/feed top 270 / bottom 672 / sides 65; TikTok In-Feed top 150 / bottom 480 / left 60 / right 140; YouTube Shorts top 288 / bottom 672 / left 48 / right 192. A Meta 9:16 ad shown in feed is cropped to 4:5 (285 px top and bottom), hence logo bug top 300. Hebrew-audience TikTok: keep **140 px on both sides** (the owner's rule; research: TikTok's RTL template is for Arabic-region only, Hebrew text alone does not select it — `[CONFLICT]`, resolved conservatively, to be settled by a Hebrew-UI device screenshot `[IDEA]`).
+Owner's per-platform inputs behind the 9:16 union (px margins, "checked 2026-09" by the author; **research could not verify any video safe-zone rectangle**): Meta Reels/Stories/feed top 270 / bottom 672 / sides 65; TikTok In-Feed top 150 / bottom 480 / left 60 / right 140; YouTube Shorts top 288 / bottom 672 / left 48 / right 192. A Meta 9:16 ad shown in feed is cropped to 4:5 (285 px top and bottom), hence logo bug top 300. Hebrew-audience TikTok: keep **140 px on both sides** (the author's rule; research: TikTok's RTL template is for Arabic-region only, Hebrew text alone does not select it — `[CONFLICT]`, resolved conservatively, to be settled by a Hebrew-UI device screenshot `[IDEA]`).
 
 Recorded tensions (do not hide them): the caption-rail exception lets captions sit inside the documented Meta/Shorts bottom exclusion (owner decision, never device-validated); the master over-protects TikTok (its own bottom figure is 480). Required evidence row for any future numeric claim: platform, organic/paid, placement, app version, OS, physical viewport, video raster, caption lines, CTA, LTR/Arabic-RTL region, template date, normalised rectangle, screenshot date. A generated overlay is **proposed** until checked on that exact viewport. Check with `hyperframes snapshot --at <hook>,<offer>,<endcard> --describe false` (≤ 5 timestamps per call) and `caption_qa --band <top>:1450`.
 

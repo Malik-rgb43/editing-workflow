@@ -186,9 +186,6 @@ audio = [
     { name = "pyloudnorm" },
     { name = "soundfile" },
 ]
-depth = [
-    { name = "onnxruntime" },
-]
 matte-ort = [
     { name = "numba" },
     { name = "onnxruntime" },
@@ -213,7 +210,6 @@ requires-dist = [
     { name = "matplotlib", marker = "extra == 'plots'", specifier = ">=3.9" },
     { name = "numba", marker = "extra == 'matte-ort'", specifier = ">=0.60" },
     { name = "numpy", specifier = ">=2.0" },
-    { name = "onnxruntime", marker = "extra == 'depth'", specifier = ">=1.20" },
     { name = "onnxruntime", marker = "extra == 'matte-ort'", specifier = ">=1.20" },
     { name = "opencv-python-headless", marker = "extra == 'opencv'", specifier = ">=5.0" },
     { name = "pillow", specifier = ">=10.1" },
@@ -221,7 +217,7 @@ requires-dist = [
     { name = "scipy", marker = "extra == 'matte-ort'", specifier = ">=1.13" },
     { name = "soundfile", marker = "extra == 'audio'", specifier = ">=0.12" },
 ]
-provides-extras = ["opencv", "plots", "audio", "asr-cpu", "matte-ort", "depth"]
+provides-extras = ["opencv", "plots", "audio", "asr-cpu", "matte-ort"]
 
 [package.metadata.requires-dev]
 dev = [

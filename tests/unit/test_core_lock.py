@@ -1,6 +1,6 @@
 """lock.py: kernel-lock ownership, advisory sidecar, no takeover, heartbeat, crash recovery.
 
-Regression tests for the TWO races reproduced against the owner's original ``render_lock`` (frontier F31, blueprint
+Regression tests for the TWO races reproduced against the author's original ``render_lock`` (frontier F31, blueprint
 TOOLS_SPEC section 2):
 
 1. ``test_two_processes_never_both_enter`` - the non-atomic read-before-write race: two real processes both saw "no owner"
@@ -372,7 +372,7 @@ def test_control_naive_read_then_write_design_admits_two_owners(tmp_path):
     """Why a kernel lock: the ORIGINAL design (read owner file; if none/old, write ourselves) lets two contenders in.
 
     Both threads read 'no owner' before either writes (forced with a barrier, exactly the interleaving F31 injected into
-    the owner's tool). The same test applied to ``core.lock`` is the real-process race above, where it cannot happen.
+    the author's tool). The same test applied to ``core.lock`` is the real-process race above, where it cannot happen.
     """
     owner = tmp_path / "naive.owner"
     barrier = threading.Barrier(2)

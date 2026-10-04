@@ -49,20 +49,19 @@ def test_asr_cpu_addon_creates_separate_env_pins_package_and_records_it(env):
 
 
 def test_model_weights_are_listed_but_never_downloaded(env):
-    rc, plan = env.json("plan", "--with", "asr-vulkan")
+    rc, plan = env.json("plan", "--with", "asr-cpu")
     assert any("NOT downloaded by bootstrap" in d["what"] for d in plan["downloads"])
-    rc, out = env.json("apply", "--yes", "--with", "asr-vulkan")
+    rc, out = env.json("apply", "--yes", "--with", "asr-cpu")
     assert not [c for c in env.fake.calls if any("huggingface" in a for a in c)]
 
 
-def test_native_plugins_are_reported_for_manual_install_only(env):
-    rc, plan = env.json("plan", "--profile", "pro", "--with", "nle-premiere,nle-ae,blender")
-    ids = {r["id"] for r in plan["by_hand_plugins"]}
-    assert {"nle-premiere", "nle-ae"} <= ids
+def test_blender_bridge_is_never_auto_connected(env):
+    rc, plan = env.json("plan", "--profile", "pro", "--with", "blender")
+    assert not [r for r in plan["by_hand_plugins"]]  # no native plugins are offered any more
     blender = [m for m in plan["mcp"] if m["id"] == "blender-mcp"]
     assert blender and blender[0]["register"] == "manual"  # port 9876 has no authentication: never auto-connected
-    rc, out = env.json("apply", "--yes", "--profile", "pro", "--with", "nle-premiere,blender")
-    assert not [c for c in env.fake.calls if "blender" in " ".join(c).lower() and "mcp" in c and "add" in c]
+    rc, out = env.json("apply", "--yes", "--profile", "pro", "--with", "blender")
+    assert not [c for c in env.fake.calls if "mcp" in c and "add" in c and ("avc-blender" in c or "mcp-for-blender" in " ".join(c))]
 
 
 def test_existing_toolkit_local_toml_written_by_the_user_is_not_overwritten(env):

@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """cut_regression.py - score detected edit points against hand-verified ground truth (the G4 regression gate).
 
-Why: a change to a cut-detector threshold must never be judged by eye. The owner's detector reached
-F1 0.89 (precision 0.87, recall 0.91) on 20 hand-verified ads, 339 edit points (the owner's private
+Why: a change to a cut-detector threshold must never be judged by eye. The author's detector reached
+F1 0.89 (precision 0.87, recall 0.91) on 20 hand-verified ads, 339 edit points (the author's private
 set, not reproduced here). A port must hold at least its own recorded baseline on a rights-cleared
 labelled set; this script computes the numbers and fails closed.
 
@@ -34,7 +34,7 @@ from pathlib import Path
 
 VERSION = "0.1.0"
 OWNER_BASELINE = {"f1": 0.89, "precision": 0.87, "recall": 0.91, "videos": 20, "edit_points": 339,
-                  "source": "distilled 06 reference-analysis §1.2 (checked 2026-10-01); owner's private set, not reproduced"}
+                  "source": "distilled 06 reference-analysis §1.2 (checked 2026-10-01); author's private set, not reproduced"}
 
 
 def _load(p: Path):
@@ -117,7 +117,7 @@ def run(pairs, tol, min_f1, min_recall, min_truth, include_check):
     out = {"tool": "cut_regression", "version": VERSION, "pairs": len(pairs), "truth_points": n_truth, "tolerance_frames": tol,
            "by_tolerance": table, "gate": {"min_f1": min_f1, "min_recall": min_recall, "min_truth": min_truth},
            "owner_baseline": OWNER_BASELINE,
-           "limits": ["0.89 is a historical number on the owner's private 20-ad set, not reproduced; hold the baseline recorded for YOUR labelled set",
+           "limits": ["0.89 is a historical number on the author's private 20-ad set, not reproduced; hold the baseline recorded for YOUR labelled set",
                       "kinetic-type / continuous-camera references hide graphic transitions from the detector (known blind spot)",
                       "'check' points (jump cut vs graphic swap) are excluded unless --include-check; decide them from the frames"]}
     if n_truth < min_truth:
