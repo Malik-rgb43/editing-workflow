@@ -1,7 +1,7 @@
 ---
 name: reference-style-matching
 description: >-
-  Make the user's footage, script or topic in the style of a reference video: measure it into a Style DNA card, map it onto the user's material, offer three ways to apply it (Faithful / Elevated / Twist); grammar, never assets. Triggers: in the style of, like this video, match this edit, a reference link or file; בסגנון של, רפרנס, תעשה כמו הסרטון הזה, אותו סגנון. NOT for plain analysis (video-analysis), reusing a reference's footage, music or logos (refused), or building the edit (`pro-video-editor`).
+  Make the user's footage, script or topic in the style of a reference video: measure it into a Style DNA card, map it onto the user's material, offer three ways to apply it (Faithful / Elevated / Twist); grammar, never assets. Triggers: in the style of, like this video, match this edit, a reference link or file; בסגנון של, רפרנס, תעשה כמו הסרטון הזה, אותו סגנון. NOT for plain analysis (video-analysis), reusing its footage, music or logos (refused), or building the edit (`pro-video-editor`).
 compatibility: >-
   Needs the video-analysis skill and its tool; scripts/px_measure.py needs ffmpeg on PATH; the other scripts need only Python 3.9+. Analysis speed (9-23 min per video under load) is the author's batch observation on one reference machine.
 metadata:

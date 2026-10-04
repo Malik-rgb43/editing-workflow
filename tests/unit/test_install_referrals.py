@@ -96,3 +96,11 @@ def test_the_installer_never_adds_referral_parameters_to_connector_commands():
         m = e.get("mcp") or {}
         for v in [m.get("url", "")] + [i.get("command", "") for i in (e.get("install") or {}).values()]:
             assert not re.search(r"(?i)(ref=|referral|affiliate|aff_id)", v or ""), e["id"]
+
+
+def test_tripo_is_its_own_connectable_entry_with_the_same_signup(env):
+    rc, out = env.json("add", "tripo")
+    assert rc == 0
+    res = out["results"][0]
+    assert res["id"] == "tripo" and res["kind"] == "mcp" and res["gate"] == "paid-spend-gate"
+    assert {s["service"] for s in res["signup"]} == {"Tripo (3D generation)"}

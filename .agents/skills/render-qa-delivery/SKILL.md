@@ -1,7 +1,7 @@
 ---
 name: render-qa-delivery
 description: >-
-  Run the cheap-first render, QA and delivery pipeline for a HyperFrames video: preflight, range renders, one full render, final-file loudness and mux, every-frame QA, visual review, manifest, timing ledger. Triggers: רינדור, תריץ בדיקה לפני רינדור, מסירה, בדוק את כל הפריימים, render the final, run QA on this render, deliver the 9:16 version, present the draft. NOT for creative decisions (`pro-video-editor`), client notes (revision-notes-handler), or variants of one master (video-variants-exporter).
+  Run the cheap-first render, QA and delivery pipeline for a HyperFrames video: preflight, range renders, one full render, final-file loudness and mux, every-frame and visual QA, manifest, timing ledger. Triggers: רינדור, תריץ בדיקה לפני רינדור, מסירה, בדוק את כל הפריימים, render the final, run QA on this render, deliver the 9:16 version, present the draft. NOT for creative decisions (`pro-video-editor`), client notes (revision-notes-handler), or variants of one master (video-variants-exporter).
 compatibility: >-
   Needs ffmpeg/ffprobe, Python 3.12 and a HyperFrames CLI pinned per project; scripts are stdlib only. Render times and traps are measured or reported on one reference machine with HyperFrames 0.8.79-0.8.98; re-verify per version.
 metadata:

@@ -5,6 +5,7 @@
 > Evidence tags: `[VERIFIED-external]` confirmed against a primary source and re-checked · `[SOURCED-unverified]` one source, not re-checked · `[IDEA]` a proposal · `[MEASURED-lab]` measured in the research (not used for legal points). Source pointers are to the research record (`distilled/08`, `T18`) and to the official pages named in the text.
 
 <a id="scope"></a>
+<!-- step: legal-guide-01 -->
 ## 1. What this guide is and is not
 
 **It is:** a map of the questions a professional AI video editor must be able to answer, with the current official positions we found, their dates and their limits. **It is not:** a contract, a release form, a licence, an opinion on your project, or a promise that anything listed is safe. Where we found no source, we say "not found" instead of guessing.
@@ -12,6 +13,7 @@
 How to use it: read sections 2-5 once; use sections 6-10 when a project touches AI output, disclosure, client footage, voices or music; use section 11 when you write or review a client agreement; use section 12 before you deliver or publish. Section 14 lists what the research could not verify.
 
 <a id="six-questions"></a>
+<!-- step: legal-guide-02 -->
 ## 2. The six rights questions — keep them separate
 
 Every asset, model output and delivery raises six different questions. A paid plan answers **at most the first one**.
@@ -28,6 +30,7 @@ Every asset, model output and delivery raises six different questions. A paid pl
 A rendered MP4, an editable project, a template, a model checkpoint and a repository asset are **different deliverables with different rights**. For every asset, model and font keep a record: source, file hash, rightsholder, licence name and version, account plan, date obtained, permitted media, territory, term, required credit, and where the evidence is stored. `[IDEA]` (src: T18 LEGAL_GUIDE §1)
 
 <a id="repo-contents"></a>
+<!-- step: legal-guide-03 -->
 ## 3. What the repository may and may not contain
 
 The course repository is distributed to students, so the strictest question (6) applies to everything in it. `[SOURCED-unverified]` (src: blueprint SECURITY_AND_LICENSING §2)
@@ -41,6 +44,7 @@ The course repository is distributed to students, so the strictest question (6) 
 **Before every release** the maintainers generate a file-level bill of materials from the actual pinned tree, reconcile it with the research register, close every unresolved row the tree contains, include notices, and test that no restricted stock, client recording, proprietary font or unlicensed checkpoint entered the download. As of 2026-10-01 **none of the 392 register rows was cleared** and 114 were unresolved, so the default is *link, not bundle*. (The register is a candidate list, not a software bill of materials.)
 
 <a id="licence-obligations"></a>
+<!-- step: legal-guide-04 -->
 ## 4. What each kind of licence asks of you
 
 | Licence | You must | You must not |
@@ -57,11 +61,13 @@ The course repository is distributed to students, so the strictest question (6) 
 Examples from the research (dated 2026-10-01, `[SOURCED-unverified]` unless marked): HyperFrames is Apache-2.0; three.js and shadcn/ui core are MIT; **GSAP is under its own no-charge licence, not MIT**, and a competing visual animation builder needs written consent; **Remotion has a custom licence** (free for qualified individuals and very small for-profits; version-5 terms were announced as "upcoming") `[VERIFIED-external]`; FFmpeg is LGPL 2.1+ at baseline, with optional GPL or non-free parts; Tencent Hunyuan 3D 2.1 excludes the EU, UK and South Korea; the person-matting model RVM is GPL-3.0 (so the course treats it as an optional, user-installed, internal-use plugin); SDXL-Turbo needs registration and has a revenue condition `[VERIFIED-external]`. The ONNX conversions of the Hebrew speech model have **no declared licence — do not redistribute them** `[VERIFIED-external]`.
 
 <a id="unknown-licence"></a>
+<!-- step: legal-guide-05 -->
 ## 5. The rule for "licence: unknown"
 
 **An unknown licence means no permission has been established. Do not use it in client work.** (course decision default Q2.) Some editors keep a looser personal rule — "unknown means organic only, on my own account" — but that is a **risk you accept for yourself**, not a permission, and it never covers ads, clients, or the course repository. Never swap an unknown licence for the licence of a "parent" project. A track you hear in a platform's trending list, a brand's jingle, a logo or a screenshot of someone's product is not licensed to you by the platform; brand sounds and logos are at best organic, and for ads you need written permission from the brand. `[SOURCED-unverified]` (src: T18 FINDINGS; blueprint SECURITY_AND_LICENSING §4)
 
 <a id="ai-output"></a>
+<!-- step: legal-guide-06 -->
 ## 6. Who owns AI output? Positions by country (and their limits)
 
 **United States.** The Copyright Office's report *Copyright and Artificial Intelligence, Part 2: Copyrightability* (**2025-01-29**) supports protection for **human expression** inside AI-assisted work, including a human's creative selection, arrangement and modification of AI material. It does **not** extend copyright to purely AI-generated material, and **prompting alone** ordinarily does not give enough creative control under the technology it examined. Registration guidance (**2023-03-16**) asks you to disclose more-than-minimal AI-generated material and exclude it from the claim. `[VERIFIED-external]` (src: https://www.copyright.gov/ai/Copyright-and-Artificial-Intelligence-Part-2-Copyrightability-Report.pdf, https://copyright.gov/ai/ai_policy_guidance.pdf). These are agency reports and guidance, not statutes, and the research filed or assessed no registration. A 2024 report on digital replicas is a historical policy report — its recommendations are not enacted law, and it clears no imitation of a celebrity, no misleading endorsement and no state publicity right `[SOURCED-unverified]`.
@@ -73,6 +79,7 @@ Examples from the research (dated 2026-10-01, `[SOURCED-unverified]` unless mark
 **What to do in practice:** keep the scripts, edit decisions, compositing steps and project versions that show **your human contribution**; sell a **written assignment or exclusive licence of the rights you actually hold**; say honestly that protection of purely AI-generated parts is uncertain; and **never promise a client "exclusive copyright in every generated pixel or voice."** `[IDEA]` + `[VERIFIED-external]` for the US position.
 
 <a id="disclosure"></a>
+<!-- step: legal-guide-07 -->
 ## 7. Telling the audience it is AI — platforms, the EU, provenance
 
 Four checks are separate: **AI disclosure, rights and likeness, content eligibility, and provenance.** A label never cures a prohibited or misleading claim, and a labelled or provenance-signed asset is not automatically legal or monetisable. `[VERIFIED-external]` (src: T17 FINDINGS)
@@ -86,6 +93,7 @@ Four checks are separate: **AI disclosure, rights and likeness, content eligibil
 For AI-generated work, write the **disclosure plan for each platform route** in the project brief (`DISCLOSURE` line). Platform steps change — date every instruction.
 
 <a id="privacy-footage"></a>
+<!-- step: legal-guide-08 -->
 ## 8. Client footage and cloud tools — checks before you upload
 
 A client saying "please edit this" is **not** a release from the people filmed, and it is **not** permission for a vendor to train on the footage. `[SOURCED-unverified]` (src: T18-S007, S020)
@@ -102,6 +110,7 @@ A client saying "please edit this" is **not** a release from the people filmed, 
 **Israel.** The Privacy Protection Law, **Amendment 13**, was approved on 5 August 2024 and came into force on **14 August 2025** (indexed official snippet; the gazette text was not authenticated). It widens definitions and enforcement, changes database registration and notification rules, and creates data-protection-officer duties for specified organisations. A smaller registration burden does not remove duties of security, lawful processing and purpose. Do not assume a small editor must appoint an officer — work out your real role. `[VERIFIED-external]` partial (src: T18-S006).
 
 <a id="voice-likeness"></a>
+<!-- step: legal-guide-09 -->
 ## 9. Voice and likeness
 
 - **A written release for a specific use.** Treat capture, training or cloning, generated speech, dubbing and publication as **separate activities**. A release should name the person and recording rights; the provider, model and where data is stored; permitted scripts or topics; languages; territory, media and term; paid advertising; compensation; permitted edits and approvals; withdrawal and deletion limits; and any sublicence. Exclude unrelated training, public voice libraries and future endorsements unless explicitly agreed. `[IDEA]` (src: T18 LEGAL_GUIDE §6)
@@ -111,6 +120,7 @@ A client saying "please edit this" is **not** a release from the people filmed, 
 - **Data licences are not model licences:** the Hebrew speech datasets published by ivrit.ai carry purpose limits (training / academic research) and restrict identifiable voice simulation — do not use them as sample footage or as a voice-cloning fixture `[SOURCED-unverified]`.
 
 <a id="assets"></a>
+<!-- step: legal-guide-10 -->
 ## 10. Music, sound effects, stock, fonts, models
 
 | Item | What it gives | What it does not give |
@@ -129,6 +139,7 @@ A client saying "please edit this" is **not** a release from the people filmed, 
 `[VERIFIED-external]` for the Adobe Fonts, Eleven Music, Artlist and TikTok library statements; `[SOURCED-unverified]` for the rest (dated 2026-10-01). Per asset, keep a record (section 2). **Choose cleared ad music before the edit depends on a trending track.** Epidemic Sound, Musicbed, Soundstripe and Udio were **not reviewed**. A font installed on your machine is not proof that you may redistribute it.
 
 <a id="contract-checklist"></a>
+<!-- step: legal-guide-11 -->
 ## 11. Contract checklist for an AI-editing service (to take to counsel)
 
 This is a list of topics to discuss and tailor — **not boilerplate to paste**. `[IDEA]` (src: T18 LEGAL_GUIDE §9)
@@ -147,21 +158,25 @@ This is a list of topics to discuss and tailor — **not boilerplate to paste**.
 12. **Portfolio and course reuse:** only with a **separate, explicit grant** — a client's editing licence does not clear student fixtures or promotion.
 
 <a id="release-gate"></a>
+<!-- step: legal-guide-12 -->
 ## 12. Your own gate before you deliver or publish
 
 For every client project, before delivery: (1) the rights record exists for every asset, model and font used; (2) you hold the consent and releases you need and the footage was uploaded only to routes you checked; (3) the platform disclosure plan is written and, where it applies, done; (4) no asset with an unknown licence is in the final; (5) a human approved the result; (6) you re-read any rolling terms on the **date** you generated, downloaded and published. Keep the evidence file with the project. If you cannot complete a step, the project is **not ready** — it is never "probably fine".
 
 <a id="when-counsel"></a>
+<!-- step: legal-guide-13 -->
 ## 13. When to ask counsel (concrete triggers, not "always")
 
 Medical or patient footage · children · employee monitoring · biometric identification · intimate content · a contested international transfer · voice cloning or an identifiable person's synthetic performance in an ad · a client contract that allocates AI risk or indemnities · any EU-facing deepfake-style content with a deadline question · bundling a GPL/AGPL component in something you distribute · publishing the course repository.
 
 <a id="gaps"></a>
+<!-- step: legal-guide-14 -->
 ## 14. What the research could not verify
 
 EU authorship of AI output · the operative EU instrument and date for the Article 50 grace period (EUR-Lex was blocked) · Israel's current consolidated Copyright Act and any AI-output ruling · the Amendment 13 gazette text and transition clauses · direct GDPR statute text (EDPB guidance was used) · per-provider data-processing, retention and indemnity terms for your upload route (OpenAI and Anthropic only partly read) · Meta's commercial-music rights (login-gated) · account-specific music rights · the licences of the larger part of the 392 register rows. A same-family reviewer re-checked 13 of 30 claims — this is **not** legal clearance.
 
 <a id="refresh"></a>
+<!-- step: legal-guide-15 -->
 ## 15. Refresh
 
 Dated 2026-10-02; re-check before every cohort and before every release (`agent-content/references/licences-bom-rules.md` holds the dated component facts; `agent-content/references/platform-specs.md` holds the dated disclosure steps). Hebrew counterpart: `docs/he/legal-guide.md` (same section ids). The privacy and security rules for the toolkit itself are in `docs/en/privacy-and-security.md`.

@@ -86,7 +86,8 @@ After the install works the agent asks, **one choice at a time**. Nothing is pre
   | Voice and AI generation | ElevenLabs, Higgsfield | **paid** |
   | Stock media | Pexels, Iconify | free tier |
   | UI components | shadcn; 21st.dev | free; paid |
-  | 3D | Blender connector (the default 3D builder); optional AI model generation with Tripo, used only if you connect it | Blender free; generation paid |
+  | 3D | Blender connector (the default 3D builder) | free |
+  | | Tripo: AI 3D model generation (official connector, alpha), used only if you connect it | **paid** |
   For each service you pick, the agent explains what it is and what it costs, then shows you the **sign-up link**. Some sign-up links are referral links: they are labelled "referral link", the plain link is shown beside them, and you may choose either or skip. The agent opens nothing without your yes.
 * **Connect more later - just write it.** In any later conversation say "connect ElevenLabs" (or any service); the agent runs `add` and shows you the sign-up link the same way.
 

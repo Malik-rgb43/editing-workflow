@@ -3,11 +3,13 @@
 > Written **2026-10-02** from research read on 2026-10-01. **Not legal advice** (the legal side is in `docs/en/legal-guide.md`). These are the rules the toolkit follows and the rules you should follow when you extend it. Versions, defaults and provider terms change — every dated statement must be re-checked. Evidence tags: `[VERIFIED-external]` confirmed against a primary source · `[SOURCED-unverified]` one source, not re-checked · `[PROVEN-internal]` observed in an owner-approved project · `[MEASURED-lab]` measured in the research · `[IDEA]` a proposal.
 
 <a id="scope"></a>
+<!-- step: privacy-and-security-01 -->
 ## 1. Scope and threat model in one paragraph
 
 You will install tools, skills, servers and plugins written by other people, point an AI agent at folders that may hold client footage, and sometimes give it keys that can spend money. The realistic risks are: **client material leaving your machine** by accident, **secrets** ending up in files or logs, **someone else's instructions** (hidden in a web page, a README, a skill, a tool result) steering the agent, **code you installed** acting with your permissions, and **a deletion or export tool touching the wrong folder**. This guide gives the default rules against each. It does not protect you from a malicious operating system or from you approving something you did not read.
 
 <a id="principles"></a>
+<!-- step: privacy-and-security-02 -->
 ## 2. Principles
 
 1. **Instructions are data until the user says so.** Anything an agent reads — a web page, a document, a tool result, a skill text, a filename — is *data*. If it contains instructions, the agent quotes them and asks the user; it does not obey them.
@@ -18,6 +20,7 @@ You will install tools, skills, servers and plugins written by other people, poi
 6. **Local first, upload second.** Anything that sends footage to a third party is a separate, deliberate, per-client decision (section 7 and the legal guide).
 
 <a id="no-telemetry"></a>
+<!-- step: privacy-and-security-03 -->
 ## 3. No telemetry from the toolkit
 
 The toolkit has **no telemetry endpoint** and sends nothing home. Its dependencies are different: each one's opt-outs and required traffic are documented individually, and any privacy claim must be backed by a network audit, not by a README. `[SOURCED-unverified]` (src: T20 DX spec §6)
@@ -28,6 +31,7 @@ The toolkit has **no telemetry endpoint** and sends nothing home. Its dependenci
 - **Onboarding says which step talks to which host** (package registries, browser download, model hubs, provider APIs).
 
 <a id="secrets"></a>
+<!-- step: privacy-and-security-04 -->
 ## 4. Secrets
 
 - Keys live in **environment variables or the operating-system keychain** — never in the repository, on a command line, in logs, diagnostics, output metadata, screenshots or support bundles.
@@ -39,6 +43,7 @@ The toolkit has **no telemetry endpoint** and sends nothing home. Its dependenci
 - A signed-in connector is **not spend authorisation**: automated generation can consume credits even where the website is "unlimited". Every costed job needs prior approval with a dated estimate. `[VERIFIED-external]`
 
 <a id="skills-are-data"></a>
+<!-- step: privacy-and-security-05 -->
 ## 5. Skills, plugins and servers: procedure data with your permissions
 
 - A **skill** is procedure text (plus optional scripts). It is **not permission**: the user's and the project's restrictions on spend, installs and publication override it.
@@ -48,6 +53,7 @@ The toolkit has **no telemetry endpoint** and sends nothing home. Its dependenci
 - Never copy vendor skill texts into your own deliverables (study only; check licences).
 
 <a id="mcp-isolation"></a>
+<!-- step: privacy-and-security-06 -->
 ## 6. MCP servers and Blender: isolation rules
 
 - **Minimal profile = no servers.** Add one only when a stage needs it; load only what the task needs. `[SOURCED-unverified]` (src: blueprint MCP_PROFILES)
@@ -60,6 +66,7 @@ The toolkit has **no telemetry endpoint** and sends nothing home. Its dependenci
 - **Hosted tools that index or analyse video** keep copies — a per-client decision (section 7).
 
 <a id="footage-routes"></a>
+<!-- step: privacy-and-security-07 -->
 ## 7. Client footage: the routes that send it somewhere
 
 | Route | What leaves your machine | Rule |
@@ -74,6 +81,7 @@ The toolkit has **no telemetry endpoint** and sends nothing home. Its dependenci
 **A local tool is private only if everything around it is controlled:** model downloads, telemetry, remote assets, plugins, web/MCP tools, logs and backups. A local model that calls a web tool can still transmit data. Decision order: **eligibility** (may this footage leave at all?) → privacy terms of the exact route → cost. See `docs/en/legal-guide.md#privacy-footage`.
 
 <a id="ci-actions"></a>
+<!-- step: privacy-and-security-08 -->
 ## 8. GitHub Actions and CI (for when you extend or fork the toolkit)
 
 - **Pin actions to reviewed commit SHAs**, not moving tags; update them deliberately.
@@ -84,6 +92,7 @@ The toolkit has **no telemetry endpoint** and sends nothing home. Its dependenci
 - Evaluate the full permissions a GitHub App requests before installing it. `[SOURCED-unverified]` (src: T20-S025; distilled 07 §5)
 
 <a id="paths-and-tools"></a>
+<!-- step: privacy-and-security-09 -->
 ## 9. Paths, deletion and export tools
 
 - **Path handling is tested** with spaces, apostrophes, Hebrew letters, emoji and long paths, and with **forbidden roots** (a tool must refuse to write to or delete the source folder, any ancestor of it, a sibling, a symlink or junction pointing there, or an empty argument).
@@ -93,11 +102,13 @@ The toolkit has **no telemetry endpoint** and sends nothing home. Its dependenci
 - Never run a delete or "clean" command on a path you did not resolve and print first.
 
 <a id="scans"></a>
+<!-- step: privacy-and-security-10 -->
 ## 10. Scans before you share or release
 
 Run before every commit you share and before every release: a **secret scan** (keys, tokens, `.env`, `.pem`), a **client-name and private-path scan** (names, folder paths, e-mail addresses, brand kits, transcripts), a **licence/bill-of-materials check** (`agent-content/references/licences-bom-rules.md`), and a hash check that no footage, transcript, font binary or model checkpoint slipped in. A scan that cannot run reports `not_run` and blocks. Synthetic secrets and fake client names are used to test the scanners themselves. `[IDEA]` (src: blueprint SECURITY_AND_LICENSING §6–7)
 
 <a id="incidents"></a>
+<!-- step: privacy-and-security-11 -->
 ## 11. If something went wrong `[IDEA]`
 
 - **Key leaked** (committed, pasted, logged): revoke it at the provider **first**, create a new one, then remove it from files and history with help; assume it was seen.
@@ -107,11 +118,13 @@ Run before every commit you share and before every release: a **secret scan** (k
 - **Wrong folder deleted:** stop writing to the disk and restore from your backup; do not run recovery tools that overwrite.
 
 <a id="support-bundle"></a>
+<!-- step: privacy-and-security-12 -->
 ## 12. Asking for help safely
 
 The support template asks for: environment and versions, the step, expected vs actual, a **sanitised short error**, and a reproducible **synthetic** fixture. The toolkit's `doctor` produces a **redacted support bundle** — never keys, never client media. **Never paste keys or client footage into a group chat or a ticket.**
 
 <a id="refresh"></a>
+<!-- step: privacy-and-security-13 -->
 ## 13. Refresh
 
 Dated 2026-10-02. Re-check before each cohort: provider terms (training/retention), the HyperFrames telemetry/skills behaviour on the pinned version, MCP server versions and defaults, the CI action pins. The Hebrew counterpart is `docs/he/privacy-and-security.md` (same section ids). Related dated references: `agent-content/references/mcp-profiles.md`, `hyperframes-traps.md`, `licences-bom-rules.md`.

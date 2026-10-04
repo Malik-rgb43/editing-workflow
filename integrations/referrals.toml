@@ -42,6 +42,6 @@ referral_url = ""
 [[service]]
 id = "tripo"
 name = "Tripo (3D generation)"
-entries = ["blender-mcp"]
+entries = ["tripo", "blender-mcp"]
 plain_url = "https://www.tripo3d.ai"
 referral_url = ""

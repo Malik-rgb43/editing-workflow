@@ -701,6 +701,51 @@ notes = "Prefer native headless bpy for deterministic batch jobs. Do NOT use the
   checked = "2026-10-02"
   confidence = "medium"
 
+[[entry]]
+id = "tripo"
+kind = "mcp"
+name = "Tripo MCP (official, VAST-AI-Research; alpha)"
+role = "generate 3D models from text or images with Tripo and import them into Blender; needs Blender and the Tripo Blender add-on"
+addons = ["ai-3d"]
+profiles = ["optional"]
+cost = "paid (Tripo account and credits; free-tier output is CC BY 4.0 non-commercial per three-d-routes, checked 2026-09-27)"
+gate = "paid-spend-gate"
+terms = "Tripo's plan terms decide commercial use: read them before client work; keep the generated-mesh manifest (agent-content/references/three-d-routes.md)"
+license = "MIT (server); generated models per Tripo's terms"
+security = "alpha, small project: pin the exact version. The Tripo API key is a secret: set it yourself where the project's README / the Tripo add-on says, never in chat. The README does not name an environment variable, so the toolkit checks none."
+doctor = { smoke = "client status connected; list the tools only (read-only). Never call a generation tool to test." }
+notes = "Blender is the default 3D builder and works without this: Tripo is used only if the student connected it (INSTALL.md install-10). Official repo github.com/VAST-AI-Research/tripo-mcp (MIT; PyPI tripo-mcp 0.1.2, released 2025-04-12; the README says alpha, Tripo Blender add-on integration). Blender MCP has its own Tripo option in its premium tier; this entry is the standalone route."
+  [entry.mcp]
+  name = "avc-tripo"
+  transport = "stdio"
+  command = "uvx"
+  args = ["tripo-mcp==0.1.2"]
+  auth = "none"
+  register = "manual"
+  status = "verified"
+  source = "https://github.com/VAST-AI-Research/tripo-mcp (README: uvx tripo-mcp) ; https://pypi.org/pypi/tripo-mcp/json (0.1.2, MIT, Python >=3.10)"
+  checked = "2026-10-04"
+  confidence = "medium"
+  by_hand = "Read the project's README first (alpha). Install Blender and the Tripo Blender add-on, then register the server; the README does not say where the API key goes - set it yourself as the README / Tripo's page says, never in chat."
+  [entry.install.windows]
+  command = "claude mcp add --scope user --transport stdio avc-tripo -- cmd /c uvx tripo-mcp==0.1.2"
+  status = "verified"
+  source = "https://github.com/VAST-AI-Research/tripo-mcp (README: uvx tripo-mcp; Windows cmd /c wrapper as for the other uvx servers)"
+  checked = "2026-10-04"
+  confidence = "medium"
+  [entry.install.macos]
+  command = "claude mcp add --scope user --transport stdio avc-tripo -- uvx tripo-mcp==0.1.2"
+  status = "verified"
+  source = "https://github.com/VAST-AI-Research/tripo-mcp"
+  checked = "2026-10-04"
+  confidence = "medium"
+  [entry.install.linux]
+  command = "claude mcp add --scope user --transport stdio avc-tripo -- uvx tripo-mcp==0.1.2"
+  status = "verified"
+  source = "https://github.com/VAST-AI-Research/tripo-mcp"
+  checked = "2026-10-04"
+  confidence = "medium"
+
 # ============================================================================= ASR / MATTE routes (separate Python envs per route)
 [[entry]]
 id = "faster-whisper"

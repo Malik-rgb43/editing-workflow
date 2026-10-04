@@ -40,7 +40,7 @@ def test_entry_schema(e):
     for osn, inst in (e.get("install") or {}).items():
         assert osn in ("windows", "macos", "linux")
         assert inst.get("status") in ("verified", "unverified")
-        assert inst.get("checked") == "2026-10-02" and inst.get("confidence") in ("high", "medium", "low")
+        assert inst.get("checked") in ("2026-10-02", "2026-10-04") and inst.get("confidence") in ("high", "medium", "low")
         assert inst.get("command") or inst.get("manual")
         if inst["status"] == "verified":
             assert inst.get("source") or osn in ("windows", "macos", "linux") and e["id"] == "npm", e["id"]
