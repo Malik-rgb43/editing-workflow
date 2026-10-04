@@ -96,6 +96,7 @@ def test_levels_follow_the_loudness(tmp_path, capsys):
 def test_verify_admits_a_block_in_an_empty_project():
     from core import hf_engine
 
-    if hf_engine.find() is None:
-        pytest.skip("HyperFrames engine not installed")
+    eng = hf_engine.find()
+    if eng is None or eng.source == "project-local":  # npx --no-install with nothing installed is not an engine (CI had only npx)
+        pytest.skip("HyperFrames engine not installed (toolkit or AVC_HYPERFRAMES_CLI)")
     assert hf_blocks.main(["verify", "voice-orb"]) == 0

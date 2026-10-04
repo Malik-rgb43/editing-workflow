@@ -28,7 +28,13 @@ def test_self_check(script):
     assert p.returncode == 0, (p.stdout[-2000:], p.stderr[-2000:])
 
 
+def _failure_text(stderr: str) -> str:
+    """The unittest failure blocks themselves (tracebacks), not the last N characters (CI cut them off once)."""
+    i = stderr.find("=" * 70)
+    return stderr[i:i + 6000] if i >= 0 else stderr[-4000:]
+
+
 @pytest.mark.parametrize("script", UNIT_FILES, ids=_id)
 def test_unit_file(script):
     p = subprocess.run([sys.executable, "-X", "utf8", str(script)], capture_output=True, text=True, encoding="utf-8", timeout=300, cwd=script.parent)
-    assert p.returncode == 0, (p.stdout[-2000:], p.stderr[-2000:])
+    assert p.returncode == 0, _failure_text(p.stderr) + "\n--- stdout ---\n" + p.stdout[-1000:]

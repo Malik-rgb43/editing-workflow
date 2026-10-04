@@ -539,8 +539,17 @@ def serve(board_dir: Path, port: int = 0, timeout: float = 3600.0, open_browser:
                 return
             os.replace(tmp, board_dir / "choices.json")
             result.update(res)
+            self.close_connection = True
             self._send(200, json.dumps({"ok": True, "decision_lines": res["decision_lines"]}, ensure_ascii=False).encode("utf-8"))
-            done.set()
+            self.wfile.flush()
+            self._final = True  # done fires in finish(), after the response is fully written (a race on macOS CI)
+
+        def finish(self):
+            try:
+                super().finish()
+            finally:
+                if getattr(self, "_final", False):
+                    done.set()
 
     try:
         httpd = ThreadingHTTPServer(("127.0.0.1", port), Handler)

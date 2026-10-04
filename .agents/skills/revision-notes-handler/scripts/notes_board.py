@@ -276,8 +276,17 @@ def serve(video: Path, out_dir: Path, round_n: int = 1, lang: str = "he", fps: f
                 md = [f"## Round {round_n} - notes from the review page ({doc['received_utc']})", ""] + [note_line(x) for x in notes]
             (out_dir / "notes.md").write_text("\n".join(md) + "\n", encoding="utf-8")
             result.update(doc)
+            self.close_connection = True
             self._json(200, {"ok": True, "count": len(notes)})
-            done.set()
+            self.wfile.flush()
+            self._final = True  # done fires in finish(), after the response is fully written (a race on macOS CI)
+
+        def finish(self):
+            try:
+                super().finish()
+            finally:
+                if getattr(self, "_final", False):
+                    done.set()
 
     try:
         httpd = ThreadingHTTPServer(("127.0.0.1", port), Handler)
