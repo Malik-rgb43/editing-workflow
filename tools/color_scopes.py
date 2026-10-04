@@ -59,14 +59,16 @@ SKIN_HUE_PLAUSIBLE = (70.0, 170.0)
 SKIN_CHROMA_MIN = 5.0
 
 
-def not_skin_reason(m):
+def not_skin_reason(m, detected_face=False):
     """None when the region's mean colour could be skin at all, else why not. Deliberately WIDE (the gate band is 105-125 degrees): it only catches a
-    region that missed the face (a dark wall measured hue ~306 and chroma ~1 on real footage), never a merely miscoloured face; rejected samples
-    leave the evidence (the gate then reports fewer person frames) instead of counting as failed skin."""
+    FIXED region that missed the face (a dark wall measured hue ~306 and chroma ~1 on real footage), never a merely miscoloured face; rejected samples
+    leave the evidence (the gate then reports fewer person frames) instead of counting as failed skin.
+    ``detected_face``: the region comes from faces.json, i.e. a detector saw a face there. Then only a colourless region is rejected - a real
+    face in open shade measured hue 60-63 degrees (2026-10-04) and the hue test had hidden exactly the cast the gate exists to catch."""
     lo, hi = SKIN_HUE_PLAUSIBLE
     if m["chroma"] < SKIN_CHROMA_MIN:
         return f"no colour in the region (chroma {m['chroma']:.1f} < {SKIN_CHROMA_MIN}): not skin - the region probably missed the face"
-    if not lo <= m["hue_deg"] <= hi:
+    if not detected_face and not lo <= m["hue_deg"] <= hi:
         return f"hue {m['hue_deg']:.0f} degrees is outside anything skin-like ({lo:.0f}-{hi:.0f}): the region probably missed the face"
     return None
 
@@ -156,7 +158,7 @@ def main(argv=None) -> int:
             roi = skin_fixed or (face_roi(faces, t, aspect=sw / sh) if faces else None)
             if roi:
                 m = measure_region(fr, roi)
-                why = not_skin_reason(m) if m else "empty region"
+                why = not_skin_reason(m, detected_face=not skin_fixed) if m else "empty region"
                 if m and why is None:
                     rec.update(person=True, skin_Y=round(m["Y_pct"], 2), skin_hue=round(m["hue_deg"], 2), skin_chroma=round(m["chroma"], 2))
                 elif m:

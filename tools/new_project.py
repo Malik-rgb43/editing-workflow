@@ -4,9 +4,7 @@
 * Source files are COPIED (never moved or renamed) into ``source/`` and verified (size + SHA-256). A failed verification is
   reported and the tool exits non-zero (the original script once stopped on ``rmdir ... busy`` without copying).
 * ``hf/`` receives the BRIEF.md and DESIGN.md templates from ``agent-content/techniques/templates/`` (never overwritten if present).
-  ``--starter NAME`` (a folder under ``templates/starters/``, e.g. ``talking-head``) copies that starter's files instead (its BRIEF.md and a
-  DRAFT PROMPT.md with the house-preset defaults typed in and every open question marked ASK). A starter saves typing; the PROMPT stays
-  unapproved until the human approves it, and the intake ledger check fails until every ASK is answered.
+  No pre-filled PROMPT.md: the editor writes the decisions for THIS video (pro-video-editor, Step 3).
 * ``--init-hyperframes`` runs the PINNED engine's ``init . --non-interactive`` in the still-empty ``hf/`` BEFORE the templates are written
   (``init`` refuses a folder that already has files; found by a live run). It never downloads the engine, never runs ``npx hyperframes@latest``,
   and refuses when the engine or the project sits under a non-ASCII path (``init`` then silently skips index.html).
@@ -14,8 +12,7 @@
   refuses and proposes an ASCII folder instead of guessing one.
 
 Usage:
-    python tools/new_project.py "<title>" [--work-root DIR] [--copy FILE_OR_DIR ...] [--slug name] [--starter talking-head] [--init-hyperframes] [--json]
-    python tools/new_project.py --list-starters
+    python tools/new_project.py "<title>" [--work-root DIR] [--copy FILE_OR_DIR ...] [--slug name] [--init-hyperframes] [--json]
 Exit: 0 created and verified, 2 refused / verification failed, 3 tool error.
 """
 
@@ -58,29 +55,17 @@ def _init_hyperframes(hf: Path) -> dict:
 TEMPLATES = Path(__file__).resolve().parents[1] / "agent-content" / "techniques" / "templates"
 
 
-def starters() -> list[str]:
-    d = TEMPLATES / "starters"
-    return sorted(p.name for p in d.iterdir() if p.is_dir()) if d.is_dir() else []
-
-
 def main(argv=None) -> int:
     if argv is None:
         argv = sys.argv[1:]
-    if "--list-starters" in argv:
-        print("\n".join(starters()) or "no starters")
-        return 0
     ap = argparse.ArgumentParser(prog="new_project", description=__doc__.split("\n\n")[0])
     ap.add_argument("title")
-    ap.add_argument("--starter", help="copy a starter's BRIEF.md + DRAFT PROMPT.md (see --list-starters)")
     ap.add_argument("--work-root")
     ap.add_argument("--slug")
     ap.add_argument("--copy", nargs="*", default=[], help="source files/folders to COPY into source/")
     ap.add_argument("--init-hyperframes", action="store_true")
     ap.add_argument("--json", action="store_true")
     args = ap.parse_args(argv)
-    if args.starter and args.starter not in starters():
-        print(f"new_project: unknown starter {args.starter!r}; available: {', '.join(starters()) or 'none'}", file=sys.stderr)
-        return 2
 
     from core.config import load_config
     from core.envelope import sha256_file
@@ -106,8 +91,6 @@ def main(argv=None) -> int:
         if args.init_hyperframes:
             init = _init_hyperframes(pp.hf)
         files = {name: TEMPLATES / name for name in ("BRIEF.md", "DESIGN.md")}
-        if args.starter:
-            files.update({f.name: f for f in (TEMPLATES / "starters" / args.starter).iterdir() if f.is_file()})
         written = []
         for name, src_tpl in files.items():
             dst = pp.hf / name
@@ -136,12 +119,11 @@ def main(argv=None) -> int:
                 else:
                     failed.append({"file": str(f), "why": "verification failed (size/hash differ)"})
         report = {"slug": pp.slug, "title": args.title, "root": str(pp.root), "source": str(pp.source), "hf": str(pp.hf), "final": str(pp.final), "work": str(pp.work), "copied": copied, "failed": failed, "hyperframes_init": init,
-                  "starter": args.starter, "templates_written": written}
+                  "templates_written": written}
         if args.json:
             print(json.dumps(report, ensure_ascii=False, indent=2))
         else:
-            print(f"created {pp.root}\n  copied {len(copied)} file(s), {len(failed)} failed" + (f"\n  hyperframes init: {init}" if init else "")
-                  + (f"\n  starter {args.starter}: {', '.join(written) or 'nothing new'} (DRAFT: answer every ASK, then get approval)" if args.starter else ""))
+            print(f"created {pp.root}\n  copied {len(copied)} file(s), {len(failed)} failed" + (f"\n  hyperframes init: {init}" if init else ""))
         return 2 if failed or (init is not None and not init.get("ok")) else 0
     except ToolkitError as exc:
         print(f"new_project: {exc}", file=sys.stderr)

@@ -1,7 +1,7 @@
 ---
 name: video-analysis
 description: >-
-  Turn a video the user sends or links (file or URL) or a folder of clips into measurements (cuts, pacing, per-frame data), keyframe sheets, a Hebrew transcript and sound analysis (SFX, BPM, key, beats, song ID). Triggers: watch, analyse, break down, transcribe this video/reel/ad; תנתח, תעבור על, תמלל, מה קורה בסרטון, קאטים, BPM. NOT for cutting or rendering (type skills), applying a style (reference-style-matching), or captions for a final render (hebrew-captions-transcription).
+  Turn a video the user sends or links (file or URL) or a folder of clips into measurements (cuts, pacing, per-frame data), keyframe sheets, a Hebrew transcript and sound analysis (SFX, BPM, key, beats, song ID). Triggers: watch, analyse, break down, transcribe this video/reel/ad; תנתח, תעבור על, תמלל, מה קורה בסרטון, קאטים, BPM. NOT for cutting or rendering (`pro-video-editor`), applying a style (reference-style-matching), or captions for a final render (hebrew-captions-transcription).
 compatibility: >-
   Procedure over the toolkit's `tools/analyze.py` and `tools/frames.py` (verify flags with --help). scripts/ need only Python 3.9+. Speeds quoted in references are measured on one reference machine; NVIDIA and Apple cells are unmeasured.
 metadata:
@@ -42,7 +42,7 @@ Output contract (`references/output-contract.md`): `analysis/<video>/{measuremen
 | 4 | Read: all sheets, all audio images; zoom only distinct devices; resolve `check` points; correct the count (`pacing.override` + `review.corrections`); audit tempo half/double | `review` block |
 | 5 | `python scripts/validate_analysis.py analysis/<video> --video <source>`; exit 0 required to present numbers as facts | validation report |
 | 6 | Write `breakdown.md` in the user's language per `references/reading-and-breakdown.md` (coverage first, 7 sections, uncertainties last) | `breakdown.md` |
-| 7 | Report: the file path, 5-10 lines, the corrections, what could not be established; offer the next skill (`reference-style-matching`, a type skill) instead of doing it | message |
+| 7 | Report: the file path, 5-10 lines, the corrections, what could not be established; offer the next skill (`reference-style-matching`, `pro-video-editor`) instead of doing it | message |
 
 ## Gates
 States are `pass | fail | blocked | n/a` with a reason. A timeout, empty sample or missing input is `blocked`, never `pass`. A successful tool call is execution evidence; viewed sheets are appearance evidence.

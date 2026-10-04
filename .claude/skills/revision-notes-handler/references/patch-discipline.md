@@ -15,7 +15,7 @@ Load when you are about to change project files for a round, or choose how to ve
 | Rung | Tool | Time (order of magnitude) | Proves |
 |---|---|---|---|
 | 1 static | `hf_preflight` | 2-5 s | structure, timing grid, ids, safe zone |
-| 2 look | Studio preview (`npx hyperframes preview`); hot reload measured 0.04-0.9 s on 0.8.98 | seconds | position, timing, copy, motion feel |
+| 2 look | Studio preview (`python tools/hf_studio.py <project>/hf`); hot reload measured 0.04-0.9 s on 0.8.98 | seconds | position, timing, copy, motion feel |
 | 3 stills | `snapshot --at t1,t2,... --describe false` (<= 5 timestamps per call; `--describe false` always) | 1-2 min per pack | a single moment: first frame of a scene, an effect at peak, a keyword at full size. Does not prove cuts or motion |
 | 4 segment | `hf_segment --from A --to B --qa` (range snapped outward to whole scenes, picture only) | 2-4 min | render-only risks: `<video>` layers (about 1 frame off in Studio), 3D, filters, cuts |
 | 5 critic | the SAME critic continued by message with only the fix list ("verify on the frames, re-score <= 250 words") | minutes | independent reading of the fixes |

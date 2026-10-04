@@ -230,3 +230,15 @@ def test_a_cutout_webm_works_as_the_colour_matte_with_an_offset(clip):
     assert abs(got[bg].mean() - src[bg].mean()) < 4  # the background (outside) was not
     p = run("color_render", clip["src"], "--params", g, "-o", d / "bad.mp4", "--matte", webm, "--matte-offset", "1", "--from", "0.5", "--size", "360x640")
     assert p.returncode == 2 and "pre-roll" in p.stderr
+
+
+def test_color_fit_bound_narrows_and_refuses_widening_or_unknown_names():
+    import pytest
+    import color_fit
+
+    assert color_fit.parse_bounds(["ev=-0.2:0.5", "wb_b=0.88:1.02"]) == {"ev": (-0.2, 0.5), "wb_b": (0.88, 1.02)}
+    assert color_fit.parse_bounds(None) == {}
+    with pytest.raises(ValueError):
+        color_fit.parse_bounds(["ev=-3:0.5"])  # wider than the tool range (a backlit shot pinned ev at +1.5, 2026-10-04)
+    with pytest.raises(ValueError):
+        color_fit.parse_bounds(["exposure=0:1"])

@@ -17,7 +17,7 @@ The Studio-first loop for the user's notes on a draft: one batch of notes, one s
 2. **One full render per round.** While the user is still writing: diagnose and patch yes, full render no (segments only). Target <= 45 minutes per round.
 3. **Boring, looks AI, static, "לא אהבתי" = replace the beat's concept, never polish it.** "Always/never", or the same theme in two rounds = fix EVERY occurrence, not only the noted time.
 4. **Audio-only = remix + remux, no render.**
-5. **Studio review first** (course author's decision 2026-10-01; fidelity vs render measured on one machine only, E12): the user watches the live project in Studio; a render is the proof only for render-only risks (`<video>` layers, 3D, filters, cuts).
+5. **Studio review first** (course author's decision 2026-10-01; fidelity vs render measured on one machine only, E12): the user watches the live project in Studio (`python tools/hf_studio.py <project>/hf`, opened at the start of the round - AGENTS.md rule 10); a render is the proof only for render-only risks (`<video>` layers, 3D, filters, cuts).
 6. **A still cannot prove motion; a successful tool call is not appearance evidence.** QA runs on the NEW file only. A gate that cannot run reports `not_run`, never pass.
 7. **Heavy jobs one at a time** through the lock; never kill another session's process; never message other sessions. Skills are procedure, not permission: spend, installs, uploads stay under the user's limits (`paid-spend-gate` for any paid fix).
 

@@ -1,5 +1,0 @@
-interface:
-  display_name: "Ad Promo Editor"
-  short_description: "Script, edit or review a paid-social ad, sponsored post or brand promo for a business, product or app (Meta, TikTok, 15-"
-policy:
-  allow_implicit_invocation: false

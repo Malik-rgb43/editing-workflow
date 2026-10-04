@@ -1,7 +1,7 @@
 ---
 name: render-qa-delivery
 description: >-
-  Run the cheap-first render, QA and delivery pipeline for a HyperFrames video: preflight, range renders, one full render, final-file loudness and mux, every-frame QA, visual review, manifest, timing ledger. Triggers: רינדור, תריץ בדיקה לפני רינדור, מסירה, בדוק את כל הפריימים, render the final, run QA on this render, deliver the 9:16 version, present the draft. NOT for creative decisions (type skills), client notes (revision-notes-handler), or variants of one master (video-variants-exporter).
+  Run the cheap-first render, QA and delivery pipeline for a HyperFrames video: preflight, range renders, one full render, final-file loudness and mux, every-frame QA, visual review, manifest, timing ledger. Triggers: רינדור, תריץ בדיקה לפני רינדור, מסירה, בדוק את כל הפריימים, render the final, run QA on this render, deliver the 9:16 version, present the draft. NOT for creative decisions (`pro-video-editor`), client notes (revision-notes-handler), or variants of one master (video-variants-exporter).
 compatibility: >-
   Needs ffmpeg/ffprobe, Python 3.12 and a HyperFrames CLI pinned per project; scripts are stdlib only. Render times and traps are measured or reported on one reference machine with HyperFrames 0.8.79-0.8.98; re-verify per version.
 metadata:
@@ -63,7 +63,7 @@ States: `pass | fail | blocked | n/a` with a reason; a timeout, empty sample or 
 Envelope: `{tool, version, input_sha256, decoded_frames, expected_frames, coverage, status: PASS|FAIL|INSUFFICIENT_EVIDENCE, findings[]}`; exit non-zero on FAIL or INSUFFICIENT_EVIDENCE. Intentional flags (approved black frames, deliberate holds) need an exemption that is time-bounded and tied to an approved PROMPT.md row; a blanket "ignore flags" is rejected [CONFLICT with the author's blanket "zero flagged frames": resolved by exemption rows]. Model reviewers cannot certify waveform metering, every-frame completeness, exact Hebrew copy or pixel-safe geometry: a contact sheet is not "the model watched the video".
 
 ## Timing ledger
-One JSONL line per stage attempt (`scripts/ledger_summary.py append`): stage, UTC start/end, queue wait, setup/run minutes, renders, retries, credits (null is not 0). The ledger is how a student replaces the modelled budget in `talking-head-editor` with measured numbers.
+One JSONL line per stage attempt (`scripts/ledger_summary.py append`): stage, UTC start/end, queue wait, setup/run minutes, renders, retries, credits (null is not 0). The ledger is how a student replaces the modelled budget in `pro-video-editor` with measured numbers.
 
 ## References (load when)
 - `references/pipeline-stages.md` - running any stage; command text, snapshot points, stale-file guard.
@@ -72,7 +72,7 @@ One JSONL line per stage attempt (`scripts/ledger_summary.py append`): stage, UT
 - `references/delivery-and-manifest.md` - loudness, mux, 1088 canvas, naming, manifest, presenting.
 - `references/visual-review.md` - before reviewing or presenting a draft.
 - `references/volatile-facts.md` - before quoting a time, a trap or an issue number.
-- Scripts: `scripts/qa_aggregate.py` (fail-closed aggregator), `scripts/ledger_summary.py` (ledger append/summary); both stdlib with `--self-check`; script paths are relative to this skill's folder. Siblings: `revision-notes-handler`, `video-variants-exporter`, `talking-head-editor`, `hebrew-captions-transcription`, `speaker-color-correction`.
+- Scripts: `scripts/qa_aggregate.py` (fail-closed aggregator), `scripts/ledger_summary.py` (ledger append/summary); both stdlib with `--self-check`; script paths are relative to this skill's folder. Siblings: `revision-notes-handler`, `video-variants-exporter`, `pro-video-editor`, `hebrew-captions-transcription`, `speaker-color-correction`.
 - Repo-level modules (owned elsewhere): `agent-content/techniques/cheap-first-qa.md`, `agent-content/techniques/studio-review-loop.md`, `agent-content/techniques/timing-ledger.md`, `agent-content/references/hyperframes-traps.md`, `agent-content/references/audio-mix.md`, `agent-content/references/platform-specs.md`; load when you need their dated tables.
 
 ## Evidence status

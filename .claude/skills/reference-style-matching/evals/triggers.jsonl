@@ -14,5 +14,5 @@
 {"prompt": "delete the second scene", "should_trigger": false, "route_instead": "revision-notes-handler"}
 {"prompt": "מה השעה", "should_trigger": false, "route_instead": null}
 {"prompt": "תפיק לי גרסאות של הסרטון ב-9:16 ו-1:1", "should_trigger": false, "route_instead": "video-variants-exporter"}
-{"prompt": "תערוך לי את הסרטון עם B-roll וזום, בלי רפרנס, פשוט תעשה יפה", "should_trigger": false, "route_instead": "talking-head-editor"}
+{"prompt": "תערוך לי את הסרטון עם B-roll וזום, בלי רפרנס, פשוט תעשה יפה", "should_trigger": false, "route_instead": "pro-video-editor"}
 {"prompt": "copy this competitor's ad frame by frame and just swap the logo", "should_trigger": false, "route_instead": null}

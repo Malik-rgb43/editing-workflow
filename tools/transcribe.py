@@ -137,9 +137,28 @@ def main(argv=None) -> int:
     dur = facts.get("duration_s") or words[-1]["end"]
     from core.fsio import write_json_atomic
 
-    write_json_atomic(a.out, {"schema": "avc.words/1", "language": facts.get("language", a.language), "model": model_label, "route": route, "vad": a.vad, "audio_duration_s": dur, "run": {**facts, "wall_s": secs, "realtime_factor": round(dur / secs, 2) if secs else None}, "words": words})
+    suspect = hallucination_signs(words, dur)
+    write_json_atomic(a.out, {"schema": "avc.words/1", "language": facts.get("language", a.language), "model": model_label, "route": route, "vad": a.vad, "audio_duration_s": dur, "run": {**facts, "wall_s": secs, "realtime_factor": round(dur / secs, 2) if secs else None}, "suspect": suspect, "words": words})
+    if suspect:
+        print(f"transcribe: the transcript looks HALLUCINATED ({'; '.join(suspect)}) - written to {a.out} for inspection, NOT accepted. "
+              + ("Run again with --vad (voice-activity filter)." if not a.vad else "Check the audio: it may hold no clear speech."), file=sys.stderr)
+        return 2
     print(f"transcribe: {len(words)} words, route {route}, {secs}s wall -> {a.out}")
     return 0
+
+
+def hallucination_signs(words, duration_s) -> list[str]:
+    """Pure: reasons to distrust a transcript. Seen on a real 20.8 s Hebrew clip WITHOUT VAD (2026-10-04): two words, "תודה רבה.", the second
+    stretched over 16.4 s of real speech; with --vad the same clip gave 23 words. A Hebrew word lasting more than 3 s, or under 0.25 words per
+    second over a clip longer than 8 s, does not happen in speech."""
+    out = []
+    long = [w for w in words if (w["end"] - w["start"]) > 3.0]
+    if long:
+        w = max(long, key=lambda x: x["end"] - x["start"])
+        out.append(f"{len(long)} word(s) last over 3 s (\"{w['w']}\" {w['end'] - w['start']:.1f} s)")
+    if duration_s and duration_s > 8 and len(words) / duration_s < 0.25:
+        out.append(f"{len(words)} words in {duration_s:.1f} s")
+    return out
 
 
 if __name__ == "__main__":

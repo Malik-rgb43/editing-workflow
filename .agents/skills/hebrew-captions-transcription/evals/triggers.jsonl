@@ -11,7 +11,7 @@
 {"prompt": "transcribe this voice-over and compare it to the script word by word", "should_trigger": true, "route_instead": null}
 {"prompt": "translate this English video into French subtitles", "should_trigger": false, "route_instead": null}
 {"prompt": "colour correct the speaker, the skin is pink", "should_trigger": false, "route_instead": "speaker-color-correction"}
-{"prompt": "make a 3D logo animation for the intro", "should_trigger": false, "route_instead": "motion-graphics-builder"}
+{"prompt": "make a 3D logo animation for the intro", "should_trigger": false, "route_instead": "pro-video-editor"}
 {"prompt": "מה קורה בסרטון הזה בדקה 2, תנתח לי אותו", "should_trigger": false, "route_instead": "video-analysis"}
 {"prompt": "render the final and check loudness and every frame", "should_trigger": false, "route_instead": "render-qa-delivery"}
-{"prompt": "תוסיף זומים ובי-רול לדובר", "should_trigger": false, "route_instead": "talking-head-editor"}
+{"prompt": "תוסיף זומים ובי-רול לדובר", "should_trigger": false, "route_instead": "pro-video-editor"}

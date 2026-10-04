@@ -11,7 +11,7 @@
 {"prompt": "check the final file is -14 LUFS and the true peak is under -1", "should_trigger": true, "route_instead": null}
 {"prompt": "choose a font for the intro", "should_trigger": false, "route_instead": null}
 {"prompt": "write the script for the reel", "should_trigger": false, "route_instead": null}
-{"prompt": "generate the hook with AI", "should_trigger": false, "route_instead": "ai-generated-video-editor"}
+{"prompt": "generate the hook with AI", "should_trigger": false, "route_instead": "pro-video-editor"}
 {"prompt": "מה המחיר של Higgsfield", "should_trigger": false, "route_instead": "paid-spend-gate"}
 {"prompt": "I have six notes from the client on the draft, handle them", "should_trigger": false, "route_instead": "revision-notes-handler"}
 {"prompt": "תעשה גרסאות של הסרטון ל-1:1 ול-16:9", "should_trigger": false, "route_instead": "video-variants-exporter"}

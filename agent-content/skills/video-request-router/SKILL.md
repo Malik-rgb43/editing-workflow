@@ -15,7 +15,7 @@ Single entry for the video course. It reads the request and the project state, n
 ## Rules that never bend
 1. **Decide and hand over only.** No render, generation, install, download or file write, except the handoff note (chat, or `projects/<name>/_work/handoff.md`; never inside `hf/`).
 2. **One owner per request.** Gate skills (`video-brief-intake`, `paid-spend-gate`) are overlays: name them in the note, they do not take ownership.
-3. **An existing project beats new intake.** If `projects/<name>/hf/PROMPT.md` exists and the request touches that project, resume it. Never restart intake, never adopt another project's PROMPT because the source clip is the same.
+3. **An existing project beats new intake.** If `projects/<name>/hf/PROMPT.md` exists and the request touches that project, resume it. Never restart intake, never adopt another project's PROMPT because the source clip is the same. Resuming (or starting a build) on a project with `hf/index.html` = first `python tools/hf_studio.py <project>/hf` and show the user its `studio_url` (AGENTS.md rule 10).
 4. **The user's explicit choice wins** (skill, engine, tool, slash command, "use Remotion"). Quote it in the note; do not substitute a default.
 5. **Analysis is not production.** "Analyse / transcribe / what happens in this video" goes to `video-analysis`; never answer it by editing or generating.
 6. **Skills are procedure, not permission.** User and project limits on spend, installs and publishing override every route. A route never authorises a paid action; `paid-spend-gate` does that.
@@ -31,14 +31,10 @@ Single entry for the video course. It reads the request and the project state, n
 ## Route table (full table with Hebrew/English cues: `references/route-table.md`)
 | Signal in the request | Owner | Overlay gates |
 |---|---|---|
-| New video, brief, concept, "no reference", "סרטון חדש" | `video-brief-intake`, then the type skill | `paid-spend-gate` if AI generation is planned |
+| New video, brief, concept, "no reference", "סרטון חדש" | `video-brief-intake`, then `pro-video-editor` | `paid-spend-gate` if AI generation is planned |
 | Reference link, "בסגנון של", "make it like this" (new video) | `video-brief-intake` (branches to `reference-style-matching`) | |
 | Notes, complaints, timestamps on a draft | `revision-notes-handler` | |
-| Speaker to camera; tutorial, vlog, "how I work" | `talking-head-editor` | `speaker-color-correction`, `hebrew-captions-transcription` |
-| Customer review, success story | `testimonial-editor` | |
-| Ad, promo, offer, CTA; product demo, UGC, unboxing | `ad-promo-editor` | |
-| Launch, kinetic type, logo reveal; trailer, montage | `motion-graphics-builder` | |
-| Mostly AI-generated shots | `ai-generated-video-editor` | `paid-spend-gate` |
+| Any edit: speaker to camera, testimonial, ad/promo, launch/motion, AI shots, podcast clip, tutorial, vlog (the kind is context in the note) | `pro-video-editor` | `video-brief-intake` Round 0; `paid-spend-gate` if generation is planned |
 | Only a video-generation prompt (Seedance), `/seedance` | `video-prompt-writer` | `paid-spend-gate` before any generation |
 | Only a still-image prompt: keyframe, start frame, character sheet, thumbnail | `image-prompt-writer` | `paid-spend-gate` before any generation |
 | Skin, sky, tinted blacks on real footage | `speaker-color-correction` | |
@@ -48,7 +44,6 @@ Single entry for the video course. It reads the request and the project state, n
 | Torn between fonts, palettes, easings, hooks | `visual-choice-board` | |
 | Analyse, transcribe, "what happens in this clip" | `video-analysis` | |
 | Cost, credits, "buy more", cloud render | `paid-spend-gate` | |
-| Podcast clip | no skill yet: playbook + `talking-head-editor` beat menu; say it is untested | |
 
 ## Gates
 States: `pass | fail | blocked | n/a`, each with a reason. A missing listing, empty probe or timeout never passes.

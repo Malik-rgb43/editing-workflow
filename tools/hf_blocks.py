@@ -35,7 +35,7 @@ import _common  # noqa: F401
 
 REPO = Path(__file__).resolve().parents[1]
 BLOCKS = REPO / "hf-blocks"
-SCAN_REL = Path("motion-graphics-builder") / "scripts" / "seek_safe_scan.py"
+SCAN_REL = Path("pro-video-editor") / "scripts" / "seek_safe_scan.py"
 HF_JSON = {"$schema": "https://hyperframes.heygen.com/schema/hyperframes.json", "paths": {"blocks": "compositions", "components": "compositions/components", "assets": "assets"}, "media": {"autoProxy": True}}
 
 
@@ -245,7 +245,7 @@ def verify_one(m: dict, keep: bool) -> dict:
                 return res
         scan_py = find_scan()
         if scan_py is None:
-            res["notes"].append("seek_safe_scan.py not found (install the motion-graphics-builder skill): the seek-safety half of the admission test cannot run, so nothing is admitted")
+            res["notes"].append("seek_safe_scan.py not found (install the pro-video-editor skill): the seek-safety half of the admission test cannot run, so nothing is admitted")
             return res
         r = run([sys.executable, "-X", "utf8", str(scan_py), str(tmp), "--json"], timeout=120)
         try:

@@ -3,7 +3,7 @@
 Load when: choosing or changing a caption font, sizing captions, running the look-alike test, checking font licences. Dated 2026-10-02; sources: distilled 06 hebrew-rtl-and-captions §1-§2 (E03, T08, owner notes); decision default Q5.
 
 ## 1. Precedence
-1. The style the client already approved. 2. The signature in the video-type skill. 3. The default: Rubik (Black/900 for keywords, Regular/600 for small words). Rubik is a **default, not law**: the author said "you do not have to use Rubik" (2026-09-28); another display face is allowed after the full-size look-alike test below. Platform-native fonts for UGC-style paid ads (TikTok, Stories) are an external recommendation, not an owner rule.
+1. The style the client already approved. 2. The signature in `pro-video-editor`. 3. The default: Rubik (Black/900 for keywords, Regular/600 for small words). Rubik is a **default, not law**: the author said "you do not have to use Rubik" (2026-09-28); another display face is allowed after the full-size look-alike test below. Platform-native fonts for UGC-style paid ads (TikTok, Stories) are an external recommendation, not an owner rule.
 
 ## 2. The look-alike failure and the test (law before locking a display font)
 Karantina Bold at display size made ז almost identical to ו: the keyword "לבזבז" (to waste) read as "לבובו". The fix moved only that keyword to Noto Sans Hebrew Condensed Black (wdth 62.5, wght 900), enlarged to 330 px because the Noto face rendered lower and the gap below grew. Test, for every keyword of the film:
@@ -35,8 +35,8 @@ Caveats from the report: fonts were compared at "practical caption presets", not
 | Context | Value | Status |
 |---|---|---|
 | Talking-head premium (Rubik) | caption rail y 900-1240 on A-roll, never below 1450; keyword lockups tight on the glyph box; one keyword was enlarged to 330 px | proven in travel-agency speaker tests |
-| Testimonial signature | 88 px, weight 900, glyph height 3-4.5 % of frame, white fill, `-webkit-text-stroke: 2.5px #000; text-shadow: 3px 4px 8px rgba(0,0,0,.65)`, top 68 % (paid Meta <= 58 %) | belongs to `testimonial-editor` |
-| Ad signature | white heavy rounded sans, soft shadow, no box, chest height 37-66 % | belongs to `ad-promo-editor` |
+| Testimonial signature | 88 px, weight 900, glyph height 3-4.5 % of frame, white fill, `-webkit-text-stroke: 2.5px #000; text-shadow: 3px 4px 8px rgba(0,0,0,.65)`, top 68 % (paid Meta <= 58 %) | belongs to `pro-video-editor` |
+| Ad signature | white heavy rounded sans, soft shadow, no box, chest height 37-66 % | belongs to `pro-video-editor` |
 Rules: height 37-73 % by type; 1-3 words; keyword colour = the film's ONE keyword colour (alert colour only for the problem word, never pink); small words sit close to the keyword (gap 40-70 px, tight on the glyph box, `data-layout-allow-overlap` per word span because a display font's line box can exceed its glyphs); digits not number words ("200 אלף ש״ח"); animate words not letters.
 
 ## 5. Fit and measurement

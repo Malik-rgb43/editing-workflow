@@ -2,7 +2,7 @@
 
 Start it as a BACKGROUND command right after `new_project` (the intake questions do not need its results; the concept and the build do).
 It runs the existing tools one after another, each under the heavy-job lock (one heavy job at a time). Build inputs go where the type
-skills read them (``hf/data/``, talking-head-editor stage 1), looks go to ``_work/prep/``, references to ``_work/analysis/<ref-id>/``:
+skills read them (``hf/data/``, pro-video-editor stage 1), looks go to ``_work/prep/``, references to ``_work/analysis/<ref-id>/``:
 
     sheet    contact sheet of the main source (24 tiles)                    -> _work/prep/sheet.jpg        (tools/sheet.py)
     asr      word-timed transcript of the main source                       -> hf/data/words.json          (tools/transcribe.py)
@@ -186,7 +186,8 @@ def main(argv=None) -> int:
             results["refs"] = {"status": "skipped", "reason": f"no videos in {n['hf']}/references/"}
             continue
         for job in [j for j in plan(root, main_src, refs, a, faces_done) if j["step"] == step]:
-            key = {"cmd": job["cmd"], "inputs": stamp(job["inputs"])}
+            # the tool's own file is part of the key: a fixed tool must not hand back a cached result of its old code (found 2026-10-04)
+            key = {"cmd": job["cmd"], "inputs": stamp(job["inputs"] + [Path(job["cmd"][1])])}
             prev = steps_state.get(job["id"]) or {}
             if not a.force and prev.get("status") in ("done", "cached") and prev.get("key") == key and all(Path(o).exists() for o in job["outputs"]):
                 results[job["id"]] = {**prev, "status": "cached"}

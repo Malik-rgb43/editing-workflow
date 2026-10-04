@@ -6,7 +6,7 @@
 | Field | Value |
 |---|---|
 | Stage | 3 of 9 — **mandatory gate** |
-| Owner skill | the **type skill** + the techniques [frame-spec-prompt.md](../techniques/frame-spec-prompt.md) and [clean-smooth-motion.md](../techniques/clean-smooth-motion.md) (motion) |
+| Owner skill | the editor (**`pro-video-editor`**) + the techniques [frame-spec-prompt.md](../techniques/frame-spec-prompt.md) and [clean-smooth-motion.md](../techniques/clean-smooth-motion.md) (motion) |
 | Artifacts (exact files) | `hf/PROMPT.md` (ledger + the six frame blocks; for footage the edit spec), `hf/DESIGN.md` (from the [DESIGN.md template](../techniques/templates/DESIGN.md)), four approval stills in `_work/prompt/stills/`, an approval entry in `hf/CHANGELOG.md` |
 | Exit gate | **G3 — the human approved PROMPT.md and DESIGN.md before the first line of composition code** (also in autonomous runs) |
 | Target time | **30–40 min** (owner target) to a presentable spec |

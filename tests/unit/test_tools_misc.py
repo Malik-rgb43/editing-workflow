@@ -27,6 +27,17 @@ def test_help_under_one_and_a_half_seconds(tool):
     assert p.returncode == 0 and time.monotonic() - t < 1.5, (tool, time.monotonic() - t)  # E04-L01: the original transcribe --help took > 45 s
 
 
+def test_transcribe_flags_the_real_hallucination_and_passes_real_speech():
+    import transcribe as tr
+
+    halluc = [{"w": "תודה", "start": 0.0, "end": 1.86}, {"w": "רבה.", "start": 1.86, "end": 18.28}]  # the real no-VAD output, 2026-10-04
+    signs = tr.hallucination_signs(halluc, 20.8)
+    assert len(signs) == 2 and "16.4 s" in signs[0]
+    speech = [{"w": f"מילה{i}", "start": i * 0.3, "end": i * 0.3 + 0.25} for i in range(170)]  # ~3.3 words/s like the 52 s talking-head
+    assert tr.hallucination_signs(speech, 51.99) == []
+    assert tr.hallucination_signs(halluc[:1], 4.0) == []  # a short clip with one short word is not suspicious
+
+
 def test_transcribe_normalize_words_is_monotonic_and_drops_empties():
     import transcribe
 
@@ -69,30 +80,6 @@ def test_new_project_scaffold_copy_verify_and_no_overwrite(tmp_path, e04_set):
     assert json.loads((root / "project.json").read_text(encoding="utf-8"))["title"] == "סרטון בדיקה"
     p2 = run("new_project", "סרטון בדיקה", "--work-root", wr, "--copy", e04_set["clean"], "--json")
     assert p2.returncode == 2 and "never overwritten" in p2.stdout  # re-run does not overwrite the source copy
-
-
-def test_new_project_starter_writes_a_draft_that_the_intake_gate_still_blocks(tmp_path):
-    p = run("new_project", "--list-starters")
-    assert p.returncode == 0 and "talking-head" in p.stdout.split()
-    p = run("new_project", "סרטון דובר", "--work-root", tmp_path / "work", "--starter", "talking-head", "--json")
-    assert p.returncode == 0, p.stderr
-    d = json.loads(p.stdout)
-    hf = Path(d["hf"])
-    assert sorted(d["templates_written"]) == ["BRIEF.md", "DESIGN.md", "PROMPT.md"]
-    prompt = (hf / "PROMPT.md").read_text(encoding="utf-8")
-    assert "status: DRAFT (not approved)" in prompt and "type: talking-head" in (hf / "BRIEF.md").read_text(encoding="utf-8")
-    # the starter is well-formed, yet the intake ledger gate FAILS it until every ASK is answered by the user
-    checker = REPO / "agent-content" / "skills" / "video-brief-intake" / "scripts" / "ledger_check.py"
-    c = subprocess.run([sys.executable, "-X", "utf8", str(checker), str(hf / "PROMPT.md"), "--structure-only", "--footage", "--json"],
-                       capture_output=True, text=True, encoding="utf-8", timeout=60)
-    rep = json.loads(c.stdout)
-    assert c.returncode == 1 and rep["rows"] == 14
-    assert {f["code"] for f in rep["findings"] if f["severity"] == "error"} == {"blocking_dim_missing"}
-    # a second run never overwrites the draft the agent has been editing
-    (hf / "PROMPT.md").write_text("edited", encoding="utf-8")
-    p = run("new_project", "סרטון דובר", "--work-root", tmp_path / "work", "--starter", "talking-head", "--json")
-    assert json.loads(p.stdout)["templates_written"] == [] and (hf / "PROMPT.md").read_text(encoding="utf-8") == "edited"
-    assert run("new_project", "x", "--work-root", tmp_path / "work", "--starter", "nope").returncode == 2
 
 
 def test_new_project_refuses_without_work_root_and_non_ascii_root(tmp_path):
@@ -143,3 +130,31 @@ def test_new_project_init_hyperframes_reports_missing_engine_and_never_downloads
     (hf / "x.txt").write_text("keep", encoding="utf-8")
     r2 = new_project._init_hyperframes(hf)
     assert r2["ok"] is False and "not empty" in r2["why"] and (hf / "x.txt").read_text(encoding="utf-8") == "keep"
+
+
+def test_hf_studio_parses_the_engine_json_and_refuses_a_folder_without_a_project(tmp_path):
+    import hf_studio
+
+    line = '{"schemaVersion":1,"operation":"start","ok":true,"result":{"state":"started","studioUrl":"http://127.0.0.1:3002/#project/hf","port":3002}}'
+    assert hf_studio.parse_engine_json("lint: 1 warning\n" + line)["result"]["port"] == 3002
+    assert hf_studio.parse_engine_json("no json here") is None
+    hf = tmp_path / "demo-project-1a2b3c" / "hf"
+    assert hf_studio.with_project_tag("http://127.0.0.1:3002/#project/hf", hf) == "http://127.0.0.1:3002/?p=demo-project-1a2b3c#project/hf"
+    assert hf_studio.with_project_tag("http://127.0.0.1:3002/?p=x#project/hf", hf).count("?p=") == 1
+    p = run("hf_studio", tmp_path / "empty")
+    assert p.returncode == 2 and "index.html not found" in p.stderr
+
+
+def test_motion_qa_cuts_accept_frames_and_seconds():
+    import types
+
+    import motion_qa
+
+    a = types.SimpleNamespace(cuts="48,1.8667,86", cuts_from=None)
+    assert motion_qa.parse_cuts(a, 30.0) == [48, 56, 86]  # "1.8667" has a decimal point = seconds (real edit point, 2026-10-04)
+
+
+def test_hf_deliver_loudnorm_aims_under_the_true_peak_gate():
+    import hf_deliver
+
+    assert hf_deliver.TP_MARGIN_DB >= 0.3  # a target equal to the gate measured -0.99 vs -1.0 after AAC (2026-10-04)

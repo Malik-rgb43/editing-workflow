@@ -12,7 +12,7 @@ The toolkit must work on every computer and for every student with no author-spe
 Follow [INSTALL.md](INSTALL.md) exactly: tell the student what is downloaded and which questions they will be asked, get ONE confirmation, install, then ask the optional connection questions one at a time (default no). Sign-up links for paid services are shown as the installer prints them: a referral link is always labelled and disclosed, the plain link is shown beside it, nothing is opened without the student's yes, and no referral parameter is ever added to MCP / API / CLI calls.
 
 ## Entry point for any video request
-Use the skill **`video-request-router`**. It picks the ONE owning skill or workflow (intake, type skills, captions, render/QA/delivery, revision rounds, `paid-spend-gate`, ...). Do not start building before it routed. A project that already has `PROMPT.md` is resumed, never restarted.
+Use the skill **`video-request-router`**. It picks the ONE owning skill or workflow (intake, `pro-video-editor`, captions, render/QA/delivery, revision rounds, `paid-spend-gate`, ...). Do not start building before it routed. A project that already has `PROMPT.md` is resumed, never restarted.
 
 ## Never-break rules
 1. **Intake until precise.** No reference given -> ask for one. Ask in rounds until every parameter is checkable.
@@ -24,6 +24,7 @@ Use the skill **`video-request-router`**. It picks the ONE owning skill or workf
 7. **HyperFrames:** no `dir="rtl"` on the composition root (RTL only on text elements); fonts from `@font-face` files in `hf/fonts/` (never by name); `hyperframes snapshot --describe false` and at most 5 timestamps per call; strip `data-hf-id` before patching/rendering; run `tools/hf_preflight.py` before any check or render.
 8. **ASCII work root** (`paths.work_root` in `toolkit.toml`, or `AVC_PATHS_WORK_ROOT`). Never run `npx hyperframes init` under a path with Hebrew letters; never rename source folders.
 9. **Never message other Claude/agent sessions** on your own initiative.
+10. **Open the Studio whenever you start or resume work on a HyperFrames project** (owner rule): `python tools/hf_studio.py <project>/hf` (reuses a running one), then show the user the `studio_url` (open it in a NEW tab of your browser pane, or give the link; if the tool exits 3, run it with `--attach` as a background command) so they watch the video and its timeline while you work. Stop it with `--stop` when the session ends.
 
 ## Secrets, privacy, safety
 * Never ask for, accept in chat, print, log or write into any file an API key, password or token. Point to the place (OS environment variable, `/mcp` OAuth, vendor CLI sign-in, keychain) and let the user do it. Check credentials by **presence only**.

@@ -22,7 +22,7 @@ Hebrew look-alikes (ו/ז, ד/ר, ה/ח) read as a different word in a display f
 ## 3. Classes
 | Class | Signs | Do |
 |---|---|---|
-| **replace-concept** | "boring", "looks AI", "static", "didn't like": taste, not a defect | propose a NEW beat for that range from the type skill's beat menu (or, if none, 2-3 alternatives you pick from by the sentence's meaning); one line why; never polish the old beat. For 3+ pending visual choices use `visual-choice-board` |
+| **replace-concept** | "boring", "looks AI", "static", "didn't like": taste, not a defect | propose a NEW beat for that range from the editor's beat menu (or, if none, 2-3 alternatives you pick from by the sentence's meaning); one line why; never polish the old beat. For 3+ pending visual choices use `visual-choice-board` |
 | **fix** | glitch, position, size, timing, cut, colour, typo | fix the cause from section 2 |
 | **audio-only** | SFX, music, VO level, swoosh | remix + remux (no render): `hf_mix --report`, then `hf_deliver ... --skip-render`; never chase loudness inside the composition |
 | **global rule** | "always", "never", or the same theme in two rounds | fix EVERY occurrence in the film (centring was fixed per section once and 17-24 s was missed); list all occurrences in the log |
@@ -35,4 +35,4 @@ A note with several claims is split (1a, 1b). A mixed round (audio + picture) pu
 First half of a full render: stop it (only your own process tree, check the lock) and rerun after the collection window. Second half: finish; the note joins the next round unless it is a blocker (wrong fact, broken frame, rights problem). Never start a full render while reviewers are still running, and wait for all of them before re-rendering.
 
 ## 6. Where the notes come from
-Studio review is the default channel: the user watches the live project in HyperFrames Studio (`npx hyperframes preview`) and sends notes; fidelity limits for `<video>` layers are about 1 frame (measured on one machine, HyperFrames 0.8.98, E12; other versions unmeasured), so render-only risks still need a segment render. Studio adds `data-hf-id` to `index.html`: strip before patching, re-read the file after any Studio edit.
+Studio review is the default channel: the user watches the live project in HyperFrames Studio (`python tools/hf_studio.py <project>/hf`) and sends notes; fidelity limits for `<video>` layers are about 1 frame (measured on one machine, HyperFrames 0.8.98, E12; other versions unmeasured), so render-only risks still need a segment render. Studio adds `data-hf-id` to `index.html`: strip before patching, re-read the file after any Studio edit.

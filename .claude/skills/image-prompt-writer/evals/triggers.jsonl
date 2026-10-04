@@ -13,7 +13,7 @@
 {"prompt": "write the Seedance prompt for this 15 second scene", "should_trigger": false, "route_instead": "video-prompt-writer"}
 {"prompt": "how much will generating these stills cost", "should_trigger": false, "route_instead": "paid-spend-gate"}
 {"prompt": "approve the budget and run the generation", "should_trigger": false, "route_instead": "paid-spend-gate"}
-{"prompt": "plan the whole AI film from the script", "should_trigger": false, "route_instead": "ai-generated-video-editor"}
+{"prompt": "plan the whole AI film from the script", "should_trigger": false, "route_instead": "pro-video-editor"}
 {"prompt": "fix the skin colour in my footage", "should_trigger": false, "route_instead": "speaker-color-correction"}
 {"prompt": "retouch this photo of me", "should_trigger": false, "route_instead": null}
 {"prompt": "תכין לי פרומפט לוידאו של 15 שניות", "should_trigger": false, "route_instead": "video-prompt-writer"}

@@ -5,7 +5,7 @@ PURPOSE: the VISUAL TRUTH FILE. One file per project; the source of every CSS va
 easing is invented mid-build. The 4-axis visual review (agent-content/benchmarks/visual-review-4-axis.md, axis 2)
 checks the film against THIS file and against PROMPT.md. A hex that is not in the palette table is a finding.
 
-PRECEDENCE for caption/title styling: (1) a style the client already approved, (2) the type skill's signature,
+PRECEDENCE for caption/title styling: (1) a style the client already approved, (2) the editor's signature,
 (3) the defaults here. Rubik Black (keywords) + Rubik Regular (small words) is a DEFAULT, not a law.
 Values in "(example)" cells are synthetic orientation values — replace them.
 -->

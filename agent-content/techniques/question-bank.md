@@ -17,6 +17,7 @@ The author's wording (O0305, 2026-09-29): *"אם אין סרטון רפרנס א
 7. After each round print one line: `נעול: … | פתוח: …`.
 8. **Stop** when nothing material is open — typically 1–3 rounds. Do not ask infrastructure questions (tools, folders, models): decide and say why in one line.
 9. **"תמשיך"** (or "continue", "whatever you think") = take every recommended default, mark them `D`, and say so in ONE line. That counts as the person's choice, not a guess.
+10. **Round 0 first** (owner rule 2026-10-04): what the video is for, who decides the concept (full control / the person), and the caption language (never assume Hebrew). Full control = you decide every taste dimension, mark `D`, show the decisions in the draft.
 10. **Before asking, look**: `ls` the whole source folder, `ffprobe` the files, read the message. Never ask what is already known.
 
 ## 1. Round plan (default order)
@@ -48,7 +49,7 @@ Format of each cell: the Hebrew question · the English gloss · options (**firs
 | MOT | איזו שפת תנועה? | motion language | נקי וחלק: קאמרה רציפה, עקומות רכות (מומלץ) · snap-ואז-drift בסגנון השקות · מינימלי |
 | 3D | באילו ביטים יש תלת-ממד, ובאיזה כלי? | which beats get 3D and with which tool | 2–3 ביטים מרכזיים עם נימוק לכל ביט: Blender לאובייקט פוטוריאליסטי, Three.js לפרוצדורלי/נתונים/מופעים רבים (מומלץ) · בלי · הרבה |
 | BROLL | איזה B-roll? | kind of B-roll | צילום אמיתי + שכבת גרפיקה, UI לפי המשמעות, מונע-נתונים (מומלץ) · סטוק בלבד · בלי. **אף פעם לא תמונות AI של אנשים** |
-| CAP | כתוביות? | captions | קבוצות של 1–3 מילים, אנימציית כניסה **וגם יציאה**, פס כתוביות שתחתיתו לא מתחת ל-y 1450 (מומלץ לדובר) · מילות מפתח בלבד · בלי (ברירת מחדל להשקות מושן) |
+| CAP | כתוביות? באיזו שפה? | captions + their language (Round 0, never assumed) | שפת הדיבור · תרגום (לאיזו שפה) · בלי. סגנון: קבוצות של 1–3 מילים, אנימציית כניסה **וגם יציאה**, פס כתוביות שתחתיתו לא מתחת ל-y 1450 (מומלץ לדובר) · מילות מפתח בלבד · בלי (ברירת מחדל להשקות מושן) |
 | MUS | איזו מוזיקה? | music | רצועה מהספרייה עם שורת רישיון, נגמרת ברינג-אאוט עד הפריים האחרון (מומלץ) · סאונד טרנדי (אורגני בלבד) · בלי. **נשאל גם כשלרפרנס אין מוזיקה** |
 | SFX | אפקטי סאונד? | sound effects | רק על אירועים נראים, 18–26 dB מתחת לקול (מומלץ) · עשיר (השקה) · בלי |
 | VO | קריינות? איך מבטאים שמות מותג? | voice-over and brand pronunciation | הקול של המקור (מומלץ) · TTS עם לקסיקון (שם מותג מאוית באותיות) · בלי |
@@ -59,7 +60,7 @@ Format of each cell: the Hebrew question · the English gloss · options (**firs
 | BRAND | יש לוגו, צבעים, פונטים? | logo, colours, fonts | מקבצים שתשלחו או מאתר הלקוח (מומלץ) · אשלח · אין. **לא ממציאים** |
 | COLOR | יש קובץ מצלמה מקורי (4K)? צריך תיקון צבע? | camera original / colour correction | תיקון מהמקור עם סקופים (מומלץ) · הצילום בסדר · מראה משלי |
 
-Notes: *TYPE* — a font that reads one word as another is a failure, e.g. a condensed display face made ז look like ו and "לבזבז" read as "לבובו"; test every keyword at final size (the look-alike test). *LOOK* — "one palette through the whole video with clear rules per role" is the author's rule; "no pink" is his taste. *CAP* — word-pop vs sentence mode differ in timing (1–3 words, 0.35–0.7 s per card vs up to 6 words and ≥ 5/6 s); the type skill says which.
+Notes: *TYPE* — a font that reads one word as another is a failure, e.g. a condensed display face made ז look like ו and "לבזבז" read as "לבובו"; test every keyword at final size (the look-alike test). *LOOK* — "one palette through the whole video with clear rules per role" is the author's rule; "no pink" is his taste. *CAP* — word-pop vs sentence mode differ in timing (1–3 words, 0.35–0.7 s per card vs up to 6 words and ≥ 5/6 s); `pro-video-editor` says which.
 
 ## 3. When a reference exists
 

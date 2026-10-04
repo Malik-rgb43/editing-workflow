@@ -1,7 +1,7 @@
 ---
 name: video-variants-exporter
 description: >-
-  Deliver one approved video as several outputs (other aspect ratios, hook variants, platform versions, no-music/no-captions versions) or run several videos in parallel, with one shared mix, strict naming and a manifest that blocks stale derivatives. Triggers: export as 9:16 and 1:1, hook variants, variants batch; גרסאות, וריאציות הוק, כמה סרטונים יחד, 9:16 ו-16:9. NOT for a single deliverable (render-qa-delivery) or designing the master (the type skill).
+  Deliver one approved video as several outputs (other aspect ratios, hook variants, platform versions, no-music/no-captions versions) or run several videos in parallel, with one shared mix, strict naming and a manifest that blocks stale derivatives. Triggers: export as 9:16 and 1:1, hook variants, variants batch; גרסאות, וריאציות הוק, כמה סרטונים יחד, 9:16 ו-16:9. NOT for a single deliverable (render-qa-delivery) or designing the master (`pro-video-editor`).
 compatibility: >-
   scripts/manifest_check.py needs only Python 3.9+ (ffprobe optional). Presets and speeds quoted in references are house preset v1 / measured on one reference machine; NVIDIA and Apple cells are unmeasured.
 metadata:
@@ -12,7 +12,7 @@ metadata:
 
 # video-variants-exporter
 
-Turns ONE approved master into N outputs without losing control of which file came from which source state. It owns the variant matrix, the master freeze, the re-layout copies, the shared mix, the naming, the one-render-at-a-time queue, the agent supervision rules and the manifest gate. It does not design the master (the type skill does) and does not replace per-file QA (`render-qa-delivery`).
+Turns ONE approved master into N outputs without losing control of which file came from which source state. It owns the variant matrix, the master freeze, the re-layout copies, the shared mix, the naming, the one-render-at-a-time queue, the agent supervision rules and the manifest gate. It does not design the master (`pro-video-editor` does) and does not replace per-file QA (`render-qa-delivery`).
 
 ## Rules that outrank the rest of this file
 1. **Master first, then frozen.** Derivatives are made only from a master that passed its own full QA and is recorded with `manifest_check.py freeze`. A fix needed later is made in the MASTER, logged with `change`, carried to every copy in the same round, and every derivative is re-rendered and re-recorded. Fixing only a copy is forbidden.
@@ -81,5 +81,5 @@ Late 16:9 request at delivery (a full re-layout, dropped); a master fix of 3.7 s
 - `references/parallel-and-agents.md` - launching agents, queue, lock, heartbeats, stopping, token budget.
 - `references/house-presets.md` - before quoting any canvas, safe-zone, loudness or platform number (dated module).
 - `agent-content/references/platform-specs.md` (canonical platform facts, owned elsewhere) and `agent-content/playbooks/wf-08-deliver.md` (delivery playbook: naming, manifest rules) - export presets and the playbook; if a number differs, the canonical file wins and `references/house-presets.md` is updated.
-- Other skills: `render-qa-delivery` (per-file QA), `hebrew-captions-transcription` (caption rail), `ad-promo-editor` (hook ranking), `revision-notes-handler` (notes across aspects), `paid-spend-gate`.
+- Other skills: `render-qa-delivery` (per-file QA), `hebrew-captions-transcription` (caption rail), `pro-video-editor` (hook ranking), `revision-notes-handler` (notes across aspects), `paid-spend-gate`.
 - Scripts: `scripts/manifest_check.py` (`--self-check` 29 cases, exit 0 READY / 1 BLOCKED / 2 INSUFFICIENT_EVIDENCE) and `scripts/test_manifest_check.py` (unittest).

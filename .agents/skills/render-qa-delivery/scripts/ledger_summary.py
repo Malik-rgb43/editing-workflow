@@ -3,7 +3,7 @@
 
 One line per stage attempt in _work/timing_ledger.jsonl. The summary counts FULL renders per round
 (gate G4: exactly one per round) and sums minutes per stage, so a student can replace the modelled
-budget in talking-head-editor with measured numbers.
+budget in pro-video-editor with measured numbers.
 
 Usage:
     python -X utf8 ledger_summary.py append LEDGER.jsonl --project P --round N --stage S --kind K

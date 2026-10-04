@@ -1,18 +1,18 @@
 # Editor vocabulary -> owner skill
 
-Load when: the user talks like a video editor from a timeline editor (Premiere, DaVinci, Final Cut, CapCut) and the words do not name a skill. Map the word to the OWNER below, say the mapping in one line ("a jump cut removal = `talking-head-editor`"), and keep the user's own word in the handoff note. A word that maps to a tool is a hint for the owner skill, not a route of its own.
+Load when: the user talks like a video editor from a timeline editor (Premiere, DaVinci, Final Cut, CapCut) and the words do not name a skill. Map the word to the OWNER below, say the mapping in one line ("a jump cut removal = `pro-video-editor`"), and keep the user's own word in the handoff note. A word that maps to a tool is a hint for the owner skill, not a route of its own.
 
 | The editor says (English / Hebrew) | They mean | Owner | The AI-side equivalent |
 |---|---|---|---|
-| rough cut, assembly, "clean up the takes", ripple delete, remove silences / חיתוך גס, ניקוי שתיקות | cut a talking recording down to the good takes | `talking-head-editor` | `source_cuts`, `aroll_cut`, `join_diff` (the cut list is a file, not a timeline) |
-| jump cut, punch-in, scale up on a beat / קפיצה, זום | a visible cut hidden by a zoom | `talking-head-editor` | the camera rig (`camera_path`) and `references/camera-and-zoom.md` |
+| rough cut, assembly, "clean up the takes", ripple delete, remove silences / חיתוך גס, ניקוי שתיקות | cut a talking recording down to the good takes | `pro-video-editor` | `source_cuts`, `aroll_cut`, `join_diff` (the cut list is a file, not a timeline) |
+| jump cut, punch-in, scale up on a beat / קפיצה, זום | a visible cut hidden by a zoom | `pro-video-editor` | the camera rig (`camera_path`) and `references/camera-and-zoom.md` |
 | subtitles, captions, burn-in, SRT / כתוביות, תרגום | timed words on screen | `hebrew-captions-transcription` | `transcribe` then the `caption` block; Hebrew RTL on the text element only |
 | colour grade, LUT, skin tones, "look" / צבע, גריידינג, גוני עור | match the picture to a target | `speaker-color-correction` | `color_fit` then `color_render` (the grade is baked into a file) |
-| rotoscope, mask, remove background, text behind the person / רוטו, מסכה, טקסט מאחורי הדובר | the person as a separate layer | `talking-head-editor` (beat) -> `cutout` | `cutout`, then the `speaker-cutout-behind` block |
-| lower third, title, MOGRT, animated text, kinetic type / כותרת, אנימציית טקסט | graphics over footage | `motion-graphics-builder` | `hf-blocks` and HyperFrames compositions (HTML + a paused timeline) |
-| keyframes, easing, graph editor / קיפריימים, איזינג | motion over time | `motion-graphics-builder` | GSAP tweens on one paused timeline; `references/seek-safe-and-render-traps.md` |
-| transition, light leak, film burn, flash / טרנזישן, שריפת פילם | the join between two shots | the type skill that owns the video | the `film-burn` block, or a hard cut; transitions are `check` points in `analyze` |
-| B-roll, stock, cutaway, overlay footage / ב-רול, חומרי גלם משלימים | footage that covers the speaker | the type skill that owns the video | chosen by the meaning of the sentence; real footage first, generation only through `paid-spend-gate` |
+| rotoscope, mask, remove background, text behind the person / רוטו, מסכה, טקסט מאחורי הדובר | the person as a separate layer | `pro-video-editor` (beat) -> `cutout` | `cutout`, then the `speaker-cutout-behind` block |
+| lower third, title, MOGRT, animated text, kinetic type / כותרת, אנימציית טקסט | graphics over footage | `pro-video-editor` | `hf-blocks` and HyperFrames compositions (HTML + a paused timeline) |
+| keyframes, easing, graph editor / קיפריימים, איזינג | motion over time | `pro-video-editor` | GSAP tweens on one paused timeline; `references/seek-safe-and-render-traps.md` |
+| transition, light leak, film burn, flash / טרנזישן, שריפת פילם | the join between two shots | `pro-video-editor` that owns the video | the `film-burn` block, or a hard cut; transitions are `check` points in `analyze` |
+| B-roll, stock, cutaway, overlay footage / ב-רול, חומרי גלם משלימים | footage that covers the speaker | `pro-video-editor` that owns the video | chosen by the meaning of the sentence; real footage first, generation only through `paid-spend-gate` |
 | sound design, SFX, music bed, ducking, loudness, LUFS / סאונד, מוזיקה, דאקינג | the audio mix | `render-qa-delivery` | `hf_mix --report`, loudness on the final file |
 | export, render queue, H.264, preset, proxy / ייצוא, רנדר | the final file | `render-qa-delivery` | studio preview first, range renders, ONE full render, every-frame QA |
 | client notes, "revision 2", "change request" / הערות לקוח, תיקונים | changes to a draft | `revision-notes-handler` | patch, re-verify only what changed |

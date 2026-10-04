@@ -3,22 +3,18 @@
 
 Every skill, workflow and tool in one place. Skills are specified with deterministic checks only; model evaluation has not been run (decision default Q4). Nothing here grants permission: user and project restrictions on spend, installs and publication always win.
 
-## Skills (18)
+## Skills (14)
 
 | skill | kind | version | what it is for |
 |---|---|---|---|
-| `ad-promo-editor` | type | 0.1.0 | Script, edit or review a paid-social ad, sponsored post or brand promo for a business, product or app (Meta, TikTok, 15-60 s): exact offer and CTA, ranked hooks, hook variants, end card, blocking compliance table, licen… |
-| `ai-generated-video-editor` | type | 0.1.0 | Plan, prompt, cut and review a video built mainly from AI-generated shots (Higgsfield, Kling, Veo, Seedance, Hailuo, Runway, still-to-video): AI explainers, spec commercials, narrative skits, character or X-ray comedy. |
 | `hebrew-captions-transcription` | process | 0.1.0 | Transcribe Hebrew speech and build burned-in Hebrew captions: ASR route per hardware, word timestamps, proofreading, RTL and mixed English/number lines, caption font, entrance and exit animation, safe zone, caption QA. |
 | `image-prompt-writer` | tool | 0.1.0 | Write copy-ready text-to-image prompts for the stills-first stage of a video: keyframes, start frames, hero frames, character and location sheets, B-roll stills, thumbnails; one STYLE PREFIX per film, no text inside the… |
-| `motion-graphics-builder` | type | 0.1.0 | Design, build and review a motion-graphics piece in HyperFrames/GSAP: product or app launch, feature announcement, kinetic typography, logo reveal, UI explainer, animated screenshots. |
 | `paid-spend-gate` | gate | 0.1.0 | Gate every paid action before it runs - AI image, video or audio generation, upscales, paid APIs, cloud renders, credit purchases, trials that need a card. |
+| `pro-video-editor` | process | 0.1.0 | Use when editing any video into a finished piece - a speaker to camera, a testimonial, an ad or promo, a motion or launch piece, AI-generated takes, a podcast clip - from raw footage, a rough cut, a brief or a reference. |
 | `reference-style-matching` | gate | 0.1.0 | Make the user's footage, script or topic in the style of a reference video: measure it into a Style DNA card, map it onto the user's material, offer three ways to apply it (Faithful / Elevated / Twist); grammar, never a… |
 | `render-qa-delivery` | process | 0.1.0 | Run the cheap-first render, QA and delivery pipeline for a HyperFrames video: preflight, range renders, one full render, final-file loudness and mux, every-frame QA, visual review, manifest, timing ledger. |
 | `revision-notes-handler` | process | 0.1.0 | Use when the user sends notes, complaints or timestamped fixes on an existing draft or delivered video - boring, looks AI, too static, the caption at 0:12 is late, change the font, make the globe bigger, music too loud. |
 | `speaker-color-correction` | process | 0.1.0 | Colour-correct footage of a person (talking head, interview, UGC, speaker outdoors) from the CAMERA ORIGINAL with scopes, a numeric fit, a subject matte and a baked plate, then gate the render. |
-| `talking-head-editor` | type | 0.1.0 | Edit a talking-head / speaker-to-camera video (expert, coach, service provider) from raw or rough-cut footage into a premium vertical reel: whole-sentence cuts, face-centred zooms, full-bleed B-roll, cutout, captions. |
-| `testimonial-editor` | type | 0.1.0 | Edit a customer testimonial, client review, student success story or case-study video from consented interview, Zoom or selfie footage into a short, honest, result-first cut with original proof and accessible captions. |
 | `video-analysis` | tool | 0.1.0 | Turn a video the user sends or links (file or URL) or a folder of clips into measurements (cuts, pacing, per-frame data), keyframe sheets, a Hebrew transcript and sound analysis (SFX, BPM, key, beats, song ID). |
 | `video-brief-intake` | gate | 0.1.0 | Turn a new video idea, brief or list of specifics into a checkable Concept Ledger and ask questions until every parameter is precise, before any concept, prompt or build. |
 | `video-prompt-writer` | tool | 0.1.0 | Write shot-by-shot, about 15-second Seedance 2.x prompts from a script, scene or beat: cinematic film or a short single shot, with camera, lens, light and sound per shot. |
@@ -81,7 +77,7 @@ Every skill, workflow and tool in one place. Skills are specified with determini
 - `agent-content/references/platform-specs.md` - Platform specs, delivery presets and AI-disclosure — dated reference
 - `agent-content/references/three-d-routes.md` - 3D routes — dated reference
 
-## Tools (33)
+## Tools (34)
 
 | tool | purpose | usage |
 |---|---|---|
@@ -104,11 +100,12 @@ Every skill, workflow and tool in one place. Skills are specified with determini
 | `tools/hf_mix.py` | hf_mix - premix voice-over + music bed + SFX from ONE cue file into a master WAV (two-pass loudnorm), and report what it measured. | python tools/hf_mix.py <cues.json> -o <mix.wav> [--report] [--lufs-tol 1.0] [--no-duck] |
 | `tools/hf_preflight.py` | hf_preflight - static lint of a HyperFrames project (seconds, not an 8-minute render). Run it before ANY check/render. | python tools/hf_preflight.py <hf-project-dir \| file.html> [--strict] [--rail-bottom 1450] [--canvas-height 1920] [--json-out r.json] [--human] |
 | `tools/hf_segment.py` | hf_segment - render ONLY a time range of a HyperFrames project, widened outward to whole scenes (a fast picture-only draft). | python tools/hf_segment.py <hf-dir> --from 26.0 --to 28.5 [--no-snap] [--quality draft\|delivery] [--out FILE] [--fps 30] [--workers N] [--qa] [--dry-run] [--render-cmd "..."] [--eta 300] [--lock-wait 0] (--from/--to accept seconds ``26.0`` or frames ``f780``) |
+| `tools/hf_studio.py` | hf_studio - open a HyperFrames project in Studio (video + timeline) so the user sees what the agent is working on. | python tools/hf_studio.py <hf-dir> [--port 3002] [--open] [--json]      start (or reuse) the Studio for this project; prints studio_url python tools/hf_studio.py <hf-dir> --status [--json]                      is a Studio running for this project? python tools/hf_studio.py <hf-dir> --stop                                  stop it (end of the session or before moving the project) python tools/hf_studio.py <hf-dir> --attach                                keep the server attached (run it as the host's BACKGROUND command) |
 | `tools/join_diff.py` | join_diff - word-level diff between the APPROVED cut text and what the assembled voice-over really says (ASR of the full assembled VO). | python tools/join_diff.py --reference cut.txt --assembled assembled.words.json [--extra error\|warning] [--min-ratio 0.0] [--json-out r.json] |
 | `tools/ledger.py` | ledger - read and summarise the per-project timing ledger (JSONL, one line per stage). | python tools/ledger.py summarize <ledger.jsonl>... [--project NAME] [--json] python tools/ledger.py demo <ledger.jsonl>          (writes 3 sample lines; used by tests) |
-| `tools/motion_qa.py` | motion_qa - camera-motion stutter detector (pan/zoom jerk) with an explicit coverage statement. | python tools/motion_qa.py <video> [--max-width 480] [--accel-px 2.5] [--sigma 6] [--reversal-px 1.5] [--max-unmeasured 0.3] [--min-points 12] [--min-inliers 30] [--timeout 900] [--json-out report.json] |
+| `tools/motion_qa.py` | motion_qa - camera-motion stutter detector (pan/zoom jerk) with an explicit coverage statement. | python tools/motion_qa.py <video> [--max-width 480] [--accel-px 2.5] [--sigma 6] [--reversal-px 1.5] [--max-unmeasured 0.3] [--min-points 12] [--min-inliers 30] [--cuts 48,86 \| --cuts-from hf/data/src_cuts.json] [--timeout 900] [--json-out report.json] |
 | `tools/motion_scan.py` | motion_scan - flag B-roll that is "boring/static": windows >= N seconds with almost no temporal change. | python tools/motion_scan.py <video> [--window 1.5] [--min-ti 1.0] [--severity warning\|error] [--json-out r.json] |
-| `tools/new_project.py` | new_project - scaffold ``<work_root>/projects/<slug>/{source,hf,final,_work}`` under an ASCII work root. | python tools/new_project.py "<title>" [--work-root DIR] [--copy FILE_OR_DIR ...] [--slug name] [--starter talking-head] [--init-hyperframes] [--json] python tools/new_project.py --list-starters |
+| `tools/new_project.py` | new_project - scaffold ``<work_root>/projects/<slug>/{source,hf,final,_work}`` under an ASCII work root. | python tools/new_project.py "<title>" [--work-root DIR] [--copy FILE_OR_DIR ...] [--slug name] [--init-hyperframes] [--json] |
 | `tools/prep.py` | prep - minute-0 preparation of a project: every slow measurement runs in the background while the brief is still being written. | python tools/prep.py <project-root> [--main FILE] [--steps sheet,asr,cuts,faces,scopes,refs] [--language he] [--model-dir DIR] [--face-model yunet.onnx] [--lock-wait 900] [--step-timeout 1800] [--force] [--plan] [--json] |
 | `tools/qa_delivery.py` | qa_delivery - the delivery evidence gate: may THIS file be delivered? (aggregates the gate reports, fail-closed) | python tools/qa_delivery.py run <video> [--captions] [--expected-duration S] [--human-approved "words" --attested-by NAME] [--out-dir DIR] [--max-age-min 120] python tools/qa_delivery.py aggregate <contract.json> <report.json>... |
 | `tools/render_lock.py` | render_lock - the machine-wide single-heavy-job lock (kernel lock; replaces the original file-timestamp lock). | python tools/render_lock.py status [--json] python tools/render_lock.py run --job "render v3" [--wait 600] [--timeout 5400] -- <command> [args...] |

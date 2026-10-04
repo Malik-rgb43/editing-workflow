@@ -7,6 +7,30 @@ Releases are immutable: a correction is a new release.
 Dates and facts here are perishable; each entry states its source where it relies on research
 (src: blueprint/REPO_ARCHITECTURE.md section 10, 2026-10-02).
 
+## [Unreleased]
+
+### Changed (owner decision 2026-10-04: a way of thinking, not templates)
+- **One central editor skill, `pro-video-editor`, replaces the five per-type skills** (`talking-head-editor`, `testimonial-editor`, `ad-promo-editor`, `motion-graphics-builder`, `ai-generated-video-editor`). It is a method like `video-analysis`:
+  - perceive everything; understand the intent; decide every discipline with a reason; build while the user watches; review as an editor;
+  - plus how the best editors think, which skill and which connection to use when, how to read the evidence, and a mistakes table from real runs.
+- Their knowledge is kept whole, regrouped by editing discipline into 13 references (story, cutting, camera, visual beats, type and colour, cutout, sound, honesty, AI footage, safe zones, render traps, rounds, dated facts). Ten evidence scripts moved with it.
+- Removed: the two template-format linters (`ad_gate_check.py`, `motion_spec_check.py`), the talking-head starter, and `new_project --starter`.
+- The router sends every edit to `pro-video-editor`; the kind of video is context in the handoff note.
+- `motion_qa --cuts` accepts seconds (a value with a decimal point); `hf_deliver` aims loudnorm 0.5 dB under the true-peak gate.
+
+### Added
+- `tools/hf_studio.py`: opens the project in HyperFrames Studio (owner rule, AGENTS.md rule 10) with the pinned engine; probes the server after start (some agent hosts kill background children) and offers `--attach` for the host's background command; the URL carries `?p=<project>` because every project is called `hf`.
+- `color_fit --bound NAME=LO:HI`: narrows one parameter when the fit pins it (a backlit shot pinned `ev` at +1.5 and blew out the background).
+- Intake Round 0 (question banks): the concept and who decides it (full control = the agent decides and shows its decisions), and the caption language, asked first and never assumed.
+
+### Fixed (found by end-to-end runs on real footage, 2026-10-04)
+- `hf_segment`: the root is never a clip; persistent layers do not force snapping; trims clip the tail; trimmed hosted sub-compositions warn `sub_restart`.
+- `hf_deliver`: `data-deliver-width` crops the 1088 canvas to 1080 at mux (the right-edge trap, re-verified).
+- `motion_qa --cuts / --cuts-from`: jump cuts are masked instead of reported as camera stutter.
+- `color_scopes`: a detector-found face is not rejected by the fixed-ROI hue guard.
+- `prep`: the cache key includes the tool file (a fixed tool no longer returns a stale result).
+- `transcribe`: no-VAD hallucinations (one word stretched over 16 s) are flagged `suspect` and exit 2 with a `--vad` hint.
+
 ## [0.4.0] - 2026-10-04
 
 ### Added

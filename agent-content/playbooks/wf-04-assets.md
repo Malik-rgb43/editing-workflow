@@ -6,7 +6,7 @@
 | Field | Value |
 |---|---|
 | Stage | 4 of 9 — runs **in parallel with wf-05** (heavy lanes start at the beginning of the build, not after review) |
-| Owner skills | `speaker-color-correction` (footage of a person), `hebrew-captions-transcription` (ASR, fonts), `paid-spend-gate` (any spend), `video-prompt-writer` (video prompts), the type skill |
+| Owner skills | `speaker-color-correction` (footage of a person), `hebrew-captions-transcription` (ASR, fonts), `paid-spend-gate` (any spend), `video-prompt-writer` (video prompts), `pro-video-editor` |
 | Artifacts (exact files) | everything the spec needs under `hf/assets/`; fonts in `hf/fonts/` + `@font-face` in the compositions; `hf/SOURCES.md` (a licence row per external asset); `hf/TAKES.md` (AI takes: clean windows); `hf/data/` (`edit.json`, `words.json`, `faces.json`, `src_cuts.json`, `cam_path.json` as needed); `_work/cost_estimate.json` (+ approval id) when anything is paid |
 | Exit gate | **G4 — all assets in before render 1, licensed, measured; paid work only with an approved dated estimate** |
 | Target time | **60–90 min** (owner target; parallel with the build, so it does not add to the 4 h to a first draft). Heavy lanes are measured on OM only (§5) |

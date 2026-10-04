@@ -191,3 +191,5 @@ class TestMotionQa:
         tx[20] = 0.0
         found = motion_qa.analyse_series(tx, [0.0] * 40, [0.0] * 40, meas, clock=clock)
         assert any(f.code == "accel_spike" and f.frame in (20, 21) for f in found)
+        # the same jump AT a declared edit point is not camera stutter (real talking-head, 2026-10-04)
+        assert motion_qa.analyse_series(tx, [0.0] * 40, [0.0] * 40, meas, clock=clock, cuts=[20]) == []

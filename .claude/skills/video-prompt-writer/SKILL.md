@@ -1,7 +1,7 @@
 ---
 name: video-prompt-writer
 description: >-
-  Write shot-by-shot, about 15-second Seedance 2.x prompts from a script, scene or beat: cinematic film or a short single shot, with camera, lens, light and sound per shot. Triggers: סידנס, פרומפט לווידאו, שוט אחר שוט, פרומפט של 15 שניות, /seedance, "turn this script into shot-by-shot prompts". Not for deciding or approving spend (paid-spend-gate), cutting or grading the result (ai-generated-video-editor) or still-image prompts (image-prompt-writer).
+  Write shot-by-shot, about 15-second Seedance 2.x prompts from a script, scene or beat: cinematic film or a short single shot, with camera, lens, light and sound per shot. Triggers: סידנס, פרומפט לווידאו, שוט אחר שוט, פרומפט של 15 שניות, /seedance, "turn this script into shot-by-shot prompts". Not for deciding or approving spend (paid-spend-gate), cutting or grading the result (pro-video-editor) or still-image prompts (image-prompt-writer).
 compatibility: >-
   Plain text in, plain text out; Python >= 3.9 (stdlib) only for the optional lint script.
 metadata:

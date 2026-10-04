@@ -46,9 +46,32 @@ def test_actions_and_rewrite():
     assert 'id="s1"' not in out and 'id="s3"' not in out and 'id="au"' not in out
     assert re.search(r'id="s2"[^>]*data-start="0"', out)  # shifted by -4
     v = re.search(r'<video[^>]*>', out).group(0)
-    assert 'data-start="0"' in v and 'data-duration="5"' in v and 'data-media-start="2"' in v  # cut 1 s (media-start 1 + 1)
+    assert 'data-start="0"' in v and 'data-duration="4"' in v and 'data-media-start="2"' in v  # cut 1 s in front (media-start 1 + 1), tail clipped at B=8
     assert 'data-duration="4"' in re.search(r'<div id="root"[^>]*>', out).group(0)  # root = B-A
     assert 'data-hf-segment="scrub"' in out and "A=4" in out  # scrub wrapper because A > 0
+
+
+REAL = """<!doctype html><html><body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="20.8" data-width="1080" data-height="1920">
+  <div id="cam"><video id="aroll" class="clip" src="assets/aroll.mp4" data-start="0" data-duration="20.8" data-track-index="0"></video></div>
+  <div id="hook" class="clip" data-start="0" data-duration="2.6" data-track-index="1">hook</div>
+  <div id="caption-clip" class="clip" data-composition-id="caption-host" data-composition-src="compositions/caption.html" data-start="0" data-duration="20.8"></div>
+</div></body></html>"""
+
+
+def test_real_talking_head_root_is_the_canvas_and_whole_film_layers_do_not_force_a_full_render():
+    # found on a real 20.8 s talking-head (2026-10-04): the root carried data-start, was trimmed like a clip (19.3 s instead of 3 s),
+    # and the whole-film caption host snapped every range to the full film
+    A, B, acts = seg.plan_segment(REAL, 1.5, 4.5, fps=30)
+    assert (A, B) == (0.0, 4.5)  # snapped only to the 0-2.6 hook scene, not to the 20.8 s layers
+    assert "root" not in {sp.attrs.get("id") for sp, _, _ in acts}
+    A, B, acts = seg.plan_segment(REAL, 1.5, 4.5, fps=30, snap=False)
+    out = seg.rewrite(REAL, A, B, acts, fps=30)
+    assert 'data-duration="3"' in re.search(r'<div id="root"[^>]*>', out).group(0)
+    v = re.search(r"<video[^>]*>", out).group(0)
+    assert 'data-duration="3"' in v and 'data-media-start="1.5"' in v
+    cap = re.search(r'<div id="caption-clip"[^>]*>', out).group(0)
+    assert 'data-duration="3"' in cap
 
 
 def test_range_starting_at_zero_needs_no_scrub_wrapper():

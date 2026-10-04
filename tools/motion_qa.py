@@ -14,7 +14,7 @@ are starting points (``--accel-px``, ``--sigma``): calibrate on footage you acce
 
 Usage:
     python tools/motion_qa.py <video> [--max-width 480] [--accel-px 2.5] [--sigma 6] [--reversal-px 1.5] [--max-unmeasured 0.3]
-                              [--min-points 12] [--min-inliers 30] [--timeout 900] [--json-out report.json]
+                              [--min-points 12] [--min-inliers 30] [--cuts 48,86 | --cuts-from hf/data/src_cuts.json] [--timeout 900] [--json-out report.json]
 Exit: 0 PASS, 1 FAIL, 2 INSUFFICIENT_EVIDENCE, 3 tool error.
 """
 
@@ -28,13 +28,17 @@ import _common  # noqa: F401
 TOOL = "motion_qa"
 
 
-def analyse_series(tx, ty, ls, measured, *, clock, accel_px=2.5, sigma=6.0, reversal_px=1.5):
-    """Pure: per-pair translation (px), log-scale and measured flags -> findings. Unit-tested without OpenCV."""
+def analyse_series(tx, ty, ls, measured, *, clock, accel_px=2.5, sigma=6.0, reversal_px=1.5, cuts=()):
+    """Pure: per-pair translation (px), log-scale and measured flags -> findings. Unit-tested without OpenCV.
+    ``cuts``: frame numbers of edit points IN the footage (e.g. source_cuts). The motion across a cut is not camera motion: pairs within
+    -1..+2 frames of a cut are left out (on a real talking-head every hidden source cut was otherwise reported as a stutter, 2026-10-04)."""
     import statistics
 
     from core.envelope import Finding, Severity
 
     n = len(tx)
+    near = {j for c in cuts for j in range(int(c) - 1, int(c) + 3)}
+    measured = [m and i not in near for i, m in enumerate(measured)]
     out = []
 
     def vel(series, i):
@@ -129,8 +133,26 @@ def run(args, b):
         clock = FrameClock.from_pts(sorted(pts_), tb)
     else:
         clock = FrameClock.cfr(vs.fps, len(meas))
-    for f in analyse_series(tx, ty, ls, meas, clock=clock, accel_px=args.accel_px, sigma=args.sigma, reversal_px=args.reversal_px):
+    cuts = parse_cuts(args, vs.fps)
+    if cuts:
+        b.extra["cuts_excluded"] = sorted(cuts)
+    for f in analyse_series(tx, ty, ls, meas, clock=clock, accel_px=args.accel_px, sigma=args.sigma, reversal_px=args.reversal_px, cuts=cuts):
         b.add(f)
+
+
+def parse_cuts(args, fps) -> list[int]:
+    """--cuts "48,86" (frames of THIS video; a value with a decimal point, e.g. "1.8667", is SECONDS) and/or --cuts-from src_cuts.json
+    (source_cuts output: time_s, converted with this video's fps)."""
+    import json
+
+    out = set()
+    if args.cuts:
+        out |= {int(round(float(x) * float(fps))) if "." in x else int(x) for x in (v.strip() for v in str(args.cuts).split(",")) if x}
+    if args.cuts_from:
+        with open(args.cuts_from, encoding="utf-8") as fh:
+            data = json.load(fh)
+        out |= {int(round(float(c["time_s"]) * float(fps))) for c in data.get("cuts", [])}
+    return sorted(out)
 
 
 def main(argv=None) -> int:
@@ -144,6 +166,8 @@ def main(argv=None) -> int:
     ap.add_argument("--min-points", type=int, default=12)
     ap.add_argument("--min-inliers", type=int, default=30, help="a frame pair with fewer consistent tracks is UNMEASURED")
     ap.add_argument("--timeout", type=float, default=900.0)
+    ap.add_argument("--cuts", help="frame numbers of edit points in this video (comma separated): motion across them is not judged")
+    ap.add_argument("--cuts-from", help="a source_cuts.py JSON (hf/data/src_cuts.json): its cut times are excluded")
     ap.add_argument("--json-out")
     a = ap.parse_args(argv)
     return _common.qa_main(TOOL, lambda b: run(a, b), a.video, out_json=a.json_out)

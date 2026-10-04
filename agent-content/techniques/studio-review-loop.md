@@ -6,7 +6,7 @@
 
 ## 0. The decision (owner, 2026-10-01) `[RULE-owner]`
 
-1. Review drafts **live in HyperFrames Studio** (`npx hyperframes preview --background`) instead of rendering a draft per round.
+1. Review drafts **live in HyperFrames Studio** (`python tools/hf_studio.py <project>/hf`) instead of rendering a draft per round.
 2. Re-render only **the noted range plus its scene context** (`hf_segment`, snapped outward to whole scenes) — and only for render-only risks (below).
 3. **One** full-quality render, **only after the author approves the preview**.
 4. An **audio-only** change is a remix + remux, never a render.

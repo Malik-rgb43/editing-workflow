@@ -33,7 +33,7 @@ A user who has already chosen an option (and said so) does not need the three-op
 - UI/component motion language (curves, blur-out-up words, sequential chat with typing dots) re-implemented in the engine's seek-safe animation library; third-party registry components need their own licence check.
 - Data-driven animation (counters, charts from real numbers); the user's own transitions before stock; cutout with graphics behind the speaker; a spline camera or shared motion kit.
 - Never "reference look only" at a premium bar: the reference's grammar is the floor, B-roll and motion-graphics beats are added (that is what makes it Elevated).
-Type skills own the build: `talking-head-editor`, `ad-promo-editor`, `motion-graphics-builder`, `ai-generated-video-editor`, `testimonial-editor`.
+`pro-video-editor` owns the build: `pro-video-editor`.
 
 ## 4. Into the spec
 1. `hf/STYLE_DNA.md` = the card + beat map + chosen option; each row keeps its tolerance or `deviate: <reason>`.

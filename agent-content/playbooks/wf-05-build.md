@@ -6,7 +6,7 @@
 | Field | Value |
 |---|---|
 | Stage | 5 of 9 |
-| Owner skills | the **type skill** (`talking-head-editor`, `testimonial-editor`, `ad-promo-editor`, `motion-graphics-builder`, `ai-generated-video-editor`) + the HyperFrames engine skills (`hyperframes`, `hyperframes-core`, `hyperframes-cli`) |
+| Owner skills | the editor (**`pro-video-editor`**) + the HyperFrames engine skills (`hyperframes`, `hyperframes-core`, `hyperframes-cli`) |
 | Artifacts (exact files) | `hf/index.html`, `hf/compositions/*.html`, `hf/cues.js` (the **single source of truth for timing and mix**; the toolkit may ship it as a JSON cue file read by `hf_mix` — either way ONE file drives picture and sound), `hf/data/*`, `hf/CHANGELOG.md` (what changed each round), `_work/STATE.md` |
 | Exit gate | **G5 — `hf_preflight --strict` reports 0 errors** (+ assets complete, ledger ids cited) |
 | Target time | **≈ 90 min** (owner target); the whole first presentable draft **within 4 h** (owner target) — see §6 |
@@ -33,7 +33,7 @@
 | 5 | **Captions** (`hebrew-captions-transcription`): word-pop or sentence mode per the type; words in final slots on a centred line; lead the voice 0.08–0.1 s (clamp ≥ 0); last word ≥ 0.25 s, card ≥ 0.9 s; **entry AND exit animation** (blur-out-up ≈ 4 f), the next card's first word starts 2 f early; **rail bottom ≤ y 1450**; keyword contrast ≥ 4.5:1 sampled; look-alike test at final size; export the **caption layout manifest** for the collision solver ([caption-collision.md](../techniques/caption-collision.md)). Motion/launch pieces: **no captions** by default. | agent | `data/captions.json`, `data/caption_layout.json` |
 | 6 | **Colour** — already baked into the A-roll (wf-04); **never** `data-color-grading` on speaker footage. | agent | — |
 | 7 | **Sound** with `hf_mix` from the cue file: VO per line −14.5 LUFS + glue, ducking −10 dB (over a loud drop duck only on the words), VO ≥ 5 dB over the bed in 1–4 kHz, SFX 1–3 f **before** the picture and only on visible events at −18 to −26 dB under VO, master −14 LUFS / TP ≤ −1.5 in the mix (house presets; the render can attenuate audio ≈ 11.5 dB, so the final is **always muxed or loudness-normalised and measured** in wf-08). Run `hf_mix --report` after **every** sound change. | agent | the report |
-| 8 | **Preview in Studio** (`npx hyperframes preview --background`) so the person can watch live; Studio adds `data-hf-id` — strip before every patch/render. | agent | the link/port in chat |
+| 8 | **Preview in Studio** - opened at the START of the build and kept open (AGENTS.md rule 10): `python tools/hf_studio.py hf` (the pinned engine's `preview --background`; never `npx` = never a download) so the person watches the video and its timeline live; Studio adds `data-hf-id` — strip before every patch/render (the render tools strip it). If the person edits in Studio, `--stop` before your patch and start it again after. | agent | the `studio_url` in chat / opened in the browser pane |
 | 9 | **Self-gate:** `hf_preflight --strict` + `grep -n 'data-start="-' index.html compositions/*.html` (must print nothing) + the ledger-id check; then continue to wf-06 for `check`, snapshots and range renders. | agent | the preflight envelope |
 
 ### 2.1 Patch discipline (every change after the first build) `[PROVEN-internal]`

@@ -6,7 +6,7 @@
 | Field | Value |
 |---|---|
 | Stage | 2 of 9 |
-| Owner skill | `video-brief-intake` (concept step) + the **type skill** (`talking-head-editor`, `testimonial-editor`, `ad-promo-editor`, `motion-graphics-builder`, `ai-generated-video-editor`; podcast: this repo's `wf-podcast-clip`) |
+| Owner skill | `video-brief-intake` (concept step) + the editor (**`pro-video-editor`**) |
 | Artifacts (exact files) | `hf/CONCEPT.md` (three concepts, the recommendation, `chosen:` with the person's mix), `hf/SCRIPT.md` (the script with ranked hooks, **or** the paper edit / **text of the cut**, with an `approved:` line), optional `_work/concept/stills/` (4 key stills) or an animatic, new `A` rows in `hf/PROMPT.md` `<ledger>` |
 | Exit gate | **G2 — the person picked; the cut text/script is approved with no picture render** |
 | Target time | **20–40 min** (owner target) |

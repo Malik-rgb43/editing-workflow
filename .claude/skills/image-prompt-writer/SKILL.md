@@ -1,9 +1,9 @@
 ---
 name: image-prompt-writer
 description: >-
-  Write copy-ready text-to-image prompts for the stills-first stage of a video: keyframes, start frames, hero frames, character and location sheets, B-roll stills, thumbnails; one STYLE PREFIX per film, no text inside the picture. Triggers: image prompt, text to image, keyframe, character sheet; פרומפט לתמונה, תמונת פתיחה, גיליון דמות. NOT for video prompts (video-prompt-writer), spend approval (paid-spend-gate), real photo edits, or the whole AI film (ai-generated-video-editor).
+  Write copy-ready text-to-image prompts for the stills-first stage of a video: keyframes, start frames, hero frames, character and location sheets, B-roll stills, thumbnails; one STYLE PREFIX per film, no text inside the picture. Triggers: image prompt, text to image, keyframe, character sheet; פרומפט לתמונה, תמונת פתיחה, גיליון דמות. NOT for video prompts (video-prompt-writer), spend approval (paid-spend-gate), real photo edits, or the whole AI film (pro-video-editor).
 compatibility: >-
-  Plain text in, plain text out; Python >= 3.9 (stdlib) only for the optional lint script. Model names, limits and prices are NOT in this skill: they live in the dated modules of ai-generated-video-editor.
+  Plain text in, plain text out; Python >= 3.9 (stdlib) only for the optional lint script. Model names, limits and prices are NOT in this skill: they live in the dated modules of pro-video-editor.
 metadata:
   version: "0.1.0"
   kind: tool
@@ -12,7 +12,7 @@ metadata:
 
 # image-prompt-writer
 
-Turns a beat, a shot card or a brief into copy-ready still-image prompts. A still is the cheap place to lock identity, product, location and light BEFORE any paid motion, so this skill is the first writing step of an AI-shot film (`ai-generated-video-editor` calls it for every `image` field of a shot card). **No generation, no spend, no files other than the prompt text.**
+Turns a beat, a shot card or a brief into copy-ready still-image prompts. A still is the cheap place to lock identity, product, location and light BEFORE any paid motion, so this skill is the first writing step of an AI-shot film (`pro-video-editor` calls it for every `image` field of a shot card). **No generation, no spend, no files other than the prompt text.**
 
 ## Rules (read first)
 1. **Never generate or spend here.** "Make it / run it" gets the prompts plus a hand-off to `paid-spend-gate` by name. Even a free local route asks the user's explicit OK before an image is generated.
@@ -46,7 +46,7 @@ States `pass | fail | blocked | n/a` with a reason. A lint that could not run is
 | G3 hygiene | no quality charms, age words, negatives about actions, real people or brands | lint I03-I05 | rewrite positively with a lens, a light, a number | this skill | any edit |
 | G4 text | no text inside the picture unless the asset is text-bearing and the user asked; then one quoted string | lint I06 | move the text to post | this skill | each prompt |
 | G5 no spend | no provider or paid tool call; the hand-off names `paid-spend-gate` | tool-call log | stop; hand off | paid-spend-gate | any "generate" wording |
-| G6 likeness and consent | no real person, no lookalike of a public figure, no unlicensed IP; real-face references flagged | the answer; the brief | describe an archetype instead; ask for consent in writing | this skill + `ai-generated-video-editor` | new reference |
+| G6 likeness and consent | no real person, no lookalike of a public figure, no unlicensed IP; real-face references flagged | the answer; the brief | describe an archetype instead; ask for consent in writing | this skill + `pro-video-editor` | new reference |
 
 `blocked` (not guessed): no beat or shot card, unknown ratio, a prefix the user has not supplied, an unreadable reference. Never default a ratio silently.
 
@@ -57,4 +57,4 @@ States `pass | fail | blocked | n/a` with a reason. A lint that could not run is
 - Script: `scripts/image_prompt_lint.py` (`--self-check` first): structure and hygiene only; it never judges what a model will render.
 
 ## Maintenance
-Prefix text and look notes belong to the project (`hf/DESIGN.md`), not here. Model-specific tips are dated and live in `ai-generated-video-editor/references/dated-model-routes.md`. Specified, deterministic checks only; model eval not run. Spend, quality and Hebrew-in-image claims are out of scope.
+Prefix text and look notes belong to the project (`hf/DESIGN.md`), not here. Model-specific tips are dated and live in `pro-video-editor/references/dated-facts.md`. Specified, deterministic checks only; model eval not run. Spend, quality and Hebrew-in-image claims are out of scope.

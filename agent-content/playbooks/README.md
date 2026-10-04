@@ -24,17 +24,17 @@ A playbook is the **procedure** for one stage: entry gate, steps, artifact, exit
 |---|---|---|---|---|---|---|
 | 0 | [wf-00-intake](wf-00-intake.md) | `video-brief-intake` | `hf/PROMPT.md` `<ledger>`, `hf/BRIEF.md` | **G0** ledger locked | person answers rounds of 3–4; agent asks and writes rows | 10–20 min (owner target) |
 | 1 | [wf-01-references](wf-01-references.md) | `reference-style-matching`, `video-analysis`, `visual-choice-board` | `hf/STYLE_DNA.md` or `hf/references/MOODBOARD.md` | **G1** option and time range picked | person picks; agent analyses and shows 3 options | 15–30 min (owner target) |
-| 2 | [wf-02-concept](wf-02-concept.md) | `video-brief-intake` + type skill | `hf/CONCEPT.md`, `hf/SCRIPT.md` | **G2** concept picked, script/paper edit approved, no render | person picks; agent proposes three | 20–40 min (owner target) |
-| 3 | [wf-03-prompt](wf-03-prompt.md) | type skill | `hf/PROMPT.md`, `hf/DESIGN.md`, four stills | **G3** human approved before any code | person approves; agent drafts | 30–40 min (owner target) |
+| 2 | [wf-02-concept](wf-02-concept.md) | `video-brief-intake` + `pro-video-editor` | `hf/CONCEPT.md`, `hf/SCRIPT.md` | **G2** concept picked, script/paper edit approved, no render | person picks; agent proposes three | 20–40 min (owner target) |
+| 3 | [wf-03-prompt](wf-03-prompt.md) | `pro-video-editor` | `hf/PROMPT.md`, `hf/DESIGN.md`, four stills | **G3** human approved before any code | person approves; agent drafts | 30–40 min (owner target) |
 | 4 | [wf-04-assets](wf-04-assets.md) | `speaker-color-correction`, `hebrew-captions-transcription`, `paid-spend-gate` | `hf/assets/`, `hf/fonts/`, `hf/SOURCES.md`, `hf/data/*` | **G4** assets in, licensed, measured; paid only with approval | agent builds; person approves spend | 60–90 min, parallel with stage 5 (owner target) |
-| 5 | [wf-05-build](wf-05-build.md) | type skill + HyperFrames skills | `hf/index.html`, `hf/compositions/*`, `hf/cues.js` | **G5** `hf_preflight --strict` 0 errors | agent | ≈ 90 min; first draft within 4 h (owner targets) |
+| 5 | [wf-05-build](wf-05-build.md) | `pro-video-editor` + HyperFrames skills | `hf/index.html`, `hf/compositions/*`, `hf/cues.js` | **G5** `hf_preflight --strict` 0 errors | agent | ≈ 90 min; first draft within 4 h (owner targets) |
 | 6 | [wf-06-render-qa](wf-06-render-qa.md) | `render-qa-delivery` | `_work/drafts/…`, `_work/qa/<ver>/`, `hf/QA.md` | **G6** 0 flags, rubric ≥ 4.0, no dim < 3 | agent renders once and checks; critic is a separate process | 30–45 min (owner target; machine stages measured on OM) |
 | 7 | [wf-07-revise](wf-07-revise.md) | `revision-notes-handler` | message, `CHANGELOG.md` round, patch script | **G7** approved or notes in | person reviews; agent applies notes with ONE full render | present 5 min; round ≤ 45 min (owner target) |
 | 8 | [wf-08-deliver](wf-08-deliver.md) | `render-qa-delivery`, `video-variants-exporter` | `final/<name>_….mp4`, `final/manifest.json` | **G8** `hf_deliver` pass on the FINAL file | agent; person receives | 15 min + one final render (owner target) |
 | 9 | [wf-09-learn](wf-09-learn.md) | none (playbook step) | `_work/RETRO.md`, `projects/LESSONS.md` | **G9** retro + lesson lines + timing summary | agent writes; person approves rules | 15 min (owner target) |
 | — | [wf-variants](wf-variants.md) | `video-variants-exporter` | `hf_<ratio>/`, per-output files | **GV** all variants from the frozen master | agent; person names the matrix at intake | not measured |
 | — | [wf-batch](wf-batch.md) | `video-request-router` + queue | `BATCH.md`, `_shared/` | **GB** each video has its own record | agent supervises; person approves each prompt | not measured |
-| — | [wf-podcast-clip](wf-podcast-clip.md) | selection here + `talking-head-editor` | `_work/selection.md`, per-clip projects | **GP** chosen clips only, stand-alone ≥ 4 | person chooses clips; agent proposes | not measured; rubric provisional |
+| — | [wf-podcast-clip](wf-podcast-clip.md) | selection here + `pro-video-editor` | `_work/selection.md`, per-clip projects | **GP** chosen clips only, stand-alone ≥ 4 | person chooses clips; agent proposes | not measured; rubric provisional |
 
 "Owner target" = the author's stated target for a premium project; "modelled" = computed from measurements; "measured" = timed on OM. A target is **not** a measured student result.
 

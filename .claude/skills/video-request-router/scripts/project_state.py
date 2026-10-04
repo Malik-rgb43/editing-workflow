@@ -30,8 +30,8 @@ OWNER = {
     "scaffolded": "video-brief-intake",
     "no_project": "video-brief-intake",
     "intake_open": "video-brief-intake",
-    "prompt_drafted": "video-brief-intake (get PROMPT.md approved) then the type skill",
-    "prompt_approved": "the type skill (edit-*)",
+    "prompt_drafted": "video-brief-intake (get PROMPT.md approved) then pro-video-editor",
+    "prompt_approved": "pro-video-editor",
     "in_review": "revision-notes-handler",
     "delivered": "revision-notes-handler (notes) or video-variants-exporter (derivatives)",
 }

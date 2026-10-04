@@ -54,7 +54,7 @@ A row with identical boxes in two different aspects is a red flag for a crop.
 - **Shared mix:** the hook changes picture and text, not the music bed or the cue timing. If the hook needs a different spoken line, it is `own-vo`: declare it, give a reason, accept that the mix hash differs, and keep every other variant on the shared mix.
 - **`nomusic`:** a separate premix with the bed removed (declared `mix_variant: nomusic`); captions and picture unchanged. **`nocaps`:** the caption layer off through a variable (or the clean master), mix unchanged. Deliver a timed text file (SRT) alongside where the platform supports native captions (YouTube, LinkedIn, X Media Studio per the platform module) instead of relying on burned-in text alone.
 - **Length variants (15 s from a 30 s master):** these are NEW edits, not re-layouts. They get their own ledger lines and PROMPT rows, their own mix (`mix_variant: recut`, with a note), are derived from the frozen master's assets, and pass full QA as a master would.
-- **Ranking and compliance of the hooks themselves** belong to the type skill (`ad-promo-editor`); this skill only guarantees the copies are consistent.
+- **Ranking and compliance of the hooks themselves** belong to `pro-video-editor` (`pro-video-editor`); this skill only guarantees the copies are consistent.
 
 ## 5. Several different videos in parallel
 Building (spec, patches, layout) runs in parallel; heavy work runs in one machine-wide queue (see `parallel-and-agents.md`). One project per video, each with its own ledger and PROMPT.md; shared assets are copied from the first project. Several sessions on the same source (a bake-off): never message or stop another session; report to the user only; one session owns shared rule files.

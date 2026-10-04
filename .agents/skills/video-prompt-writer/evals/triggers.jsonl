@@ -7,10 +7,10 @@
 {"prompt": "תעשה לי סטוריבורד בפרומפטים", "should_trigger": true, "route_instead": null}
 {"prompt": "split this 40 s scene into 15 s Seedance prompts that keep the same character tags", "should_trigger": true, "route_instead": null}
 {"prompt": "spend credits on generation", "should_trigger": false, "route_instead": "paid-spend-gate"}
-{"prompt": "edit the cut", "should_trigger": false, "route_instead": "ai-generated-video-editor"}
+{"prompt": "edit the cut", "should_trigger": false, "route_instead": "pro-video-editor"}
 {"prompt": "colour grade this footage", "should_trigger": false, "route_instead": "speaker-color-correction"}
 {"prompt": "תתרגם לי את התסריט הזה לאנגלית", "should_trigger": false, "route_instead": null}
 {"prompt": "כמה זה יעלה להריץ 4 שוטים בסידנס?", "should_trigger": false, "route_instead": "paid-spend-gate"}
 {"prompt": "write a still-image prompt for GPT Image of the keeper's portrait", "should_trigger": false, "route_instead": null}
-{"prompt": "which is better for this shot, Kling or Seedance?", "should_trigger": false, "route_instead": "ai-generated-video-editor"}
+{"prompt": "which is better for this shot, Kling or Seedance?", "should_trigger": false, "route_instead": "pro-video-editor"}
 {"prompt": "תכין לי לוח בחירה אינטראקטיבי של סגנונות פרומפט", "should_trigger": false, "route_instead": "visual-choice-board"}

@@ -1,6 +1,6 @@
 """ui - search and READ shadcn-registry components as source (nothing is installed), with the licence tier of each registry next to every hit.
 
-Why: a beat that needs a card, a text effect or an animated component should start from a proven component, then be re-authored seek-safe (see motion-graphics-builder /
+Why: a beat that needs a card, a text effect or an animated component should start from a proven component, then be re-authored seek-safe (see pro-video-editor /
 ui-sources-and-port.md). This tool replaces the ``ui-registries`` MCP for students who have it disabled: it reads the public registry directory
 (https://ui.shadcn.com/r/registries.json) and each registry's own ``registry.json`` index over HTTPS, caches both on disk (7 days; ``--offline`` uses only the cache) and never
 runs ``npx shadcn add`` (that installs packages and edits files; it is printed as text only, for a scratch folder).

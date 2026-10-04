@@ -39,7 +39,7 @@ Master fix flow: edit the master -> `change --id M-001 --summary "..."` -> carry
 - `name_override: {ledger_id}` on an entry marks a file name the user asked for (it must then carry explicit `platform`, `hook`, `aspect` fields). The short form `<name>_<aspect>.mp4` is read as platform `all`, hook `master`.
 - `kind`: `master | relayout | hook | nomusic | nocaps | recut`. `mix_variant`: `shared | nomusic | own-vo | recut` (`own-vo` and `recut` need `mix_note`).
 - `qa`: `pass | fail | not_run`; only `pass` with an existing evidence file is ready. `lufs`/`tp` are numbers measured on the FINAL file; `0.0` is a number, `null` is missing.
-- `route` is informational for rights (music scope, disclosure field) but must be filled; the tool does not judge licences (that is the type skill's gate).
+- `route` is informational for rights (music scope, disclosure field) but must be filled; the tool does not judge licences (that is the editor's gate).
 
 ## 3. Finding codes (what each means and the fix)
 | Code | Severity | Meaning | Fix |

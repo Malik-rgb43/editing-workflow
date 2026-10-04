@@ -136,7 +136,7 @@ Story in one sentence: <what the viewer feels; what the speaker promises>
 <start> snapshot times (output seconds) for look approval, then a full draft </start>
 ```
 
-Footage-specific pacing numbers live in the type skill (talking-head: a beat every 3–6 s that shows the sentence, owner "premium" bar; cutting numbers: minimum pause to cut 0.40 s tight / 0.60 s natural / 0.25 s aggressive, minimum shot 0.35 s, lead 0.08 s, tail 0.12 s, cut 0.06 s inside the silence — author's earlier tool constants `[PROVEN-internal]` `[LOCAL-only]`).
+Footage-specific pacing numbers live in `pro-video-editor` (talking-head: a beat every 3–6 s that shows the sentence, owner "premium" bar; cutting numbers: minimum pause to cut 0.40 s tight / 0.60 s natural / 0.25 s aggressive, minimum shot 0.35 s, lead 0.08 s, tail 0.12 s, cut 0.06 s inside the silence — author's earlier tool constants `[PROVEN-internal]` `[LOCAL-only]`).
 
 ## 4. Variant: AI-generated film (shot cards)
 

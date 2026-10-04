@@ -12,10 +12,11 @@ root data-duration becomes B-A, (7) when A > 0 a small script scrubs the ROOT GS
 failed because GSAP renormalises negative child starts to 0). The wrapper uses offset 0 (the original's 1e-5 s offset made later units
 visually lossless but not bit-exact, E11). Then `npx hyperframes render -c index.seg.html ...` under the heavy-job lock.
 
-STATUS: the planner/rewriter (pure functions) is unit-tested; the scrub wrapper and the render call depend on HyperFrames runtime
-internals (``window.__timelines``) and have NOT been run end-to-end against a live HyperFrames render in this repo: pin the tested
-HyperFrames version, run the version-pinned smoke test (`tests/integration`, when added) and use `--dry-run` to inspect the plan first.
-Use it for render-only risks (e.g. ``<video>`` layers ~1 frame offset); a Studio preview is the first review step.
+STATUS (first live run, HyperFrames 0.8.98, a real 20.8 s talking-head, the reference machine, 2026-10-04): a 3 s range rendered in
+23.6 s vs 64 s for the whole film (4 workers); its picture, camera zoom and root motion matched the full render. Two bugs found on that
+run are fixed (the root was trimmed like a clip; a whole-film layer forced every range to the full film). Known limit: a hosted
+sub-composition that starts before the range (e.g. a whole-film caption block) restarts its animation at the segment start - the CLI
+warns (`sub_restart`). Use it for render-only risks (``<video>`` layers, 3D, filters); a Studio preview is the first review step.
 
 Usage:
     python tools/hf_segment.py <hf-dir> --from 26.0 --to 28.5 [--no-snap] [--quality draft|delivery] [--out FILE] [--fps 30] [--workers N]
@@ -39,14 +40,16 @@ from pathlib import Path
 import _common  # noqa: F401
 
 VOIDS = {"area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "param", "source", "track", "wbr"}
+# The ROOT timeline is wrapped the moment it is registered and driven from A (verified on a real render, 2026-10-04: picture and root
+# motion of a 3 s range matched the full render). A hosted sub-composition that starts BEFORE A is NOT corrected: HyperFrames 0.8.98
+# nests sub-composition timelines inside the root itself, so in the segment its animation restarts at the segment start (a whole-film
+# caption block showed its first words). The CLI warns about such hosts (`sub_restart` in its output).
 SCRUB_JS = """<script data-hf-segment="scrub">
-(function(){var A=%(A)s,D=%(D)s;var reg={};
-window.__timelines=new Proxy(reg,{set:function(t,k,v){t[k]=v;return true}});
-var tries=0;function wrap(){var ids=Object.keys(reg);if(!ids.length&&tries++<200){return setTimeout(wrap,10)}
-var root=reg[ids[0]];if(!root||root.__hfSegWrapped)return;root.__hfSegWrapped=true;root.pause(0);
-var outer=gsap.timeline({paused:true});outer.to({t:0},{t:D,duration:D,ease:"none",onUpdate:function(){root.totalTime(A+outer.time())}},0);
-window.__timelines[ids[0]]=outer;}
-wrap();})();
+(function(){var A=%(A)s,D=%(D)s,R=%(R)s;var reg={};
+window.__timelines=new Proxy(reg,{set:function(t,k,v){
+if(v&&!v.__hfSegWrapped&&(k===R||(R===null&&!Object.keys(t).length))){v.__hfSegWrapped=true;v.pause(0);var o=gsap.timeline({paused:true});
+o.to({t:0},{t:D,duration:D,ease:"none",onUpdate:function(){v.totalTime(A+o.time())}},0);t[k]=o;return true}
+t[k]=v;return true}});})();
 </script>"""
 
 
@@ -115,14 +118,20 @@ def plan_segment(html: str, a: float, b: float, *, fps: float = 30.0, snap: bool
     sc = _Scan(html)
     sc.feed(html)
     sc.close()
+    root = _root_span(sc.spans)
+    total = (_num(root.attrs.get("data-duration")) or 0.0) if root else 0.0
     timed = []
     for sp in sc.spans:
         st, du = _num(sp.attrs.get("data-start")), _num(sp.attrs.get("data-duration"))
-        if st is not None and du is not None and sp.tag not in ("html", "body"):
+        if st is not None and du is not None and sp.tag not in ("html", "body") and sp is not root:  # the root is the canvas, not a clip
             timed.append((sp, st, st + du))
     A, B = a, b
     if snap:
-        scenes = [(st, en) for sp, st, en in timed if sp.tag not in ("audio", "video", "img") and (sp.attrs.get("data-composition-src") or "clip" in sp.attrs.get("class", "").split() or sp.attrs.get("data-composition-id"))]
+        # a layer that runs (almost) the whole film - the A-roll wrapper, the caption host - is not a scene: snapping to it would turn every
+        # range render into a full render (found on a real talking-head, 2026-10-04); such layers are trimmed to the range instead
+        persistent = (lambda st, en: total > 0 and (en - st) >= 0.9 * total)
+        scenes = [(st, en) for sp, st, en in timed if sp.tag not in ("audio", "video", "img") and not persistent(st, en)
+                  and (sp.attrs.get("data-composition-src") or "clip" in sp.attrs.get("class", "").split() or sp.attrs.get("data-composition-id"))]
         changed = True
         while changed:
             changed = False
@@ -148,6 +157,14 @@ def plan_segment(html: str, a: float, b: float, *, fps: float = 30.0, snap: bool
     return A, B, actions
 
 
+def _root_span(spans):
+    """The root composition: the first element with data-composition-id that is not a hosted sub-composition (no data-composition-src)."""
+    for sp in spans:
+        if "data-composition-id" in sp.attrs and not sp.attrs.get("data-composition-src"):
+            return sp
+    return None
+
+
 def _set_attr(tagtext: str, name: str, value: str) -> str:
     pat = re.compile(rf"""(\s{name}\s*=\s*)("[^"]*"|'[^']*'|[^\s>]+)""", re.I)
     if pat.search(tagtext):
@@ -157,6 +174,24 @@ def _set_attr(tagtext: str, name: str, value: str) -> str:
 
 def fmt(x: float) -> str:
     return f"{x:.6f}".rstrip("0").rstrip(".") or "0"
+
+
+def sub_cuts(hf_dir: Path, actions) -> dict:
+    """{inner composition id: seconds cut} for every TRIMMED hosted sub-composition (its file under hf_dir declares the inner id).
+    These are the layers whose animation restarts at the segment start (see SCRUB_JS)."""
+    out = {}
+    for sp, act, cut in actions:
+        src = sp.attrs.get("data-composition-src")
+        if act != "trim" or not src:
+            continue
+        try:
+            text = (hf_dir / src).read_text(encoding="utf-8")
+        except OSError:
+            continue
+        m = re.search(r"""data-composition-id\s*=\s*["']([^"']+)["']""", text)
+        if m:
+            out[m.group(1)] = round(float(cut), 6)
+    return out
 
 
 def rewrite(html: str, A: float, B: float, actions, *, fps: float = 30.0) -> str:
@@ -171,20 +206,21 @@ def rewrite(html: str, A: float, B: float, actions, *, fps: float = 30.0) -> str
             du = _num(sp.attrs.get("data-duration"), 0.0)
             if act == "shift":
                 t = _set_attr(t, "data-start", fmt(st - A))
+                if st + du > B:  # ends after the range: clip the tail too
+                    t = _set_attr(t, "data-duration", fmt(B - st))
             else:
                 rate = _num(sp.attrs.get("data-playback-rate"), 1.0) or 1.0
                 t = _set_attr(t, "data-start", "0")
-                t = _set_attr(t, "data-duration", fmt(du - cut))
+                t = _set_attr(t, "data-duration", fmt(min(st + du, B) - A))
                 if sp.tag in ("video", "audio"):
                     t = _set_attr(t, "data-media-start", fmt((_num(sp.attrs.get("data-media-start"), 0.0) or 0.0) + cut * rate))
             edits.append((sp.start, sp.start_end, t))
-    # root duration
+    # root duration = the range (the root is never treated as a clip)
     sc = _Scan(html)
     sc.feed(html)
-    for sp in sc.spans:
-        if "data-composition-id" in sp.attrs and "data-duration" in sp.attrs and not any(e[0] == sp.start for e in edits):
-            edits.append((sp.start, sp.start_end, _set_attr(html[sp.start : sp.start_end], "data-duration", fmt(B - A))))
-            break
+    root = _root_span(sc.spans)
+    if root is not None and "data-duration" in root.attrs:
+        edits.append((root.start, root.start_end, _set_attr(html[root.start : root.start_end], "data-duration", fmt(B - A))))
     edits.sort(key=lambda e: e[0], reverse=True)
     out = html
     last_start = None
@@ -194,7 +230,8 @@ def rewrite(html: str, A: float, B: float, actions, *, fps: float = 30.0) -> str
         out = out[:s] + rep + out[e:]
         last_start = s
     if A > 0:
-        inj = SCRUB_JS % {"A": fmt(A), "D": fmt(B - A)}
+        rid = root.attrs.get("data-composition-id") if root is not None else None
+        inj = SCRUB_JS % {"A": fmt(A), "D": fmt(B - A), "R": json.dumps(rid)}
         i = out.lower().find("<script")
         out = out[:i] + inj + "\n" + out[i:] if i >= 0 else out.replace("</body>", inj + "</body>", 1)
     return out
@@ -235,6 +272,12 @@ def main(argv=None) -> int:
         print(f"hf_segment: {exc}", file=sys.stderr)
         return 2
     summary = {"requested": [args.a, args.b], "snapped": [A, B], "fps": fps, "actions": {k: sum(1 for _, a_, _ in actions if a_ == k) for k in ("drop", "remove", "trim", "shift")}}
+    restart = sub_cuts(hf, actions) if A > 0 else {}
+    if restart:
+        summary["sub_restart"] = sorted(restart)
+        print(f"hf_segment: WARNING sub-composition(s) {sorted(restart)} start before {fmt(A)} s: in this segment their animation restarts at the "
+              "segment start (HyperFrames nests them in the root timeline). Judge those layers in Studio or in the full render, or start the "
+              "range at their start.", file=sys.stderr)
     if args.dry_run:
         print(json.dumps(summary, indent=2))
         return 0

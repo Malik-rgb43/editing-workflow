@@ -145,14 +145,32 @@ def has_neutral(samples) -> bool:
     return any(s.get("neutral") is not None or s.get("black") is not None or s.get("sky") is not None for s in samples)
 
 
-def fit(samples, targets, stage: str, fixed: dict, max_nfev: int = 600):
+def parse_bounds(specs) -> dict:
+    """Pure: ['ev=-0.2:0.6', ...] -> {'ev': (-0.2, 0.6)}; narrows a parameter (the skill: a parameter on its bound = constrain it)."""
+    from core import colour
+
+    out = {}
+    for spec in specs or []:
+        name, _, rng = spec.partition("=")
+        lo, _, hi = rng.partition(":")
+        if name not in colour.BOUNDS:
+            raise ValueError(f"--bound: unknown parameter {name!r} (known: {', '.join(colour.BOUNDS)})")
+        lo, hi = float(lo), float(hi)
+        blo, bhi = colour.BOUNDS[name]
+        if not (blo <= lo < hi <= bhi):
+            raise ValueError(f"--bound {spec}: must narrow the tool range {blo}..{bhi}")
+        out[name] = (lo, hi)
+    return out
+
+
+def fit(samples, targets, stage: str, fixed: dict, max_nfev: int = 600, narrow: dict | None = None):
     from core import colour
 
     keys = colour.GLOBAL_KEYS if stage == "global" else colour.SUBJECT_KEYS
     if stage == "global" and not has_neutral(samples):
         keys = tuple(k for k in keys if k not in ("wb_r", "wb_b"))  # no neutral reference: white balance is not fitted from skin
     base = colour.full_params(fixed)
-    bounds = {k: colour.BOUNDS[k] for k in keys}
+    bounds = {k: (narrow or {}).get(k, colour.BOUNDS[k]) for k in keys}
 
     def cost(x):
         p = dict(base)
@@ -162,7 +180,7 @@ def fit(samples, targets, stage: str, fixed: dict, max_nfev: int = 600):
         return sum(v * v for v in res) + reg
 
     before = measure(samples, base, stage == "subject")
-    sol = minimize_wrapper(cost, {k: base[k] for k in keys}, bounds, max_nfev)
+    sol = minimize_wrapper(cost, {k: min(max(base[k], bounds[k][0]), bounds[k][1]) for k in keys}, bounds, max_nfev)
     final = dict(base)
     final.update(sol["x"])
     after = measure(samples, final, stage == "subject")
@@ -230,6 +248,7 @@ def main(argv=None) -> int:
     ap.add_argument("--width", type=int, default=270)
     ap.add_argument("--sheet")
     ap.add_argument("--max-nfev", type=int, default=600)
+    ap.add_argument("--bound", action="append", metavar="NAME=LO:HI", help="narrow one parameter (repeatable), e.g. --bound ev=-0.2:0.6 on a backlit shot where the global stage pins exposure")
     a = ap.parse_args(argv)
 
     from core import colour
@@ -254,7 +273,7 @@ def main(argv=None) -> int:
         samples = collect(a.video, times, a.width, faces, color_scopes.parse_roi(a.skin_roi) if a.skin_roi else None,
                           color_scopes.parse_roi(a.black_roi) if a.black_roi else None, color_scopes.parse_roi(a.sky_roi) if a.sky_roi else None,
                           color_scopes.parse_roi(a.neutral_roi) if a.neutral_roi else None)
-        final, before, after, sol = fit(samples, tg, a.stage, fixed, a.max_nfev)
+        final, before, after, sol = fit(samples, tg, a.stage, fixed, a.max_nfev, parse_bounds(a.bound))
     except (ValueError, OSError, ToolkitError) as exc:
         print(f"color_fit: {exc}", file=sys.stderr)
         return 2

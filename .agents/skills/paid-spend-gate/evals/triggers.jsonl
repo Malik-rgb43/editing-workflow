@@ -10,7 +10,7 @@
 {"prompt":"start a free trial of the video tool, it needs my card","should_trigger":true,"route_instead":null}
 {"prompt":"render locally on my laptop","should_trigger":false,"route_instead":"render-qa-delivery"}
 {"prompt":"transcribe with the local model","should_trigger":false,"route_instead":"hebrew-captions-transcription"}
-{"prompt":"edit the cuts so the pauses are gone","should_trigger":false,"route_instead":"talking-head-editor"}
+{"prompt":"edit the cuts so the pauses are gone","should_trigger":false,"route_instead":"pro-video-editor"}
 {"prompt":"תסביר מה זה LUFS","should_trigger":false,"route_instead":null}
 {"prompt":"תכתוב לי פרומפט לסידנס לשוט של 15 שניות, בלי לייצר","should_trigger":false,"route_instead":"video-prompt-writer"}
 {"prompt":"המחיר של הסרטון ללקוח צריך להיות 800 שקל, תכין הצעת מחיר","should_trigger":false,"route_instead":null}

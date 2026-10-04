@@ -2,7 +2,7 @@
 
 Load when: building or retiming caption cards, adding the exit animation, positioning captions, writing the coverage statement. Dated 2026-10-02; sources: distilled 06 hebrew-rtl-and-captions §3, §5; distilled 02 techniques §6.1; distilled 01 rules-and-gates N. Status words: [owner rule] = said by the author; [proven] = worked in an owner project; [house] = house preset v1, overridable (decision default Q5).
 
-## 1. Two timing modes (the type skill says which)
+## 1. Two timing modes (`pro-video-editor` says which)
 | | Word-pop (reels, ads, premium talking head) | Sentence captions (Netflix/BBC style; only when asked) |
 |---|---|---|
 | Words per card | 1-3 | 1-6 |

@@ -30,6 +30,18 @@ def codes(d):
     return [f["code"] for f in d["findings"]]
 
 
+def test_deliver_width_reads_the_house_1088_rule():
+    sys.path.insert(0, str(TOOL.parent))
+    sys.path.insert(0, str(REPO / "src"))
+    import hf_deliver as d
+
+    page = '<div id="root" data-composition-id="main" data-width="1088" data-height="1920" data-deliver-width="1080"></div>'
+    assert d.deliver_width(page) == 1080
+    assert d.deliver_width(page.replace(' data-deliver-width="1080"', "")) is None  # no declaration: no crop
+    assert d.deliver_width(page.replace('data-width="1088"', 'data-width="1080"')) is None  # nothing to crop
+    assert d.deliver_width('<div data-composition-id="x" data-deliver-width="1079"></div>') is None  # odd width: refuse
+
+
 def test_help_fast():
     t = time.monotonic()
     p = subprocess.run([sys.executable, str(TOOL), "--help"], capture_output=True, text=True, encoding="utf-8")

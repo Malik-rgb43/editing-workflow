@@ -1,7 +1,7 @@
 ---
 name: speaker-color-correction
 description: >-
-  Colour-correct footage of a person (talking head, interview, UGC, speaker outdoors) from the CAMERA ORIGINAL with scopes, a numeric fit, a subject matte and a baked plate, then gate the render. Triggers: תקן צבע, הצבע לא טוב, העור נראה ורוד / כתום, הפנים חשוכים, הקליפ שטוח, גריידינג, skin too pink, grey sky, hazy blacks, match colour between cuts. NOT for stylised or LUT-only looks on stock clips, AI-film looks (ai-generated-video-editor), or the edit (talking-head-editor).
+  Colour-correct footage of a person (talking head, interview, UGC, speaker outdoors) from the CAMERA ORIGINAL with scopes, a numeric fit, a subject matte and a baked plate, then gate the render. Triggers: תקן צבע, הצבע לא טוב, העור נראה ורוד / כתום, הפנים חשוכים, הקליפ שטוח, גריידינג, skin too pink, grey sky, hazy blacks, match colour between cuts. NOT for stylised or LUT-only looks on stock clips, AI-film looks (pro-video-editor), or the edit (pro-video-editor).
 compatibility: >-
   Needs ffmpeg and Python 3.12; the colour toolchain (color_*) needs numpy/numba/scipy and a person-matte model. Timings are from one reference machine; the bundled script is stdlib only.
 metadata:
@@ -33,7 +33,7 @@ In: camera original, the rough-cut timeline (if any), a named preset or an appro
 4. **Fit in two stages** (`color_fit --stage global`, then `--stage subject --fixed global.json`): few free parameters, WB gains luminance-preserving, `lift_ev` owns exposure; a parameter sitting on its bound = degenerate, constrain it. Log solver success/message/cost/nfev and look at the before/after sheet each iteration (`color_fit ... --sheet before-after.jpg`); convergence is not acceptance.
 5. **Matte + bake.** Person matte on the padded person box; the subject node blends in by a soft matte; bake two 65^3 `.cube` LUTs through ffmpeg (`color_render <camera original> --params grade.json --matte matte.mp4 -o hf/assets/video/aroll.mp4`, or `grade_bake` for a simple chain), x264 CRF 11-12, 6-frame pre-roll, one 30 fps base. Details: `references/fit-and-bake.md`.
 6. **Gate.** `color_check <final.mp4> --step 2 [--ignore a-b]`, then `scripts/grade_gate.py` on its measurements for the preset verdict and coverage statement. Re-fit only if the scene light changes.
-7. **Handoff.** Remove any `data-color-grading`, re-cut the cutout from the corrected plate (`talking-head-editor` G7), view the first 3 frames after every A-roll return, run the matte-flicker check, send the before/after sheet at 3+ cuts plus one 100 % face crop.
+7. **Handoff.** Remove any `data-color-grading`, re-cut the cutout from the corrected plate (`pro-video-editor` G7), view the first 3 frames after every A-roll return, run the matte-flicker check, send the before/after sheet at 3+ cuts plus one 100 % face crop.
 
 ## Gates
 States: `pass | fail | blocked | n/a` with a reason. A timeout, an empty sample, a missing frame set or an unreadable file is `blocked`, never `pass`.
@@ -44,7 +44,7 @@ States: `pass | fail | blocked | n/a` with a reason. A timeout, an empty sample,
 | G3 fit | two-stage fit toward a NAMED preset; solver status logged; no parameter pinned to a bound; before/after sheet looked at | fit log + the `color_fit --sheet` image | constrain parameters; pick the right preset (indoor/AI-film differ) | this skill | scene light changes |
 | G4 bake | subject matte, WB for the face separate, neutral black, clean sky; baked into the file; no `data-color-grading`; no global `shadows +`; 6-frame pre-roll | bake log + `grep -c data-color-grading hf/*.html` = 0 + first 3 frames viewed | re-bake | this skill | grade or cut list changes |
 | G5 color_check | per sampled frame with a person: skin Y within +-9 of target, hue 105-125 degrees, chroma 16-32, black abs(Cb) and abs(Cr) <= 3 and Y <= 9 %, sky chroma <= 3, p1 >= 1 %, p99 >= 95 with bright sky; >= 85 % of evaluable frames pass each check; enough evaluable frames | `color_check` JSON -> `scripts/grade_gate.py` verdict with coverage | iterate once, then ask the user | this skill | any render of the speaker |
-| G6 handoff + flicker | cutout cut from the corrected plate; matte flicker absent (`rendered_diff <= 1.35 x src_diff + 0.6`); before/after at 3+ cuts and a 100 % crop approved by a human | flicker JSON + sheet + approval message | smooth the matte (every frame + temporal smoothing); erode/blur | `talking-head-editor` | matte or grade changes |
+| G6 handoff + flicker | cutout cut from the corrected plate; matte flicker absent (`rendered_diff <= 1.35 x src_diff + 0.6`); before/after at 3+ cuts and a 100 % crop approved by a human | flicker JSON + sheet + approval message | smooth the matte (every frame + temporal smoothing); erode/blur | `pro-video-editor` | matte or grade changes |
 
 ## Cost and limits (the reference machine, historical, not re-run)
 Bake about 3 min per minute of footage (59 s for 1,776 frames per the tool header); a u2net matte about 0.45 s each on the person box. Every number is `[LOCAL-only]`; re-measure with the timing ledger (`render-qa-delivery`). NVIDIA and Apple: unmeasured.
@@ -59,7 +59,7 @@ Bake about 3 min per minute of footage (59 s for 1,776 frames per the tool heade
 - `references/colour-contract-hdr.md` - HDR/log/full-range sources, unknown tags.
 - `references/failure-modes.md` - symptom -> cause -> fix when the result looks wrong.
 - `references/volatile-facts.md` - before quoting a timing, licence or tool claim.
-- Script `scripts/grade_gate.py` (stdlib; `gate`, `flicker`, `--self-check`; script paths are relative to this skill's folder). Sibling skills: `talking-head-editor`, `render-qa-delivery`, `ai-generated-video-editor` (its own colour rules).
+- Script `scripts/grade_gate.py` (stdlib; `gate`, `flicker`, `--self-check`; script paths are relative to this skill's folder). Sibling skills: `pro-video-editor`, `render-qa-delivery`, `pro-video-editor` (its own colour rules).
 - Repo-level dated module (owned elsewhere): `agent-content/references/colour-presets.md`; load when you need the HDR branch table or the repo's preset naming.
 
 ## Evidence status

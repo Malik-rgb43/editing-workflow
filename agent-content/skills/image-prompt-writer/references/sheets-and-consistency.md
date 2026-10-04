@@ -20,4 +20,4 @@ Generate front, side, three-quarter and back. Test a close-up FIRST (face drift 
 No real person's face as a reference without written consent, and none for a public figure. Some models refuse or flag real-face references (an owner project saw 7 of 7 refused on one model). Prefer synthetic characters for public-facing work. Realistic synthetic people, places or events carry the platform's AI label.
 
 ## 5. Aspect and safe zones
-State the delivery ratio in every prompt. Leave the safe-zone areas empty of key content (house preset v1 lives in `ad-promo-editor/references/safe-zone-presets.md`); space for post-added captions stays empty.
+State the delivery ratio in every prompt. Leave the safe-zone areas empty of key content (house preset v1 lives in `pro-video-editor/references/platforms-and-safe-zones.md`); space for post-added captions stays empty.

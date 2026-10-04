@@ -10,6 +10,9 @@ Load when a ledger field is missing or you are composing a round. Shared techniq
 - Do not ask what is already known (read the source tree and the message first) and do not ask infrastructure questions (tools, folders): decide and say why in one line.
 - "תמשיך" / "continue" / "whatever you think" = take every recommended option, mark `D`, say so in ONE line (`Defaults taken: 9:16, 45 s, silence-cut only, ...`). It counts as the user's choice. It never covers a blocking dimension the user has not seen.
 
+- **Round 0, always first (owner rule 2026-10-04): the concept and who decides it.** One round, before anything else: what the video is for (one line), *who decides the concept* (`full control - you decide` / `I define it`), and the **caption language** (the speech language / another language / no captions). Never assume Hebrew: not every student speaks Hebrew or wants Hebrew captions.
+- **Full control** ("אתה מחליט", "you decide") = decide every remaining dimension yourself (format, length, tone, structure, hook, look, font, music, CTA wording), mark each `D`, say the decisions in ONE line and show them in the draft for approval. Ask only facts you cannot know (product facts, rights, consent, a deadline) and the caption language if Round 0 did not settle it.
+
 ## 2. Round plan
 | Round | Dimensions (max 4) | Why this order |
 |---|---|---|
@@ -30,11 +33,11 @@ Same plan as the shared technique `agent-content/techniques/question-bank.md` (c
 | TON | איזו אנרגיה? | What energy? | energetic-premium / calm-premium / luxury / humorous |
 | HOOK | מה נאמר או נראה ב-0-3 שניות? | What is said or seen at 0-3 s? | the strongest result or number on frame 0 (rec.) / a question / a pattern-interrupt visual / the source's first line |
 | LOOK | איזו פלטה? | Which palette? | the client's brand (rec. if it exists) / one dark ground + ONE accent / light editorial. One locked palette per project |
-| TYPE | איזה פונט לכתוביות וכותרות? | Which caption/title font? | the user names one, or a brand font; no name = build a font board (`visual-choice-board` rule 8: 8 OFL Hebrew fonts with their own line), never a silent default; "you choose" = Rubik (house preset), said back as a default |
+| TYPE | איזה פונט לכתוביות וכותרות? | Which caption/title font? | the user names one, or a brand font; no name = build a font board for the caption language (`visual-choice-board` rule 8: the bundled catalogue is 8 OFL **Hebrew** fonts; for another script offer 3-4 named OFL fonts with a sample line instead), never a silent default; "you choose" / full control = your pick (Rubik is the Hebrew house preset), said back as a default |
 | MOT | איזו שפת תנועה? | Which motion language? | clean and smooth (one continuous camera, eased) (rec.) / snap and drift / minimal |
 | 3D | באילו ביטים תלת-ממד? | Which beats get 3D? | 2-3 hero beats with a reason each (rec.) / none / heavy. Decide per beat, not per video |
 | BROLL | איזה בי-רול? | Which B-roll? | real footage + motion-graphics layer (rec.) / UI rebuilt in code / stock only / none. No AI-looking stills of people |
-| CAP | כתוביות? | Captions? | word-group cards that animate in AND out (rec.) / keywords only / none (default for motion launches) |
+| CAP | כתוביות? באיזו שפה? | Captions? In which language? | language first (asked in Round 0, never assumed): the speech language / a translation (say which) / none. Style: word-group cards that animate in AND out (rec.) / keywords only / none (default for motion launches) |
 | MUS | מוזיקה? (שואלים תמיד, גם אם לרפרנס אין) | Music? (ask even if the reference has none) | a licensed bed with a SOURCE row (rec.) / trending sound (own account only) / none |
 | SFX | אפקטי קול? | Sound effects? | only on visible events, quiet under speech (rec.) / rich (launch) / none |
 | VO | קריינות והגייה של שמות? | Voice-over and name pronunciation? | the source voice (rec.) / TTS with a spelled lexicon / none |

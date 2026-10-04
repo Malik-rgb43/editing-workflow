@@ -44,6 +44,16 @@ def test_pure_math_gray_has_no_chroma_and_percent_scale():
     assert m["cr"] > 100 and abs(m["cb"]) < 70  # red is mostly +Cr
 
 
+def test_skin_guard_trusts_a_detected_face_and_only_rejects_colourless_regions():
+    import color_scopes as cs
+
+    shade = {"hue_deg": 60.0, "chroma": 9.3, "Y_pct": 27.0}  # a real face in open shade (2026-10-04)
+    assert cs.not_skin_reason(shade) is not None  # a FIXED region with that colour may have missed the face
+    assert cs.not_skin_reason(shade, detected_face=True) is None  # a detector saw the face: measure it, let the gate judge the cast
+    wall = {"hue_deg": 306.0, "chroma": 1.0, "Y_pct": 20.0}
+    assert cs.not_skin_reason(wall, detected_face=True) is not None  # no colour at all is never skin
+
+
 def test_parse_roi_rejects_nonsense():
     import color_scopes as cs
 

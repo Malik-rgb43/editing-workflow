@@ -14,7 +14,7 @@
 
 ## 1. Present first (stage 7)
 
-**Deliver the file at once**, then the message below. For the author the review happens **live in HyperFrames Studio** (`npx hyperframes preview --background`; a **local** server — for a remote client send the draft render or a screen recording instead). `[RULE-owner]` Ask one question: *fixes, or render the final?* **The final render happens only after the person approves.**
+**Deliver the file at once**, then the message below. For the author the review happens **live in HyperFrames Studio** (`python tools/hf_studio.py <project>/hf`; a **local** server — for a remote client send the draft render or a screen recording instead). `[RULE-owner]` Ask one question: *fixes, or render the final?* **The final render happens only after the person approves.**
 
 ```text
 Round <N> — <name>_v<N>: <path>   (Studio: <link or "local port">)
@@ -70,7 +70,7 @@ Goal: **≤ 45 min per round and exactly one full render per round** `[RULE-owne
 
 | Class | Signs | What to do |
 |---|---|---|
-| **replace-concept** | "boring", "looks AI", "static", "I didn't like it" (taste, not a fault) | a **new beat from the type skill's beat menu**, chosen by the *meaning* of the sentence; do not polish the old one; explain in ONE line what you chose and why |
+| **replace-concept** | "boring", "looks AI", "static", "I didn't like it" (taste, not a fault) | a **new beat from the editor's beat menu**, chosen by the *meaning* of the sentence; do not polish the old one; explain in ONE line what you chose and why |
 | **fix** | glitch, position, size, timing, cut, colour | fix the cause from step 3 |
 | **audio-only** | SFX, music, VO level, a swoosh | the audio branch below — **no render** |
 | **global rule** | "always", "never", or the same note in two rounds | fix **all** occurrences in the film (centring was fixed by section and 17–24 s was missed); add the rule to the style notes (wf-09) |
@@ -119,7 +119,7 @@ Gate record → `hf/QA.md` "Gate log". Approval from anyone other than the perso
 
 ## 8. Tool invocations
 
-`sheet --range a:b --fps 10|30` · `hf_preflight` · `hf_segment --qa` · `hyperframes snapshot --at … --describe false` · `npx hyperframes preview --background` · `hf_mix --report` · `hf_deliver --skip-render` (audio-only) · `seg_diff` (planned: SSIM/VMAF per frame **outside** the fixed range — proves a segment fix touched nothing else) · `join_diff` · `frame_qa` etc. via wf-06 · `ledger`. Patch scripts are written with the file-writing tool, not shell heredocs.
+`sheet --range a:b --fps 10|30` · `hf_preflight` · `hf_segment --qa` · `hyperframes snapshot --at … --describe false` · `python tools/hf_studio.py <project>/hf` · `hf_mix --report` · `hf_deliver --skip-render` (audio-only) · `seg_diff` (planned: SSIM/VMAF per frame **outside** the fixed range — proves a segment fix touched nothing else) · `join_diff` · `frame_qa` etc. via wf-06 · `ledger`. Patch scripts are written with the file-writing tool, not shell heredocs.
 
 ## 9. Per-type deltas
 

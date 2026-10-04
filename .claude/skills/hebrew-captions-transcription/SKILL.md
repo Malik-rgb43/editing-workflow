@@ -46,7 +46,7 @@ States: `pass | fail | blocked | n/a` with a reason; a timeout, an empty card li
 | G1 ASR route | route chosen from a capability probe; model + weights pinned; `language=he` forced | `asr_route.json` (path, revision, device, precision, threads, timer scope) | fall back to CPU CT2 int8 | this skill | new machine, driver, model |
 | G2 VAD | VAD on/off decided by an A/B on a 60 s real sample; the silence control run when the audio has long non-speech | both WERs (`scripts/wer.py`) + control output recorded | switch VAD off if WER is worse; add filters if hallucinations appear | this skill | new audio type |
 | G3 transcript | every name/brand/number proofread; spelling dict applied; 0 spelling errors approved by a Hebrew reader | approved transcript + dict; `wer.py` against the corrected text on a sample | fix words by hand; never an LLM over the whole text | this skill + human | any text change |
-| G4 assembled cut | ASR of the FULL assembled VO matches the intended words; no extra token; first/last 2 words of each sentence present | `join_diff` JSON | fix the join, re-cut, re-ASR | `talking-head-editor` G2 | every re-cut |
+| G4 assembled cut | ASR of the FULL assembled VO matches the intended words; no extra token; first/last 2 words of each sentence present | `join_diff` JSON | fix the join, re-cut, re-ASR | `pro-video-editor` G2 | every re-cut |
 | G5 RTL / bidi | no root `dir=rtl`; `lang="he"`; Latin, digits, currency, URLs isolated; no stray bidi controls; the final frame viewed | `scripts/caption_lint.py` bidi block + `hf_preflight` + viewed frame | isolate the span; strip controls | this skill | any caption text change |
 | G6 look-alikes / font | each keyword rendered at final size and at 360x640; ו/ז, ד/ר, ה/ח cannot be read as another word; font loaded from a file | specimen record in `hf/QA.md` (font file, hash, size, frame) + snapshot showing no fallback | swap the face for that word (Karantina "לבזבז" read as "לבובו") | this skill | any font, size or keyword change |
 | G7 timing + animation | word >= 0.25 s, card >= 0.9 s, last word >= 0.25 s; exit animation present; swap overlap 1-2 frames; no negative start | `caption_lint` report + `caption_qa` + frame check | re-time; add the exit | this skill | any re-cut or retime |
@@ -63,7 +63,7 @@ Rubik: Black (900) keywords, Regular/600 small words; 54-66 px at 1080x1920 (E03
 - `references/volatile-facts.md` - before quoting speeds, WER, pins, licences, safe-zone numbers.
 - Scripts: `scripts/caption_lint.py` (card timing/bidi/rail lint), `scripts/wer.py` (WER/CER with a declared normalisation); both stdlib, `--self-check`; script paths are relative to this skill's folder.
 - Repo-level dated modules (owned elsewhere): `agent-content/references/asr-routes.md`, `agent-content/references/hebrew-rtl-captions.md`, `agent-content/references/platform-specs.md`, `agent-content/techniques/caption-collision.md`; load when you need the dated tables or the box-collision method.
-- Siblings: `talking-head-editor`, `render-qa-delivery`, `video-analysis` (analysis reports, not captions).
+- Siblings: `pro-video-editor`, `render-qa-delivery`, `video-analysis` (analysis reports, not captions).
 
 ## Evidence status
 ASR from experiments E02/E08 (the reference machine); fonts from E03; timing and exit rules from the author's projects. No human timing ground truth, no cloud ASR run, no model-licence resolution for ONNX conversions. Specified; deterministic checks only; model eval not run (Q4).

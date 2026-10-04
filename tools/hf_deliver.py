@@ -43,6 +43,9 @@ TOOL = "hf_deliver"
 
 
 # ------------------------------------------------------------------------------------------------ measurement
+
+TP_MARGIN_DB = 0.5  # loudnorm target sits this far under the verify limit
+
 def loudness(path, *, i=-14.0, tp=-1.0, lra=11.0):
     """Measure integrated loudness / true peak with FFmpeg loudnorm (first pass, JSON). Returns dict or raises DecodeError."""
     from core.errors import DecodeError
@@ -145,22 +148,42 @@ def verify_file(path, *, expected_duration=None, lufs=-14.0, lufs_tol=1.0, tp=-1
 
 
 # ------------------------------------------------------------------------------------------------ mux
-def mux(raw, out, *, mix=None, lufs=-14.0, tp=-1.0):
-    """AAC 320k / 48 kHz. With a mix file: video from raw, audio from the mix. Without: two-pass loudnorm of the raw audio."""
+def deliver_width(index_html: str) -> int | None:
+    """The house rule for 1080-wide masters: render a 1088 canvas (data-width) and declare data-deliver-width="1080" on the root;
+    the encoder's dark right-edge columns then fall in the 8 px that are cropped away at mux. Returns the width to crop to, or None.
+    (Before 2026-10-04 the rule was documented here but not implemented: a real render shipped with 8 black columns and verify caught it.)"""
+    m = re.search(r"<[^>]*\bdata-composition-id\s*=[^>]*>", index_html)
+    if not m:
+        return None
+    tag = m.group(0)
+    dw = re.search(r"""data-deliver-width\s*=\s*["']?(\d+)""", tag)
+    cw = re.search(r"""data-width\s*=\s*["']?(\d+)""", tag)
+    if not dw:
+        return None
+    d, c = int(dw.group(1)), int(cw.group(1)) if cw else None
+    return d if (c is None or d < c) and d % 2 == 0 and d > 0 else None
+
+
+def mux(raw, out, *, mix=None, lufs=-14.0, tp=-1.0, crop_width=None):
+    """AAC 320k / 48 kHz. With a mix file: video from raw, audio from the mix. Without: two-pass loudnorm of the raw audio.
+    ``crop_width``: keep the left N columns (re-encodes the video with libx264 CRF 12, yuv420p); otherwise the video is copied."""
     from core.errors import ToolkitError
     from core.ffprobe import find_ffmpeg
     from core.procs import run
 
     ff = find_ffmpeg()
     base = [ff, "-hide_banner", "-nostdin", "-v", "error", "-y"]
+    vcodec = (["-vf", f"crop={int(crop_width)}:ih:0:0", "-c:v", "libx264", "-crf", "12", "-preset", "medium", "-pix_fmt", "yuv420p"]
+              if crop_width else ["-c:v", "copy"])
     if mix:
-        cmd = base + ["-i", os.fspath(raw), "-i", os.fspath(mix), "-map", "0:v:0", "-map", "1:a:0", "-c:v", "copy", "-c:a", "aac", "-b:a", "320k", "-ar", "48000", "-shortest", "-movflags", "+faststart", os.fspath(out)]
+        cmd = base + ["-i", os.fspath(raw), "-i", os.fspath(mix), "-map", "0:v:0", "-map", "1:a:0", *vcodec, "-c:a", "aac", "-b:a", "320k", "-ar", "48000", "-shortest", "-movflags", "+faststart", os.fspath(out)]
     else:
         m = loudness(raw, i=lufs, tp=tp)
         if any(m.get(k) is None for k in ("lufs", "true_peak_dbtp", "lra", "thresh", "offset")):
             raise ToolkitError("cannot normalise: first-pass loudness measurement incomplete")
-        af = f"loudnorm=I={lufs}:TP={tp}:LRA=11:measured_I={m['lufs']}:measured_TP={m['true_peak_dbtp']}:measured_LRA={m['lra']}:measured_thresh={m['thresh']}:offset={m['offset']}:linear=true"
-        cmd = base + ["-i", os.fspath(raw), "-map", "0:v:0", "-map", "0:a:0", "-c:v", "copy", "-af", af, "-c:a", "aac", "-b:a", "320k", "-ar", "48000", "-movflags", "+faststart", os.fspath(out)]
+        # aim 0.5 dB under the gate: the AAC encode overshoots the true peak a little (measured -0.99 vs a -1.0 limit, 2026-10-04)
+        af = f"loudnorm=I={lufs}:TP={tp - TP_MARGIN_DB}:LRA=11:measured_I={m['lufs']}:measured_TP={m['true_peak_dbtp']}:measured_LRA={m['lra']}:measured_thresh={m['thresh']}:offset={m['offset']}:linear=true"
+        cmd = base + ["-i", os.fspath(raw), "-map", "0:v:0", "-map", "0:a:0", *vcodec, "-af", af, "-c:a", "aac", "-b:a", "320k", "-ar", "48000", "-movflags", "+faststart", os.fspath(out)]
     r = run(cmd, timeout=1800)
     if r.timed_out or r.returncode != 0 or not Path(out).is_file():
         raise ToolkitError(f"mux failed (exit {r.returncode}): {(r.stderr or '').strip()[-300:]}")
@@ -261,8 +284,11 @@ def cmd_render(a) -> int:
     if mix is not None and not mix.is_file():
         print(f"hf_deliver: --mix {mix} not found", file=sys.stderr)
         return 2
+    crop = deliver_width((hf / "index.html").read_text(encoding="utf-8"))
+    if crop:
+        print(f"hf_deliver: cropping the render to the delivery width {crop} px (data-deliver-width)")
     try:
-        mux(raw, out, mix=mix, lufs=a.lufs, tp=a.tp)
+        mux(raw, out, mix=mix, lufs=a.lufs, tp=a.tp, crop_width=crop)
     except ToolkitError as exc:
         print(f"hf_deliver: {exc}", file=sys.stderr)
         return 2

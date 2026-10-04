@@ -35,4 +35,4 @@ Fill the shared template `agent-content/techniques/templates/BRIEF.md` (frontmat
 ## 4. Hand-off checklist (what intake passes on)
 1. `_work/intake/INTAKE_LOG.md`, `source_ls.txt`, `probe.json`; the `<ledger>` in `hf/PROMPT.md`; `hf/BRIEF.md`; the chosen card; the variants rows (one row per file: ratio, hook, platform, ledger id).
 2. `ledger_check.py` exit 0 (G1, G2) and, once the structure exists, `--prompt` exit 0 (G7).
-3. Next owner: reference stage if a reference exists (`reference-style-matching`), else the PROMPT writer (`agent-content/techniques/frame-spec-prompt.md`), then the type skill. Present PROMPT.md and wait; the line `PROMPT_APPROVED <date> "<the user's words>"` goes into `hf/CHANGELOG.md` only after the user's explicit yes.
+3. Next owner: reference stage if a reference exists (`reference-style-matching`), else the PROMPT writer (`agent-content/techniques/frame-spec-prompt.md`), then `pro-video-editor`. Present PROMPT.md and wait; the line `PROMPT_APPROVED <date> "<the user's words>"` goes into `hf/CHANGELOG.md` only after the user's explicit yes.

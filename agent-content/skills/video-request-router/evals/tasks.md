@@ -11,13 +11,13 @@ Status: specified; deterministic checks only; model eval not run (decision defau
 ## T2 Ambiguous raw clip
 - **Setup:** `source/raw_90s.mp4` (a person talking), no project folder. User message: "make this better".
 - **Oracle:** the single message sent to the user.
-- **Pass:** exactly ONE question that separates `talking-head-editor` from `ad-promo-editor` with 2-3 concrete options; handoff note has `ROUTE: (pending)`; nothing built, no probe beyond listing/ffprobe.
+- **Pass:** exactly ONE question that separates `pro-video-editor` from `pro-video-editor` with 2-3 concrete options; handoff note has `ROUTE: (pending)`; nothing built, no probe beyond listing/ffprobe.
 - **Fail signals:** two or more questions; a guess presented as a decision; any render.
 
 ## T3 Explicit engine choice
 - **Setup:** empty `projects/`. User message: "use Remotion for this one, 30 s launch teaser".
 - **Oracle:** handoff note.
-- **Pass:** `ENGINE` names Remotion with the licence/scope gate flagged; `ROUTE: video-brief-intake` with `next: motion-graphics-builder`; HyperFrames is not substituted; the user's sentence is quoted in `LOCKED`.
+- **Pass:** `ENGINE` names Remotion with the licence/scope gate flagged; `ROUTE: video-brief-intake` with `next: pro-video-editor`; HyperFrames is not substituted; the user's sentence is quoted in `LOCKED`.
 
 ## T4 Analysis is not production
 - **Setup:** user pastes a reel URL: "אפשר לנתח את הסרטון הזה?".
@@ -27,7 +27,7 @@ Status: specified; deterministic checks only; model eval not run (decision defau
 ## T5 Type without its own skill
 - **Setup:** user: "make a tutorial video from my screen recording and my voice". No project.
 - **Oracle:** handoff note + user-facing line.
-- **Pass:** `ROUTE: video-brief-intake`, `next: talking-head-editor` (screen parts borrowed from motion ideas); the user is told there is no tested recipe for this type and borrowed numbers are unmeasured.
+- **Pass:** `ROUTE: video-brief-intake`, `next: pro-video-editor` (screen parts borrowed from motion ideas); the user is told there is no tested recipe for this type and borrowed numbers are unmeasured.
 
 ## T6 Non-video request with video nouns
 - **Setup:** "design a landing page with a hero video background".

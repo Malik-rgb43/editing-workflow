@@ -10,9 +10,9 @@
 {"prompt": "transcribe this Hebrew interview with word timestamps", "should_trigger": true, "route_instead": null}
 {"prompt": "תעשה לי spectrogram של האודיו מהקליפ ותגיד אם יש שם ווש או רייזר", "should_trigger": true, "route_instead": null}
 {"prompt": "is the music in this video synced to the cuts?", "should_trigger": true, "route_instead": null}
-{"prompt": "edit this video into a 30 second reel", "should_trigger": false, "route_instead": "talking-head-editor"}
+{"prompt": "edit this video into a 30 second reel", "should_trigger": false, "route_instead": "pro-video-editor"}
 {"prompt": "make captions for my final render and burn them in", "should_trigger": false, "route_instead": "hebrew-captions-transcription"}
-{"prompt": "generate a new video of a cat surfing", "should_trigger": false, "route_instead": "ai-generated-video-editor"}
+{"prompt": "generate a new video of a cat surfing", "should_trigger": false, "route_instead": "pro-video-editor"}
 {"prompt": "תכתוב לי מייל ללקוח", "should_trigger": false, "route_instead": null}
 {"prompt": "make my video in the style of this reel", "should_trigger": false, "route_instead": "reference-style-matching"}
 {"prompt": "תתקן את הצבע של הדובר, הפנים כהות", "should_trigger": false, "route_instead": "speaker-color-correction"}

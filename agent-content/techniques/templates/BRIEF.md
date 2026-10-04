@@ -11,7 +11,7 @@ RULES (agent-content/playbooks/wf-00-intake.md):
  - Dates, prices and model ids do not belong here (perishable) — they go in dated reference modules.
 -->
 ---
-type: <talking-head | testimonial | ad-promo | motion-graphics | ai-generated | podcast-clip>   # the type skill that owns the work
+kind: <speaker | testimonial | ad | motion | ai-shots | podcast-clip | other>   # context for pro-video-editor, not a template
 ratios: <9:16 | 16:9 | 1:1 | 4:5 ...>    # the MASTER first; others are re-layouts (wf-variants)
 fps: <30 | native fps of AI takes (usually 24)>
 length: <exact seconds, e.g. 45.0>        # ledger LEN; never derived from a multiplier

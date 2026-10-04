@@ -1,7 +1,7 @@
 ---
 name: reference-style-matching
 description: >-
-  Make the user's footage, script or topic in the style of a reference video: measure it into a Style DNA card, map it onto the user's material, offer three ways to apply it (Faithful / Elevated / Twist); grammar, never assets. Triggers: in the style of, like this video, match this edit, a reference link or file; בסגנון של, רפרנס, תעשה כמו הסרטון הזה, אותו סגנון. NOT for plain analysis (video-analysis), reusing a reference's footage, music or logos (refused), or building the edit (the type skill).
+  Make the user's footage, script or topic in the style of a reference video: measure it into a Style DNA card, map it onto the user's material, offer three ways to apply it (Faithful / Elevated / Twist); grammar, never assets. Triggers: in the style of, like this video, match this edit, a reference link or file; בסגנון של, רפרנס, תעשה כמו הסרטון הזה, אותו סגנון. NOT for plain analysis (video-analysis), reusing a reference's footage, music or logos (refused), or building the edit (`pro-video-editor`).
 compatibility: >-
   Needs the video-analysis skill and its tool; scripts/px_measure.py needs ffmpeg on PATH; the other scripts need only Python 3.9+. Analysis speed (9-23 min per video under load) is the author's batch observation on one reference machine.
 metadata:
@@ -12,7 +12,7 @@ metadata:
 
 # reference-style-matching
 
-Turns "make mine like this" into numbers, a mapping and a decision the user makes. It runs after intake and BEFORE the type skill builds anything. A reference gives **grammar** (pacing, devices, type system, camera rhythm, sound shape) as measured rows; it never gives **assets** (frames, footage, voice-over, music, logos, characters, paid fonts, scripts).
+Turns "make mine like this" into numbers, a mapping and a decision the user makes. It runs after intake and BEFORE `pro-video-editor` builds anything. A reference gives **grammar** (pacing, devices, type system, camera rhythm, sound shape) as measured rows; it never gives **assets** (frames, footage, voice-over, music, logos, characters, paid fonts, scripts).
 
 ## Rules that outrank the rest of this file
 1. **Measure, do not eyeball.** Every DNA number comes from a validated `video-analysis` folder or from `px_measure.py` on a full-resolution frame. No analysis folder = `blocked`: run `video-analysis` first.
@@ -46,7 +46,7 @@ States are `pass | fail | blocked | n/a` with a reason. A timeout, empty sample 
 |---|---|---|---|---|---|
 | G1 measured | each numeric row equals its value in the validated analysis (`source_key`) or carries a px_measure/zoom evidence path; analysis hash on the card = hash of `measurements.json`; cut counts verified on frames | `style_card_check.py card` exit 0 | run or re-run `video-analysis`; fix the row from the measurement, never the measurement from the row | this skill + `video-analysis` | new reference, new segment, re-analysis |
 | G2 grammar not assets | `assets_taken_from_reference` empty; no reference frame, clip, VO, music, logo or character in `hf/assets/` or the plan | `rights.json` + the asset list vs `SOURCES.md` | replace with owned/licensed assets; delete the copy | this skill | each new asset |
-| G3 rights | song match is `not_established`; replacement music licence in the allowed set and cleared for ads when the context is a client ad; fonts licensed | `style_card_check.py rights` exit 0; SOURCES.md rows | pick a licensed alternative; flag the original as reference-only | this skill + `ad-promo-editor` for ads | any music/font change |
+| G3 rights | song match is `not_established`; replacement music licence in the allowed set and cleared for ads when the context is a client ad; fonts licensed | `style_card_check.py rights` exit 0; SOURCES.md rows | pick a licensed alternative; flag the original as reference-only | this skill + `pro-video-editor` for ads | any music/font change |
 | G4 option diversity | exactly Faithful/Elevated/Twist, same decision keys, pairwise differ in >= 3 decisions, cost and risk stated, one recommended, Twist keeps 1-2 devices and changes one axis | `style_card_check.py options` exit 0 | rewrite the duplicate option | this skill | any option edit |
 | G5 pinned look | the user named the time range that is the style | `reference.pinned_segment.pinned_by = user` | ask; re-analyse the right range | this skill | new reference |
 | G6 fidelity | after each render every row is `ok`, `info` or declared `deviate`; none `flag`/`not_measured` | `fidelity_diff.py` exit 0 on the DRAFT's analysis | fix the draft or record a deviate with the user's OK | this skill | every render |
@@ -64,5 +64,5 @@ States are `pass | fail | blocked | n/a` with a reason. A timeout, empty sample 
 - `references/options-and-mapping.md` - mapping beats and writing the three options (step 5-6).
 - `references/rights-and-limits.md` - rights ledger, what to take and never take, legal posture, privacy (step 7, any doubt about a reference asset).
 - `references/failure-modes.md` - when a transfer went wrong, or before presenting.
-- Other skills: `video-analysis` (required), `video-brief-intake`, the type skill that will build, `visual-choice-board` (when the user hesitates between looks), `paid-spend-gate`.
+- Other skills: `video-analysis` (required), `video-brief-intake`, `pro-video-editor` that will build, `visual-choice-board` (when the user hesitates between looks), `paid-spend-gate`.
 - Scripts: `scripts/style_card_check.py` (card | options | rights | all), `scripts/fidelity_diff.py`, `scripts/px_measure.py`; each has a Usage docstring and `--self-check`; exit 0 / 1 / 2 (INSUFFICIENT_EVIDENCE).

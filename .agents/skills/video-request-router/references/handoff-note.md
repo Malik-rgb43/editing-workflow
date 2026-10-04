@@ -38,7 +38,7 @@ EVIDENCE:  hf/PROMPT.md, hf/CHANGELOG.md (PROMPT_APPROVED 2026-10-01), _work/dra
 
 ## Example B: explicit engine
 ```
-ROUTE:     video-brief-intake   next: motion-graphics-builder
+ROUTE:     video-brief-intake   next: pro-video-editor
 WHY:       row "launch" | user said: "use Remotion for this one"
 PROJECT:   none yet
 STATE:     intake=none prompt=none render=none (source: ls)
@@ -52,7 +52,7 @@ EVIDENCE:  user message
 
 ## Example C: ambiguous, one question
 ```
-ROUTE:     (pending)   next: talking-head-editor OR ad-promo-editor
+ROUTE:     (pending)   next: pro-video-editor OR pro-video-editor
 WHY:       raw 90 s clip + "make this better" | user said: "make this better"
 OPEN:      "Is this a speaker reel (keep the person talking, add B-roll and captions) or an ad (offer, CTA, hook variants)?"
 ```
