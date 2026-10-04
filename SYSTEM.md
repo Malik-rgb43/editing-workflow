@@ -77,7 +77,7 @@ Every skill, workflow and tool in one place. Skills are specified with determini
 - `agent-content/references/platform-specs.md` - Platform specs, delivery presets and AI-disclosure — dated reference
 - `agent-content/references/three-d-routes.md` - 3D routes — dated reference
 
-## Tools (36)
+## Tools (37)
 
 | tool | purpose | usage |
 |---|---|---|
@@ -89,6 +89,7 @@ Every skill, workflow and tool in one place. Skills are specified with determini
 | `tools/color_fit.py` | color_fit - fit a small, named grade to a NAMED colour preset from sampled frames of the CAMERA ORIGINAL (two stages, few free parameters). | python tools/color_fit.py <video> --at 2,9,16 -o grade.json [--preset speaker-plate-v1] [--preset-file presets.json] [--stage global\|subject] [--fixed global.json] (--faces faces.json \| --skin-roi x0,y0,x1,y1) [--neutral-roi ...] [--black-roi ...] [--sky-roi ...] [--width 270] [--sheet before_after.jpg] [--max-nfev 600] |
 | `tools/color_render.py` | color_render - bake a fitted grade into the A-roll as a FILE: two 65^3 LUTs (GLOBAL and SUBJECT) blended by a soft person matte, one ffmpeg run. | python tools/color_render.py <camera-original> --params grade.json -o hf/assets/video/aroll.mp4 [--matte matte.mp4] [--from 12.0 --to 18.0] [--matte-offset S] [--fps 30] [--size 1080x1920] [--canvas 1088x1920] [--crf 11] [--preroll-frames 6] [--matte-blur 3] [--matte-erode 1] [--subject-everywhere] [--threads N] [--timeout 3600] |
 | `tools/color_scopes.py` | color_scopes - numeric colour measurements of sampled frames, in the shape the colour gate expects (measurements.json). | python tools/color_scopes.py <video> -o measurements.json [--every 2.0 \| --times 1.5,4,9] [--skin-roi 0.4,0.2,0.6,0.4] [--faces faces.json] [--black-roi x0,y0,x1,y1] [--sky-roi x0,y0,x1,y1] [--max-width 640] [--timeout 900] |
+| `tools/connections.py` | connections - what is connected on THIS machine, grouped by the job it does, so the agent decides what to use before it plans. | python tools/connections.py [--json] [-o <project>/_work/connections.json] [--cwd DIR] |
 | `tools/cutout.py` | cutout - cut the speaker out of a clip as a transparent video (WebM VP9 alpha or ProRes 4444), ONLY for the beats that put graphics behind the speaker. | python tools/cutout.py <clip> -o hf/assets/video/speaker.webm [--from 12.0 --to 18.0] [--route native\|onnx\|external] [--cut-at 14.2,16.0 \| --cuts src_cuts.json] [--model m.onnx] [--stride 1] [--alpha-from alpha.mp4] [--erode 4] [--blur 1.8] [--quality fast\|balanced\|best] [--cache-dir DIR] [--no-cache] [--timeout 7200] |
 | `tools/doctor.py` | doctor - health check AND hardware auto-detection. Decides the safest working profile for THIS machine (no questions asked). | python tools/doctor.py [report\|recommend\|smoke] [--json] [--work-root DIR] [--out report.json] |
 | `tools/face_center.py` | face_center - where is the speaker's face, and is it centred? (`source` measures, `audit` judges) | python tools/face_center.py source <video> -o faces.json [--model yunet.onnx] [--every 5] [--max-width 480] [--min-coverage 0.5] [--timeout 900] python tools/face_center.py audit <faces.json> [--tol 0.08] [--min-run 6] [--json-out r.json] |

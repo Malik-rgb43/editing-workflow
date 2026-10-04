@@ -14,6 +14,9 @@ metadata:
 
 Corrects skin, sky, blacks and clip-to-clip matching on real speaker footage: scopes -> numeric fit against a NAMED preset -> subject matte -> bake into a file -> gate. The grade is a file, never an attribute.
 
+## Start: connections (API, MCP, CLI) - before anything else
+Run `python tools/connections.py` (about 1 s; presence only, nothing is called) and read your own tool list: claude.ai connectors and plugin servers appear only there, sometimes under an id instead of the vendor name. If the router's handoff note already lists the decisions, use them. For this skill: FFmpeg CLI always; an editing host or image tool connected over MCP (Premiere Pro, After Effects, an image-adjust MCP) only when the student finishes there. Decide per connection - use it / not needed / fallback - say it to the user in one line, then continue. A missing connection never stops the work; anything paid goes through `paid-spend-gate`.
+
 ## Rules that outrank the rest
 1. **Camera original only.** `ls` the whole source tree, find the camera file (4K, 50-100 Mbps), hash it, and say why in one line. Never grade the compressed rough cut (in the reference case: a 1080p 2.2 Mbps re-encode of a 4K 96 Mbps 8-bit rotated camera file; the 4K -> 1080 Lanczos downscale gave sharper, cleaner images and real headroom). Not found -> ask for it.
 2. **Measure before touching; numbers AND eyes.** Scopes first (waveform, RGB parade, vectorscope with the skin line at 123 degrees, histogram, skin sample). Numbers alone passed visibly bad frames; the eye alone is fooled by a bright monitor: check on a phone and on a before/after sheet.

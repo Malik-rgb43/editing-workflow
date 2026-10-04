@@ -2,7 +2,7 @@
   "schema": "avc.hf-block/1",
   "name": "caption",
   "title": "Word-timed caption",
-  "description": "Captions that show a few words at a time and light up the word being spoken. Works for Hebrew (RTL set on the text, never on the root) and English.",
+  "description": "Captions that show a few words at a time (a chunk never crosses a sentence break or a pause of 0.35 s or more) and light up the word being spoken. Works for Hebrew (RTL set on the text, never on the root) and English.",
   "duration_s": 3,
   "size": [
     1080,

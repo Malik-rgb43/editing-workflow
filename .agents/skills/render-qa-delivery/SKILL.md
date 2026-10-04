@@ -14,6 +14,9 @@ metadata:
 
 The pipeline that proves a file: preflight -> check -> snapshots -> Studio/range renders -> ONE full render under the lock -> final-file loudness/mux -> every-frame QA -> 4-axis visual review -> manifest, with a timing ledger written along the way. It never decides the look.
 
+## Start: connections (API, MCP, CLI) - before anything else
+Run `python tools/connections.py` (about 1 s; presence only, nothing is called) and read your own tool list: claude.ai connectors and plugin servers appear only there, sometimes under an id instead of the vendor name. If the router's handoff note already lists the decisions, use them. For this skill: the pinned HyperFrames CLI (`doctor` node_engine), FFmpeg CLI, Playwright MCP or the browser pane for preview checks. Decide per connection - use it / not needed / fallback - say it to the user in one line, then continue. A missing connection never stops the work; anything paid goes through `paid-spend-gate`.
+
 ## Rules that outrank the rest
 1. **Fail closed.** A gate that cannot run reports `not_run` / `INSUFFICIENT_EVIDENCE`. A timeout, an empty sample, a missing, stale or different file never passes. A pass means the test ran on its stated coverage; "0 findings" from an empty sample is not a pass.
 2. **Cheap first.** Seconds-level checks before minutes-level renders. ONE full render per round of notes, after every note and reviewer is in. Review drafts in Studio (`preview`), not by rendering a draft per round (owner decision 2026-10-01); audio-only change = remix + remux, no render.

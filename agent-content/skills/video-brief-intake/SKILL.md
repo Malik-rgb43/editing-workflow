@@ -12,6 +12,9 @@ metadata:
 
 The gate every new video passes first (stage wf-00). Output: a verbatim intake log, a Concept Ledger with one measurable row per concrete thing, BRIEF.md, and (if the user did not fix a concept) three concept cards. It writes no frame-by-frame PROMPT, no code, no generation.
 
+## Start: connections (API, MCP, CLI) - before anything else
+Run `python tools/connections.py` (about 1 s; presence only, nothing is called) and read your own tool list: claude.ai connectors and plugin servers appear only there, sometimes under an id instead of the vendor name. If the router's handoff note already lists the decisions, use them. What is connected shapes the questions: stock (Pexels API/MCP), real icons and logos (Iconify MCP), 3D (Blender CLI/MCP) or generation (Higgsfield MCP/CLI, ElevenLabs MCP/API) can be proposed in the brief; ask only about what is missing and matters. Decide per connection - use it / not needed / fallback - say it to the user in one line, then continue. A missing connection never stops the work; anything paid goes through `paid-spend-gate`.
+
 ## Rules that never bend
 1. **Intake until precise.** With no reference, ask. Platform, length, tone, CTA, structure (silence cut vs rebuild) and quality bar are never guessed.
 2. **Every concrete thing the user wrote becomes a ledger row** with an id, in the user's own words (Hebrew stays Hebrew). Compound claims are split ("globe bigger and person higher" = 2 rows).

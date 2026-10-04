@@ -52,11 +52,11 @@ The thinking loop for each decision: **intent** (what should the viewer feel her
 4. **Fail closed.** A gate that cannot run is `not_run`, never pass. A tool call is execution evidence; a viewed frame is appearance evidence; a still cannot prove motion.
 
 ## Step 1 - Perceive everything (before any decision)
-1. **`ls` the whole source tree**, not only the file you were given:
+1. **Connections first (API, MCP, CLI):** `python tools/connections.py -o <project>/_work/connections.json` (1 s, presence only) plus your own tool list (claude.ai connectors and plugins appear only there). Use the router's decisions when its handoff note has them. Decide per job - use / not needed / fallback (table "Connections" below) - say it in one line and write it in the editor's notes. Plan with what the student actually has; never assume a connection.
+2. **`ls` the whole source tree**, not only the file you were given:
    - a camera original beside the cut (more resolution, untouched colour). A 9:16 cut may come from a sideways 16:9 file with no rotation tag;
    - a finished or earlier edit: your benchmark for Step 5;
    - an assets folder (illustrations, logos, 3D, an end frame).
-2. **See what is connected** (`python tools/doctor.py report`, catalogue `integrations/catalog.toml`). Plan with what the student actually has; never assume a connection.
 3. **Start the slow measurements at minute 0** as ONE background command: `python tools/prep.py <project>` (sheet, transcript, hidden cuts, faces, scopes), with the local model paths.
 4. **Map the cut back to the original** when one exists: an audio match finds every edit point, including jump cuts the picture detectors miss. Colour, resolution and reframing come from the original; a zoom above about x1.3 needs a plate rendered above output resolution.
 5. **Read and look:** the full transcript (proofread rare words against a second model or the owner's text), every contact sheet, any reference or benchmark through `video-analysis`.
@@ -135,7 +135,7 @@ The kind of video changes the answers, not the method:
 | Notes on a draft | `revision-notes-handler` |
 
 ## Connections: use what is connected, the right one for the job
-Check presence first (`doctor`); a listed integration is not a working one. Free and local come first; anything that can cost money goes through `paid-spend-gate` with a dated estimate.
+Check presence first (`tools/connections.py` + your own tool list, Step 1); a listed integration is not a working one. Free and local come first; anything that can cost money goes through `paid-spend-gate` with a dated estimate.
 
 | Need | Connected route (if the student has it) | Free / local fallback |
 |---|---|---|

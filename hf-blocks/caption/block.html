@@ -33,9 +33,16 @@
             .map(function (w) { return { w: w.w, start: Math.max(0, +w.start), end: Math.max(+w.start, +w.end) }; });
           var root = document.getElementById("caption");
           var tl = gsap.timeline({ paused: true });
-          for (var c = 0; c * n < words.length; c++) {
-            var group = words.slice(c * n, c * n + n);
-            var next = words[c * n + n];
+          // a chunk ends after n words, at a word ending in punctuation, or before a pause of 0.35 s or more - never across a sentence break
+          var chunks = [], cur = [];
+          words.forEach(function (w, i) {
+            var nx = words[i + 1];
+            cur.push(w);
+            if (cur.length >= n || !nx || /[.?!…;:,]["'״׳)\]]*$/.test(w.w) || nx.start - w.end >= 0.35) { chunks.push(cur); cur = []; }
+          });
+          for (var c = 0; c < chunks.length; c++) {
+            var group = chunks[c];
+            var next = chunks[c + 1] && chunks[c + 1][0];
             var t0 = group[0].start, t1 = Math.min(D, next ? Math.max(group[group.length - 1].end, Math.min(next.start, group[group.length - 1].end + 0.35)) : group[group.length - 1].end + 0.35);
             var el = document.createElement("div");
             el.className = "cp-chunk"; el.id = "caption-chunk-" + c; el.style.bottom = bottom + "px"; el.style.fontSize = size + "px"; el.style.lineHeight = "1.25";

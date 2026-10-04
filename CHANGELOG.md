@@ -34,6 +34,7 @@ Dates and facts here are perishable; each entry states its source where it relie
 - `tools/hf_studio.py`: opens the project in HyperFrames Studio (owner rule, AGENTS.md rule 10) with the pinned engine; probes the server after start (some agent hosts kill background children) and offers `--attach` for the host's background command; the URL carries `?p=<project>` because every project is called `hf`.
 - `color_fit --bound NAME=LO:HI`: narrows one parameter when the fit pins it (a backlit shot pinned `ev` at +1.5 and blew out the background).
 - Intake Round 0 (question banks): the concept and who decides it (full control = the agent decides and shows its decisions), and the caption language, asked first and never assumed.
+- `tools/connections.py` and a "Start: connections (API, MCP, CLI)" step at the top of every skill (owner rule 2026-10-05, AGENTS.md rule 11): what is connected on this machine, grouped by job (CLIs on PATH, API keys by presence, MCP servers by name from the Claude Code / Codex config files; about 1 s, nothing is called, no value is read), plus the agent's own tool list for claude.ai connectors; the agent decides use / not needed / fallback, says it in one line, then continues. The router writes the decisions into the handoff note so the owning skill does not check again.
 
 ### Fixed (found by end-to-end runs on real footage, 2026-10-04)
 - `hf_segment`: the root is never a clip; persistent layers do not force snapping; trims clip the tail; trimmed hosted sub-compositions warn `sub_restart`.
@@ -42,6 +43,9 @@ Dates and facts here are perishable; each entry states its source where it relie
 - `color_scopes`: a detector-found face is not rejected by the fixed-ROI hue guard.
 - `prep`: the cache key includes the tool file (a fixed tool no longer returns a stale result).
 - `transcribe`: no-VAD hallucinations (one word stretched over 16 s) are flagged `suspect` and exit 2 with a `--vad` hint.
+- `caption` block: a chunk never crosses a sentence break - it also ends at a word ending in punctuation and before a pause of 0.35 s or more (it used to cut every N words).
+- `hf_preflight`: `font-family: var(--x, sans-serif)` no longer reports a phantom family `sans-serif)` (a named fallback is still checked), and a timed composition root/host is no longer flagged `missing_clip_class`.
+- macOS CI: the board servers skip HTTPServer's reverse-DNS lookup (it took more than 5 s on the runner) and the tests wait up to 30 s.
 
 ## [0.4.0] - 2026-10-04
 

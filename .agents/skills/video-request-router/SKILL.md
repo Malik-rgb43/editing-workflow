@@ -12,6 +12,9 @@ metadata:
 
 Single entry for the video course. It reads the request and the project state, names ONE owner and writes a handoff note. It builds nothing.
 
+## Start: connections (API, MCP, CLI) - before anything else
+Run `python tools/connections.py` (about 1 s; presence only, nothing is called) and read your own tool list: claude.ai connectors and plugin servers appear only there, sometimes under an id instead of the vendor name. Do it once per session or project and put one decision line per relevant job in the handoff note, so the owning skill does not check again. Decide per connection - use it / not needed / fallback - say it to the user in one line, then continue. A missing connection never stops the work; anything paid goes through `paid-spend-gate`.
+
 ## Rules that never bend
 1. **Decide and hand over only.** No render, generation, install, download or file write, except the handoff note (chat, or `projects/<name>/_work/handoff.md`; never inside `hf/`).
 2. **One owner per request.** Gate skills (`video-brief-intake`, `paid-spend-gate`) are overlays: name them in the note, they do not take ownership.

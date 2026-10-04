@@ -12,6 +12,9 @@ metadata:
 
 Every paid action passes here first: dated estimate -> explicit approval -> retry cap -> provenance. The skill contains no prices; it contains the formulas, the refusals and the records.
 
+## Start: connections (API, MCP, CLI) - before anything else
+Run `python tools/connections.py` (about 1 s; presence only, nothing is called) and read your own tool list: claude.ai connectors and plugin servers appear only there, sometimes under an id instead of the vendor name. If the router's handoff note already lists the decisions, use them. For this skill: which paid routes actually exist (Higgsfield MCP/CLI, ElevenLabs MCP/API, Tripo MCP, 21st.dev Magic MCP). Estimate only for a connected route, and offer a connected free route first (stock API/MCP, Blender CLI, the toolkit's own tools). Decide per connection - use it / not needed / fallback - say it to the user in one line, then continue. A missing connection never stops the work; anything paid goes through `paid-spend-gate`.
+
 ## Rules that never bend
 1. **No call before approval of a number.** The estimate is shown, the user approves that number, then (and only then) the first paid call runs. "Only prepare a document" = zero calls.
 2. **No price promises** (decision default Q3). Never quote a provider price from memory or from this repo's examples: read the current card today, record its date, show the formula.

@@ -25,6 +25,7 @@ Use the skill **`video-request-router`**. It picks the ONE owning skill or workf
 8. **ASCII work root** (`paths.work_root` in `toolkit.toml`, or `AVC_PATHS_WORK_ROOT`). Never run `npx hyperframes init` under a path with Hebrew letters; never rename source folders.
 9. **Never message other Claude/agent sessions** on your own initiative.
 10. **Open the Studio whenever you start or resume work on a HyperFrames project** (owner rule): `python tools/hf_studio.py <project>/hf` (reuses a running one), then show the user the `studio_url` (open it in a NEW tab of your browser pane, or give the link; if the tool exits 3, run it with `--attach` as a background command) so they watch the video and its timeline while you work. Stop it with `--stop` when the session ends.
+11. **Check the connections before you plan** (owner rule): at the start of every skill or request, `python tools/connections.py` (API keys, MCP servers, CLIs; presence only) plus your own tool list (claude.ai connectors appear only there). Decide per job whether to use each one (use / not needed / fallback), tell the user in one line, then continue. A missing connection never stops the work; anything paid goes through `paid-spend-gate`.
 
 ## Secrets, privacy, safety
 * Never ask for, accept in chat, print, log or write into any file an API key, password or token. Point to the place (OS environment variable, `/mcp` OAuth, vendor CLI sign-in, keychain) and let the user do it. Check credentials by **presence only**.

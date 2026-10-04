@@ -14,6 +14,9 @@ metadata:
 
 Turns a beat, a shot card or a brief into copy-ready still-image prompts. A still is the cheap place to lock identity, product, location and light BEFORE any paid motion, so this skill is the first writing step of an AI-shot film (`pro-video-editor` calls it for every `image` field of a shot card). **No generation, no spend, no files other than the prompt text.**
 
+## Start: connections (API, MCP, CLI) - before anything else
+Run `python tools/connections.py` (about 1 s; presence only, nothing is called) and read your own tool list: claude.ai connectors and plugin servers appear only there, sometimes under an id instead of the vendor name. If the router's handoff note already lists the decisions, use them. For this skill: the image generator you write for (Higgsfield MCP/CLI or another, paid); a free real image (Pexels API/MCP, another stock MCP) first when a real photo proves the claim better than a generated one. Decide per connection - use it / not needed / fallback - say it to the user in one line, then continue. A missing connection never stops the work; anything paid goes through `paid-spend-gate`.
+
 ## Rules (read first)
 1. **Never generate or spend here.** "Make it / run it" gets the prompts plus a hand-off to `paid-spend-gate` by name. Even a free local route asks the user's explicit OK before an image is generated.
 2. **One STYLE PREFIX per film**, written once (render look, palette hexes, lens, grain, "no text, no labels") and pasted VERBATIM at the start of every prompt of that film. Record it in each answer: `prefix: <name>` (user's own, or from the look bible). No prefix yet: write one first and ask for a yes.

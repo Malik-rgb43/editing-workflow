@@ -20,7 +20,7 @@ def run(tool, *args, env=None, timeout=120):
     return subprocess.run([sys.executable, "-X", "utf8", str(TOOLS / f"{tool}.py"), *map(str, args)], capture_output=True, text=True, encoding="utf-8", timeout=timeout, env=env)
 
 
-@pytest.mark.parametrize("tool", ["transcribe", "new_project", "render_lock", "ledger", "hf_segment", "hf_deliver", "word_retime", "vo_clean"])
+@pytest.mark.parametrize("tool", ["transcribe", "new_project", "render_lock", "ledger", "hf_segment", "hf_deliver", "word_retime", "vo_clean", "connections"])
 def test_help_under_one_and_a_half_seconds(tool):
     t = time.monotonic()
     p = run(tool, "--help")

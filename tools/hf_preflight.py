@@ -173,7 +173,7 @@ def lint_html(text: str, path: Path, *, rail_bottom=1450.0, canvas_height=1920.0
                 pass
         if "data-color-grading" in el.attrs:
             add("color_grading_attr", "error", "data-color-grading is a render-time shader (stalls AMD); bake the grade with FFmpeg (grade_bake)", el.line)
-        if "data-start" in el.attrs and "data-duration" in el.attrs and "clip" not in el.cls():
+        if "data-start" in el.attrs and "data-duration" in el.attrs and "clip" not in el.cls() and "data-composition-id" not in el.attrs:  # a composition root/host is timed, not a clip
             add("missing_clip_class", "warning", 'element has data-start and data-duration but no class="clip"', el.line)
     # -- media in 3d / hidden parent
     pres3d_sel = [sel for sel, body in rules if "preserve-3d" in body]
@@ -260,19 +260,23 @@ def lint_html(text: str, path: Path, *, rail_bottom=1450.0, canvas_height=1920.0
     used = set()
     for _, body in rules:
         for m in re.finditer(r"font-family\s*:\s*([^;]+)", body):
-            for f in m.group(1).split(","):
-                f = f.strip().strip("'\"").lower()
-                if f and f not in GENERIC_FONTS and not f.startswith("var("):
-                    used.add(f)
+            used |= _named_families(m.group(1))
     for el in d.els:
         for m in re.finditer(r"font-family\s*:\s*([^;]+)", el.style_text):
-            for f in m.group(1).split(","):
-                f = f.strip().strip("'\"").lower()
-                if f and f not in GENERIC_FONTS and not f.startswith("var("):
-                    used.add(f)
+            used |= _named_families(m.group(1))
     for f in sorted(used - declared):
         add("font_not_declared", "warning", f"font-family {f!r} is used but has no @font-face file (the renderer's Chrome does not find fonts by name)", None, family=f)
     return out
+
+
+def _named_families(value: str) -> set:
+    """Font families named in a font-family value. var(--x, fallback) contributes only its fallback; generic families are skipped."""
+    names = set()
+    for f in value.split(","):
+        f = re.sub(r"var\(\s*--[\w-]+\s*", "", f).strip().rstrip(")").strip().strip("'\"").strip().lower()
+        if f and f not in GENERIC_FONTS and not f.startswith("--"):
+            names.add(f)
+    return names
 
 
 def collect_files(target: Path):

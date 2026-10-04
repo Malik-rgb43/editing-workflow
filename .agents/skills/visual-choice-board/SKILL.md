@@ -12,6 +12,9 @@ metadata:
 
 One page, every option, the user's real content, one click each, and a `choices.json` the agent can validate. The page is a local file: no account, no upload, no remote resource.
 
+## Start: connections (API, MCP, CLI) - before anything else
+Run `python tools/connections.py` (about 1 s; presence only, nothing is called) and read your own tool list: claude.ai connectors and plugin servers appear only there, sometimes under an id instead of the vendor name. If the router's handoff note already lists the decisions, use them. For this skill: Iconify MCP for real icons and logos, shadcn registries / 21st.dev Magic MCP for UI pieces, a font service MCP only for fonts whose licence allows embedding (the board shows local font files). Decide per connection - use it / not needed / fallback - say it to the user in one line, then continue. A missing connection never stops the work; anything paid goes through `paid-spend-gate`.
+
 ## Rules that never bend
 1. **Build only when it earns its round**: 3 or more visual decisions pending, or options that cannot be judged from names. A decision already made, one obvious option, or a project rule that fixes it (locked palette, banned list) is applied, not boarded (`references/decision-types.md`).
 2. **Real content only**: the user's text, colours and a footage still. Placeholder text is refused by the builder.

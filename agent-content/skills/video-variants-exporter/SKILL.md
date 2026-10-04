@@ -14,6 +14,9 @@ metadata:
 
 Turns ONE approved master into N outputs without losing control of which file came from which source state. It owns the variant matrix, the master freeze, the re-layout copies, the shared mix, the naming, the one-render-at-a-time queue, the agent supervision rules and the manifest gate. It does not design the master (`pro-video-editor` does) and does not replace per-file QA (`render-qa-delivery`).
 
+## Start: connections (API, MCP, CLI) - before anything else
+Run `python tools/connections.py` (about 1 s; presence only, nothing is called) and read your own tool list: claude.ai connectors and plugin servers appear only there, sometimes under an id instead of the vendor name. If the router's handoff note already lists the decisions, use them. For this skill: FFmpeg CLI and the pinned HyperFrames CLI; a publishing connection (a platform MCP or API) only with the user's explicit yes for each post. Decide per connection - use it / not needed / fallback - say it to the user in one line, then continue. A missing connection never stops the work; anything paid goes through `paid-spend-gate`.
+
 ## Rules that outrank the rest of this file
 1. **Master first, then frozen.** Derivatives are made only from a master that passed its own full QA and is recorded with `manifest_check.py freeze`. A fix needed later is made in the MASTER, logged with `change`, carried to every copy in the same round, and every derivative is re-rendered and re-recorded. Fixing only a copy is forbidden.
 2. **Re-layout, never crop.** Each aspect is a copy of the master source (`hf_9x16/`, `hf_1x1/` ...) with its own canvas, safe zones, type scale, caption rail, camera keys and face centring. An FFmpeg crop or scale of a rendered master is not a variant.

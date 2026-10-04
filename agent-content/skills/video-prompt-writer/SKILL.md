@@ -14,6 +14,9 @@ metadata:
 
 Turns a script, scene or beat into copy-ready Seedance prompts using the author's skeleton. **No spend, no generation, no files other than the prompt text.**
 
+## Start: connections (API, MCP, CLI) - before anything else
+Run `python tools/connections.py` (about 1 s; presence only, nothing is called) and read your own tool list: claude.ai connectors and plugin servers appear only there, sometimes under an id instead of the vendor name. If the router's handoff note already lists the decisions, use them. For this skill: the video generator you write for (Higgsfield MCP/CLI or another, paid); stock video (Pexels API/MCP) first when real footage proves the claim better. Decide per connection - use it / not needed / fallback - say it to the user in one line, then continue. A missing connection never stops the work; anything paid goes through `paid-spend-gate`.
+
 ## Rules (read first)
 1. **Never spend or generate.** A request that implies generation ("make it", "run it") gets the prompts plus a hand-off to `paid-spend-gate` by name; no provider call is made here. Credits, plans and prices are not discussed: they are volatile and belong to the gate and the dated modules.
 2. **Record the prefix choice in every answer:** `prefix: owner-cinematic | vendor-short | custom`, labelled *owner preference, untested on your account* for the author preset (decision default Q7). The prefix is pasted VERBATIM at the start of EVERY prompt of a film; a user-supplied prefix is used verbatim.

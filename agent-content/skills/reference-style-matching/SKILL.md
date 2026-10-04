@@ -14,6 +14,9 @@ metadata:
 
 Turns "make mine like this" into numbers, a mapping and a decision the user makes. It runs after intake and BEFORE `pro-video-editor` builds anything. A reference gives **grammar** (pacing, devices, type system, camera rhythm, sound shape) as measured rows; it never gives **assets** (frames, footage, voice-over, music, logos, characters, paid fonts, scripts).
 
+## Start: connections (API, MCP, CLI) - before anything else
+Run `python tools/connections.py` (about 1 s; presence only, nothing is called) and read your own tool list: claude.ai connectors and plugin servers appear only there, sometimes under an id instead of the vendor name. If the router's handoff note already lists the decisions, use them. For this skill: yt-dlp CLI for a link, Playwright MCP (or the browser pane) for a web reference, a vision API (Gemini) only when the client allows hosted analysis. Decide per connection - use it / not needed / fallback - say it to the user in one line, then continue. A missing connection never stops the work; anything paid goes through `paid-spend-gate`.
+
 ## Rules that outrank the rest of this file
 1. **Measure, do not eyeball.** Every DNA number comes from a validated `video-analysis` folder or from `px_measure.py` on a full-resolution frame. No analysis folder = `blocked`: run `video-analysis` first.
 2. **Pin "the style".** If the reference has several looks (before/after vs final, intro vs body, split screen vs full), the USER says which time range is the style. One past project styled the wrong look and lost a round.

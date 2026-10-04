@@ -14,6 +14,9 @@ metadata:
 
 Hebrew transcription and burned-in captions: choose an ASR route by profile, get word timings, proofread by hand, build RTL-correct caption cards that animate in AND out, and prove them with `caption_qa` plus a coverage statement.
 
+## Start: connections (API, MCP, CLI) - before anything else
+Run `python tools/connections.py` (about 1 s; presence only, nothing is called) and read your own tool list: claude.ai connectors and plugin servers appear only there, sometimes under an id instead of the vendor name. If the router's handoff note already lists the decisions, use them. For this skill: local speech recognition first (faster-whisper with the Hebrew model); a hosted speech API or MCP only with the client's per-project yes. Decide per connection - use it / not needed / fallback - say it to the user in one line, then continue. A missing connection never stops the work; anything paid goes through `paid-spend-gate`.
+
 ## Rules that outrank the rest
 1. **Force `language="he"`.** HyperFrames' built-in `transcribe` defaults to `small.en` (poor Hebrew) and `init` auto-transcribes with it: use `--skip-transcribe` and the local ivrit-ai route.
 2. **Never run an LLM over a whole transcript.** Fix specific words by hand with a per-project spelling dictionary; decide ambiguous words by majority over several passes, then stop flip-flopping. Delivery bar: zero spelling errors (names, brands, quotes); a Hebrew reader accepts, a model critic only nominates.

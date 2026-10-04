@@ -99,6 +99,17 @@ def test_missing_font_file_is_error_and_undeclared_font_is_warning(tmp_path):
     assert rc3 == 1
 
 
+def test_var_font_with_generic_fallback_and_timed_composition_root_are_not_flagged(tmp_path):
+    # the block pattern: font from a host variable with a generic fallback; a timed root/host is a composition, not a clip
+    html = GOOD.replace(".card { font-family: 'Rubik', sans-serif; }", ".card { font-family: var(--hfb-font, sans-serif); }")
+    html = html.replace('data-composition-id="main"', 'data-composition-id="main" data-start="0" data-duration="5"')
+    rc, d = run(project(tmp_path, html))
+    assert rc == 0 and d["status"] == "PASS", d["findings"]
+    assert "font_not_declared" not in codes(d) and "missing_clip_class" not in codes(d)
+    rc2, d2 = run(project(tmp_path / "2", html.replace("var(--hfb-font, sans-serif)", "var(--hfb-font, 'Heebo', sans-serif)")))
+    assert "font_not_declared" in codes(d2)  # a NAMED fallback still needs its file
+
+
 def test_media_in_3d_and_hidden_parent_and_tween_on_video(tmp_path):
     html = """<html><head><style>.stage{transform-style:preserve-3d}.hid{visibility:hidden}</style></head><body>
     <div class="stage"><video id="v1" src="a.mp4" class="clip" data-start="0" data-duration="2"></video></div>

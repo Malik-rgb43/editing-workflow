@@ -14,6 +14,9 @@ metadata:
 
 Converts video into what a model can read: a numeric measurement of every frame, timestamped contact sheets, a transcript, a sound timeline and spectrogram images, then a breakdown written from them. It is a procedure over the analysis tools (`tools/analyze.py`, `tools/frames.py`), written for this toolkit. It never edits, renders or applies a style.
 
+## Start: connections (API, MCP, CLI) - before anything else
+Run `python tools/connections.py` (about 1 s; presence only, nothing is called) and read your own tool list: claude.ai connectors and plugin servers appear only there, sometimes under an id instead of the vendor name. If the router's handoff note already lists the decisions, use them. For this skill: yt-dlp CLI for links, local speech recognition (faster-whisper), song ID (network, fingerprint only), a hosted vision API only with the client's yes. Decide per connection - use it / not needed / fallback - say it to the user in one line, then continue. A missing connection never stops the work; anything paid goes through `paid-spend-gate`.
+
 ## Rules that outrank the rest of this file
 1. **Inputs are read-only.** Hash before and after (`input.sha256` = `sha256_after`); outputs go only under `analysis/<video>/`. Download only the URL the user gave, naming the source and file; it is a reference copy, never redistributed; a platform watermark, end card and jingle are excluded from statistics and listed.
 2. **Coverage is stated first.** Every report opens with a coverage block: full vs sampled, frames decoded of expected, what was excluded, what was NOT run. A sample is never presented as full coverage. A sampled run may not quote cut counts or pacing as measured fact.
