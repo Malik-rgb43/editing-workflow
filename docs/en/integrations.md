@@ -77,7 +77,7 @@ What each local model replaces, the exact download source and size, and the gaps
 | id | kind | role | profile / add-on | cost | auth | verified | notes |
 |---|---|---|---|---|---|---|---|
 | `higgsfield-cli` | cli | official Claude Code route to Higgsfield per the vendor help centre | optional / add higgsfield-cli | paid (credits) | none | verified | `higgsfield auth login` opens a browser: the student signs in by hand |
-| `blender` | cli | 3D scenes for motion graphics; headless `bpy` is preferred for deterministic batch work | optional / add blender | free | none | verified | Exact version matters for the opt-in `blender` profile (research host: Blender 5.2). macOS build is Apple Silicon only (macOS 13+) per the download page. |
+| `blender` | cli | where the 3D is built (the default 3D builder); headless `bpy` for deterministic batch work. Asked by itself in INSTALL.md install-09 when missing (yes/no with its size: 348 MB Windows / 330 MB macOS / 366 MB Linux, Blender 5.2.2 LTS, 2026-10-06) | optional / add blender | free | none | verified | Exact version matters for the opt-in `blender` profile (research host: Blender 5.2). macOS build is Apple Silicon only (macOS 13+) per the download page. |
 | `gh` | cli | optional: clone private forks, open issues | optional / add gh | free | none | mixed | `gh auth login` is the student's own sign-in |
 | `yt-dlp` | cli | fetch a reference video the student is entitled to analyse | optional / add yt-dlp | free | none | verified | parses untrusted remote content; keep it updated (yt-dlp -U) |
 

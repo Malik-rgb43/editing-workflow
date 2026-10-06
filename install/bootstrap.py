@@ -546,9 +546,23 @@ def version_ge(have, need: str) -> bool:
     return bool(have and n and have >= n)
 
 
+def find_in_search_paths(entry: dict):
+    """Apps such as Blender are often installed but NOT on PATH: look in the catalogue's default install folders (newest first)."""
+    import glob
+
+    for pat in entry.get("search_paths", []):
+        hits = sorted(glob.glob(os.path.expanduser(pat)), reverse=True)
+        hits = [h for h in hits if os.path.isfile(h)]
+        if hits:
+            return hits[0]
+    return None
+
+
 def probe_cli(entry: dict) -> dict:
     binary = entry.get("binary") or entry["id"]
-    path = which(binary)
+    path = which(binary) or find_in_search_paths(entry)
+    if path and not which(binary):
+        binary = path  # found in its default install folder: run it by full path
     res = {"id": entry["id"], "kind": entry["kind"], "binary": binary, "found": bool(path), "path": path, "version": None, "ok": False, "min_version": entry.get("min_version")}
     if not path:
         return res
@@ -1052,6 +1066,8 @@ def build_plan(args, repo=None) -> tuple:
             r = probe_cli(e)
             r["required"] = "core" in e.get("profiles", [])
             r["install"] = install_hint(e)
+            if e.get("download_size"):
+                r["download_size"] = e["download_size"]
             r["role"] = e.get("role")
             prereqs.append(r)
     ff = ffmpeg_mini_encode()
@@ -1159,6 +1175,8 @@ def render_plan(plan: dict, lang: str) -> str:
     for r in plan["prerequisites"]:
         flag = (L("ok") + " " + str(r["version"])) if r["found"] and r["ok"] else (L("missing") if not r["found"] else "FOUND-BUT-NOT-OK " + str(r.get("note", "")))
         o.append("  %-12s %s%s" % (r["id"], flag, "" if r["found"] else ("   -> " + str(r["install"]["command"] or r["install"].get("manual") or "see integrations/catalog.toml"))))
+        if not r["found"] and r.get("download_size"):
+            o.append("  %-12s download: %s" % ("", r["download_size"]))
     ff = plan["ffmpeg_mini_encode"]
     o.append("  ffmpeg real mini-encode: %s (%s)" % (ff["state"], ff["evidence"]))
     o += ["", "## %s (%d)" % (L("skills"), len(plan["skills"]))]
@@ -1712,6 +1730,8 @@ def cmd_add(args) -> int:
             pr = probe_cli(e)
             hint = install_hint(e)
             act = {"found": pr["found"], "version": pr["version"], "install": hint}
+            if not pr["found"] and e.get("download_size"):
+                act["download_size"] = e["download_size"]
             if not pr["found"] and args.install_missing and not dry:
                 pm = package_manager_for(hint["command"])
                 if pm and which(pm):

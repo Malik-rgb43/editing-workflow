@@ -629,10 +629,12 @@ doctor = { smoke = "client status 'connected' after OAuth; non-generating tool l
 id = "blender"
 kind = "cli"
 name = "Blender (native app)"
-role = "3D scenes for motion graphics; headless `bpy` is preferred for deterministic batch work"
+role = "3D scenes for motion graphics (the default 3D builder); headless `bpy` is preferred for deterministic batch work. Asked by itself during the install (INSTALL.md install-09): when it is missing the student gets ONE yes/no question with its size, told that this is where the 3D is built (owner decision 2026-10-06)"
 addons = ["blender"]
 profiles = ["optional"]
 binary = "blender"
+search_paths = ["C:/Program Files/Blender Foundation/Blender*/blender.exe", "/Applications/Blender.app/Contents/MacOS/Blender", "/snap/bin/blender", "~/blender*/blender"]
+download_size = "Blender 5.2.2 LTS: Windows installer 348 MB, macOS Apple Silicon 330 MB, Linux 366 MB (blender.org/download, read 2026-10-06)"
 cost = "free"
 license = "GPL-2.0+ (the app); do not redistribute"
 doctor = { smoke = ["blender", "--version"], note = "Blender is often NOT on PATH; check the default install folder or use the full path" }

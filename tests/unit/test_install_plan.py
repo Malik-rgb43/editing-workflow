@@ -118,3 +118,19 @@ def test_real_exec_guard_blocks_real_processes(monkeypatch):
         assert False, "should have raised"
     except RuntimeError as e:
         assert "AVC_NO_REAL_EXEC" in str(e)
+
+
+def test_blender_is_asked_by_itself_found_in_its_install_folder_and_carries_its_size(tmp_path, monkeypatch):
+    bs = load_bootstrap()
+    cat = bs.load_toml(bs.REPO / "integrations" / "catalog.toml")
+    blender = next(e for e in cat["entry"] if e["id"] == "blender")
+    assert "348 MB" in blender["download_size"]
+    assert blender not in bs.select_entries(cat, "minimal", [], "hyperframes")  # never installed under the general yes
+    assert blender in bs.select_entries(cat, "minimal", ["blender"], "hyperframes")  # `add blender` after its own yes
+    exe = tmp_path / "Blender Foundation" / "Blender 5.2" / "blender.exe"
+    exe.parent.mkdir(parents=True)
+    exe.write_text("x", encoding="utf-8")
+    entry = {**blender, "search_paths": [str(tmp_path / "Blender Foundation" / "Blender*" / "blender.exe")]}
+    monkeypatch.setattr(bs, "which", lambda name: None)  # not on PATH
+    assert bs.find_in_search_paths(entry) == str(exe)
+    assert bs.find_in_search_paths({**blender, "search_paths": [str(tmp_path / "nowhere" / "blender")]}) is None

@@ -9,7 +9,7 @@ Presence comes from Step 0 (`_work/connections.json` + your own tool list); a li
 | Stock footage and photos | Pexels API (free tier; licence row per file) | the student's own footage, `assets/` |
 | Icons and real logos | Iconify MCP (brand logos only with permission for ads) | hand-drawn SVG |
 | UI components, cards, effects | shadcn registries (free); 21st.dev Magic MCP (account) | toolkit blocks, hand-built |
-| 3D objects and scenes | Blender (CLI headless or Blender MCP) | a 2.5D move on a still |
+| 3D objects and scenes | Blender (CLI headless or Blender MCP). Blender missing and the video needs 3D: ask ONE yes/no, "Blender is where the 3D is built; about 350 MB, free; install it?", then `install/bootstrap.py add blender --yes --install-missing` | a 2.5D move on a still |
 | Generated stills, video, voice | Higgsfield MCP/CLI, ElevenLabs MCP: paid, through the gate | plan + stills, the source voice |
 | Music | ElevenLabs: paid, through the gate | a licensed library track (licence row per placement) or silence |
 | Reference capture, preview QA | Playwright MCP | `hyperframes snapshot` |

@@ -86,7 +86,7 @@ Say it in the student's language, in plain words, in this order (at most 15 line
    | missing tools the plan listed (FFmpeg, Node, uv ...) | winget / brew, only with the student's yes | prerequisites |
 3. **What changes on the computer:** the `editing-workflow` plugin in Claude Code (user scope) and/or skills in `~/.agents/skills` (Codex; with `--skills-via copy` also `~/.claude/skills`); the toolkit folder `~/.avc/toolkit`; an ASCII work folder; a short removable "toolkit location" block in the agent's instruction file; nothing else, no global settings.
 4. **Cost: none.** No account, key or payment is needed for this install.
-5. **Questions they will be asked:** this ONE confirmation now, then (after the install) either the free local extras (local) or the list of services to connect (connected), one choice at a time. "No" or silence = nothing is added. They are never asked about hardware.
+5. **Questions they will be asked:** this ONE confirmation now; then two short yes/no downloads (the HyperFrames headless Chrome, and Blender - where the 3D is built - only if it is missing); then (after the install) either the free local extras (local) or the list of services to connect (connected), one choice at a time. "No" or silence = nothing is added. They are never asked about hardware.
 6. **How to undo:** `uninstall` removes exactly what was installed.
 Then ask exactly: "Shall I go ahead with this plan? (yes/no)" (the plan you show already reflects their answer from install-05). If the student says yes to everything except the package-manager lines, drop `--install-missing` and hand them the commands instead.
 > HE: "זיהיתי את המחשב ובחרתי את ההתקנה הבטוחה שעובדת על כל מחשב. אני מוריד: את הסקילים והכלים (מהתיקייה הזו, בלי רשת), חבילות Python לבדיקות איכות, ואת מנוע HyperFrames בגרסה נעוצה מהמקור הרשמי שלו; ואם בחרת מקומי - גם סביבת תמלול (בלי משקלות המודל עד שתאשר). אף מודל לא יורד בלי אישור. העלות: אפס. הכול ניתן לביטול בפקודה אחת. אחרי ההתקנה אשאל אותך מה לחבר (או איזה כלים מקומיים להוסיף), אחד אחד, ובלי שום חיבור שלא אישרת. להמשיך? (כן/לא)"
@@ -116,6 +116,13 @@ HyperFrames renders in a headless Chrome. It is a **separate download**, so ask 
 `browser ensure` finds a Chrome or downloads one. Gate on the **payload** of `doctor --json` (it always exits 0): `Node.js`, `FFmpeg`, `FFprobe` and `Chrome` must be ok. `Docker` showing "not found" is **optional and fine**; never install Docker for the student. Official docs and source of the engine: https://github.com/heygen-com/hyperframes (read-only for you; do not clone it into the toolkit). Optional, only if the student asks: HyperFrames' own agent skills (`npx skills add heygen-com/hyperframes`) are a third-party installer: show the command, explain it, and let the student run it themselves.
 `hyperframes init` must never run under a path with Hebrew letters (it silently skips `index.html`): projects live under the ASCII work root only.
 
+**Blender - its own question (owner decision 2026-10-06).** Blender is where the 3D is built (objects, 3D text, product shots, whole scenes); without it 3D falls back to a flat move on a still. Check first: `<PY> install/bootstrap.py add blender` (read-only: it finds Blender on PATH *and* in its default install folder, and prints the download size when it is missing).
+* Found -> say so in one line ("Blender <version> is already installed: this is where I build the 3D"), ask nothing.
+* Missing -> ask exactly ONE yes/no question with the size from the output, then wait:
+  > HE: "בלנדר הוא התוכנה שבה יוצרים את התלת-מימד: אובייקטים, טקסט בתלת-מימד, צילומי מוצר וסצנות שלמות. בלי בלנדר, תלת-מימד יהיה רק תנועה על תמונה שטוחה. ההורדה היא כ-348 MB (Windows) / 330 MB (Mac) / 366 MB (Linux), בחינם. להוריד ולהתקין את בלנדר? (כן/לא)"
+  > EN: "Blender is where the 3D is built: objects, 3D text, product shots and whole scenes. Without it, 3D is only a move on a flat picture. The download is about 348 MB (Windows) / 330 MB (Mac) / 366 MB (Linux), free. Shall I download and install Blender? (yes/no)"
+* Yes -> `<PY> install/bootstrap.py add blender --yes --install-missing` (winget on Windows, brew on macOS Apple Silicon; Linux and Intel Macs get the blender.org link to install by hand, since Blender's current build is Apple Silicon only on macOS). Then `add blender` again to confirm it is found. No / silence -> nothing is installed; say "3D can be added later: tell me 'install Blender'".
+
 <!-- step: install-10 -->
 ## install-10 - What to connect (all MCP / CLI / API questions live here)
 Start after the install works. What you ask depends on install-05. **Everything is the student's choice; nothing is pre-selected; "none" and "not now" are valid answers.**
@@ -125,7 +132,7 @@ Start after the install works. What you ask depends on install-05. **Everything 
 |---|---|---|
 | "Do you want to give me links of reference videos (YouTube, TikTok, Instagram) to analyse?" | `yt-dlp` | a small downloader tool is installed |
 | "Do you want a faster cut-out of people from the background?" | `matte-fast` | a local Python environment (licence note shown) |
-| "Do you make 3D (objects, 3D text)? Blender builds it for free; Three.js needs nothing to install" | `blender` | Blender and its add-on are installed by the student; the Blender socket has **no authentication**: keep it on localhost. Blender is the default 3D builder; Three.js runs inside HyperFrames when they choose it |
+| (Blender itself was asked in install-09.) "Do you want me to drive Blender live while I build 3D (the Blender connector)?" | `blender-mcp` | the connector and its Blender add-on; the Blender socket has **no authentication**: keep it on localhost. Three.js runs inside HyperFrames when they choose it |
 
 **If they chose CONNECTED (or both) - show this list and let them pick what to connect now (any number, or none):**
 | Group | Service | Cost | `add` | What the student must do |
@@ -135,7 +142,7 @@ Start after the install works. What you ask depends on install-05. **Everything 
 | Stock media | Pexels, Iconify | free tier | `stock-media` | a free Pexels key stored as an environment variable; Iconify needs nothing |
 | UI components | shadcn | free | `ui-shadcn` | nothing |
 | | 21st.dev | paid | `ui-21st` | create the account and key |
-| 3D | Blender connector (the default 3D builder) | free | `blender` | install Blender by hand; the Blender socket has no authentication, keep it on localhost |
+| 3D | Blender connector (lets the agent drive Blender live; Blender itself was asked in install-09) | free | `blender-mcp` | the Blender add-on; the Blender socket has no authentication, keep it on localhost |
 | | Tripo (AI 3D model generation; official MCP, alpha) | **paid** | `tripo` | needs Blender and the Tripo add-on; create the Tripo account and keep the key yourself: **Tripo is used only if connected, otherwise 3D is built with Blender (or Three.js if they choose it)** |
 For each service they pick: say in one sentence what it is and what it costs, run `add <id>` (read-only plan) and show it, then `add <id> --yes` for the safe part. `add` prints the **sign-up links**: a referral link is labelled with the one-line disclosure, the plain link is shown beside it, the student chooses or skips, you open nothing without their yes (rule 12). Every generation still goes through `paid-spend-gate`.
 

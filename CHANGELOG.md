@@ -9,6 +9,14 @@ Dates and facts here are perishable; each entry states its source where it relie
 
 ## [Unreleased]
 
+## [0.5.1] - 2026-10-06
+
+### Changed (owner decision 2026-10-06)
+- **Blender gets its own yes/no question during the install** (INSTALL.md install-09). The question tells the student that this is where the 3D is built and gives the size (Blender 5.2.2 LTS: 348 MB Windows, 330 MB macOS Apple Silicon, 366 MB Linux; blender.org, 2026-10-06). On yes: `add blender --yes --install-missing` (winget / brew; by hand on Linux and Intel Macs).
+  - The installer now finds Blender in its default install folder too (`search_paths` in the catalogue), since Blender is often not on PATH. `add blender` prints the download size when it is missing.
+  - The Blender connector (`blender-mcp`) stays a separate, optional question in install-10.
+  - `pro-video-editor` asks the same question when a video needs 3D and Blender is missing.
+
 ## [0.5.0] - 2026-10-06
 
 ### Changed (owner decisions 2026-10-06: show the work, never assume the language, guidance pass over every skill)
