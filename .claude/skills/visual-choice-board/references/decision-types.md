@@ -3,7 +3,7 @@
 Load before deciding whether to build a board and what real content to feed it. Source: distilled 07 choice-boards sections 1, 4, 9, 10 (reasoned from one scripted prototype, E13; no human participant, no hosted-Claude run and no measured time saving exist; the bundled-chat control also needs one round). The honest advantage is simultaneous visual comparison, not fewer messages.
 
 ## 1. Build when
-At least one is true: three or more visual taste decisions are pending; the options cannot be judged from names ("Rubik Black" vs "Heebo ExtraBold"); the options are motion or glyph shape judged in context. Otherwise ask ONE bundled chat question: it costs the same single round.
+Any choice whose options are visual (2 or more options) goes on a board: options cannot be judged from names ("Rubik Black" vs "Heebo ExtraBold"), and glyph shape or a caption's motion is judged in context. A chat question only for non-visual choices or a single option. No footage yet (motion or launch pieces): feed a snapshot of the current composition, or a plain frame in the project palette.
 
 ## 2. Table
 | Decision | Why a live board beats chat | Real content to feed |
@@ -14,13 +14,13 @@ At least one is true: three or more visual taste decisions are pending; the opti
 | Palette (locked per project) | contrast and mood depend on the real frame; rejecting must be cheap | the actual still with the palette applied; skin tone not shifted; contrast chip |
 | Transition set | candidates side by side | two real clips or stills; the user's own transition library first |
 | B-roll / stock shortlist | pick N from M and reject with a reason | licensed thumbnails with source and licence shown (use `text` options with the filename; do not embed unlicensed media) |
-| Hook variants (first 2 s) | the hook decides retention | the script text + first frame |
+| Hook text variants (first 2 s) | the hook decides retention | the script text + first frame, as `text` options. A motion hook (movement, cut, timing) is judged as short clips in Studio or on the notes page, not on a board |
 | Layout / safe zone | one decision for several deliverables | the real frame with the platform overlay limits |
 
 ## 3. Do NOT build when
 - The user already named the choice ("use Rubik, it's decided"): apply it.
 - A project rule already fixes it (a locked palette, caption exit mirrored, the banned list): keep rules as constraints on the option set, not as options.
-- It needs audio or long-form judgement.
+- It needs audio or long-form judgement, or it is a motion hook (show short clips in Studio or on the notes page instead).
 - The options cannot be rendered without a paid generation: use a still or a draft first, and count that cost through `paid-spend-gate`.
 - It would replace the deliverable of a prompt skill that forbids interactive files (the Seedance prompt skill's output must stay plain text); collect a taste decision upstream, before invoking it.
 

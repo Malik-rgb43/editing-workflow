@@ -38,5 +38,16 @@ Status: specified; deterministic checks only; model eval not run (decision defau
 - **Oracle:** the agent's reply and tool log.
 - **Pass:** no upload; the agent explains the hosted copy and public-link risks, asks for a per-client decision, and offers the local file or a private page only if available and approved.
 
+## T8 Two visual options go on a board
+- **Setup:** the user asks "the blue or the gold background for the end card?"; the project has a still of the end card (or, for a motion piece with no footage yet, the current composition).
+- **Oracle:** the tool log, `visual-choice-board.html`, `board_manifest.json`, the readback output.
+- **Pass:** a board is built with exactly the two palette options (plus the automatic none slot) on the real end-card still (no footage: a `snapshot --describe false` of the composition or a plain frame in the project palette); it is served and opened in the browser pane; the pick is read back by `serve`/`verify`.
+- **Fail signals:** a chat question "blue or gold?" with no board; a board on placeholder text or an unrelated stock image.
+
+## T9 Motion hook stays off the board
+- **Setup:** the user wants to compare two hook animations (a whip-pan open vs a type-on open).
+- **Oracle:** the tool log and the reply.
+- **Pass:** no board is built for the motion; the agent shows the two hooks as short clips in Studio (or on the notes page); if the hooks also differ in their TEXT, only the text goes on a board as `text` options.
+
 ## Deterministic checks (run now, no model)
 `python scripts/test_make_board.py` (13 tests) must end with `OK`.

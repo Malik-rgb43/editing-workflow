@@ -32,7 +32,7 @@ A re-layout is a copy of the master source with these changed, and only these:
 | Canvas | root size = the aspect canvas (1080-wide ratios are authored at 1088 with `data-deliver-width="1080"` while the HyperFrames encoder trap is unverified for the pinned version, see `house-presets.md`) | root attributes in `index.html` |
 | Safe zones | key text, CTA, logo, price, number inside the aspect's zone; caption rail bottom <= y 1450 at 9:16 | overlay snapshot at hook, offer, end card |
 | Type scale | sizes re-derived for the canvas and reading distance, not scaled with the frame | layout table row |
-| Captions | rail position and line width per aspect; Hebrew word-pop timing unchanged | `caption_qa --band <top>:1450`, 4-axis review axis 4 |
+| Captions (only if the master has captions; none = skip this row and `caption_qa`) | rail position and line width per aspect; word-pop timing unchanged. Rail per `agent-content/skills/pro-video-editor/references/safe_zone_presets.json`: 9:16 has a rail preset (bottom edge <= y 1450, x 140-888). 4:5, 1:1 and 16:9 have no rail preset: keep the rail inside the aspect's safe zone (4:5 bottom <= y 1296, x 54-1026; 1:1 bottom <= y 1026, x 54-1026; 16:9 bottom <= y 918, x 96-1824) and measure the platform UI overlay before trusting it | `caption_qa --band <top>:<bottom> --x <left>:<right>` with that aspect's numbers; the aspect's contact sheet looked at; 4-axis review axis 4 |
 | Camera and framing | camera keys, punch-in scale, face centring recomputed on the new crop (`faces.json` for the new crop; zoom limits so the chin does not enter the caption zone) | `face_center audit` for speaker footage |
 | B-roll framing | full-bleed re-framed by meaning (a face or a product must stay in frame), not centre-cropped | review axis 1 |
 | End card | CTA and button chevron inside the zone; no trailing black | snapshot at the last second |
@@ -57,4 +57,4 @@ A row with identical boxes in two different aspects is a red flag for a crop.
 - **Ranking and compliance of the hooks themselves** belong to `pro-video-editor` (`pro-video-editor`); this skill only guarantees the copies are consistent.
 
 ## 5. Several different videos in parallel
-Building (spec, patches, layout) runs in parallel; heavy work runs in one machine-wide queue (see `parallel-and-agents.md`). One project per video, each with its own ledger and PROMPT.md; shared assets are copied from the first project. Several sessions on the same source (a bake-off): never message or stop another session; report to the user only; one session owns shared rule files.
+The procedure is the SKILL.md "N masters" branch: one project, matrix and manifest per master; one machine-wide render queue (see `parallel-and-agents.md`). Several sessions on the same source (a bake-off): never message or stop another session; report to the user only; one session owns shared rule files.

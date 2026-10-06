@@ -1,5 +1,5 @@
 interface:
   display_name: "Paid Spend Gate"
-  short_description: "Gate every paid action before it runs - AI image, video or audio generation, upscales, paid APIs, cloud renders, credit "
+  short_description: "Use before any paid action runs - AI image, video or audio generation, upscales, paid APIs or MCP tools, cloud renders, "
 policy:
   allow_implicit_invocation: false

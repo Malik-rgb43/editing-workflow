@@ -16,8 +16,10 @@ Status and exit code (fail closed):
                          add rows or waive them explicitly with --waive
 
 Ledger = the first argument: a file holding the `<ledger>` block (normally hf/PROMPT.md; a standalone
-ledger file also works). Format: references/ledger-template.md. Blocking rows: FMT LEN TON BAR CTA FILE,
-plus STR and COLOR with --footage, plus VAR with --variants (gate G0 of the intake playbook).
+ledger file also works). Format: references/ledger-template.md. Blocking rows: FMT LEN TON BAR CTA CAP FILE,
+plus STR and COLOR with --footage, plus VAR with --variants (gate G0 of the intake playbook). FILE is never asked:
+a D row (the default name, said back) satisfies it. A D row counts only when the log shows the defaults were said
+back ("Defaults taken: ...", "continue") or the user gave full control ("you decide", "אתה מחליט").
 Source = _work/intake/INTAKE_LOG.md: the user's words, one clause per line; lines starting with "Q:" are
 the agent's questions (counted per "## Round N", max 4). A row is struck when its status starts with
 "struck" or its spec starts with "~~".
@@ -38,7 +40,7 @@ DIMS = {
     "VO", "CTA", "FILE", "BAR", "DUE", "VAR", "BRAND", "COLOR", "LAY", "TRN", "SHOT",
     "LOUD", "REF", "RIGHTS", "AIDISC", "CONSENT",
 }
-BLOCKING = ["FMT", "LEN", "TON", "BAR", "CTA", "FILE"]
+BLOCKING = ["FMT", "LEN", "TON", "BAR", "CTA", "CAP", "FILE"]
 BLOCKING_FOOTAGE = ["STR", "COLOR"]
 BLOCKING_VARIANTS = ["VAR"]
 SRC = {"U", "R", "D", "A"}
@@ -53,7 +55,7 @@ CONCRETE_RE = re.compile(
     r"(\d|#[0-9a-f]{3,6}\b|\bmore\b|\bless\b|bigger|larger|higher|lower|faster|slower|\bmust\b|\bshould\b|\bneed|"
     r"without|\bno\b|יותר|פחות|גדול|קטן|"
     r"חייב|צריך|בלי|תוסיף)", re.I)
-CONTINUE_RE = re.compile(r"(defaults taken|continue|תמשיך|לקחתי ברירות)", re.I)
+CONTINUE_RE = re.compile(r"(defaults taken|decisions taken|continue|you decide|full control|תמשיך|לקחתי ברירות|אתה מחליט|שליטה מלאה)", re.I)
 NIQQUD = re.compile("[֑-ׇ]")
 
 
@@ -297,6 +299,7 @@ the person higher
 the tone is energetic premium
 premium quality bar
 CTA: book a free call
+captions in English
 call the final file clinic_reel_9x16.mp4
 """
 _GOOD = _HEAD + "\n".join([
@@ -309,6 +312,7 @@ _GOOD = _HEAD + "\n".join([
     '| L07 | BAR | "premium quality bar" | premium: beat every 3-6 s | whole | rubric >= 4.0 | U | locked |',
     '| L08 | CTA | "book a free call" | end card 2.5 s, exact line | 42.5-45.0 s | OCR end card | U | locked |',
     '| L09 | FILE | "clinic_reel_9x16.mp4" | clinic_reel_9x16.mp4 | whole | ls final folder | U | locked |',
+    '| L11 | CAP | "captions in English" | English captions, word groups | whole | caption_qa on the final | U | locked |',
 ]) + "\n"
 
 
@@ -332,6 +336,12 @@ def _self_check() -> int:
     expect("missing blocking dim", go(no_cta), "FAIL", "blocking_dim_missing")
     no_file = "\n".join(l for l in _GOOD.splitlines() if "| FILE |" not in l)
     expect("FILE is blocking", go(no_file), "FAIL", "blocking_dim_missing")
+    no_cap = "\n".join(l for l in _GOOD.splitlines() if "| CAP |" not in l)
+    expect("CAP (caption language) is blocking", go(no_cap), "FAIL", "blocking_dim_missing")
+    file_d = _GOOD.replace('| L09 | FILE | "clinic_reel_9x16.mp4" | clinic_reel_9x16.mp4 | whole | ls final folder | U |', '| L09 | FILE | - | clinic_reel_9x16.mp4 | whole | ls final folder | D |')
+    expect("FILE as a default needs it said back", go(file_d), "FAIL", "default_not_shown")
+    expect("FILE as a said-back default passes", go(file_d, src=_BRIEF + "Defaults taken: file clinic_reel_9x16.mp4\n"), "PASS")
+    expect("full control makes D rows the user's choice", go(file_d, src=_BRIEF + "you decide\n"), "PASS")
     expect("variants need a VAR row", go(_GOOD, variants=True), "FAIL", "blocking_dim_missing")
     invented = _GOOD.replace('"the globe bigger"', '"the globe much bigger"')
     expect("invented said", go(invented), "FAIL", "said_not_in_source")
@@ -356,7 +366,8 @@ def _self_check() -> int:
     expect("strike keeps coverage through the new row", go(struck), "PASS")
     inplace = _GOOD.replace("| 45.0 s +-0.1 | whole | ffprobe duration | U | locked |", "| ~~30 s~~ -> 45.0 s, 09:05 | whole | ffprobe duration | U | locked |")
     expect("in-place strike with ~~ keeps the row readable", go(inplace + '| L10 | LEN | "45 second" | 45.0 s +-0.1 | whole | ffprobe duration | U | locked |\n'), "PASS")
-    prompt_ok = "<ledger>\n" + "\n".join(f"L0{i}" for i in range(1, 10)) + "\n</ledger>\n" + " ".join(f"L0{i}" for i in range(1, 10))
+    ids = [f"L0{i}" for i in range(1, 10)] + ["L11"]
+    prompt_ok = "<ledger>\n" + "\n".join(ids) + "\n</ledger>\n" + " ".join(ids)
     expect("every id cited twice", go(_GOOD, prompt=prompt_ok), "PASS")
     expect("uncited id fails", go(_GOOD, prompt="L01 L01 L02 L02"), "FAIL", "id_not_cited")
     in_prompt = "<ledger>\n" + _GOOD + "</ledger>\n<structure>" + " ".join(f"L0{i}" for i in range(1, 10)) + "</structure>"

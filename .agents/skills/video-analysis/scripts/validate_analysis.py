@@ -2,7 +2,7 @@
 """validate_analysis.py - check an analysis folder against the video-analysis output contract (fail closed).
 
 Contract (schema_version 1.0.0), see references/output-contract.md:
-  analysis/<video>/
+  <project>/_work/analysis/<video-id>/   (or analysis/<video-id>/ when there is no project)
     measurements.json   input identity, environment, coverage, edit points, pacing, review
     frames.csv          per-frame data (required when coverage.mode == "full")
     sheets/index.json   + sheet_*.jpg / overview_*.jpg / audio_*.png / zoom images

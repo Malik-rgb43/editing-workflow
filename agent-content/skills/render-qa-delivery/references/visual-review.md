@@ -25,7 +25,7 @@ Average >= 4.0 with no dimension < 3, scored 1-5 against the references (5 indis
 Waveform metering, every-frame completeness, exact Hebrew copy, pixel-safe geometry, audio sync to +-2 ms. A model reading a contact sheet saw sampled images, not the video; say what was sampled. A Hebrew reader checks spelling and legibility. Review the audio separately by measurement (ebur128, 3 s-LUFS timeline) and by listening.
 
 ## 5. Human review of drafts
-Review live in Studio (`preview`); the user sees changes as they are made. Present each draft as soon as it exists (partial results first). The expensive human step is the user's time: keep the numbered-notes format (`delivery-and-manifest.md` section 7).
+Each round: check in Studio, then ONE draft render (`python tools/hf_deliver.py ... --draft`), which is the round's one full render, then the notes page on that file (`revision-notes-handler`). The delivery render runs only after the notes page returns `approved`. The user watches changes live in Studio (`preview`) while you work; open each draft in the browser pane as soon as it exists (partial results first). The expensive human step is the user's time: keep the numbered-notes format (`delivery-and-manifest.md` section 7).
 
 ## Sources
 distilled 01 rules-and-gates F1-F10, G1; distilled 02 qa-and-benchmarks; blueprint QA_AND_BENCHMARKS §6-§8; checked 2026-10-02.

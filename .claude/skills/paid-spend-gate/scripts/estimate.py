@@ -2,7 +2,7 @@
 """Cost-estimate worksheet, approval record, retry cap and provenance for paid actions.
 
 Usage:
-  python estimate.py estimate SPEC.json [--out cost_estimate.json] [--max-age-days 7]
+  python estimate.py estimate SPEC.json [--out cost_estimate.json] [--max-age-days 0]
   python estimate.py approve  cost_estimate.json --approved --approval-quote "<user's words>"
                               --approved-amount WALLET=AMOUNT [...] [--ttl-hours 24] [--out approval.json]
   python estimate.py can-run  approval.json --line S1        # ask BEFORE every paid call
@@ -28,8 +28,9 @@ this script contains no prices and promises none):
 Totals are kept PER WALLET. Credits, API dollars and another vendor's price are never summed.
 
 Refusals (exit 3): no approval token without an explicit --approved, a non-empty --approval-quote,
-the exact ceiling shown in the estimate, and a price source dated within --max-age-days (default 7,
-a course setting, not a vendor fact). Exit 4: over a stated limit / cap reached. Exit 2: bad input.
+the exact ceiling shown in the estimate, and a price source read today (--max-age-days, default 0 = the
+same local day; a course setting, not a vendor fact; approve re-checks it, so a next-day approval needs a
+fresh read). Exit 4: over a stated limit / cap reached. Exit 2: bad input.
 The token is an integrity tag. With env AVC_APPROVAL_SECRET set when approving (run it yourself,
 outside the agent) it becomes an HMAC the agent cannot forge; without it, the user's chat message
 is still the authority and the token only detects accidental edits.
@@ -415,6 +416,9 @@ def _self_check() -> int:
     bad = json.loads(json.dumps(spec))
     bad["price_sources"]["p1"]["checked_at"] = "2026-09-01"
     expect("stale price refused", lambda: build_estimate(bad, today, 7), "stale_price", 3)
+    expect("default rule: a price read yesterday is stale", lambda: build_estimate(spec, today, 0), "stale_price", 3)
+    same_day = json.loads(json.dumps(spec)); same_day["price_sources"]["p1"]["checked_at"] = today.isoformat()
+    expect("default rule: a price read today passes", lambda: build_estimate(same_day, today, 0))
     bad["price_sources"]["p1"]["checked_at"] = "2026-12-01"
     expect("future date refused", lambda: build_estimate(bad, today, 7), "price_date_in_future")
     bad = json.loads(json.dumps(spec)); del bad["price_sources"]["p1"]["tax_status"]
@@ -492,7 +496,7 @@ def main(argv: list[str]) -> int:
     ap = argparse.ArgumentParser(prog="estimate.py", description="Cost worksheet and approval gate (see module docstring).")
     sub = ap.add_subparsers(dest="cmd")
     p = sub.add_parser("estimate"); p.add_argument("spec"); p.add_argument("--out", default="cost_estimate.json")
-    p.add_argument("--max-age-days", type=int, default=7); p.add_argument("--today")
+    p.add_argument("--max-age-days", type=int, default=0); p.add_argument("--today")
     p = sub.add_parser("approve"); p.add_argument("estimate"); p.add_argument("--approved", action="store_true")
     p.add_argument("--approval-quote", default=""); p.add_argument("--approved-amount", action="append")
     p.add_argument("--ttl-hours", type=float, default=24); p.add_argument("--out", default="approval.json"); p.add_argument("--today")

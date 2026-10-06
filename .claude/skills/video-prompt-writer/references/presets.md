@@ -13,20 +13,20 @@ Do not mix two presets in one prompt. If the register is ambiguous, ask ONE ques
 
 ## 1. `owner-cinematic` (owner preference; the author's own prefix, reproduced as the author's core prompt asset)
 ```text preset=owner-cinematic
-Style: 8K cinematic. Photorealistic — no 3D render, no game engine, no game-cutscene aesthetic.
+Style: Live-action footage from a physical cine camera — no 3D render, no game engine, no game-cutscene aesthetic.
 Cinematography: naturalistic master cinematography.
 Lighting: Natural light only — contre-jour backlight, camera on shadow side, atmospheric haze. Key light from sky and windows only.
 Color: 60:30:10 — dominant / secondary / accent.
 Camera: Physical cine lens. 180° shutter motion blur.
 Skin: Pore-level realism — vellus hair, asymmetric moles, capillary flush, pore-shadow matching on-set light.
-Acting: top-tier cinematic — micro-pauses before reactions, precise eye-line, wet living eyes with catch-lights, visible breath and chest rise.
+Acting: screen-acting detail — micro-pauses before reactions, precise eye-line, wet living eyes with catch-lights, visible breath and chest rise.
 Physics: Gravity and inertia respected — mass has real weight, correct contact shadows. No floating props.
 Composition: Rule of thirds + golden ratio. Every person moving from frame one.
 Continuity: Characters, props, environment identical across every cut. No identity drift.
-Technical: 24fps smooth motion. 8K detail. No jitter.
+Technical: 24fps smooth motion. No jitter.
 Audio: Environmental SFX only. No music. No subtitles.
 ```
-Notes: (a) it contains quality charms ("8K cinematic", "Photorealistic") and negatives ("no 3D render", "No music") that the vendor/community contract tells you to avoid - `[CONFLICT]` kept visible, not resolved (see the conflict file); the author treats the prefix as a measured-in-practice asset and applies the anti-slop rule to the scene body only. (b) It was derived from the vendor's style prefix (which names two real cinematographers); the author's version drops the names - never add real people's names. (src: distilled 05 prompting §2.1, §3.2, contradictions, 2026-10-01)
+Notes: (a) 2026-10-06: the quality words "8K cinematic", "Photorealistic", "top-tier cinematic" and "8K detail" were removed. Reason: the video and the stills of one film share one look, and `image-prompt-writer` (gate G3) deletes words no camera or light meter can measure; "live-action footage from a physical cine camera" keeps the intent (not CG). The scoped negatives ("no 3D render", "No music") stay - `[CONFLICT]` with the vendor contract kept visible (see the conflict file). (b) It was derived from the vendor's style prefix (which names two real cinematographers); the author's version drops the names - never add real people's names. (src: distilled 05 prompting §2.1, §3.2, contradictions, 2026-10-01)
 
 ## 2. `vendor-short` (profile, no prefix block)
 A short single-shot prompt in the vendor contract's shape (own words; details and date in `vendor-contract-dated.md`): optional reference-tag lines, then a **60-100 word main block** (subject + action + environment + spatial layout, one action per CUT, light inside the block, everything positive), then three lines:

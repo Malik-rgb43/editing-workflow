@@ -1,5 +1,5 @@
 interface:
   display_name: "Video Prompt Writer"
-  short_description: "Write shot-by-shot, about 15-second Seedance 2.x prompts from a script, scene or beat: cinematic film or a short single "
+  short_description: "Write shot-by-shot prompts for AI video models (Seedance deepest; Kling, Veo, Hailuo and others) from a script, scene or"
 policy:
   allow_implicit_invocation: false

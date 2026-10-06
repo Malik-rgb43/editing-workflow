@@ -15,3 +15,4 @@
 {"prompt": "מה המחיר של Higgsfield", "should_trigger": false, "route_instead": "paid-spend-gate"}
 {"prompt": "I have six notes from the client on the draft, handle them", "should_trigger": false, "route_instead": "revision-notes-handler"}
 {"prompt": "תעשה גרסאות של הסרטון ל-1:1 ול-16:9", "should_trigger": false, "route_instead": "video-variants-exporter"}
+{"prompt":"the notes page says approved, render the delivery version","should_trigger":true,"route_instead":null}

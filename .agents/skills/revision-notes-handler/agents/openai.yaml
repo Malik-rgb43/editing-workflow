@@ -1,5 +1,5 @@
 interface:
   display_name: "Revision Notes Handler"
-  short_description: "Use when the user sends notes, complaints or timestamped fixes on an existing draft or delivered video - boring, looks A"
+  short_description: "Use when a round's draft has just been rendered and is presented (open the notes page then, unasked), or when the user s"
 policy:
   allow_implicit_invocation: false

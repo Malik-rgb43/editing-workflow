@@ -10,9 +10,10 @@ Reads the `## Round N` section of CHANGELOG.md (format: references/round-log-for
   1. "<note in the user's words>" @ 0:24-0:26 | class: fix | ledger: L21 | cause: <file/line/cue/asset> | frames: _work/notes/r3_n1.jpg
   RENDER full <file>      (at most one per round; none when every note is audio-only)
   PRESENTED <date>        (required with --require-present)
-Checks per note: quoted words, class in {fix, replace-concept, audio-only, global-rule}, a ledger id that
-also appears in PROMPT.md at least twice, a concrete cause, a frame strip (unless audio-only), and the
-class-specific field (replacement / occurrences / render: none). `--patch` adds an order check: the patch file
+Checks per note: quoted words, class in {fix, replace-concept, audio-only, global-rule, restructure,
+music-swap}, a ledger id that also appears in PROMPT.md at least twice, a concrete cause, a frame strip
+(unless audio-only or music-swap), and the class-specific field (replacement / occurrences / render: none /
+order + asked for a restructure, asked before patching / licence + render: none for a music swap). `--patch` adds an order check: the patch file
 must not be older than PROMPT.md (ledger -> PROMPT -> code); mtimes are evidence, not proof.
 
 Exit codes (fail closed): 0 PASS, 1 FAIL, 2 INSUFFICIENT_EVIDENCE (no round / no notes / unreadable),
@@ -29,7 +30,8 @@ import time
 from pathlib import Path
 
 VERSION = "0.1.0"
-CLASSES = {"fix", "replace-concept", "audio-only", "global-rule"}
+CLASSES = {"fix", "replace-concept", "audio-only", "global-rule", "restructure", "music-swap"}
+AUDIO_CLASSES = {"audio-only", "music-swap"}
 NOTE_RE = re.compile(r"^\s*(\d+[a-z]?)\.\s+(.*)$")
 ROUND_RE = re.compile(r"^##\s+(?:Round|סבב)\s+(\d+)", re.I)
 POLISH_RE = re.compile(r"\b(polish|tweak|slightly|a bit|fine-?tune)\b|קצת|לשפר את", re.I)
@@ -114,7 +116,7 @@ def run(changelog: str, rnd: int | None, prompt: str | None, patch: Path | None,
         if f.get("cause", "").strip().lower() in WEAK_CAUSE or len(f.get("cause", "")) < 8:
             add("error", "no_cause", w, "write a concrete cause (file/line, cue or asset), not a guess")
         frames = f.get("frames", "")
-        if cls != "audio-only":
+        if cls not in AUDIO_CLASSES:
             if not frames or frames.lower().startswith("none"):
                 if nt["time"] or not frames.lower().startswith("none:"):
                     add("error", "no_frames", w, "a timed note needs a frame strip at the noted time (+-1 s; transitions every frame +-0.5 s)")
@@ -132,10 +134,17 @@ def run(changelog: str, rnd: int | None, prompt: str | None, patch: Path | None,
                 add("error", "no_occurrences", w, "a global rule must list EVERY occurrence fixed")
             elif len(occ) == 1:
                 add("review", "single_occurrence", w, "global rule lists one occurrence; grep the whole film")
-        if cls == "audio-only" and f.get("render", "").lower() not in ("none", "remix+remux", "remix-remux"):
-            add("error", "audio_needs_no_render", w, "audio-only note must say `render: none` (remix + remux)")
+        if cls in AUDIO_CLASSES and f.get("render", "").lower() not in ("none", "remix+remux", "remix-remux"):
+            add("error", "audio_needs_no_render", w, f"{cls} note must say `render: none` (remix + remux)")
+        if cls == "music-swap" and len(f.get("licence", f.get("license", ""))) < 3:
+            add("error", "no_licence", w, "a music swap needs the new track's licence row (`licence: <ledger id or licence>`)")
+        if cls == "restructure":
+            if len(f.get("order", "")) < 3:
+                add("error", "no_order", w, "a restructure writes the new order (as shown in PROMPT.md <structure>)")
+            if len(f.get("asked", "")) < 3:
+                add("error", "restructure_not_asked", w, "a restructure is shown to the user and patched only after their yes (`asked: <date> \"<their answer>\"`)")
     renders = [l for l in lines if re.match(r"^\s*RENDER\s+full\b", l)]
-    all_audio = all(nt["fields"].get("class") == "audio-only" for nt in notes)
+    all_audio = all(nt["fields"].get("class") in AUDIO_CLASSES for nt in notes)
     if len(renders) > 1:
         add("error", "multiple_full_renders", f"round {n}", f"{len(renders)} full renders logged; target is exactly one per round")
     if all_audio and renders:
@@ -194,6 +203,17 @@ def _self_check() -> int:
     expect("two full renders fail", go(_LOG + "RENDER full _work/drafts/x.mp4\n"), "FAIL", "multiple_full_renders")
     all_audio = '## Round 4\n1. "music too loud" | class: audio-only | ledger: L21 | cause: bed at -10 dB under VO | render: none\nRENDER full a.mp4\nPRESENTED x\n'
     expect("audio-only round with a render fails", go(all_audio), "FAIL", "audio_only_round_rendered")
+    restr = ('5. "shorter, move the offer earlier" | class: restructure | ledger: L25 | cause: offer at 0:22 after two proof beats '
+             '| order: hook, offer, proof 1, CTA (proof 2 cut) | asked: 2026-10-05 "yes" | frames: _work/notes/r3_n5.jpg\n')
+    prompt5 = _PROMPT + " L25 L25"
+    expect("restructure with order and answer passes", go(_LOG.replace("RENDER full", restr + "RENDER full"), prompt=prompt5), "PASS")
+    expect("restructure not asked fails", go(_LOG.replace("RENDER full", restr.replace(' | asked: 2026-10-05 "yes"', "") + "RENDER full"), prompt=prompt5),
+           "FAIL", "restructure_not_asked")
+    swap = ('## Round 5\n1. "use a calmer song" | class: music-swap | ledger: L21 | cause: bed is a 128 bpm drum loop under VO '
+            '| licence: L22 library licence row | render: none\nPRESENTED x\n')
+    expect("music swap with licence, no render passes", go(swap), "PASS")
+    expect("music swap without licence fails", go(swap.replace(" | licence: L22 library licence row", "")), "FAIL", "no_licence")
+    expect("music swap round with a render fails", go(swap.replace("PRESENTED", "RENDER full a.mp4\nPRESENTED")), "FAIL", "audio_only_round_rendered")
     expect("presented required", go(_LOG.replace("PRESENTED 2026-10-05\n", "")), "FAIL", "not_presented")
     expect("hebrew round heading is read", go(_LOG.replace("## Round 3", "## סבב 3")), "PASS")
     with tempfile.TemporaryDirectory() as td:

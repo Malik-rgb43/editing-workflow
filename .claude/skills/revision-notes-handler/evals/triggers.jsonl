@@ -14,3 +14,6 @@
 {"prompt":"תכין לי חשבונית ללקוח","should_trigger":false,"route_instead":null}
 {"prompt":"render the final version and check loudness","should_trigger":false,"route_instead":"render-qa-delivery"}
 {"prompt":"תן לי שלושה רעיונות לסרטון חדש על המספרה שלי","should_trigger":false,"route_instead":"video-brief-intake"}
+{"prompt":"הטיוטה הראשונה מוכנה ורונדרה, תציג לי אותה","should_trigger":true,"route_instead":null}
+{"prompt":"make it shorter and move the offer earlier","should_trigger":true,"route_instead":null}
+{"prompt":"תחליף את השיר למשהו רגוע יותר","should_trigger":true,"route_instead":null}

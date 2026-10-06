@@ -8,7 +8,7 @@ Load when: writing or reviewing a card (procedure steps 3-4). Source: distilled 
   "schema_version": "1.0.0",
   "reference": {
     "id": "yt-abc123",
-    "analysis_dir": "analysis/ref-abc123-1a2b3c",
+    "analysis_dir": "_work/analysis/ref-abc123-1a2b3c",
     "analysis_sha256": "<sha256 of that folder's measurements.json>",
     "pinned_segment": {"start_s": 0.0, "end_s": 28.0, "look": "final look, not the before/after", "pinned_by": "user"},
     "role": "all"
@@ -23,7 +23,7 @@ Load when: writing or reviewing a card (procedure steps 3-4). Source: distilled 
   "beat_map": [{"ref_beat": "0.0-1.4", "function": "hook", "ref_device": "number slam, punch 115 %", "user_beat": "0.0-2.1", "user_line": "...", "mapped_device": "same, on the user's number"}]
 }
 ```
-- `analysis_dir` is relative to the project root; `analysis_sha256` ties the card to ONE analysis (re-analysing changes it).
+- `analysis_dir` is relative to the project root (`<project>/_work/analysis/<ref-id>`, run the checker with `--root <project>`); `analysis_sha256` ties the card to ONE analysis (re-analysing changes it).
 - A numeric row with `source_key` (`measurements:<dotted path>` or `audio:<dotted path>`) must equal the analysis value (within 0.5 %). If the frames show the analysis is wrong, correct it THERE (`pacing.override` + `review.corrections`), never in the card.
 - A row without `source_key` needs an `evidence` path (a px_measure output, a zoom folder, a sheet) unless it is confidence L.
 - A dimension that does not apply (`value: null`) needs an `na_reason`; an unfilled dimension is never invented.

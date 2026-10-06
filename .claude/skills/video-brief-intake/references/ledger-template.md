@@ -6,8 +6,8 @@ Load when building or editing the ledger. Canonical rules live in the shared tec
 | File | Content | Rule |
 |---|---|---|
 | `_work/intake/INTAKE_LOG.md` | every user message and answer, verbatim, in order, plus your questions as `Q:` lines under `## Round N` | append-only; the only source a `said` quote may come from |
-| `_work/intake/source_ls.txt`, `probe.json` | output of `scripts/source_inventory.py ... --write` | evidence of the source-tree read |
-| `hf/PROMPT.md` | the `<ledger>` block (the frame-by-frame blocks are added later by the PROMPT writer) | one source of truth: ledger first, then structure, then code |
+| `_work/intake/source_ls.txt`, `probe.json` | output of `scripts/source_inventory.py ... --write` | evidence of the source-tree read; `pro-video-editor` Step 1 reads them instead of listing again |
+| `hf/PROMPT.md` | the `<ledger>` block (the frame-by-frame blocks are added later by `pro-video-editor`, Step 3) | one source of truth: ledger first, then structure, then code |
 | `hf/BRIEF.md` | the BRIEF template, filled from the ledger | see `concept-cards-and-brief.md` |
 (A standalone ledger file is accepted by the checker for scratch work; do not keep two copies in the project.)
 
@@ -42,12 +42,13 @@ Load when building or editing the ledger. Canonical rules live in the shared tec
 | LEN | exact seconds (never a multiplier) | yes |
 | TON | energy / register | yes |
 | BAR | quality bar (asked in round 1) | yes |
-| CTA | what the viewer does, the exact line | yes |
-| FILE | the exact final file name (the user's name wins) | yes |
+| CTA | what the viewer does, the exact line (the wording may be a full-control `D`; its URL, phone or price never) | yes |
+| CAP | captions on/off and their language (Round 0, never assumed) | yes |
+| FILE | the exact final file name: a said-back `D` default; the user's name wins | a row is required; never asked |
 | STR | footage: silence cut only vs restructure | yes with footage (`--footage`) |
 | COLOR | person footage: camera original present, colour correction needed | yes with footage (`--footage`) |
 | VAR | variant matrix: ratios, hooks, platforms, "no music", "no captions" | yes when more than one file (`--variants`) |
-| HOOK, LOOK, TYPE, MOT, 3D, BROLL, CAP, MUS, SFX, VO, DUE, BRAND | the rest of the bank | asked; may take a shown default |
+| HOOK, LOOK, TYPE, MOT, 3D, BROLL, MUS, SFX, VO, DUE, BRAND | the rest of the bank | asked; may take a shown default |
 | LAY, TRN, SHOT | free lines for concept specifics | n/a |
 | REF, RIGHTS, CONSENT, AIDISC, LOUD | reference range, licences, consent, AI-disclosure plan, loudness target (shared technique) | when applicable |
 
@@ -77,5 +78,5 @@ Load when building or editing the ledger. Canonical rules live in the shared tec
 ```
 Check it: `python scripts/ledger_check.py hf/PROMPT.md --source _work/intake/INTAKE_LOG.md` (add `--footage` and `--variants` when they apply). Statuses: PASS (exit 0) | FAIL 1 | INSUFFICIENT_EVIDENCE 2 | NEEDS_REVIEW 3 (concrete source clauses with no row: add rows or waive with a reason). `--structure-only` checks format only and is never a G1 pass.
 
-## 7. Hand-off to the PROMPT writer
+## 7. Hand-off to `pro-video-editor` (its Step 3 writes PROMPT.md)
 `<ledger>` stays first in `PROMPT.md`; every id is cited again in `<structure>` where it is realised; `ledger_check.py hf/PROMPT.md --source ... --prompt hf/PROMPT.md` requires every id at least twice. The user approves PROMPT.md in chat; the agent then appends `PROMPT_APPROVED <date> "<the user's words>"` to `hf/CHANGELOG.md`. No code before that line exists. Each later user note becomes a new row (see `revision-notes-handler`).

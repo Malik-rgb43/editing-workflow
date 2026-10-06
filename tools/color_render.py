@@ -15,7 +15,7 @@ source hash, the grade, both LUT hashes, the ffmpeg graph and whether the matte 
 
 Usage:
     python tools/color_render.py <camera-original> --params grade.json -o hf/assets/video/aroll.mp4 [--matte matte.mp4] [--from 12.0 --to 18.0]
-                                 [--matte-offset S] [--fps 30] [--size 1080x1920] [--canvas 1088x1920] [--crf 11] [--preroll-frames 6] [--matte-blur 3] [--matte-erode 1]
+                                 [--matte-offset S] [--fps source|30|30000/1001] [--size 1080x1920] [--canvas 1088x1920] [--crf 11] [--preroll-frames 6] [--matte-blur 3] [--matte-erode 1]
                                  [--subject-everywhere] [--threads N] [--timeout 3600]
 Exit: 0 baked and verified, 2 refused / failed verification, 3 tool error.
 """
@@ -78,7 +78,7 @@ def main(argv=None) -> int:
     ap.add_argument("--matte-offset", type=float, default=0.0, help="source time (s) of the matte's first frame")
     ap.add_argument("--from", dest="start", type=float)
     ap.add_argument("--to", type=float)
-    ap.add_argument("--fps", default="30")
+    ap.add_argument("--fps", default="source", help="output fps: source (default: the input's own rate, no judder) or a number/fraction")
     ap.add_argument("--size", default="1080x1920")
     ap.add_argument("--canvas")
     ap.add_argument("--crf", type=int, default=11)
@@ -102,13 +102,15 @@ def main(argv=None) -> int:
         params = colour.full_params(grade.get("params", {}))
         size = parse_size(a.size)
         canvas = parse_size(a.canvas) if a.canvas else None
-        fps = Fraction(a.fps)
-        if fps <= 0:
-            raise ValueError("fps must be > 0")
         if a.matte and not Path(a.matte).is_file():
             raise ValueError(f"matte not found: {a.matte}")
         info = probe(a.video)
         src_fps = info.first_video.fps
+        if a.fps == "source" and not src_fps:
+            raise ValueError("the source fps is unknown (variable frame rate?): pass --fps with the project rate")
+        fps = Fraction(src_fps) if a.fps == "source" else Fraction(a.fps)
+        if fps <= 0:
+            raise ValueError("fps must be > 0")
         matte_args, matte_extract = colour_matte_reader(a.matte) if a.matte else ([], "format=gray")
     except (ValueError, OSError, ToolkitError, ZeroDivisionError) as exc:
         print(f"color_render: {exc}", file=sys.stderr)

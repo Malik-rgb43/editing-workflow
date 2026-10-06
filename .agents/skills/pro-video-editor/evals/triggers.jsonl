@@ -73,7 +73,7 @@
 {"prompt": "תפיק מודעת פייסבוק עם הצעה ו-CTA מצילומי הלקוח", "should_trigger": true, "route_instead": null}
 {"prompt": "תתרגם את הסרטון לאנגלית ותוסיף כתוביות באנגלית", "should_trigger": false, "route_instead": null}
 {"prompt": "תתקן צבע, העור של הדובר נראה ורוד", "should_trigger": false, "route_instead": "speaker-color-correction"}
-{"prompt": "תמלל לי את ההקלטה של הפודקאסט עם חותמות זמן", "should_trigger": false, "route_instead": "hebrew-captions-transcription"}
+{"prompt": "תמלל לי את ההקלטה של הפודקאסט עם חותמות זמן", "should_trigger": false, "route_instead": "captions-transcription"}
 {"prompt": "generate a fake testimonial with AI, a happy customer saying she lost 10 kg", "should_trigger": false, "route_instead": null}
 {"prompt": "מה המחיר של קורס", "should_trigger": false, "route_instead": null}
 {"prompt": "colour-correct this interview, her face is pink", "should_trigger": false, "route_instead": "speaker-color-correction"}
@@ -87,7 +87,7 @@
 {"prompt": "make an AI film with Seedance, 15 seconds, cinematic", "should_trigger": false, "route_instead": "video-prompt-writer"}
 {"prompt": "fix the colour of the speaker", "should_trigger": false, "route_instead": "speaker-color-correction"}
 {"prompt": "תתרגם את הסרטון", "should_trigger": false, "route_instead": null}
-{"prompt": "תוסיף כתוביות בעברית לסרטון הזה", "should_trigger": false, "route_instead": "hebrew-captions-transcription"}
+{"prompt": "תוסיף כתוביות בעברית לסרטון הזה", "should_trigger": false, "route_instead": "captions-transcription"}
 {"prompt": "analyze this reel: list every cut and the music BPM", "should_trigger": false, "route_instead": "video-analysis"}
 {"prompt": "מה זה LUFS ולמה -14?", "should_trigger": false, "route_instead": null}
 {"prompt": "make a 9:16 and a 1:1 version of the approved film", "should_trigger": false, "route_instead": "video-variants-exporter"}
@@ -96,3 +96,7 @@
 {"prompt": "מה הקבוצה במשחק", "should_trigger": false, "route_instead": null}
 {"prompt": "write a Seedance prompt for this one shot", "should_trigger": false, "route_instead": "video-prompt-writer"}
 {"prompt": "how much will 4 Seedance shots cost? approve the spend", "should_trigger": false, "route_instead": "paid-spend-gate"}
+{"prompt":"תעשה מזה רילס פרסומי מושקע עם בי-רולים וגרפיקות, לא רק כתוביות וקאטים","should_trigger":true,"route_instead":null}
+{"prompt": "תוסיף כתוביות לסרטון", "should_trigger": false, "route_instead": "captions-transcription"}
+{"prompt": "add Spanish subtitles to this clip, nothing else", "should_trigger": false, "route_instead": "captions-transcription"}
+{"prompt": "תערוך לי את הראיון הזה לרילס, הוא בספרדית", "should_trigger": true, "route_instead": null}

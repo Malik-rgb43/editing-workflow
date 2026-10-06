@@ -43,7 +43,7 @@ Not included: tax/FX, attempts beyond the cap, review time. Approve the ceiling 
 Approval is the user's reply naming or accepting that number. A bare "go" after the number was displayed counts; an approval given before any number was shown does not. Standing approval ("up to X in wallet W until DATE") is allowed when it states a number. An explicit "generate" request never covers on-screen facts, claims, or client approval of factual stills.
 
 ## 5. Command sequence (all under `scripts/`, stdlib)
-1. Re-check the price card today; write `spec.json` (see the docstring of `estimate.py`).
+1. Read the price card today (an MCP route: its own free quote or estimate tool, recorded as `mcp:<server>/<tool>`); write `spec.json` (see the docstring of `estimate.py`).
 2. `python estimate.py estimate spec.json --out cost_estimate.json` and show the table. Exit 4 = over the user's limit: nothing may be submitted.
 3. After the user's reply: `python estimate.py approve cost_estimate.json --approved --approval-quote "<their words>" --approved-amount <wallet>=<ceiling> --out .avc/approval.json`. Without `--approved` the script refuses to write a token.
 4. Before EVERY paid call: `python estimate.py can-run .avc/approval.json --line <id>`; non-zero means stop.

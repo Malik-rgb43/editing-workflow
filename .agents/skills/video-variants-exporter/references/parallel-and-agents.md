@@ -10,7 +10,7 @@ Load when: launching agents for derivatives, queueing renders, or a run feels st
 - The lock waits but keeps no order: inside a session, chain the renders in ONE background command in the planned order (master -> 9:16 -> 1:1 -> variants) and write the order in `_work/STATE.md` with one `STATE` line per job.
 - No heavy agent during a render: Blender, local video models, matte, ASR and analysis queues finish before or wait for the lock.
 - Another session holds the lock: wait, tell the user once ("waiting for the render of project X, about N min"), do not stop it.
-- **Long-job protocol (any job > 3 min):** benchmark one unit; post a one-line ETA; `timeout` on every command (render = 3 x ETA, `check` 900 s); run in the background with a log; heartbeat about every 5 min; watchdog: 0 frames after 3 min or no progress for 10 min = kill YOUR OWN process tree, check the lock, retry once; report partial results at once. The user should never have to ask "what about the render?".
+- **Long-job protocol (any job > 3 min):** benchmark one unit; post a one-line ETA; `timeout` on every command (render = 3 x ETA, `check` 900 s); run in the background with a log; render heartbeat (the job writes a `STATE` line) about every 5 min; watchdog: 0 frames after 3 min or no progress for 10 min = kill YOUR OWN process tree, check the lock, retry once; report partial results at once. The user should never have to ask "what about the render?".
 
 ## 3. Agent caps and the brief
 At most **4 agents in parallel**, each with at most **2 sub-agents** (many agents caused usage-limit stops of hours). Every agent gets, in its first message:
@@ -37,7 +37,7 @@ Deadline: <HH:MM local>. Progress: _work/agents/relayout-9x16.progress.md. Reply
 ## 4. Supervision
 | What | Rule |
 |---|---|
-| Heartbeat | the main session checks each progress file's last write about every 15 min |
+| Agent heartbeat | the main session checks each agent's progress file last write about every 15 min (not the 5-min render heartbeat of section 2) |
 | Silent | no write for 20 min or past the deadline: check, replace or stop (a library agent once sat silent for 3 h) |
 | Stopping | stop the agent's process TREE (including its ffmpeg and headless browser), then run `render_lock status`: an agent stop once left its render running |
 | Status line | to the user about every 10 min of silence: what runs, what finished, what is next |

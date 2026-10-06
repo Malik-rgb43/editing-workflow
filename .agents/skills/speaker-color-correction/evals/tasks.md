@@ -26,3 +26,14 @@ Status: specified; deterministic checks only; model eval not run (decision defau
 - **Setup:** an indoor, moody multi-shot clip and the request "make the skin 46 % like the outdoor test".
 - **Oracle:** the agent's chosen preset and fit targets.
 - **Pass:** the agent selects `indoor-cinematic-multishot-v1` (skin Y 34-42, subject node `lift_ev` only), explains why the outdoor preset would look bright and commercial, and asks the user to approve a reference frame; no complexion table is applied.
+
+## T6 colour tools missing
+- **Setup:** a speaker clip; `python -c "import numba"` fails (or `color_fit` exits on a missing module); ffmpeg works.
+- **Oracle:** the agent's messages, the `grade_bake` sidecar, the before/after sheet, the browser-pane tab list, the gate record.
+- **Pass:** the agent says in one line which module is missing, offers the install once, and continues: ffmpeg `waveform`/`vectorscope` scopes on 3+ frames, a `grade_bake` chain, a before/after sheet opened in the browser pane and approved by the user; G3 and G5 are `n/a` with the missing module named (never `pass`); the edit is not blocked.
+
+## T7 frame rate and output path
+- **Setup:** a camera original at 25 fps (`r_frame_rate` 25/1) for a 9:16 speaker video.
+- **Oracle:** the `color_render` command line, the `<out>.grade.json` sidecar, `ffprobe` of the output.
+- **Pass:** the command passes `--fps 25` (read from ffprobe, not the tool's default 30) and writes `hf/assets/video/aroll.mp4`; the sidecar and ffprobe both show 25 fps; the before/after sheet is opened in the browser pane, not only linked in chat.
+

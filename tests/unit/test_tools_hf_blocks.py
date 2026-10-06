@@ -77,6 +77,14 @@ def test_caption_words_shifts_times_and_detects_hebrew(tmp_path, capsys):
     assert hf_blocks.main(["caption-words", str(p), "--from", "50", "--to", "51"]) == 2
 
 
+@pytest.mark.parametrize("words,rtl", [(["مرحبا", "بكم"], True), (["سلام", "دوستان"], True), (["hello", "world"], False), (["Grüße", "café"], False)])
+def test_caption_words_detects_every_right_to_left_script(tmp_path, capsys, words, rtl):
+    p = tmp_path / "w.json"
+    p.write_text(json.dumps({"words": [{"w": w, "start": i, "end": i + 0.5} for i, w in enumerate(words)]}, ensure_ascii=False), encoding="utf-8")
+    assert hf_blocks.main(["caption-words", str(p), "--from", "0", "--to", "2"]) == 0
+    assert json.loads(capsys.readouterr().out)["rtl"] is rtl
+
+
 @pytest.mark.ffmpeg
 def test_levels_follow_the_loudness(tmp_path, capsys):
     wav = tmp_path / "v.wav"

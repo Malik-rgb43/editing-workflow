@@ -116,3 +116,13 @@ A motion PROMPT without these three tables is not ready for approval (owner rule
 
 ### 6. Rubric
 Score with `agent-content/benchmarks/motion-graphics.rubric.md` (M1-M8; gates M1 spec-before-code, M3 "snap, then drift" motion language, M7 sound locked to picture). Release rule: average >= 4.0, no dimension < 3, M1/M3/M7 >= 3; a model critique suggests fixes, it is not the author's or a human's evidence. A critic that grades the work it built is not independent.
+
+## Common mistakes: zoom, follow and fades
+Load when: setting a zoom, a face follow, a scene hand-off or a fade. Moved from SKILL.md on 2026-10-06 (each cost time on a real project).
+
+| Mistake | Instead |
+|---|---|
+| x1.8 zoom on a 1080 plate (soft) | A 1.5x plate from the original |
+| Per-frame face follow (jitter) | One smoothed path per segment between cuts |
+| A 0.05 s fade (it reads as a pop-in) | Fades of at least 0.3 s, eased |
+| The next scene's camera restarts at 1.0 (the zoom snaps) | Start it at the zoom the last scene ended on |

@@ -24,7 +24,7 @@ A model reads what it is shown. The tool gives deterministic timestamps; the mod
 | Stepped cadence | repeated frames (24p in 60p, 12 fps AI footage, stop-motion, screen recording): cuts counted on unique pictures |
 | Kinetic type / continuous camera | graphic transitions inside one move are often missed: count from the sheets and correct |
 | Platform downloads | watermark, end card and jingle are not part of the edit: exclude them from pacing and energy statements and list the exclusion |
-| Song match | names a track, grants nothing: "identified as <title>; sync permission not established"; no match = "unidentified", never a guessed title |
+| Song | not identified: no song identification is run; write "song not identified (not run)", never a guessed title; a title the user names grants no licence |
 
 ## 3. Breakdown template (`breakdown.md`)
 Write in the user's language; keep quoted on-screen text verbatim in its original language (Hebrew stays Hebrew, with the logical text order; do not "fix" the user's spelling in a quote). Sections, in order:
@@ -33,10 +33,10 @@ Write in the user's language; keep quoted on-screen text verbatim in its origina
 2. **Shot-by-shot table:** `# | time | what we see | on-screen text | speech | sound | transition out`.
 3. **On-screen text/captions:** text, in/out time, position (Hebrew OCR is a separate, benchmarked step; reading by a model is a hypothesis with a confidence label).
 4. **Speech transcript with timestamps** (say plainly if there is none; label sung lyrics).
-5. **Sound design:** music (song ID status, BPM estimate, key estimate, mood guess, energy arc, drop, cut-on-beat verdict with the chance level), SFX (time, likely sound, lands on a cut?), silences before drops, loudness (LUFS, true peak, scope).
+5. **Sound design:** music ("song not identified", BPM estimate, key estimate, mood guess, energy arc, drop, cut-on-beat verdict with the chance level), hits (time, lands on a cut?; a sound's name only as "likely", confirmed on the spectrogram), silences before drops, loudness (LUFS, true peak, scope).
 6. **Editing analysis:** the hook (first 3 s: what, text, zoom, SFX), pacing (distribution, not only a median), transition types, picture/sound sync points, what makes it work, concrete improvements. No claim that any hook length works as a rule: no platform source verifies a 3-second threshold.
 7. **Uncertainties and corrections:** every correction made to the automatic numbers, every `check` decision, every low-confidence segment.
-Save as `breakdown.md` in the analysis folder. Several videos: one batch run, then one agent per video (file list: its folder only; output: its `breakdown.md`; reply at most 10 lines), then a merged `analysis/index.md` (video, folder, status, one-line type, corrected cuts/min, loudness).
+Save as `breakdown.md` in the analysis folder. Several videos: one batch run, then one agent per video (file list: its folder only; output: its `breakdown.md`; reply at most 10 lines), then a merged `index.md` beside the folders (`<project>/_work/analysis/index.md`) (video, folder, status, one-line type, corrected cuts/min, loudness).
 
 ## 4. Common mistakes (each happened)
-Sampling frames by hand with ffmpeg instead of the tool; describing after viewing only some sheets; analysing several videos serially in one context; forcing `--lang he` / `--asr always` on a music-only video (hallucinated lyrics); zooming every caption; trusting cuts/min on kinetic type; calling an AudioSet label a fact; inventing a song name; a platform end card counted as a shot; a 42-minute source blocking the queue for hours (run long jobs in the background under the lock, in approved windows when possible).
+Sampling frames by hand with ffmpeg instead of the tool; describing after viewing only some sheets; analysing several videos serially in one context; forcing `--language he` on non-Hebrew speech or `--asr always` on a music-only video (hallucinated lyrics); assuming Hebrew when the language was never asked; zooming every caption; trusting cuts/min on kinetic type; calling an AudioSet label a fact; inventing or promising a song name; a platform end card counted as a shot; a 42-minute source blocking the queue for hours (run long jobs in the background under the lock, in approved windows when possible).

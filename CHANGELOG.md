@@ -9,6 +9,35 @@ Dates and facts here are perishable; each entry states its source where it relie
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-10-06
+
+### Changed (owner decisions 2026-10-06: show the work, never assume the language, guidance pass over every skill)
+- **Shown, not described.** New AGENTS.md rule 13. Every screen opens in the browser pane, unasked:
+  - **Moodboard + storyboard before any composition code** (`pro-video-editor` Step 3b; `scripts/storyboard_board.py` check/grab/build/serve, 9 tests). The page holds the look (story, feel, palette, type, signature device, references labelled "not ours"), a real key frame of every beat marked A-roll / B-roll / graphic, and the A/B rhythm bar. The user approves the whole board, or writes notes per frame.
+  - **The caption style board** (font + animation + height) before any caption, also under full control. `hebrew_fonts.py spec --caption-style --still`.
+  - **The notes page** after every draft render, in the same turn.
+  - **The Studio** at the start of every session. The plugin's `hooks/hooks.json` SessionStart hook runs `tools/session_hint.py`, which is read-only and starts nothing.
+- **Never assume the language** (AGENTS.md rule 12):
+  - `transcribe`, `prep` and `analyze` default to `--language auto`. `word_retime` inherits the language from words.json.
+  - The Hebrew-tuned model refuses other languages (exit 2, nothing written) and prints the multilingual route: `Systran/faster-whisper-large-v3`, MIT, 3,087,284,237 bytes, verified 2026-10-06, downloaded only after a yes.
+  - **`hebrew-captions-transcription` is renamed `captions-transcription`** and owns captions in any language. `hf_blocks caption-words` detects every right-to-left script (Hebrew, Arabic, Persian, Urdu).
+  - New `tools/captions_export.py` writes SRT/VTT/TXT sidecars from words.json.
+- **Rounds:** each round has ONE draft render (`--draft`) with the notes page on it. The delivery render runs only after `approved`, logged as `render_delivery` by `ledger_summary.py`.
+  - New note classes: `restructure` (show the new order, ask before patching) and `music-swap` (audio-only + licence row).
+- **Intake:**
+  - Round 0 goes in ONE message: purpose, who decides, speech + caption language, consent, missing facts. CAP is blocking.
+  - Full control decides taste, never facts. FILE is a said-back default.
+  - `pro-video-editor` Step 0: Round 0, `new_project.py`, `prep.py --language` (`--ref-detail full` with a reference).
+  - The router gives every production one owner (`pro-video-editor`, with the intake as its Step 0) and writes `_work/connections.json` + `_work/handoff.md`, which the other skills read instead of checking again.
+- **Boards:** any visual choice with 2+ options goes on a board. The board has a new option kind `image` (1-4 real stills per option), used for reference-style options.
+- **Other skills:**
+  - Video prompts cover non-Seedance models and share ONE look with the stills (`shot_id`, `LOOK:` line).
+  - Stills feed the storyboard.
+  - The paid-spend gate reads prices today only, and an MCP's own "no confirmation needed" never replaces approval of a number.
+  - Colour keeps the source fps (`color_render --fps source` is the default) and has a fallback when its tools are missing.
+  - video-analysis no longer promises song identification.
+  - The draft is scored against the benchmark rubric by a fresh-eyes reviewer before the draft render.
+
 ### Changed (owner decision 2026-10-04: a way of thinking, not templates)
 - **One central editor skill, `pro-video-editor`, replaces the five per-type skills** (`talking-head-editor`, `testimonial-editor`, `ad-promo-editor`, `motion-graphics-builder`, `ai-generated-video-editor`). It is a method like `video-analysis`:
   - perceive everything; understand the intent; decide every discipline with a reason; build while the user watches; review as an editor;

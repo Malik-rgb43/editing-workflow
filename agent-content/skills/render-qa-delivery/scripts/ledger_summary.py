@@ -2,8 +2,9 @@
 """ledger_summary.py - append to and summarise the per-project timing ledger (JSONL, stdlib only).
 
 One line per stage attempt in _work/timing_ledger.jsonl. The summary counts FULL renders per round
-(gate G4: exactly one per round) and sums minutes per stage, so a student can replace the modelled
-budget in pro-video-editor with measured numbers.
+(gate G4: one draft render per round, plus at most one delivery render after the notes page returned
+`approved`) and sums minutes per stage, so a student can replace the modelled budget in pro-video-editor
+with measured numbers.
 
 Usage:
     python -X utf8 ledger_summary.py append LEDGER.jsonl --project P --round N --stage S --kind K
@@ -12,10 +13,11 @@ Usage:
     python -X utf8 ledger_summary.py summary LEDGER.jsonl [--strict]
     python -X utf8 ledger_summary.py --self-check
 
-kinds: render_full | render_range | check | snapshot | asr | matte | colour | review | authoring | qa | other
+kinds: render_full (the round's draft) | render_delivery (after `approved`) | render_range | check | snapshot | asr | matte | colour | review | authoring | qa | other
 Record: {"project","round","stage","kind","start_utc","end_utc","run_min","queue_wait_min","setup_min","retries","credits"}
 credits: null means unknown or not applicable, which is NOT the same as 0 (a paid action would carry a number).
-Exit codes: summary --strict returns 1 if any round has more than one render_full or a record is malformed;
+Exit codes: summary --strict returns 1 if any round has more than one render_full or more than one
+render_delivery, or a record is malformed;
 append returns 2 on bad input.
 """
 import datetime
@@ -24,7 +26,7 @@ import os
 import sys
 import tempfile
 
-KINDS = {"render_full", "render_range", "check", "snapshot", "asr", "matte", "colour", "review",
+KINDS = {"render_full", "render_delivery", "render_range", "check", "snapshot", "asr", "matte", "colour", "review",
          "authoring", "qa", "other"}
 
 
@@ -64,18 +66,18 @@ def read(path):
 def summarise(recs):
     rounds = {}
     for r in recs:
-        d = rounds.setdefault((r["project"], r["round"]), {"render_full": 0, "render_range": 0, "min_by_kind": {}, "retries": 0,
+        d = rounds.setdefault((r["project"], r["round"]), {"render_full": 0, "render_delivery": 0, "render_range": 0, "min_by_kind": {}, "retries": 0,
                                                            "credits_unknown": 0, "credits_total": 0.0})
         d["min_by_kind"][r["kind"]] = round(d["min_by_kind"].get(r["kind"], 0.0) + (r.get("run_min") or 0.0), 3)
         d["retries"] += r.get("retries") or 0
-        if r["kind"] in ("render_full", "render_range"):
+        if r["kind"] in ("render_full", "render_delivery", "render_range"):
             d[r["kind"]] += 1
         if r.get("credits") is None:
             d["credits_unknown"] += 1
         else:
             d["credits_total"] += float(r["credits"])
-    flagged = [{"project": p, "round": n, "full_renders": d["render_full"]}
-               for (p, n), d in sorted(rounds.items()) if d["render_full"] > 1]
+    flagged = [{"project": p, "round": n, "full_renders": d["render_full"], "delivery_renders": d["render_delivery"]}
+               for (p, n), d in sorted(rounds.items()) if d["render_full"] > 1 or d["render_delivery"] > 1]
     return rounds, flagged
 
 
@@ -104,9 +106,12 @@ def self_check():
             make_record("p", 1, "range", "render_range", "2026-10-02T09:00:00Z", "2026-10-02T09:03:00Z"),
             make_record("p", 2, "render", "render_full", "2026-10-02T11:00:00Z", "2026-10-02T11:10:00Z"),
             make_record("p", 2, "render", "render_full", "2026-10-02T11:20:00Z", "2026-10-02T11:30:00Z")]
+    recs.append(make_record("p", 1, "deliver", "render_delivery", "2026-10-02T10:30:00Z", "2026-10-02T10:41:00Z"))
     rounds, flagged = summarise(recs)
-    expect("round 1: one full render, not flagged", [f for f in flagged if f["round"] == 1], [])
+    expect("round 1: draft + delivery render, not flagged", [f for f in flagged if f["round"] == 1], [])
     expect("round 2: two full renders flagged", [f["full_renders"] for f in flagged if f["round"] == 2], [2])
+    two_deliveries = recs[:2] + [make_record("p", 1, "deliver", "render_delivery", "2026-10-02T10:30:00Z", "2026-10-02T10:41:00Z")] * 2
+    expect("two delivery renders in a round flagged", [f["delivery_renders"] for f in summarise(two_deliveries)[1]], [2])
     tmp = os.path.join(tempfile.mkdtemp(), "ledger.jsonl")
     with open(tmp, "w", encoding="utf-8") as fh:
         fh.write(json.dumps(recs[0]) + "\n" + "{not json}\n")
@@ -151,11 +156,12 @@ def main(argv):
     recs, bad = read(path)
     rounds, flagged = summarise(recs)
     out = {"records": len(recs), "malformed": bad,
-           "rounds": [{"project": p, "round": n, "full_renders": d["render_full"], "range_renders": d["render_range"],
+           "rounds": [{"project": p, "round": n, "full_renders": d["render_full"], "delivery_renders": d["render_delivery"],
+                       "range_renders": d["render_range"],
                        "minutes_by_kind": d["min_by_kind"], "retries": d["retries"],
                        "credits_unknown_lines": d["credits_unknown"], "credits_total_known": d["credits_total"]}
                       for (p, n), d in sorted(rounds.items())],
-           "rounds_with_more_than_one_full_render": flagged,
+           "rounds_over_render_budget": flagged,
            "note": "credits null = unknown, not 0; minutes are measured wall time per stage attempt"}
     print(json.dumps(out, indent=2, ensure_ascii=False))
     if not recs:

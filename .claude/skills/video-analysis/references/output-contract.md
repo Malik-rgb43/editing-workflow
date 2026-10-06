@@ -1,11 +1,11 @@
-# Output contract: `analysis/<video>/` (schema_version 1.0.0)
+# Output contract: `<project>/_work/analysis/<video-id>/` (schema_version 1.0.0)
 
 Load when: running or porting the `analyze` tool, writing any of the JSON files by hand, reading a `validate_analysis.py` report, or handing an analysis to another skill (`reference-style-matching`, `benchmark`). The checker is `scripts/validate_analysis.py`; every rule below is enforced there unless marked "declared".
 
-`<video>` = a slug of the file stem + `-` + first 6 hex of the source sha256 (batch mode: one folder per video under the parent `--out`). A re-run with the same hash may reuse the folder; `--force` recomputes. The source file is never written to; sidecar files live only inside the analysis folder.
+The folder lives at `<project>/_work/analysis/<video-id>/` (what `tools/prep.py` writes; `analysis/<video-id>/` when there is no project). `<video-id>` = a slug of the file stem (prep, single file) or the stem + `-` + first 6 hex of the source sha256 (batch mode: one folder per video under the parent `--out`). A re-run with the same hash may reuse the folder; `--force` recomputes. The source file is never written to; sidecar files live only inside the analysis folder.
 
 ```
-analysis/<video>/
+<video-id>/
   measurements.json     identity, environment, coverage, edit points, pacing, review      (required)
   frames.csv            per-frame data; REQUIRED when coverage.mode = "full"
   sheets/               index.json + sheet_*.jpg, overview_*.jpg, audio_*.png, zoom_*      (required)
@@ -48,7 +48,7 @@ Rules: real JPEG/PNG (magic bytes), not empty, inside `sheets/`; at least one ke
 - `layers`: `speech`, `music`, `singing` = ordered `[start_s, end_s]` lists inside the video.
 - `sfx_events[]`: `{t_s, labels[], peak, likely}`; labels are AudioSet-style model guesses ("likely a whoosh"), confirmed on the spectrogram before a claim.
 - `music`: `present`; when true: `tempo_bpm` in [30, 300] (an estimate), `beats_s` increasing, `half_double_audited: true` (checked against the audio image; otherwise INSUFFICIENT), `key` + `key_confidence`, `energy_arc[]`, `cut_on_beat {tolerance_s, ratio, chance}` (a ratio near chance means no sync).
-- `song_id`: `status` matched | no_match | skipped | opted_out; **`sync_permission` must be exactly `"not_established"`** (a match names the track, it grants no licence); a match records `title` and `transport` (remote | local). A `private` input must be `opted_out` or `skipped`: no audio excerpt may leave the machine.
+- `song_id`: the toolkit's analyzer runs no song identification and always writes `skipped` (`opted_out` for private input); the other values exist for imported analyses. `status` matched | no_match | skipped | opted_out; **`sync_permission` must be exactly `"not_established"`** (a match names the track, it grants no licence); a match records `title` and `transport` (remote | local). A `private` input must be `opted_out` or `skipped`: no audio excerpt may leave the machine.
 - `images[]`: spectrogram/loudness images, each an entry of `sheets/index.json`.
 - `status: n/a` only for a file with no audio stream (`has_audio: false` + reason).
 

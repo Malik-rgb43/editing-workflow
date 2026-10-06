@@ -57,14 +57,14 @@ Calm brand films are the opposite register: ONE continuous uniform music window 
 
 ### 3. Captions: OFF by default in motion pieces (studio style, G9)
 - A launch/kinetic/logo/explainer piece with big on-screen type carries **no captions** unless the brief asks for them. If the brief mentions sound-off viewing, offer captions in ONE line and wait; do not add them silently.
-- If captions are requested: they belong to `hebrew-captions-transcription` (ASR route, RTL, fonts, animation in and out, safe zones, QA). This skill only keeps them out of the way of the design (caption rail bottom <= y 1450 on 9:16, house preset v1) and out of the Events table's density count.
+- If captions are requested: they belong to `captions-transcription` (ASR route, RTL, fonts, animation in and out, safe zones, QA). This skill only keeps them out of the way of the design (caption rail bottom <= y 1450 on 9:16, house preset v1) and out of the Events table's density count.
 - Gate evidence: grep the composition for `caption` in ids/classes/data attributes and for caption blocks; the PROMPT `<direction>` states "captions off" or names the brief line that asks for them.
 - Taste note: the author's default caption face (Rubik Regular/600 small words, Black/900 keywords) is a default, not a law; the look-alike pairs ו/ז, ד/ר, ה/ח must be tested at full size before any other face (a condensed display face turned "לבזבז" into "לבובו").
 
 
 ## Accessible captions and audio for testimonials
 <!-- source: pro-video-editor/references/sound.md -->
-Load when: building or checking captions, the mix or the final loudness. Sources: distilled 01 OWNER_STYLE §N (caption gates), distilled 02 qa-and-benchmarks §8.5-§8.6, distilled 05 audio-music-voice §5, §7-§8, distilled 08 platform-specs §5 (2026-10-01). Hebrew typography, fonts and timing in detail: `hebrew-captions-transcription` and `agent-content/references/hebrew-rtl-captions.md` (owned elsewhere; this file lists only what a testimonial needs). House numbers are preset v1, not law (decision default Q5).
+Load when: building or checking captions, the mix or the final loudness. Sources: distilled 01 OWNER_STYLE §N (caption gates), distilled 02 qa-and-benchmarks §8.5-§8.6, distilled 05 audio-music-voice §5, §7-§8, distilled 08 platform-specs §5 (2026-10-01). Hebrew typography, fonts and timing in detail: `captions-transcription` and `agent-content/references/hebrew-rtl-captions.md` (owned elsewhere; this file lists only what a testimonial needs). House numbers are preset v1, not law (decision default Q5).
 
 ### 1. Captions (testimonial profile)
 - **Wording is a legal and trust surface:** zero spelling errors in names, numbers, quotes and brand words; a human proofreads against the speaker's recording and the client's written spelling. ASR text is never final; no LLM rewrite of the full text; majority vote of several passes for an ambiguous word.
@@ -84,3 +84,12 @@ Load when: building or checking captions, the mix or the final loudness. Sources
 - **SFX:** captions are silent; at most one soft ding per proof entry and soft whooshes on punch-ins; SFX at -18 to -26 dB under the voice (a creative target, not a loudness measurement); only for what is seen.
 - **VO margin:** voice at least 5 dB above music plus SFX in the 1-4 kHz band per line (`hf_mix --report`); a 3 s short-term loudness step larger than about 3 LU at a cut without intent reads as a bug.
 - **Master:** -14 LUFS integrated +/- 0.5, true peak <= -1 dBTP, measured on the FINAL file after encode, labelled as the social house profile (no platform numeric requirement was verified; a client or broadcaster profile overrides). Fix levels in the mix and re-mux; do not chase loudness inside the composition. Two-pass loudnorm needs a pre-limited raw mix, otherwise it falls back to dynamic mode and crushes the loudness range.
+
+## Common mistakes: voice, effects and caption timing
+Load when: placing a TTS voice, a long effect or word-timed captions. Moved from SKILL.md on 2026-10-06 (each cost time on a real project).
+
+| Mistake | Instead |
+|---|---|
+| Emotion tags on a TTS voice overdone ("warmly" whispers, "excited" sounds fake) | Light tags only on the lines that need them; the opener plain |
+| A long SFX file placed by its start (a 4 s riser lands late) | Place it by its measured peak (`"align": "peak"` in the `hf_mix` cues), trimmed around the peak |
+| Captions placed from one transcription pass (up to 0.5 s late) | Re-time per phrase (`tools/word_retime.py`): cut at pauses, transcribe each chunk, pin its first word to the measured onset |

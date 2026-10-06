@@ -1,6 +1,6 @@
 # Task evals - image-prompt-writer
 
-Status: specified. The deterministic part runs now (`python scripts/image_prompt_lint.py --self-check`: a good prose prompt and a good JSON prompt must lint clean, 14 further cases plant defects). Model evals (baseline vs with-skill; trigger rates; whether an agent keeps the prefix verbatim over a long shot list) are **not run** (decision default Q4). No image was ever generated: nothing here claims what a model renders. Triggers: `triggers.jsonl` (12 should-trigger incl. Hebrew, 10 should-not incl. Hebrew).
+Status: specified. The deterministic part runs now (`python scripts/image_prompt_lint.py --self-check`: a good prose prompt and a good JSON prompt must lint clean, 15 further cases plant defects or check the `shot_id` header lines). Model evals (baseline vs with-skill; trigger rates; whether an agent keeps the prefix verbatim over a long shot list) are **not run** (decision default Q4). No image was ever generated: nothing here claims what a model renders. Triggers: `triggers.jsonl` (13 should-trigger incl. Hebrew, 10 should-not incl. Hebrew).
 
 ## T1 - prefix and shape
 - **Setup:** a synthetic shot card: "a courier in a yellow rain jacket crosses a wet tram platform, 9:16", with a STYLE PREFIX supplied in `prefix.txt`.
@@ -23,3 +23,13 @@ Status: specified. The deterministic part runs now (`python scripts/image_prompt
 - **Setup:** "a thumbnail with the words \"חינם\"".
 - **Oracle:** `python scripts/image_prompt_lint.py draft.md --ratio 16:9 --text-asset`.
 - **Pass:** `--text-asset` lint passes with exactly one quoted string in its own language; the agent tells the user a human must proofread the render.
+
+## T5 - stills feed the storyboard
+- **Setup:** a storyboard with beats `b1` (A-roll), `b2` and `b4` (generated, 9:16); the film's prefix in `prefix.txt`; the user says "write the stills and generate them".
+- **Oracle:** the answer saved as `draft.md`; `python scripts/image_prompt_lint.py draft.md --ratio 9:16 --prefix-file prefix.txt`; the tool-call log; after the (mocked) generation, the storyboard spec and the browser-pane tab list.
+- **Pass:** lint exit 0; exactly two prompts, each with the line `shot_id: b2 · 9:16 · target: _work/stills/b2.png` (and `b4`) above its fence; the ids match the storyboard; zero provider calls (hand-off to `paid-spend-gate`); after generation each still is set as its beat's `img` and the storyboard page (or a `visual-choice-board` for 2+ takes) is opened in the browser pane; no still is only described or linked in chat.
+
+## T6 - a real brand in the shot
+- **Setup:** the beat "the founder's app open on a phone in a café, the real logo visible", 9:16.
+- **Oracle:** the answer saved as `draft.md`; the lint.
+- **Pass:** the prompt names no brand; it asks for a clean plate (the phone screen blank or evenly lit, facing camera) and the answer says the real logo/UI is composited in post; lint I03-I05 clean.

@@ -31,3 +31,9 @@ Status: specified, deterministic oracles only. Model eval not run (decision defa
 - **Oracle:** exit codes and finding codes of `manifest_check.py check`.
 - **Pass:** each case exits non-zero (2 for no manifest or missing numbers, 1 for the others) with M001 / M051 / M060 / M081 / M006 respectively; the agent reports each as blocked with the fix, never as pass.
 - **Run it yourself:** `python scripts/manifest_check.py --self-check` (29 built-in cases) and `python -X utf8 -m unittest -v test_manifest_check` from `scripts/`.
+
+## T6. Per-aspect look and caption band
+- **Setup:** an approved 9:16 master with captions; request: "also 4:5 and 16:9". A second run of the same task uses a master with no captions.
+- **Oracle:** the stage-6 commands in the log, `_work/qa/<aspect>/` (contact sheet per aspect), the agent's report.
+- **Pass:** each aspect has a contact sheet that was opened in the browser pane and is named in the report with what was seen; `caption_qa` uses each aspect's own band (16:9 bottom <= y 918, 4:5 bottom <= y 1296), never the 9:16 `1450` on another aspect; in the no-captions run `caption_qa` is skipped and reported as not applicable.
+- **Fail:** "QA pass" claimed from hashes and tool exits with no viewed sheet; one 9:16 band used for every aspect.

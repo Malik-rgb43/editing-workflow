@@ -13,3 +13,5 @@
 {"prompt":"מה השעה","should_trigger":false,"route_instead":null}
 {"prompt":"תכתוב לי פרומפט לסידנס לשוט קולנועי","should_trigger":false,"route_instead":"video-prompt-writer"}
 {"prompt":"הפלטה נעולה, תשתמש בכחול וזהב ותמשיך","should_trigger":false,"route_instead":null}
+{"prompt":"blue or gold background for the end card, which one?","should_trigger":true,"route_instead":null}
+{"prompt":"איזו משתי הפלטות מתאימה יותר לסרטון?","should_trigger":true,"route_instead":null}

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""cut_regression.py - score detected edit points against hand-verified ground truth (the G4 regression gate).
+"""cut_regression.py - score detected edit points against hand-verified ground truth (the detector regression gate,
+references/thresholds.md section 0).
 
 Why: a change to a cut-detector threshold must never be judged by eye. The author's detector reached
 F1 0.89 (precision 0.87, recall 0.91) on 20 hand-verified ads, 339 edit points (the author's private

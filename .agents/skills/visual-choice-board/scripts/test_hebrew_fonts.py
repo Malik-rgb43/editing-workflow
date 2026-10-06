@@ -81,6 +81,48 @@ class FontTests(unittest.TestCase):
         self.assertEqual(page.count("data:font/ttf;base64,"), 3)
         self.assertEqual(mb.remote_hits(page), [])
 
+    def test_caption_style_board_settles_font_animation_and_height_on_one_board(self) -> None:
+        fams = hf.pick(hf.load(), ["Heebo", "Suez One"], False)
+        for f in fams:
+            font, lic = hf.paths(f, self.dir / "fonts")
+            font.parent.mkdir(parents=True, exist_ok=True)
+            font.write_bytes(b"\x00\x01\x00\x00" + f["family"].encode())
+            lic.write_text("SIL Open Font License 1.1", encoding="utf-8")
+        still = self.dir / "frame.jpg"
+        still.write_bytes(b"\xff\xd8\xff\xe0" + b"0" * 64)
+        out = self.dir / "board" / "spec.json"
+        code, txt = run("spec", "--to", str(self.dir / "fonts"), "--text", "הזמנתי טיסה בשלוש דקות", "--families", "Heebo,Suez One",
+                        "--caption-style", "--still", str(still), "-o", str(out))
+        self.assertEqual(code, 0, txt)
+        sp = json.loads(out.read_text(encoding="utf-8"))
+        self.assertEqual([(d["id"], d["kind"]) for d in sp["decisions"]], [("font", "font"), ("anim", "caption_anim"), ("position", "layout")])
+        self.assertEqual(sp["title"], "איך הכתוביות ייראו?")
+        self.assertNotIn("bounce", [o["anim"] for o in sp["decisions"][1]["options"]])
+        self.assertTrue(all(o["caption_y_pct"] <= 75 for o in sp["decisions"][2]["options"]))  # above the house caption rail (1450/1920)
+        self.assertEqual(sp["still"], "../frame.jpg")
+        res = mb.build(out, self.dir / "board" / "html", built_utc="2026-10-06T00:00:00Z")
+        self.assertEqual(res["options"], 2 + len(hf.CAPTION_ANIMS) + len(hf.CAPTION_Y))
+        self.assertEqual(run("spec", "--to", str(self.dir / "fonts"), "--text", "x y", "--families", "Heebo", "--caption-style",
+                             "--still", str(self.dir / "missing.jpg"), "-o", str(self.dir / "s2.json"))[0], 2)
+
+    def test_a_non_hebrew_caption_board_from_the_users_own_fonts(self) -> None:
+        for fam in ("Inter", "Oswald"):
+            (self.dir / f"{fam}.ttf").write_bytes(b"\x00\x01\x00\x00" + fam.encode())
+            (self.dir / f"{fam}-OFL.txt").write_text("SIL Open Font License 1.1", encoding="utf-8")
+        out = self.dir / "board" / "spec.json"
+        args = ["spec", "--text", "Train harder, not longer", "--lang", "en", "--caption-style", "-o", str(out)]
+        for fam in ("Inter", "Oswald"):
+            args += ["--font", f"{fam}={self.dir / (fam + '.ttf')}={self.dir / (fam + '-OFL.txt')}"]
+        code, txt = run(*args)
+        self.assertEqual(code, 0, txt)
+        sp = json.loads(out.read_text(encoding="utf-8"))
+        self.assertEqual([o["family"] for o in sp["decisions"][0]["options"]], ["Inter", "Oswald"])  # no Hebrew catalogue font added
+        self.assertEqual(sp["title"], "How should the captions look?")
+        self.assertEqual(len(sp["decisions"]), 3)
+        res = mb.build(out, self.dir / "board" / "html", built_utc="2026-10-06T00:00:00Z")
+        self.assertEqual(res["options"], 2 + len(hf.CAPTION_ANIMS) + len(hf.CAPTION_Y))
+        self.assertEqual(run("spec", "--text", "x y", "--font", "Bad=only-two", "-o", str(out))[0], 2)
+
     def test_spec_refuses_missing_files_and_placeholder_text(self) -> None:
         out = self.dir / "s.json"
         code, _ = run("spec", "--to", str(self.dir), "--text", "שלום", "--families", "Heebo", "-o", str(out))

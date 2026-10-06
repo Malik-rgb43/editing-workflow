@@ -4,11 +4,12 @@
 Usage:
     python seedance_prompt_lint.py DRAFT.md [--preset owner-cinematic|vendor-short|custom]
                                    [--prefix-file FILE] [--duration 15] [--tags a,b,c]
-                                   [--presets-file ../references/presets.md] [--raw] [--allow-age-words] [--json]
+                                   [--presets-file ../references/presets.md] [--look-file FILE] [--raw] [--allow-age-words] [--json]
     python seedance_prompt_lint.py --self-check
 
 DRAFT.md is the ANSWER you are about to send: each fenced code block is one prompt; text outside the fences
-may only be a short follow-up question. `--raw` treats the whole file as ONE prompt (no fences).
+may only be the `shot_id: ...` line above each fence and a short follow-up question. `--raw` treats the whole
+file as ONE prompt (no fences). Seedance only: for Kling, Veo, Hailuo and other models this lint is n/a.
 
 Owner preset (skeleton from references/skeleton-and-fill-in.md)
   P01 E  the preset prefix is present VERBATIM at the start (whitespace and dash variants normalised)
@@ -30,6 +31,7 @@ All profiles
   P12 W  on-screen text/subtitle/caption instructions in the body (text is added in post)
   P13 E  output is not plain-text fences (HTML, markdown table, checklist) or no fence found; W long text outside the fences
   P14 W  the word "fast" in the scene body (one fast element; a duration instead)
+  P15 E  --look-file given: the film's LOOK (the image STYLE PREFIX shared with the stills) is not in the prompt verbatim
 Exit codes: 0 pass | 1 fail (>= 1 error) | 2 blocked (unreadable, no prompt found, presets file missing).
 A pass means the prompt is well-formed against the skeleton; it says nothing about what the model will render.
 Stdlib only.
@@ -42,7 +44,7 @@ from pathlib import Path
 
 HEADS = ["SUBJECT", "LOCATION", "LAYOUT", "ACTION", "CAMERA", "STYLE", "CONSTRAINTS"]
 REQUIRED = ["SUBJECT", "LOCATION", "ACTION", "CAMERA", "STYLE", "CONSTRAINTS"]
-CHARMS = re.compile(r"\b(epic|amazing|beautiful|stunning|masterpiece|breathtaking|ultra-?real|award-?winning|immersive|ethereal)\b", re.I)
+CHARMS = re.compile(r"\b(epic|amazing|beautiful|stunning|masterpiece|breathtaking|ultra-?real|award-?winning|immersive|ethereal|8k|photorealistic|hyper-?real(?:istic)?)\b", re.I)
 NEG = re.compile(r"\b(no|not|don'?t|doesn'?t|never|without|avoid)\b", re.I)
 AGE = re.compile(r"\b(boy|girl|child|children|kid|kids|young|teen|teens|teenager|little|baby|toddler)\b", re.I)
 SPEED = re.compile(r"\b\d+(?:\.\d+)?\s*(?:km/h|kph|mph|m/s)\b|\b\d+(?:\.\d+)?\s*°|\b\d+\s*degrees?\b", re.I)
@@ -81,12 +83,14 @@ def tsec(m, s):
     return int(m) * 60 + int(s)
 
 
-def lint_block(block, presets, preset=None, duration=15, tags=None, allow_age=False, prefix_text=None, label="prompt"):
+def lint_block(block, presets, preset=None, duration=15, tags=None, allow_age=False, prefix_text=None, label="prompt", look=None):
     f = []
 
     def add(sev, code, msg):
         f.append((sev, code, f"{label}: {msg}"))
     norm = squash(block)
+    if look and squash(look) not in norm:
+        add("error", "P15", "the film's LOOK (image STYLE PREFIX) is not in the prompt verbatim: paste it as `LOOK:` in STYLE (or as the vendor-short Style: line)")
     detected = preset
     if detected is None:
         for name in ("owner-cinematic",):
@@ -208,7 +212,7 @@ def lint_block(block, presets, preset=None, duration=15, tags=None, allow_age=Fa
     return f, detected
 
 
-def lint(text, presets, preset=None, duration=15, tags=None, raw=False, allow_age=False, prefix_text=None):
+def lint(text, presets, preset=None, duration=15, tags=None, raw=False, allow_age=False, prefix_text=None, look=None):
     f = []
     if not text.strip():
         return [("error", "P13", "empty draft")], {"verdict": "blocked", "reason": "empty input", "prompts": 0}
@@ -221,13 +225,14 @@ def lint(text, presets, preset=None, duration=15, tags=None, raw=False, allow_ag
     if not blocks:
         f.append(("error", "P13", "no fenced code block found (each prompt goes in a ``` fence); use --raw only for a bare prompt"))
         return f, {"verdict": "blocked", "reason": "no prompt found", "prompts": 0}
-    if len(re.findall(r"\S+", outside)) > 80:
+    outside_words = "\n".join(ln for ln in outside.splitlines() if not ln.strip().lower().startswith("shot_id:"))
+    if len(re.findall(r"\S+", outside_words)) > 80:
         f.append(("warn", "P13", "more than ~80 words outside the fences (after the prompt only one short follow-up question is allowed)"))
     det = []
     for i, (info, blk) in enumerate(blocks, 1):
         im = dict(re.findall(r"(\w+)=([^\s]+)", info))
         pf, d = lint_block(blk, presets, im.get("preset") or preset, int(im.get("dur", duration)),
-                           set(im["tags"].split(",")) if im.get("tags") else tags, allow_age, prefix_text, label=f"prompt {i}")
+                           set(im["tags"].split(",")) if im.get("tags") else tags, allow_age, prefix_text, label=f"prompt {i}", look=look)
         f += pf
         det.append(d)
     errs = [x for x in f if x[0] == "error"]
@@ -301,12 +306,21 @@ def self_check(presets_path):
     expect("vendor-short-length-warning", vend, ("V02",), preset="vendor-short")
     expect("vendor-3-moves", vend.replace("tracking shot at wheel height", "push-in, pan and orbit"), ("V03",), verdict="fail", preset="vendor-short")
     expect("vendor-no-duration", vend.replace(" 10s.", ""), ("V04",), verdict="fail", preset="vendor-short")
+    look = "35 mm film look, grey and amber (#5A6670, #C8923A), fine grain, no text, no labels."
+    with_look = body_ok.replace("STYLE — ", "STYLE — LOOK: " + look + " ")
+    expect("look-present", mk(cin, with_look), verdict="pass", preset="owner-cinematic", tags={"a", "b"}, look=look)
+    expect("look-missing", mk(cin, body_ok), ("P15",), verdict="fail", preset="owner-cinematic", look=look)
+    expect("charm-8k", mk(cin, body_ok.replace("She walks to the end", "She walks to the end, 8K photorealistic")), ("P07",), preset="owner-cinematic")
+    many_ids = "\n".join("shot_id: b%d · 16:9 · start frame: _work/stills/b%d.png" % (k, k) for k in range(1, 15))
+    f, _st = lint(many_ids + "\n" + mk(cin, body_ok), presets, preset="owner-cinematic")
+    if any(c == "P13" for _s, c, _m in f):
+        bad.append("shot_id header lines must not count as text outside the fences")
     if bad:
         print("SELF-CHECK FAILED")
         for b in bad:
             print(" -", b)
         return 1
-    print(f"SELF-CHECK OK ({len(blocks)} examples lint clean + 18 further cases)")
+    print(f"SELF-CHECK OK ({len(blocks)} examples lint clean + 22 further cases)")
     return 0
 
 
@@ -323,6 +337,7 @@ def main(argv=None):
     ap.add_argument("--duration", type=int, default=15)
     ap.add_argument("--tags")
     ap.add_argument("--presets-file", default=str(here))
+    ap.add_argument("--look-file", help="the film's image STYLE PREFIX (from image-prompt-writer / hf/DESIGN.md); P15 checks it is in every prompt")
     ap.add_argument("--raw", action="store_true")
     ap.add_argument("--allow-age-words", action="store_true")
     ap.add_argument("--json", action="store_true")
@@ -337,11 +352,12 @@ def main(argv=None):
         presets = load_presets(a.presets_file)
         text = Path(a.draft).read_text(encoding="utf-8")
         prefix = Path(a.prefix_file).read_text(encoding="utf-8").strip() if a.prefix_file else None
+        look = Path(a.look_file).read_text(encoding="utf-8").strip() if a.look_file else None
     except OSError as e:
         print(f"BLOCKED: {e}")
         return 2
     tags = set(a.tags.split(",")) if a.tags else None
-    f, st = lint(text, presets, a.preset, a.duration, tags, a.raw, a.allow_age_words, prefix)
+    f, st = lint(text, presets, a.preset, a.duration, tags, a.raw, a.allow_age_words, prefix, look)
     if a.json:
         print(json.dumps({"summary": st, "findings": [{"severity": s, "code": c, "message": m} for s, c, m in f]}, ensure_ascii=False, indent=2))
     else:

@@ -11,19 +11,20 @@ Shared dated tables (owned by another agent, read them for context, then re-chec
 | id | provider + exact model id/route/mode (a model name is not a spec) |
 | version | provider's own version label, or "rolling" |
 | checked_at | UTC date the card was read (this is what `estimate.py` enforces) |
-| source | URL of the price card or docs page; or "user stated" |
+| source | URL of the price card or docs page; for an MCP route, `mcp:<server>/<tool>` of its own free listing, quote or estimate tool; or "user stated" |
 | scope | plan, region, wallet, resolution, tax status |
 | confidence | high (read today on the live card) / medium (docs page) / low (secondary) |
-| expiry | when it must be re-read: before every spend; hard stop after the max age (default 7 days, `--max-age-days`, a course setting not a vendor fact) |
+| expiry | read on the day of the estimate: `estimate.py` refuses an older row (`--max-age-days`, default 0 = the same local day, a course setting not a vendor fact); `approve` checks it again, so a next-day approval needs a fresh read |
 | refresh | a NON-SPENDING way to refresh: open the price page, read the plan screen, call a free quote/balance endpoint only if the provider documents it as free |
 
 ## 2. Rules
-1. Re-read the card on the day of spending; copy the date, plan and tax status into the spec.
-2. Separate wallets: provider credits, API dollars and another vendor's price are different wallets.
-3. A catalogue entry does not prove access on this account; a model-listing call that returns no prices is not a price.
-4. Never convert credits to API dollars, or credits to what the client is charged.
-5. Row older than the max age: the gate blocks (`stale_price`); refresh first.
-6. Unlisted or unreadable price: ask the user for the number or stop; do not estimate from memory.
+1. Read the card on the day of the estimate; copy the date, plan and tax status into the spec.
+2. **An MCP route's price comes from its own free tool** (a model listing with prices, a quote or an estimate tool that its description or docs say does not spend), recorded as `mcp:<server>/<tool>` with the date it was called. A tool whose description does not say it is free is not called for a price: read the vendor's page or ask the user.
+3. Separate wallets: provider credits, API dollars and another vendor's price are different wallets.
+4. A catalogue entry does not prove access on this account; a model-listing call that returns no prices is not a price.
+5. Never convert credits to API dollars, or credits to what the client is charged.
+6. A row not read today: the gate blocks (`stale_price`); read it again first.
+7. Unlisted or unreadable price: ask the user for the number or stop; do not estimate from memory.
 
 ## 3. Example rows (observed 2026-10-01 in the course research; EXPIRED by the time you read this; shown only to illustrate the format and the shape of the formulas)
 | fact | id | checked_at | source | scope | confidence | expiry |

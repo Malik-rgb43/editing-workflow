@@ -74,3 +74,11 @@ Source keys: d04 motion-design §8 (T10 + owner), d05 image-and-design-assets §
 | `שָׁלוֹם` | niqqud survives a reveal |
 | a mixed-direction 3-line wrap | line breaks, safe box |
 Per fixture record: logical source, intended display order, font + version, rendered line widths, safe box, event hold; compare the displayed string to the source by eye with a Hebrew reader (OCR alone misses spacing and bidi punctuation). Check final letters ך ם ן ף ץ and the look-alike pairs. Prices: no unintended intermediate values during a whole-price transition.
+
+## Common mistakes: highlights and surfaces
+Load when: stressing a word on screen or building a glass or frosted surface. Moved from SKILL.md on 2026-10-06 (both came from one launch film's review).
+
+| Mistake | Instead |
+|---|---|
+| A highlight box behind a word (it looks like a text selection) | Stress the word with colour, weight or a gradient and a faint glow |
+| Glass or frosted UI on a plain white page (it shows nothing) | Put something behind it: a slow pastel aura or a blurred wash of the picture |

@@ -1,4 +1,4 @@
-"""transcribe - word-level speech-to-text (Hebrew first) with route auto-selection and a CPU route that always works.
+"""transcribe - word-level speech-to-text in any language (Hebrew deepest) with route auto-selection and a CPU route that always works.
 
 Output ``words.json`` (schema avc.words/1): language, model, route, audio duration, ``words[{w, start, end, prob}]`` in seconds (rational
 times are not needed here: ASR timing is not frame-exact), plus the run facts (route, device, seconds, realtime factor) so every run is
@@ -12,11 +12,17 @@ faster-whisper fetch the named model (size is large; the repo id is shown first)
 (Apache-2.0 per its model card as of 2026-10-02; PIN the revision you test - `--revision`). VAD is OFF by default (E08: it hurt speed and WER on the
 test corpus); ``--vad`` enables it per clip. Accuracy: WER ~18 % on FLEURS Hebrew (68 clips, the reference machine) - always spot-check names/numbers.
 
+Language (never assumed): ``--language auto`` (the default) lets the model detect it; pass the code once it is known (``he``, ``en``, ``ar`` ...).
+The Hebrew default model is tuned for Hebrew only, so with it any other language is REFUSED (exit 2, nothing written) and the multilingual
+route is printed instead: ``--language <code> --model-id Systran/faster-whisper-large-v3 --allow-download`` (a large download, shown first;
+unmeasured on the reference machine) or ``--model-dir`` of a local multilingual model. A model counts as Hebrew-only when its id or folder
+name contains "ivrit"; ``--model-lang he|multi`` overrides that guess for a local folder.
+
 Usage:
-    python tools/transcribe.py <audio-or-video> -o words.json [--language he] [--model-dir DIR | --allow-download] [--revision SHA]
-                               [--vad] [--beam 5] [--threads N]
+    python tools/transcribe.py <audio-or-video> -o words.json [--language auto|he|en|...] [--model-dir DIR | --allow-download]
+                               [--model-id ID] [--model-lang he|multi] [--revision SHA] [--vad] [--beam 5] [--threads N]
     python tools/transcribe.py --check          (which routes are usable on this machine; imports nothing heavy beyond find_spec)
-Exit: 0 transcribed, 2 refused (no model, no download permission, missing input, no words), 3 tool error.
+Exit: 0 transcribed, 2 refused (no model, no download permission, missing input, no words, a language the model is not for), 3 tool error.
 """
 
 from __future__ import annotations
@@ -33,6 +39,27 @@ from pathlib import Path
 import _common  # noqa: F401
 
 DEFAULT_HE_MODEL = "ivrit-ai/whisper-large-v3-turbo-ct2"
+MULTILINGUAL_MODEL = "Systran/faster-whisper-large-v3"
+
+
+def hebrew_only(model_ref: str, model_lang: str | None) -> bool:
+    """Pure: is this model tuned for Hebrew only? An explicit --model-lang wins; otherwise the ivrit name decides."""
+    if model_lang:
+        return model_lang == "he"
+    return "ivrit" in str(model_ref).lower()
+
+
+def language_refusal(requested: str, detected: str | None, model_ref: str, model_lang: str | None) -> str | None:
+    """Pure: the refusal text when the speech language does not fit a Hebrew-only model, else None."""
+    if not hebrew_only(model_ref, model_lang):
+        return None
+    lang = requested if requested != "auto" else (detected or "auto")
+    if lang in ("he", "iw", "auto"):
+        return None
+    how = "detected" if requested == "auto" else "requested"
+    return (f"transcribe: the speech language is {lang!r} ({how}), but {model_ref!r} is tuned for Hebrew only; nothing was written. "
+            f"For {lang!r} use a multilingual model: --language {lang} --model-id {MULTILINGUAL_MODEL} --allow-download (a large download: "
+            f"show it to the user and get their yes first), or --model-dir <a local multilingual model> --model-lang multi.")
 
 
 def available_routes() -> dict:
@@ -74,16 +101,18 @@ def run_faster_whisper(path, model_ref, a, local: bool):
     for s in segs:
         for w in s.words or []:
             words.append({"w": w.word, "start": w.start, "end": w.end, "prob": w.probability})
-    return words, {"language": info.language, "duration_s": round(float(info.duration), 3), "device": "cpu", "compute_type": "int8"}
+    return words, {"language": info.language, "language_probability": round(float(getattr(info, "language_probability", 0.0) or 0.0), 3),
+                   "duration_s": round(float(info.duration), 3), "device": "cpu", "compute_type": "int8"}
 
 
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(prog="transcribe", description=__doc__.split("\n\n")[0])
     ap.add_argument("media", nargs="?")
     ap.add_argument("-o", "--out")
-    ap.add_argument("--language", default="he")
+    ap.add_argument("--language", default="auto", help="speech language code, or auto (detect); never assumed")
     ap.add_argument("--model-dir")
     ap.add_argument("--model-id", default=DEFAULT_HE_MODEL)
+    ap.add_argument("--model-lang", choices=("he", "multi"), help="what a local --model-dir is for (default: guessed from its name)")
     ap.add_argument("--allow-download", action="store_true")
     ap.add_argument("--revision")
     ap.add_argument("--vad", action="store_true")
@@ -95,7 +124,7 @@ def main(argv=None) -> int:
 
     routes = available_routes()
     if a.check:
-        print(json.dumps({"routes": routes, "default": choose_route(routes), "default_model_id": DEFAULT_HE_MODEL}, indent=2))
+        print(json.dumps({"routes": routes, "default": choose_route(routes), "default_model_id": DEFAULT_HE_MODEL, "multilingual_model_id": MULTILINGUAL_MODEL}, indent=2))
         return 0 if choose_route(routes) else 2
     if not a.media or not a.out:
         ap.error("need <media> and -o words.json")
@@ -114,6 +143,11 @@ def main(argv=None) -> int:
         print(f"transcribe: {model_dir} is not a CTranslate2 model folder (no model.bin). Point --model-dir (or [models] asr_model_dir) at the folder "
               "that holds model.bin, or use --allow-download.", file=sys.stderr)
         return 2
+    model_ref = model_dir or a.model_id
+    early = language_refusal(a.language, None, model_ref, a.model_lang)
+    if early:
+        print(early, file=sys.stderr)
+        return 2
     t0 = time.monotonic()
     try:
         if model_dir:
@@ -129,6 +163,10 @@ def main(argv=None) -> int:
     except Exception as exc:  # noqa: BLE001
         print(f"transcribe: {type(exc).__name__}: {exc}", file=sys.stderr)
         return 3
+    late = language_refusal(a.language, facts.get("language"), model_ref, a.model_lang)
+    if late:
+        print(late + f" (detection probability {facts.get('language_probability')})", file=sys.stderr)
+        return 2
     words = normalize_words(words)
     if not words:
         print("transcribe: the engine returned no words (silence, wrong language, or a model problem): refusing to write an empty transcript as success", file=sys.stderr)

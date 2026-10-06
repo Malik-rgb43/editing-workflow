@@ -6,7 +6,7 @@
 | Field | Value |
 |---|---|
 | Stage | a variant of stages 1–8 for one long source → N short clips |
-| Owner skill | `pro-video-editor` (cuts/captions), `hebrew-captions-transcription`, `render-qa-delivery`; selection is this playbook |
+| Owner skill | `pro-video-editor` (cuts/captions), `captions-transcription`, `render-qa-delivery`; selection is this playbook |
 | Artifacts (exact files) | `projects/<name>/_work/proxy.mp4` (low-res proxy), `_work/transcript.json` (whole episode), `_work/selection.md` (the selection table), `_work/reframe_plan.json` (per clip: mode per span), one `projects/<name>_clip<k>/` per chosen clip, `final/<name>_clip<k>_<platform>_<aspect>.mp4` |
 | Exit gate | **GP — chosen clips only are built; each passes the stand-alone gate and wf-06; the rubric result is labelled provisional** |
 | Target time | **not measured** — clip lengths seen by the author ran from 54 s to 3.3 min (a range, not a target) |

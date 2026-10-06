@@ -10,8 +10,8 @@ Load when a ledger field is missing or you are composing a round. Shared techniq
 - Do not ask what is already known (read the source tree and the message first) and do not ask infrastructure questions (tools, folders): decide and say why in one line.
 - "תמשיך" / "continue" / "whatever you think" = take every recommended option, mark `D`, say so in ONE line (`Defaults taken: 9:16, 45 s, silence-cut only, ...`). It counts as the user's choice. It never covers a blocking dimension the user has not seen.
 
-- **Round 0, always first (owner rule 2026-10-04): the concept and who decides it.** One round, before anything else: what the video is for (one line), *who decides the concept* (`full control - you decide` / `I define it`), and the **caption language** (the speech language / another language / no captions). Never assume Hebrew: not every student speaks Hebrew or wants Hebrew captions.
-- **Full control** ("אתה מחליט", "you decide") = decide every remaining dimension yourself (format, length, tone, structure, hook, look, font, music, CTA wording), mark each `D`, say the decisions in ONE line and show them in the draft for approval. Ask only facts you cannot know (product facts, rights, consent, a deadline) and the caption language if Round 0 did not settle it.
+- **Round 0, always first (owner rule 2026-10-04), ONE message:** what the video is for (one line), *who decides the concept* (`full control - you decide` / `I define it`), the **speech and caption language** (which language is spoken; captions in it / a translation, say which / no captions), **consent** of the people on camera if unclear, and the **missing facts** (offer, prices, names, dates, contact details). Never assume Hebrew: not every student speaks Hebrew or wants Hebrew captions. The answer locks CAP (a blocking row) and gives `prep.py` its `--language`.
+- **Full control** ("אתה מחליט", "you decide") = decide every remaining taste dimension yourself (format, length, tone, structure, hook, look, font, music, the CTA wording, the file name), mark each `D`, say the decisions in ONE line and show them in the draft for approval. Facts are never decided: the offer, prices, names, dates, claims and contact details (a CTA's URL, phone or price) are asked in one bundled question, with rights, consent and a deadline.
 
 ## 2. Round plan
 | Round | Dimensions (max 4) | Why this order |
@@ -19,9 +19,9 @@ Load when a ledger field is missing or you are composing a round. Shared techniq
 | 1 | FMT, LEN, STR (footage), BAR | they change everything downstream; a quality bar asked after approval forced a rebuild once. COLOR: check the folder yourself first and ask only if unclear |
 | 2 | HOOK, TON, LOOK, MOT | the feel |
 | 3 | TYPE, 3D, BROLL, BRAND | the look of the parts (BRAND from files the user supplies, never invented) |
-| 4 | CAP, MUS, SFX, CTA (+ VO) | the finish; CTA is always asked and is `D` only on "continue" |
-| 5 | FILE, VAR, DUE (+ rights, consent, AI-disclosure facts) | the exact deliverable and the variant matrix |
-Same plan as the shared technique `agent-content/techniques/question-bank.md` (canonical, with the full Hebrew bank and per-type questions). Stop when no blocking row is open (FMT, LEN, TON, BAR, CTA, FILE; STR and COLOR with footage; VAR with several files); skip any dimension the footage or a reference already answers. Typical total: 1-3 rounds when the user answers fully, up to 5 for a vague start.
+| 4 | MUS, SFX, CTA (+ VO) | the finish; CAP was settled in Round 0. The CTA wording is `D` on "continue" or full control; a CTA fact (URL, phone, price) is always asked |
+| 5 | VAR, DUE (+ rights, AI-disclosure facts) | the variant matrix; FILE is a default name said back, never a question |
+Same plan as the shared technique `agent-content/techniques/question-bank.md` (canonical, with the full Hebrew bank and per-type questions). Stop when no blocking row is open (FMT, LEN, TON, BAR, CTA, CAP; STR and COLOR with footage; VAR with several files; FILE as a said-back default); skip any dimension the footage or a reference already answers. Typical total: 1-3 rounds when the user answers fully, up to 5 for a vague start.
 
 ## 3. The bank (Hebrew question | English question | options, first = recommended)
 | Dim | Hebrew | English | Options |
@@ -37,16 +37,16 @@ Same plan as the shared technique `agent-content/techniques/question-bank.md` (c
 | MOT | איזו שפת תנועה? | Which motion language? | clean and smooth (one continuous camera, eased) (rec.) / snap and drift / minimal |
 | 3D | באילו ביטים תלת-ממד? | Which beats get 3D? | 2-3 hero beats with a reason each (rec.) / none / heavy. Decide per beat, not per video |
 | BROLL | איזה בי-רול? | Which B-roll? | real footage + motion-graphics layer (rec.) / UI rebuilt in code / stock only / none. No AI-looking stills of people |
-| CAP | כתוביות? באיזו שפה? | Captions? In which language? | language first (asked in Round 0, never assumed): the speech language / a translation (say which) / none. Style: word-group cards that animate in AND out (rec.) / keywords only / none (default for motion launches) |
+| CAP | כתוביות? באיזו שפה? | Captions? In which language? | language first (Round 0, blocking, never assumed): the speech language / a translation (say which) / none. Style: word-group cards that animate in AND out (rec.) / keywords only / none (default for motion launches) |
 | MUS | מוזיקה? (שואלים תמיד, גם אם לרפרנס אין) | Music? (ask even if the reference has none) | a licensed bed with a SOURCE row (rec.) / trending sound (own account only) / none |
 | SFX | אפקטי קול? | Sound effects? | only on visible events, quiet under speech (rec.) / rich (launch) / none |
 | VO | קריינות והגייה של שמות? | Voice-over and name pronunciation? | the source voice (rec.) / TTS with a spelled lexicon / none |
-| CTA | מה הצופה עושה בסוף ומה כתוב? | What does the viewer do at the end; what is written? | a proposed exact line + end card <= 3 s (rec.) / the client's own words / none. Always asked |
-| FILE | איך לקרוא לקובץ הסופי? | Final file name? | `<name>_9x16.mp4` (rec.) / the user's exact name (it wins) |
+| CTA | מה הצופה עושה בסוף ומה כתוב? | What does the viewer do at the end; what is written? | a proposed exact line + end card <= 3 s (rec.) / the client's own words / none. The wording is yours under full control; its facts (URL, phone, price) are always asked |
+| FILE | (not asked) | (not asked) | default `<name>_9x16.mp4`, said back on the defaults line, `D`; the user's exact name wins when given |
 | VAR | יש גרסאות? | Variants? | one (rec.) / hooks A/B/C / lengths / ratios / no-music, no-captions versions |
 | DUE | יש דד-ליין? | Deadline? | none, quality first (rec.) / a date: say what scope shrinks |
 | COLOR | יש קובץ מצלמה מקורי? צריך תיקון צבע? | Is there a camera original; does colour need correcting? | check yourself first (`source_inventory.py`); correct from the camera original (rec.) / footage is fine / the user's own look |
 | BRAND | לוגו, צבעים, פונטים? | Logo, colours, fonts? | from the client note or site; ask, never invent; use the logo file as supplied |
 
 ## 4. Never-guess list
-Platform, length, tone, CTA, structure (silence cut vs rebuild) and quality bar block the concept. Missing footage, missing subject or missing text: ask ONE concentrated question while doing independent work (read the tree, probe files); never replace a filmed speaker with slides or an AI character without consent, and never carry the reference product's claims to the user's product.
+Platform, length, tone, CTA, caption language, structure (silence cut vs rebuild) and quality bar block the concept (under full control they are your said-back `D` decisions, except the caption language and the facts). Missing footage, missing subject or missing text: ask ONE concentrated question while doing independent work (read the tree, probe files); never replace a filmed speaker with slides or an AI character without consent, and never carry the reference product's claims to the user's product.

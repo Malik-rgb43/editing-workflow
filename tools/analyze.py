@@ -10,7 +10,7 @@ service; a remote lookup needs approval and a match would grant no licence). ASR
 
 Usage:
     python tools/analyze.py <video|folder> --out analysis/<name> [--detail quick|standard|full] [--asr auto|always|never] [--model-dir DIR | --allow-download]
-                            [--language he] [--exclude end_card:42.1-45 ...] [--private] [--force] [--timeout 3600]
+                            [--language auto|he|en|...] [--exclude end_card:42.1-45 ...] [--private] [--force] [--timeout 3600]
     python tools/analyze.py --check
     python tools/analyze.py <URL> --download --out analysis      (needs yt-dlp; downloads ONLY that URL; ask the user first)
 Folder input: one sub-folder per video under --out. Exit: 0 written, 2 refused / failed, 3 tool error. Heavy: run under ``render_lock run -- ...``.
@@ -421,7 +421,7 @@ def main(argv=None) -> int:
     ap.add_argument("--out")
     ap.add_argument("--detail", choices=("quick", "standard", "full"), default="standard")
     ap.add_argument("--asr", choices=("auto", "always", "never"), default="auto")
-    ap.add_argument("--language", default="he")
+    ap.add_argument("--language", default="auto", help="speech language code, or auto (detect); never assumed")
     ap.add_argument("--model-dir")
     ap.add_argument("--revision")
     ap.add_argument("--allow-download", action="store_true", help="let the ASR route fetch its model (large; shown by transcribe first)")

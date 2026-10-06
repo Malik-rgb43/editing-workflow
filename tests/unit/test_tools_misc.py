@@ -64,6 +64,36 @@ def test_transcribe_refuses_without_model_and_without_download_permission(tmp_pa
     assert "allow-download" in p.stderr or "no usable route" in p.stderr
 
 
+def test_transcribe_never_assumes_hebrew_and_the_hebrew_model_refuses_other_languages():
+    import transcribe as tr
+
+    he = tr.DEFAULT_HE_MODEL
+    assert tr.hebrew_only(he, None) and not tr.hebrew_only(tr.MULTILINGUAL_MODEL, None)
+    assert tr.hebrew_only("/models/my-model", "he") and not tr.hebrew_only("/models/ivrit-ct2", "multi")  # --model-lang wins
+    assert tr.language_refusal("he", None, he, None) is None
+    assert tr.language_refusal("auto", None, he, None) is None  # before the run: nothing detected yet
+    assert tr.language_refusal("auto", "he", he, None) is None
+    msg = tr.language_refusal("auto", "en", he, None)
+    assert "'en' (detected)" in msg and tr.MULTILINGUAL_MODEL in msg and "yes" in msg
+    assert "requested" in tr.language_refusal("ar", None, he, None)
+    assert tr.language_refusal("en", "en", tr.MULTILINGUAL_MODEL, None) is None
+    p = run("transcribe", "--help")
+    assert "auto" in p.stdout
+
+
+def test_transcribe_refuses_an_english_request_on_the_hebrew_model_before_running(tmp_path):
+    wav = tmp_path / "a.wav"
+    wav.write_bytes(b"RIFF....")
+    model = tmp_path / "ivrit-ct2"
+    model.mkdir()
+    (model / "model.bin").write_bytes(b"x")
+    p = run("transcribe", wav, "-o", tmp_path / "w.json", "--language", "en", "--model-dir", model)
+    if "no usable route" in p.stderr:
+        pytest.skip("faster-whisper is not installed here")
+    assert p.returncode == 2 and not (tmp_path / "w.json").exists()
+    assert "tuned for Hebrew only" in p.stderr and "--model-lang multi" in p.stderr
+
+
 def test_transcribe_missing_input_exits_nonzero(tmp_path):
     p = run("transcribe", tmp_path / "nope.wav", "-o", tmp_path / "w.json")
     assert p.returncode == 2
@@ -173,3 +203,54 @@ def test_frame_qa_allows_pops_only_inside_planned_fast_runs():
     findings, _ = frame_qa.analyze(means, diffs, clock=clock, allow_frames=allow)
     codes = {(f.code, f.frame) for f in findings}
     assert ("pop_allowed", 5) in codes and ("pop_frame", 15) in codes and ("pop_frame", 5) not in codes
+
+
+def test_session_hint_lists_projects_newest_first_and_stays_silent_without_any(tmp_path, monkeypatch):
+    sys.path.insert(0, str(REPO / "tools"))
+    import session_hint as sh
+
+    for name in ("old", "new"):
+        (tmp_path / "projects" / name / "hf").mkdir(parents=True)
+        (tmp_path / "projects" / name / "hf" / "index.html").write_text("<html>", encoding="utf-8")
+        time.sleep(0.05)
+    found = sh.find_projects(tmp_path, None)
+    assert [p.name for p in found] == ["new", "old"]
+    assert [p.name for p in sh.find_projects(tmp_path / "projects" / "old" / "hf", None)] == ["old"]  # started inside hf/
+    assert [p.name for p in sh.find_projects(tmp_path / "projects" / "old", tmp_path)] == ["new", "old"]  # a project + its work root, no duplicate
+    monkeypatch.setenv("AVC_PATHS_WORK_ROOT", str(tmp_path))
+    assert sh.configured_work_root(REPO) == tmp_path
+    p = subprocess.run([sys.executable, str(REPO / "tools" / "session_hint.py"), "--cwd", str(tmp_path)], capture_output=True, text=True, encoding="utf-8")
+    ctx = json.loads(p.stdout)["hookSpecificOutput"]
+    assert p.returncode == 0 and ctx["hookEventName"] == "SessionStart"
+    assert "hf_studio.py" in ctx["additionalContext"] and "FIRST action" in ctx["additionalContext"]
+    empty = tmp_path / "empty"
+    empty.mkdir()
+    monkeypatch.setenv("AVC_PATHS_WORK_ROOT", str(empty))
+    p = subprocess.run([sys.executable, str(REPO / "tools" / "session_hint.py"), "--cwd", str(empty)], capture_output=True, text=True, encoding="utf-8")
+    assert (p.returncode, p.stdout) == (0, "")
+
+
+def test_plugin_session_start_hook_runs_the_session_hint():
+    hooks = json.loads((REPO / "hooks" / "hooks.json").read_text(encoding="utf-8"))["hooks"]["SessionStart"][0]["hooks"][0]
+    assert "${CLAUDE_PLUGIN_ROOT}/tools/session_hint.py" in hooks["command"] and hooks["timeout"] <= 10
+
+
+def test_captions_export_groups_words_into_cues_for_srt_vtt_and_txt(tmp_path):
+    import captions_export as ce
+
+    words = [{"w": "Hello", "start": 0.0, "end": 0.3}, {"w": "there.", "start": 0.35, "end": 0.6}, {"w": "This", "start": 2.0, "end": 2.2},
+             {"w": "is", "start": 2.25, "end": 2.3}, {"w": "after", "start": 2.35, "end": 2.6}, {"w": "a", "start": 2.62, "end": 2.65}, {"w": "pause", "start": 2.7, "end": 3.0}]
+    cs = ce.cues(words, max_words=3)
+    assert [c["text"] for c in cs] == ["Hello there.", "This is after", "a pause"]
+    assert cs[0]["end"] == 0.8  # extended to the minimum duration, into the gap only
+    srt = ce.render(cs, "srt")
+    assert srt.startswith("1\n00:00:00,000 --> 00:00:00,800\nHello there.\n")
+    assert ce.render(cs, "vtt", offset=1.0).startswith("WEBVTT\n\n00:00:01.000 --> 00:00:01.800\n")
+    he = [{"w": "שלום", "start": 0.0, "end": 0.4}, {"w": "לכולם?", "start": 0.5, "end": 0.9}, {"w": "עוד", "start": 1.0, "end": 1.2}]
+    assert [c["text"] for c in ce.cues(he)] == ["שלום לכולם?", "עוד"]
+    p = tmp_path / "w.json"
+    p.write_text(json.dumps({"schema": "avc.words/1", "words": words}), encoding="utf-8")
+    assert run("captions_export", p, "-o", tmp_path / "out.vtt").returncode == 0
+    assert (tmp_path / "out.vtt").read_text(encoding="utf-8").startswith("WEBVTT")
+    p.write_text(json.dumps({"words": []}), encoding="utf-8")
+    assert run("captions_export", p, "-o", tmp_path / "x.srt").returncode == 2

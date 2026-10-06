@@ -21,7 +21,7 @@ Build is deterministic: the same spec gives the same `board_id` (the build time 
 | `banned` | animation/transition names refused for this project; default `["bounce","crossfade"]` (owner banned list); set it from the project's DESIGN.md |
 | `safe_zone` | `{top,bottom,left,right,canvas:[W,H],rail_bottom,label}`; default is "house preset v1" (300/672/140/192 on 1080x1920, caption rail <= y 1450): unverified pixels, shown as a preset not a platform law |
 | `decisions[]` | 1 or more; ids `[a-z][a-z0-9_]*`, unique |
-| `decisions[].kind` | `font`, `caption_anim`, `easing`, `palette`, `transition`, `layout`, `text` |
+| `decisions[].kind` | `font`, `caption_anim`, `easing`, `palette`, `transition`, `layout`, `text`, `image` |
 | `decisions[].options[]` | 2-12 per decision (8-12 is the target; fewer than 3 prints a warning that chat may be faster); option `id` `[A-Za-z0-9_-]{1,20}`, not `none`; `label` required |
 
 Option fields by kind:
@@ -34,6 +34,7 @@ Option fields by kind:
 | `transition` | `trans` in `wipe push iris slide_up` (`crossfade` refused by default), optional `color_b` | A to B on a loop (still or dark plate as A) |
 | `layout` | `caption_y_pct` 0-100 | the caption on the phone frame with the safe zone (green dashed) and the caption rail limit (red dashed); a warning chip when the caption would sit under the rail |
 | `text` | `text` | a hook or headline variant in the phone frame |
+| `image` | `images` (1-4 still files, jpg/png/webp, <= 1.5 MB each, paths relative to the spec), optional `caption` | the real stills of that option side by side (a style option's key frames, a B-roll pick, generated takes); their hashes are part of the board id |
 
 ## 3. What the page does (and what it refuses)
 - Self-contained: no remote font, script, image or request (the builder scans its own output and aborts if it finds one); works offline by double click; fonts and the still are data URIs.

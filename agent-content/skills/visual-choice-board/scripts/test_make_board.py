@@ -66,13 +66,34 @@ class BoardTests(unittest.TestCase):
             self.assertIn(f'id="panel-{d["id"]}"', page)
             self.assertIn(f'id="tab-{d["id"]}"', page)
 
-    def test_all_seven_kinds_render(self) -> None:
+    def test_all_kinds_render(self) -> None:
         spec = load_sample()
         spec["decisions"].append({"id": "hook", "title": "Hook", "kind": "text", "options": [
             {"id": "A", "label": "A", "text": "הכותרת הראשונה שלי"}, {"id": "B", "label": "B", "text": "הכותרת השנייה שלי"}]})
-        _, page, _ = self.build(spec)
+        for n in ("a1", "a2", "b1"):
+            (self.dir / f"{n}.jpg").write_bytes(b"\xff\xd8\xff\xe0" + n.encode() * 20)
+        spec["decisions"].append({"id": "style", "title": "Style", "kind": "image", "options": [
+            {"id": "A", "label": "Faithful", "images": ["a1.jpg", "a2.jpg"], "caption": "the reference's own rhythm"},
+            {"id": "B", "label": "Twist", "images": ["b1.jpg"]}]})
+        res, page, man = self.build(spec)
         self.assertIn("הכותרת הראשונה שלי", page)
+        self.assertEqual(page.count('class="optimg"'), 3)
+        self.assertIn("the reference&#x27;s own rhythm", page.replace("&#39;", "&#x27;"))
         self.assertEqual({d["kind"] for d in spec["decisions"]}, mb.KINDS)
+        self.assertEqual(mb.remote_hits(page), [])
+
+    def test_image_options_are_limited_and_change_the_board_id(self) -> None:
+        (self.dir / "x.jpg").write_bytes(b"\xff\xd8\xff\xe0" + b"x" * 40)
+        spec = load_sample()
+        spec["decisions"] = [{"id": "pick", "title": "Pick", "kind": "image", "options": [
+            {"id": "A", "label": "A", "images": ["x.jpg"]}, {"id": "B", "label": "B", "images": ["x.jpg"]}]}]
+        id1 = self.build(spec, "o1")[2]["board_id"]
+        (self.dir / "x.jpg").write_bytes(b"\xff\xd8\xff\xe0" + b"y" * 40)
+        self.assertNotEqual(id1, self.build(spec, "o2")[2]["board_id"])  # new pixels = a new board
+        for bad in ([], ["x.jpg"] * 5, ["missing.jpg"], ["x.txt"]):
+            spec["decisions"][0]["options"][0]["images"] = bad
+            with self.assertRaises(mb.SpecError):
+                mb.validate(json.loads(json.dumps(spec)), self.dir)
 
     def test_no_remote_resources_and_no_network_code(self) -> None:
         _, page, _ = self.build(load_sample())

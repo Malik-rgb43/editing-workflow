@@ -8,8 +8,8 @@
 
 1. Review drafts **live in HyperFrames Studio** (`python tools/hf_studio.py <project>/hf`) instead of rendering a draft per round.
 2. Re-render only **the noted range plus its scene context** (`hf_segment`, snapped outward to whole scenes) — and only for render-only risks (below).
-3. **One** full-quality render, **only after the author approves the preview**.
-4. An **audio-only** change is a remix + remux, never a render.
+3. **One** draft render per round (`hf_deliver ... --draft`): that is the round's one full render, and the notes page opens on it. The delivery render runs only after the notes page returns `approved`.
+4. An **audio-only** change (a level, an SFX, a music swap with its licence row) is a remix + remux, never a render. A **restructure** note (order, length) is shown in PROMPT.md first and asked about before any patch.
 5. **Batch the notes** before any render ("collecting for 5 more minutes, then I fix and render — anything else?").
 6. Benchmark one unit → one-line ETA → if one shot's ETA is > 30 min, offer an alternative (a shorter shot or a hosted quote) before starting.
 

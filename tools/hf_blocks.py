@@ -183,9 +183,11 @@ def cmd_caption_words(a) -> int:
     if not sel:
         print("hf_blocks: no words in that range", file=sys.stderr)
         return 2
-    letters = re.findall(r"[A-Za-z֐-׿]", "".join(w["w"] for w in sel))
-    heb = len(re.findall(r"[֐-׿]", "".join(letters)))
-    rtl = bool(letters) and heb / len(letters) > 0.5
+    # right-to-left scripts: Hebrew, Arabic (+ Persian / Urdu letters), Syriac, Thaana, N'Ko, and their presentation forms
+    rtl_re = r"[\u0590-\u08ff\ufb1d-\ufdff\ufe70-\ufeff]"
+    letters = re.findall(r"[A-Za-z\u00c0-\u024f\u0370-\u04ff]|" + rtl_re, "".join(w["w"] for w in sel))
+    rtl_n = len(re.findall(rtl_re, "".join(letters)))
+    rtl = bool(letters) and rtl_n / len(letters) > 0.5
     out = {"words": json.dumps(sel, ensure_ascii=False), "rtl": rtl, "duration": round(a.to - a.start, 3)}
     text = json.dumps(out, ensure_ascii=False, indent=2)
     if a.out:

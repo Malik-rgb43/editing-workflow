@@ -1,8 +1,14 @@
 # Detector thresholds, keyframe tiers and audio parameters
 
-Load when: tuning or porting the cut detector, choosing `--detail`, or arguing about why a count is off. Source: the author's analyzer as documented in distilled 06 reference-analysis §1.2-§1.4 (checked 2026-10-01); `[PROVEN-internal]` unless stated; values are the author's tuning on his data, not universal constants.
+Load when: tuning, porting or regression-testing the cut detector, choosing `--detail`, or arguing about why a count is off. Source: the author's analyzer as documented in distilled 06 reference-analysis §1.2-§1.4 (checked 2026-10-01); `[PROVEN-internal]` unless stated; values are the author's tuning on his data, not universal constants.
 
 **Hard rule: change a threshold only with a regression run.** Run `scripts/cut_regression.py` on a rights-cleared labelled set before and after; keep the change only if F1 does not drop below the recorded baseline for that set. Never tune by eye. Rejected ideas (owner, tested against his 20-ad ground truth): a zoom-compensated search (hurt punch-in cuts, no gain) and rejecting picture-in-picture swaps outright (hurt real jump cuts: they are flagged `check` instead).
+
+## 0. Regression gate for anyone who changes the detector
+| Predicate | Evidence | If false | Recheck when |
+|---|---|---|---|
+| any change to a detector threshold keeps F1 >= the baseline of the labelled set (author's historical 0.89 = P 0.87 / R 0.91 on 20 hand-verified ads, 339 edit points, private, not reproduced; known blind spot: kinetic type and continuous-camera pieces) | `python scripts/cut_regression.py --pair <analysis dir> <truth.json> ... --min-f1 <baseline>` exit 0 with >= 100 truth points | revert the threshold change | every detector change; never by eye |
+This gate is for whoever edits `src/core/analysis.py`; running an analysis does not need it.
 
 ## 1. What counts as an edit point
 A hard cut OR a transition (whip, slide, dissolve, flash/light leak, glitch, fast zoom/mask transition), **each ONE event**. Not counted: caption/PiP/graphic swaps, camera moves and motion blur, boiling or flickering textures, type swaps on the same flat field. Frames inside a transition are not shots.
@@ -45,6 +51,7 @@ Budget = min(cap, max(floor, floor + per_sec x duration)) frames. Per shot: a fr
 Zoom tool: every frame (or every Nth) of a window, tiles >= 280 px, at most 96 frames per call (`--step 2` on 60 fps), frame-accurate seek; zoom ONE instance of each distinct device (each transition type, caption entry and exit, hook, end card), 3-6 zooms per video, ranges under about 1 s.
 
 ## 4. Audio parameters (author's analyzer; AudioSet model labels are guesses)
+The toolkit's port (`src/core/audio_analysis.py`) runs loudness, silences, transient hits, tempo / beats / key estimates and the energy arc. It has no sound-event model (the Sound events and SFX label rows stay empty) and runs no song identification (the Song ID row is the author's analyzer only); `audio.json` then says `song_id.status: skipped` (or `opted_out` for private input).
 | Stage | Method / parameters |
 |---|---|
 | Extraction | one decode to 16 kHz mono (speech) and 32 kHz mono (events/music); EBU R128 with true peak |
@@ -56,6 +63,6 @@ Zoom tool: every frame (or every Nth) of a window, tiles >= 280 px, at most 96 f
 | Silences | RMS 50 ms window, threshold max(-55 dB, median - 24 dB), gaps >= 0.12 s |
 | Transient hits | onset envelope at 100 fps; strength >= max(0.25, median + 6 MAD); top 80 |
 | Voice present? | speech >= 0.8 s OR singing >= 2.0 s OR weak speech (P >= 0.2) >= 1.5 s; else ASR skipped (auto); music without voice triggers the lyrics pass |
-| Song ID | the two longest music segments, a 12 s window each, one excerpt sent to a recognition service; first hit wins; otherwise "unidentified" |
+| Song ID (author's analyzer only; not in this toolkit) | the two longest music segments, a 12 s window each, one excerpt sent to a recognition service; first hit wins; otherwise "unidentified" |
 
 Reading rule for sound: use BOTH the beat grid and the transient hits; tempo, beats and key are estimates (audit half/double time and variable tempo; librosa beat tracking can return no beats on silence; an onset is a candidate, not a downbeat); SFX, genre and mood are model guesses ("likely a whoosh", never "a drill").

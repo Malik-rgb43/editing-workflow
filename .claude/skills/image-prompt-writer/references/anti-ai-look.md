@@ -23,4 +23,4 @@ Load when: a draft reads generic, or a result looks "AI". Dated 2026-10-03. Most
 `locked-off static camera` not "no shaky camera"; `sharp focus throughout, deep depth of field` not "no blur"; `anatomically correct, all limbs naturally positioned` not "no extra limbs". The only negatives kept: `no text, no labels, no watermark`.
 
 ## 4. Safety filters
-Describe the scene as a filmmaker would (setting, camera, light, physics), not a subject as a note to a friend. Real names, brands and age words are replaced by archetype and visual description. Do not loop on single-word swaps.
+Describe the scene as a filmmaker would (setting, camera, light, physics), not a subject as a note to a friend. Real names and age words are replaced by archetype and visual description; a brand is replaced by a clean plate (a blank screen or sign) and the real asset is composited in post. Do not loop on single-word swaps.

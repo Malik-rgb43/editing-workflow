@@ -1,5 +1,5 @@
 interface:
   display_name: "Speaker Color Correction"
-  short_description: "Colour-correct footage of a person (talking head, interview, UGC, speaker outdoors) from the CAMERA ORIGINAL with scopes"
+  short_description: "Colour-correct footage of a person (talking head, interview, UGC, speaker outdoors, an AI-generated person needing a nat"
 policy:
   allow_implicit_invocation: false

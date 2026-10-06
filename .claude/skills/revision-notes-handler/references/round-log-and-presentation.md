@@ -10,19 +10,21 @@ COLLECTING until 14:35
 2. "משעמם" @ 0:05 | class: replace-concept | ledger: L22 | cause: static caption over static B-roll | replacement: split-screen proof card, number counting up | frames: _work/notes/r3_n2.jpg
 3. "SFX too loud" | class: audio-only | ledger: L23 | cause: gain above -18 dB under VO | render: none
 4. "the speaker is never centred" | class: global-rule | ledger: L24 | cause: zoom origin not on face x | occurrences: 0:10, 0:17-0:24, 0:31 | frames: _work/notes/r3_n4.jpg
+5. "shorter, the offer comes too late" @ 0:22 | class: restructure | ledger: L25 | cause: offer after two proof beats | order: hook, offer, proof 1, CTA (proof 2 cut) | asked: 2026-10-05 "yes" | frames: _work/notes/r3_n5.jpg
+6. "use a calmer song" | class: music-swap | ledger: L26 | cause: 128 bpm drum loop under VO | licence: L27 (library track licence row) | render: none
 PATCH: tools/patch_r3.json
 RENDER full _work/drafts/<name>_v3.mp4
 PRESENTED 2026-10-05
 ```
 - Notes are numbered in the user's order and words (1a, 1b for split claims). Fields are separated by ` | `.
-- One `RENDER full` line per round at most; none for an audio-only round.
+- One `RENDER full` line (the draft render) per round at most; none for a round of only audio-only and music-swap notes. After the notes page returns approved: `APPROVED <date> (review page, round N)`, then the delivery render belongs to `render-qa-delivery`.
 - `PRESENTED <date>` closes the round (the router reads it to decide whether the round is still open).
 
 ## 2. Ledger rows for notes
 Each note adds a row to the `<ledger>` block of `hf/PROMPT.md` (ids continue; row format: `video-brief-intake/references/ledger-template.md`; the shared rules are in `agent-content/techniques/concept-ledger.md`): `said` = the user's words with the round tag, `spec` = the measurable fix, `where / when` = the range, `acceptance check` = how the next draft proves it. Replace-concept: rewrite the range in the PROMPT structure (frames, px, easing, sound). A global rule row lists every occurrence in `where / when`. A motion note also becomes a row in the project's motion table. Then cite the new ids in PROMPT `<structure>` (each id appears at least twice). Order is always **ledger -> PROMPT -> code**.
 
 ## 3. Presentation message (file first, then this)
-Send the file or Studio link immediately, then:
+Open the new draft in the browser pane immediately, unasked, with the notes page for the next round (a path in chat is not showing), then:
 ```
 סבב 3 - <name>_v3: <path or Studio link>
 ההערות שלך:

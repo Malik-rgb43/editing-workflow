@@ -73,6 +73,8 @@ Goal: **≤ 45 min per round and exactly one full render per round** `[RULE-owne
 | **replace-concept** | "boring", "looks AI", "static", "I didn't like it" (taste, not a fault) | a **new beat from the editor's beat menu**, chosen by the *meaning* of the sentence; do not polish the old one; explain in ONE line what you chose and why |
 | **fix** | glitch, position, size, timing, cut, colour | fix the cause from step 3 |
 | **audio-only** | SFX, music, VO level, a swoosh | the audio branch below — **no render** |
+| **restructure** | "shorter", "move this earlier", "cut the middle" (order or length) | show the new order in PROMPT.md (and on the storyboard page when beats change), **ask before patching** |
+| **music-swap** | "another song", "different music" | the audio branch below with a new licence row; no render |
 | **global rule** | "always", "never", or the same note in two rounds | fix **all** occurrences in the film (centring was fixed by section and 17–24 s was missed); add the rule to the style notes (wf-09) |
 
 ### 3.3 The audio-only branch (remix + remux, no render)

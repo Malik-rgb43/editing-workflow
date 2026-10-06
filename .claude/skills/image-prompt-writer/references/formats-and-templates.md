@@ -8,7 +8,7 @@ Load when: choosing how to write a still-image prompt, or filling a template. Da
 | One keyframe, hero frame or B-roll still | **B - prose** | one composition, no chrome; reads like a cinematographer's note |
 | Character / location / prop sheet, storyboard grid, a thumbnail with one text element | **A - JSON** | regions, counts and labels are explicit, so layout survives; easy to diff between iterations |
 | The user gave only a theme and wants the model to derive the composition | **C - meta-prompt** | the model chooses composition and light; use only when the user accepts surprise |
-Always one fenced code block per prompt. Never HTML, a table or a checklist inside the answer.
+Always one fenced code block per prompt, with its header on the line above: `shot_id: <storyboard beat id> · <ratio> · target: _work/stills/<id>.png`. Never HTML, a table or a checklist inside the answer.
 
 ## 2. Format B - prose (one frame)
 One flowing paragraph in this order: **medium and ratio -> subject (identity tag) -> action or state -> setting -> light direction -> lens or stock -> composition -> exclusions.**
@@ -50,6 +50,7 @@ Show the result to the user before building anything on it; a derived compositio
 | Keyframe / start frame for a video shot | B | the shot's first instant; the same prefix and character block as the sheet; camera height and lens that the video prompt will keep | a pose that cannot continue into the planned motion |
 | Hero frame (the look of the whole film) | B | light direction, palette hexes, lens, grain; iterate until exact, then reuse as a style reference | changing two variables per round |
 | B-roll still of an object or place | B | one material with imperfection, one light direction, empty space for a super | "beautiful", "stunning" instead of a lens and a light |
+| A beat that shows a real brand, logo or app | B | a clean plate where the brand goes (an empty phone screen, a blank sign, a plain label facing camera, flat and evenly lit); the real asset is composited in post | the brand name in the prompt (garbled logo, rights question) |
 | Thumbnail / cover | A or B | one focal point readable at 160 px wide; ONE text element only if asked, exact string, proofread | three text elements and a tiny subtitle |
 | Storyboard grid | A | N regions, each with a shot type and what changes; same prefix | different looks per region |
 

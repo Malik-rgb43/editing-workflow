@@ -18,11 +18,12 @@ Load when you are about to change project files for a round, or choose how to ve
 | 2 look | Studio preview (`python tools/hf_studio.py <project>/hf`); hot reload measured 0.04-0.9 s on 0.8.98 | seconds | position, timing, copy, motion feel |
 | 3 stills | `snapshot --at t1,t2,... --describe false` (<= 5 timestamps per call; `--describe false` always) | 1-2 min per pack | a single moment: first frame of a scene, an effect at peak, a keyword at full size. Does not prove cuts or motion |
 | 4 segment | `hf_segment --from A --to B --qa` (range snapped outward to whole scenes, picture only) | 2-4 min | render-only risks: `<video>` layers (about 1 frame off in Studio), 3D, filters, cuts |
-| 5 critic | the SAME critic continued by message with only the fix list ("verify on the frames, re-score <= 250 words") | minutes | independent reading of the fixes |
-| 6 full | ONE full render under the lock, then `frame_qa`, `caption_qa`, `motion_qa`, `face_center`, `color_check` as relevant on the NEW file | 8-13 min observed (4-21) | everything |
+| 5 critic | the critic sub-agent that ran `render-qa-delivery`'s visual review (stage 7) on this film, continued with SendMessage and only the fix list ("verify on the frames, re-score <= 250 words"); a film under 20 s has no critic (self-review on the sheets); never another user session | minutes | independent reading of the fixes |
+| 6 draft | the round's ONE draft render under the lock, then `frame_qa`, `caption_qa`, `motion_qa`, `face_center`, `color_check` as relevant on the NEW file | 8-13 min observed (4-21) | everything |
 A global rule is verified at every occurrence (a segment or a snapshot each). Modelled machine time for a six-note round: about 240 s with Studio-first review vs about 430 s without (E12 model; not a measured saving for you).
 
-## 3. One full render per round
+## 3. One draft render per round
+Each round: check in Studio, then ONE draft render (`python tools/hf_deliver.py ... --draft`), which is the round's one full render, then the notes page on that file. The delivery render runs only after the notes page returns `approved` (`render-qa-delivery` stage 5).
 - Collect first ("collecting notes 5 more minutes, then I fix and render"): diagnose and patch while the user types, render segments only.
 - Before the render: all reviewers returned, lock free (`render_lock status`), no heavy agent running, Studio closed or ids stripped, assets in.
 - Long job (> 3 min): benchmark one unit, one-line ETA in chat, `timeout` (3 x ETA), background with a log and a `STATE` line, heartbeat every ~5 min, watchdog (0 frames after 3 min or no progress for 10 min: kill your own process tree, check the lock, one snapshot, retry once). The user must never have to ask "what about the render?".

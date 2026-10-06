@@ -17,7 +17,8 @@ Files (schema_version 1.0.0; field tables in references/style-dna-card.md and re
   options.json    options[3]: Faithful | Elevated | Twist, each with decisions{}, cost, risk, ...
   rights.json     context, reference{}, assets_taken_from_reference[], music{}, fonts[], distribution{}
 
---root is the directory that `analysis_dir` and evidence paths are relative to (default: current directory).
+--root is the project root that `analysis_dir` and evidence paths are relative to (default: current directory).
+Layout: the analysis at <project>/_work/analysis/<ref-id>/, this skill's files at <project>/_work/style/<ref-id>/.
 Exit codes: 0 PASS | 1 FAIL | 2 INSUFFICIENT_EVIDENCE (file or analysis folder missing, hash not verifiable).
 Checks structure, provenance and consistency only; it cannot judge whether the style reading is right,
 and a PASS is not a licence to reuse anything. Stdlib only (Python 3.9+).
@@ -192,7 +193,7 @@ def check_card(card, root: Path):
         elif conf != "L" and not row.get("evidence"):
             r.add("fail", "ROW_EVIDENCE", f"{rid}: no source_key and no evidence path (sheet, zoom, px_measure output)")
         for ev in row.get("evidence") or []:
-            if isinstance(ev, str) and not ev.startswith("analysis/") and "#" not in ev and not (root / ev).exists():
+            if isinstance(ev, str) and not ev.startswith("_work/analysis/") and "#" not in ev and not (root / ev).exists():
                 r.add("insufficient", "EVIDENCE_MISSING", f"{rid}: evidence file {ev} not found")
         # colour hexes only from full-resolution flat samples
         is_hex_value = isinstance(row["value"], str) and HEX_RE.match(row["value"]) is not None
@@ -396,7 +397,7 @@ def combine(reports):
 
 # --------------------------------------------------------------------------- self-check
 def _fixture(td: Path):
-    adir = td / "analysis" / "ref-abc123"
+    adir = td / "_work" / "analysis" / "ref-abc123"
     adir.mkdir(parents=True)
     meas = {"input": {"duration_s": 30.0}, "pacing": {"cuts_per_min": 36.0, "median_shot_s": 1.1}, "review": {"reviewed_by": "model"}}
     (adir / "measurements.json").write_text(json.dumps(meas), encoding="utf-8")
@@ -410,22 +411,22 @@ def _fixture(td: Path):
         return d
     rows = [
         row("R01", "pacing", "cuts_per_min", 36.0, unit="per_min", source_key="measurements:pacing.cuts_per_min", confidence="H", confirmed_by=["frame zoom 3.2 s"]),
-        row("R02", "hook", "first_text_s", 0.4, evidence=["analysis/ref-abc123/measurements.json#hook"], tolerance={"mode": "pct", "value": 20, "abs_floor": 0.3}),
-        row("R03", "transitions", "types", "whip x6, hard x20", unit="list", tolerance={"mode": "categorical"}, evidence=["analysis/ref-abc123/sheets"]),
-        row("R04", "camera", "punch_in_pct", 115, unit="%", evidence=["analysis/ref-abc123/zoom"]),
+        row("R02", "hook", "first_text_s", 0.4, evidence=["_work/analysis/ref-abc123/measurements.json#hook"], tolerance={"mode": "pct", "value": 20, "abs_floor": 0.3}),
+        row("R03", "transitions", "types", "whip x6, hard x20", unit="list", tolerance={"mode": "categorical"}, evidence=["_work/analysis/ref-abc123/sheets"]),
+        row("R04", "camera", "punch_in_pct", 115, unit="%", evidence=["_work/analysis/ref-abc123/zoom"]),
         row("R05", "type", "font", "rounded heavy sans", unit="text", confidence="L", nearest_match=True, licence="OFL", tolerance={"mode": "informational"}),
-        row("R06", "colour", "accent_hex", "#F2C230", unit="hex", source="fullres_png", flat_fill_std=3.2, evidence=["analysis/ref-abc123/px_0003.txt"], tolerance={"mode": "exact"}),
+        row("R06", "colour", "accent_hex", "#F2C230", unit="hex", source="fullres_png", flat_fill_std=3.2, evidence=["_work/analysis/ref-abc123/px_0003.txt"], tolerance={"mode": "exact"}),
         row("R07", "broll", None, None, na_reason="speakerless promo, no B-roll layer"),
         row("R08", "layering", None, None, na_reason="no cutout"),
         row("R09", "sound", "tempo_bpm", 128.0, unit="bpm", source_key="audio:music.tempo_bpm", tolerance={"mode": "pct", "value": 8}),
-        row("R10", "endcard", "duration_s", 2.5, evidence=["analysis/ref-abc123/zoom"]),
-        row("R11", "safezone", "key_text_bottom_y", 1180, unit="px", evidence=["analysis/ref-abc123/sheets"], tolerance={"mode": "abs", "value": 40}),
+        row("R10", "endcard", "duration_s", 2.5, evidence=["_work/analysis/ref-abc123/zoom"]),
+        row("R11", "safezone", "key_text_bottom_y", 1180, unit="px", evidence=["_work/analysis/ref-abc123/sheets"], tolerance={"mode": "abs", "value": 40}),
     ]
     for rr in rows:
         if rr["value"] is None:
             rr.pop("unit", None); rr.pop("tolerance", None); rr.pop("seen_at", None); rr.pop("method", None); rr.pop("confidence", None)
             rr["metric"] = "n/a"
-    card = {"schema_version": SCHEMA, "reference": {"id": "yt-abc123", "analysis_dir": "analysis/ref-abc123", "analysis_sha256": h,
+    card = {"schema_version": SCHEMA, "reference": {"id": "yt-abc123", "analysis_dir": "_work/analysis/ref-abc123", "analysis_sha256": h,
             "pinned_segment": {"start_s": 0.0, "end_s": 28.0, "look": "final look", "pinned_by": "user"}, "role": "all"},
             "rows": rows, "beat_map": [{"ref_beat": "0-1.4", "function": "hook", "mapped_device": "number slam on the user's number"}]}
     dec = lambda **kw: {"pacing": "36/min", "hook": "offer first", "transitions": "whips", "type": "rounded heavy", "camera": "115% punch", "palette": "ref accent", "sound": "128 bpm bed"} | kw
@@ -441,8 +442,8 @@ def _fixture(td: Path):
               "fonts": [{"reference_font_nearest": "Rubik", "licence": "OFL", "file": "hf/fonts/Rubik.woff2"}],
               "logos_brands": {"reference_logos_used": False, "client_brand_used": True}, "people_likeness": {"reference_people_used": False},
               "distribution": {"reference_in_student_repo": False, "analysis_reports_shipped": False}}
-    sd = td / "style"
-    sd.mkdir()
+    sd = td / "_work" / "style" / "yt-abc123"
+    sd.mkdir(parents=True)
     for n, o in (("style_dna.json", card), ("options.json", opts), ("rights.json", rights)):
         (sd / n).write_text(json.dumps(o, ensure_ascii=False), encoding="utf-8")
     return sd
@@ -492,7 +493,7 @@ def self_check() -> int:
         expect("card tied to another analysis -> ANALYSIS_HASH", "ANALYSIS_HASH" in codes(run_all(sd, b)))
 
         b, sd = fresh("noan")
-        (b / "analysis" / "ref-abc123" / "measurements.json").unlink()
+        (b / "_work" / "analysis" / "ref-abc123" / "measurements.json").unlink()
         out, code = combine(run_all(sd, b))
         expect("no analysis folder -> INSUFFICIENT_EVIDENCE", code == 2)
 

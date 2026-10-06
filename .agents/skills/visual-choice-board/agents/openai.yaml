@@ -1,5 +1,5 @@
 interface:
   display_name: "Visual Choice Board"
-  short_description: "Build one interactive HTML board that shows every option of a visual taste choice (fonts, caption animations, easings, p"
+  short_description: "Build one HTML board showing every option of a visual choice (font, caption animation, easing, palette, transition, layo"
 policy:
   allow_implicit_invocation: false

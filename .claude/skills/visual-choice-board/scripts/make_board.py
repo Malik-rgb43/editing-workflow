@@ -41,7 +41,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 VERSION = "0.1.0"
-KINDS = {"font", "caption_anim", "easing", "palette", "transition", "layout", "text"}
+KINDS = {"font", "caption_anim", "easing", "palette", "transition", "layout", "text", "image"}
+MAX_IMAGES, MAX_IMAGE_KB = 4, 1500
 BANNED_DEFAULT = ["bounce", "crossfade"]
 ANIMS = {"rise", "slide_up", "blur_in", "scale_in", "word_rise", "karaoke", "mask_wipe", "bounce"}
 TRANS = {"wipe", "push", "iris", "slide_up", "crossfade"}
@@ -219,6 +220,15 @@ def validate(spec: dict, base: Path, max_still_kb: int = 2500) -> dict:
             elif k == "text":
                 if not str(o.get("text", "")).strip():
                     raise SpecError(f"{did}/{oid}: text required")
+            elif k == "image":  # real stills per option (a style option's key frames, a B-roll pick, a generated take)
+                imgs = o.get("images")
+                if not isinstance(imgs, list) or not 1 <= len(imgs) <= MAX_IMAGES:
+                    raise SpecError(f"{did}/{oid}: images must list 1-{MAX_IMAGES} still files (jpg/png/webp)")
+                o["_uris"], o["images_sha256"] = [], []
+                for im in imgs:
+                    uri, _, sha, size = embed(Path(str(im)), "image", base, MAX_IMAGE_KB)
+                    o["_uris"].append(uri)
+                    o["images_sha256"].append(sha)
     return out
 
 
@@ -293,6 +303,10 @@ def card_visual(d: dict, o: dict, spec: dict, ui: dict) -> str:
         inner = (f'<span class="safe" style="{zone}"></span><span class="rail" style="top:{rail:.2f}%"></span>'
                  + sample(cls="sample cap lay", style=f"top:{y}%"))
         return phone(inner, bg) + f'<span class="spec"><span class="chips"><span class="chip">y {y:g}% ≈ {y / 100 * H:.0f} px</span>{warn}</span></span>'
+    if k == "image":
+        imgs = "".join(f'<img class="optimg" src="{u}" alt="">' for u in o["_uris"])
+        note = f'<span class="spec"><span class="imgnote" dir="auto">{esc(o["caption"])}</span></span>' if str(o.get("caption", "")).strip() else ""
+        return f'<span class="imgs n{len(o["_uris"])}">{imgs}</span>{note}'
     return phone(sample(cls="sample cap hookt", body=esc(o["text"]), fixed=True), bg)
 
 
@@ -632,6 +646,9 @@ button[aria-pressed=true]{border-color:var(--pri);color:var(--pri-h)}
 .sample.cap{text-shadow:0 0 3px #000,0 1px 2px #000,0 0 6px rgba(0,0,0,.7)}
 .sample.lay{position:absolute;inset-inline:6%;max-width:none;transform:translateY(-50%)}
 .hookt{font-size:max(10px,7cqw)}
+.imgs{display:grid;gap:4px;width:100%;grid-template-columns:repeat(2,1fr)}.imgs.n1{grid-template-columns:1fr}
+.optimg{width:100%;aspect-ratio:9/16;object-fit:cover;border-radius:8px;display:block;background:#000}
+.imgnote{font-size:.85rem;line-height:1.4}
 .spec{margin-top:8px;text-align:center;font-size:.8rem}
 .kw{font-size:1.8rem;line-height:1.1}.alike{font-size:1.3rem;letter-spacing:.08em}
 .sw{display:flex;justify-content:center;gap:4px}.sw i{width:22px;height:22px;border-radius:50%;border:1px solid var(--line-strong)}

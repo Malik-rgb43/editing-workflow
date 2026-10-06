@@ -12,7 +12,7 @@ Load when: a transfer went wrong, or before presenting options/a draft. Source: 
 | Colours wrong in the card | hex read from downscaled sheets | `px_measure.py sample` on a full-resolution flat fill | `HEX_SOURCE` check |
 | A display font reads as another word | look-alike letters (ו/ז, ד/ר, ה/ח) | full-size keyword test, switch face | font row = nearest match, L |
 | Reference timing stretched over a longer voice-over | mapped by seconds | map by function and density | beat map by function |
-| Drift between reference and draft found by the user | the DNA was not re-measured on the draft | `fidelity_diff.py` after every render | G6 |
+| Drift between reference and draft found by the user | the DNA was not re-measured on the draft | `fidelity_diff.py` on each round's draft render | G6 |
 | The same source edited in 3 sessions with 3 references and the same note sent to all | notes were treated per project | a note typed to all sessions is a global style rule: record it once in the rule file, never per project | one session owns shared rules |
 | The reference's song ended up in an ad | a match was read as permission | replacement track with a licence row; `sync_licence: not_established` | G3, `MUSIC_REPLACEMENT` check |
 | A near-zero DNA value failed or passed meaninglessly | a blanket +/-20 % | per-row tolerance with an absolute floor | `TOL_NEAR_ZERO` check |

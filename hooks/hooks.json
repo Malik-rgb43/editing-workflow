@@ -1,0 +1,18 @@
+{
+  "description": "editing-workflow: at session start, find HyperFrames projects and remind the agent to open the Studio first (AGENTS.md rule 10). Read-only; starts nothing.",
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|resume|clear|compact",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/tools/session_hint.py\" 2>/dev/null || python \"${CLAUDE_PLUGIN_ROOT}/tools/session_hint.py\"",
+            "shell": "bash",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}

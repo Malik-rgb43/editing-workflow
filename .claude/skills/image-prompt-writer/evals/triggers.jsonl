@@ -10,6 +10,7 @@
 {"prompt": "create a hero frame prompt that locks the look of the whole film", "should_trigger": true, "route_instead": null}
 {"prompt": "בוא נכין תמונת פתיחה לכל שוט לפני שמייצרים וידאו", "should_trigger": true, "route_instead": null}
 {"prompt": "turn this shot card into an image prompt with the style prefix", "should_trigger": true, "route_instead": null}
+{"prompt": "write the still prompts for the generated beats on the storyboard, b2 and b4", "should_trigger": true, "route_instead": null}
 {"prompt": "write the Seedance prompt for this 15 second scene", "should_trigger": false, "route_instead": "video-prompt-writer"}
 {"prompt": "how much will generating these stills cost", "should_trigger": false, "route_instead": "paid-spend-gate"}
 {"prompt": "approve the budget and run the generation", "should_trigger": false, "route_instead": "paid-spend-gate"}

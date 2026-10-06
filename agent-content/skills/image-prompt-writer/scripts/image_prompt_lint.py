@@ -5,8 +5,8 @@ Usage:
     python image_prompt_lint.py DRAFT.md [--ratio 9:16] [--prefix-file FILE] [--text-asset] [--allow-age-words] [--raw] [--json]
     python image_prompt_lint.py --self-check
 
-DRAFT.md is the ANSWER you are about to send: each fenced code block is one prompt; text outside the fences may only be a short
-follow-up question. `--raw` treats the whole file as ONE prompt (no fences).
+DRAFT.md is the ANSWER you are about to send: each fenced code block is one prompt; text outside the fences may only be the
+`shot_id: ...` header line above each fence and a short follow-up question. `--raw` treats the whole file as ONE prompt (no fences).
 
 Checks (E = error, W = warning)
   I01 E  --prefix-file given: the STYLE PREFIX is present VERBATIM at the start (whitespace and dash variants normalised)
@@ -112,6 +112,7 @@ def lint(text, ratio=None, prefix=None, text_asset=False, allow_age=False, raw=F
     outside = FENCE.sub("", text) if not raw else ""
     if re.search(r"<(html|table|div|ul|ol)\b|^\s*\|.+\|\s*$|^\s*- \[[ x]\]", outside + "\n".join(blocks), re.M | re.I):
         findings.append(("error", "I02", "HTML, a markdown table or a checklist found: output plain-text or JSON fences only"))
+    outside = "\n".join(ln for ln in outside.splitlines() if not ln.strip().lower().startswith("shot_id:"))
     if len(outside.split()) > 120:
         findings.append(("warn", "I02", "long text outside the fences: keep the answer to fences + prefix + at most one question"))
     for i, b in enumerate(blocks, 1):
@@ -171,12 +172,16 @@ def self_check():
     f, st = lint('```\nA street sign at dusk, 9:16, 50 mm, backlit.\n```', "1:1", None)
     if "I08" not in {c for _s, c, _m in f}:
         bad.append("a ratio missing from the prompt must fail I08")
+    ids = "\n".join("shot_id: b%d · 9:16 · target: _work/stills/b%d.png" % (k, k) for k in range(1, 30))
+    f, st = lint(ids + "\n" + GOOD_B, "9:16", prefix)
+    if st["verdict"] != "pass" or any(c == "I02" for _s, c, _m in f):
+        bad.append(f"shot_id header lines must not count as text outside the fences: {f}")
     if bad:
         print("SELF-CHECK FAILED")
         for b in bad:
             print(" -", b)
         return 1
-    print("SELF-CHECK OK (16 cases)")
+    print("SELF-CHECK OK (17 cases)")
     return 0
 
 

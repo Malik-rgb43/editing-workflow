@@ -5,7 +5,7 @@ Status: specified; deterministic checks only; model eval not run (decision defau
 ## T1 perceive the whole tree
 - **Setup:** a folder with a 1080x1920 cut (`cuts/1.mp4`), a sideways-shot 4K camera original with no rotation tag, an `assets/` folder of illustrations and a `done/` folder holding an earlier finished edit.
 - **Oracle:** the transcript of actions + `hf/PROMPT.md` inputs block.
-- **Pass:** the source tree is listed before any decision; the camera original is named as the colour/resolution source and its rotation is found from the picture, not the metadata; the earlier edit is named as the benchmark; the assets are inventoried; prep starts at minute 0 as one background command with the local model paths.
+- **Pass:** the source inventory (`_work/intake/source_ls.txt` from `video-brief-intake`) is read, or the whole tree listed when it is missing, before any decision; the camera original is named as the colour/resolution source and its rotation is found from the picture, not the metadata; the earlier edit is named as the benchmark; the assets are inventoried; prep runs right after Round 0 as one background command with the local model paths.
 
 ## T2 decisions with reasons, no template
 - **Setup:** full control given ("אתה מחליט"), Hebrew captions chosen, a 52 s speaker cut with 19 jump cuts.
@@ -36,3 +36,18 @@ Status: specified; deterministic checks only; model eval not run (decision defau
 - **Setup:** the student has Pexels and Iconify connected, no Higgsfield; a beat needs real logos and stock of a city.
 - **Oracle:** the transcript + `hf/SOURCES.md`.
 - **Pass:** presence checked first (`doctor`); logos from Iconify with the brand-permission note for ads; stock from Pexels with a licence row per file; the missing generator is named once with what it would add, the free fallback used; no paid call.
+
+## T8 the user sees it before it is built, and is asked for notes after
+- **Setup:** a 40 s phone clip of a chef to camera, 12 phone photos of dishes, "a polished promo reel with B-roll and graphics, you decide"; captions in Hebrew; Pexels connected.
+- **Oracle:** the transcript, `_work/storyboard/storyboard.json`, `hf/CHANGELOG.md`, the browser-pane urls opened.
+- **Pass:** the Studio url is opened at the start of the session; a caption style board (font + animation + height) is served before any caption is built, the agent's pick as option A; `storyboard_board.py check` passes and the board is served and opened before any composition code, with the A-roll frames grabbed from the source and every B-roll / graphic beat present; no composition file is written before `STORYBOARD APPROVED`; after the round's render the notes page is opened in the same turn without being asked.
+
+## T9 Step 0 order: Round 0 before prep, prep gets the language
+- **Setup:** a new request with one 3-minute interview file in Spanish, no project folder yet, no `_work/connections.json`; the user's first message says nothing about language or captions.
+- **Oracle:** the transcript of actions (command order and arguments) + `<project>/_work/connections.json` + the first chat message.
+- **Pass:** the Round 0 questions (purpose, who decides, speech language, caption language, missing facts) go out in ONE chat message before any `new_project.py` or `prep.py` call; `new_project.py` runs before `prep.py`; `prep.py` is started as one background command with `--language es` (or `--language auto` when the user did not answer), never a hard-coded `he`; `_work/connections.json` exists in the project after Step 0; no caption language is assumed.
+
+## T10 the draft is scored against its rubric by fresh eyes
+- **Setup:** a talking-head draft in Studio whose motion dimension would score 3 (one easing everywhere, the camera parks for 6 s) and everything else 4-5; a contact sheet and two range renders exist.
+- **Oracle:** the reviewer's report (a separate agent, `critic-brief.md` section 3, `talking-head.rubric.md`) + `hf/PROMPT.md` ledger + the count of full renders in the round (`_work/timing_ledger.jsonl` or the transcript).
+- **Pass:** the score comes from an agent that did not build the draft, given the rubric and the critic brief, before the draft render; the six dimensions are scored with `not_observed` where no evidence was seen; the motion dimension below 4 leads to a replaced beat concept recorded in the ledger (not a tweak of easing values alone); the presentation message states the score; the round still has exactly one full render (the draft render) before the notes page.

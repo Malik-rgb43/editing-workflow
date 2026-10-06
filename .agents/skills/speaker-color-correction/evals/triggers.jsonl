@@ -8,9 +8,10 @@
 {"prompt": "בדוק אם הצבע בסדר ברינדור הסופי של הדובר", "should_trigger": true, "route_instead": null}
 {"prompt": "my iPhone clip looks washed out and the face is dark, correct it", "should_trigger": true, "route_instead": null}
 {"prompt": "החולצה השחורה יוצאת כחלחלה ועכורה, תתקן את הצבע ושהתיקון יהיה אפוי בתוך הקובץ", "should_trigger": true, "route_instead": null}
+{"prompt": "the AI-generated presenter's skin changes colour between shots, make it natural and consistent", "should_trigger": true, "route_instead": null}
 {"prompt": "give this stock clip a teal-orange cinematic look", "should_trigger": false, "route_instead": null}
 {"prompt": "edit the cuts and add B-roll to the speaker video", "should_trigger": false, "route_instead": "pro-video-editor"}
-{"prompt": "transcribe this Hebrew recording with word timestamps", "should_trigger": false, "route_instead": "hebrew-captions-transcription"}
+{"prompt": "transcribe this Hebrew recording with word timestamps", "should_trigger": false, "route_instead": "captions-transcription"}
 {"prompt": "תעשה לי לוגו מונפש בתלת מימד", "should_trigger": false, "route_instead": "pro-video-editor"}
 {"prompt": "תן לקליפ המוצר הזה מראה וינטג׳ עם גרעיניות, אין בו אדם", "should_trigger": false, "route_instead": null}
 {"prompt": "render the final and check the loudness", "should_trigger": false, "route_instead": "render-qa-delivery"}

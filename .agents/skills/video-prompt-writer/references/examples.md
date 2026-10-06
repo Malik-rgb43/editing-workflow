@@ -5,19 +5,21 @@ Load when: you need a concrete model of the skeleton, a split scene, or the vend
 How to read: the prefix is pasted verbatim at the top of EVERY prompt (owner rule: each prompt is standalone). The output to the user is one copy-ready plain-text fence per prompt, never a table, HTML or checklist; after the prompt ONE short follow-up question is allowed (for example "Want 3b, the aftermath, as the next 15 s?").
 
 ## Example 1 - `owner-cinematic`, 15 s, three shots, 16:9 (owner preference)
-Brief: "the keeper relights the lighthouse before the storm". Registry: `@keeper` (Element: yellow oilskin, wool cap), `@lighthouse`, `@cove` (location, style reference only).
+Brief: "the keeper relights the lighthouse before the storm". Registry: `@keeper` (Element: yellow oilskin, wool cap), `@lighthouse`, `@cove` (location, style reference only). Storyboard beat `b4`; its approved start-frame still and the film's image STYLE PREFIX come from `image-prompt-writer`.
+
+shot_id: b4 · 16:9 · start frame: _work/stills/b4.png
 ```text example=1 preset=owner-cinematic tags=keeper,lighthouse,cove dur=15
-Style: 8K cinematic. Photorealistic — no 3D render, no game engine, no game-cutscene aesthetic.
+Style: Live-action footage from a physical cine camera — no 3D render, no game engine, no game-cutscene aesthetic.
 Cinematography: naturalistic master cinematography.
 Lighting: Natural light only — contre-jour backlight, camera on shadow side, atmospheric haze. Key light from sky and windows only.
 Color: 60:30:10 — dominant / secondary / accent.
 Camera: Physical cine lens. 180° shutter motion blur.
 Skin: Pore-level realism — vellus hair, asymmetric moles, capillary flush, pore-shadow matching on-set light.
-Acting: top-tier cinematic — micro-pauses before reactions, precise eye-line, wet living eyes with catch-lights, visible breath and chest rise.
+Acting: screen-acting detail — micro-pauses before reactions, precise eye-line, wet living eyes with catch-lights, visible breath and chest rise.
 Physics: Gravity and inertia respected — mass has real weight, correct contact shadows. No floating props.
 Composition: Rule of thirds + golden ratio. Every person moving from frame one.
 Continuity: Characters, props, environment identical across every cut. No identity drift.
-Technical: 24fps smooth motion. 8K detail. No jitter.
+Technical: 24fps smooth motion. No jitter.
 Audio: Environmental SFX only. No music. No subtitles.
 
 SUBJECT — @keeper (matches input 100%), a lighthouse keeper in a yellow oilskin coat and wool cap, climbs the last iron stairs to relight the lamp before a storm; goal: finish before the squall arrives; beat: quiet resolve turning to relief. @lighthouse (matches input 100%) stands behind her. WB 5600K. MULTISHOT.
@@ -31,11 +33,11 @@ SHOT 3 (0:09–0:15) — Wide from the rocks below: the beam sweeps out across t
 
 CAMERA — SHOT 1: low angle at tripod height, 24mm, slow push-in, motivated by her climbing toward the light. SHOT 2: eye level, 50mm, locked-off, steady so her hands carry the beat. SHOT 3: low angle from the rocks, 35mm, slow crane up, motivated by the beam rising.
 
-STYLE — Dominant 60% slate grey-blue / Secondary 30% wet black / Accent 10% warm brass-amber. WB 5600K. Reinforce lighting: sky light from the left, haze, the lamp as the only practical source.
+STYLE — LOOK: 35 mm film look, slate grey-blue, wet black and brass amber (#4A5A66, #15171A, #C8923A), fine grain, no text, no labels. Dominant 60% slate grey-blue / Secondary 30% wet black / Accent 10% warm brass-amber. WB 5600K. Reinforce lighting: sky light from the left, haze, the lamp as the only practical source.
 
 CONSTRAINTS — 16:9. NO slow-motion. One camera move per shot. Beam and lamp keep a consistent size across cuts (normal size, NOT oversized). Wind pushes her coat and the spray with real weight. NO eye glow.
 ```
-What to notice: timecodes fill 0:00-0:15 with hard cuts; one camera move per shot with its WHY; the 60/30/10 colour split is for THIS shot; the location is a style reference and the subject travels through space; physics is described broadly (real weight, spray, wind) with no km/h or degrees; the ratio is stated in CONSTRAINTS because it came from the delivery.
+What to notice: the `shot_id` line names the start-frame still; the LOOK is the stills' STYLE PREFIX, verbatim, so the still and the motion share one look; timecodes fill 0:00-0:15 with hard cuts; one camera move per shot with its WHY; the 60/30/10 colour split is for THIS shot; the location is a style reference and the subject travels through space; physics is described broadly (real weight, spray, wind) with no km/h or degrees; the ratio is stated in CONSTRAINTS because it came from the delivery.
 
 ## Example 2 - `vendor-short`, 10 s, one shot, 16:9 (vendor contract shape, own words)
 Brief: "a courier collects a coffee order". Registry: `@courier`. Positive phrasing; speed numerically in km/h as the vendor contract wants.

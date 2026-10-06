@@ -4,17 +4,17 @@ Load when the input is not a plain "new video, no reference" (a reference, a pas
 
 ## 1. Step 0: read what exists (before the first question)
 1. The message and attachments, quoted into `_work/intake/INTAKE_LOG.md`.
-2. The WHOLE source tree: `python scripts/source_inventory.py <source folder> --write projects/<name>/_work/intake` (every file, size, and for video: resolution, bitrate, duration; saves `source_ls.txt` and `probe.json`). A 4K camera original sat unseen beside a 1080p, 2.2 Mbps rough cut once; a first version was built on the rough cut and about an hour was lost. Quote the output in the ledger or intake note. A listing that is empty or unreadable is `blocked`, not "nothing found".
-3. `projects/` for a sibling on the same source: ask one line, "new project or continuation of X?". Same source clip is never the same project; never adopt another project's cut or PROMPT.
+2. The WHOLE source tree: `python scripts/source_inventory.py <the user's source folder> --write <project>/_work/intake`, right after Round 0 and `new_project.py` (every file, size, and for video: resolution, bitrate, duration; saves `source_ls.txt` and `probe.json`). A 4K camera original sat unseen beside a 1080p, 2.2 Mbps rough cut once; a first version was built on the rough cut and about an hour was lost. Quote the output in the ledger or intake note. A listing that is empty or unreadable is `blocked`, not "nothing found".
+3. `projects/` for an existing project with a `hf/PROMPT.md` that could match (same source or same title): only then ask one line, "new project or continuation of X?". Otherwise create the project with `new_project.py` without asking. Same source clip is never the same project; never adopt another project's cut or PROMPT.
 4. The user's own transitions, logos, fonts, music first (author's assets before stock).
 
 ## 2. Branch table
 | Situation | Action |
 |---|---|
-| Reference video or URL, "בסגנון של", "make it like this" | hand the reference to `reference-style-matching`; its Style DNA fills `R` rows; ask only what a reference never answers: length, ratios, structure, CTA, file name, bar, music licence, deadline |
+| Reference video or URL, "בסגנון של", "make it like this" | hand the reference to `reference-style-matching`; its Style DNA fills `R` rows and its three options replace the concept cards; ask only what a reference never answers: length, ratios, structure, CTA facts, bar, music licence, deadline |
 | Reference with several looks (before/after, intro vs body) | ask which time range is "the style" before using any analysis |
 | Pasted prompt written for another topic | compare its topic with the footage; footage wins; do not assume its length or structure; confirm in one question |
-| Same source as an existing project | one line: new project or continuation? never adopt a sibling's PROMPT |
+| Same source as an existing project with a PROMPT.md | one line: new project or continuation? never adopt a sibling's PROMPT |
 | "חדש לגמרי" / "nothing similar to before" | zero carry-over: only facts and the logo; the previous version's moves go on the project's banned list |
 | "רק תכנן" / "only a document" | deliverable is the document (ledger, concepts, PROMPT draft); zero generation, zero credits |
 | Only text, no footage, no reference | question loop |
@@ -32,6 +32,6 @@ Load when the input is not a plain "new video, no reference" (a reference, a pas
 | Reference's "no music" copied | the video shipped silent | MUS is asked even when the reference has none |
 | Only the rough cut used | camera original unseen | `source_inventory.py` in step 0 |
 | Colour fixed late | grey sky, magenta skin shipped | COLOR is a ledger line; correction runs before the build |
-| File name not asked | the user's required name was missed | FILE row |
+| File name never said back | the user's required name was missed | FILE row: a default said back on the defaults line, so the user can replace it |
 | Concept specifics lost in the build | "film burn at 1-2 s" was checked by the user, not by us | cite every ID in the PROMPT structure and tick every row in QA |
 | Asking what is known or is infrastructure | the user answered "whatever you think" five times | ask only material, creative, unknown items |

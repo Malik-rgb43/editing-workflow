@@ -22,11 +22,11 @@ A playbook is the **procedure** for one stage: entry gate, steps, artifact, exit
 
 | Stage | Playbook | Owner skill | Artifact (exact) | Exit gate | Human / agent | Target time (labelled) |
 |---|---|---|---|---|---|---|
-| 0 | [wf-00-intake](wf-00-intake.md) | `video-brief-intake` | `hf/PROMPT.md` `<ledger>`, `hf/BRIEF.md` | **G0** ledger locked | person answers rounds of 3–4; agent asks and writes rows | 10–20 min (owner target) |
+| 0 | [wf-00-intake](wf-00-intake.md) | `pro-video-editor` Step 0 (+ `video-brief-intake`) | `hf/PROMPT.md` `<ledger>`, `hf/BRIEF.md` | **G0** ledger locked | person answers rounds of 3–4; agent asks and writes rows | 10–20 min (owner target) |
 | 1 | [wf-01-references](wf-01-references.md) | `reference-style-matching`, `video-analysis`, `visual-choice-board` | `hf/STYLE_DNA.md` or `hf/references/MOODBOARD.md` | **G1** option and time range picked | person picks; agent analyses and shows 3 options | 15–30 min (owner target) |
 | 2 | [wf-02-concept](wf-02-concept.md) | `video-brief-intake` + `pro-video-editor` | `hf/CONCEPT.md`, `hf/SCRIPT.md` | **G2** concept picked, script/paper edit approved, no render | person picks; agent proposes three | 20–40 min (owner target) |
 | 3 | [wf-03-prompt](wf-03-prompt.md) | `pro-video-editor` | `hf/PROMPT.md`, `hf/DESIGN.md`, four stills | **G3** human approved before any code | person approves; agent drafts | 30–40 min (owner target) |
-| 4 | [wf-04-assets](wf-04-assets.md) | `speaker-color-correction`, `hebrew-captions-transcription`, `paid-spend-gate` | `hf/assets/`, `hf/fonts/`, `hf/SOURCES.md`, `hf/data/*` | **G4** assets in, licensed, measured; paid only with approval | agent builds; person approves spend | 60–90 min, parallel with stage 5 (owner target) |
+| 4 | [wf-04-assets](wf-04-assets.md) | `speaker-color-correction`, `captions-transcription`, `paid-spend-gate` | `hf/assets/`, `hf/fonts/`, `hf/SOURCES.md`, `hf/data/*` | **G4** assets in, licensed, measured; paid only with approval | agent builds; person approves spend | 60–90 min, parallel with stage 5 (owner target) |
 | 5 | [wf-05-build](wf-05-build.md) | `pro-video-editor` + HyperFrames skills | `hf/index.html`, `hf/compositions/*`, `hf/cues.js` | **G5** `hf_preflight --strict` 0 errors | agent | ≈ 90 min; first draft within 4 h (owner targets) |
 | 6 | [wf-06-render-qa](wf-06-render-qa.md) | `render-qa-delivery` | `_work/drafts/…`, `_work/qa/<ver>/`, `hf/QA.md` | **G6** 0 flags, rubric ≥ 4.0, no dim < 3 | agent renders once and checks; critic is a separate process | 30–45 min (owner target; machine stages measured on OM) |
 | 7 | [wf-07-revise](wf-07-revise.md) | `revision-notes-handler` | message, `CHANGELOG.md` round, patch script | **G7** approved or notes in | person reviews; agent applies notes with ONE full render | present 5 min; round ≤ 45 min (owner target) |
@@ -82,7 +82,7 @@ Techniques: [../techniques/README.md](../techniques/README.md) (frame-spec promp
 
 ## 8. Cross-references assumed to files owned elsewhere
 
-Written in backticks (not links) because other builders own them: skills `video-request-router`, `video-brief-intake`, `reference-style-matching`, `video-analysis`, `edit-*`, `speaker-color-correction`, `hebrew-captions-transcription`, `render-qa-delivery`, `revision-notes-handler`, `paid-spend-gate`, `video-prompt-writer`, `visual-choice-board`, `video-variants-exporter`; references `agent-content/references/platform-specs.md`, `talking-head-beats.md`, `qa-thresholds.md`, `model-routing.md`, `cost-model.md`; `docs/TOOLS.md`. Path proposals owned by this directory: the ledger lives inside `hf/PROMPT.md` `<ledger>`; the timing ledger is `_work/timing_ledger.jsonl`; lessons go to `projects/LESSONS.md` and `projects/RULES.md` (outside `agent-content/`).
+Written in backticks (not links) because other builders own them: skills `video-request-router`, `video-brief-intake`, `reference-style-matching`, `video-analysis`, `edit-*`, `speaker-color-correction`, `captions-transcription`, `render-qa-delivery`, `revision-notes-handler`, `paid-spend-gate`, `video-prompt-writer`, `visual-choice-board`, `video-variants-exporter`; references `agent-content/references/platform-specs.md`, `talking-head-beats.md`, `qa-thresholds.md`, `model-routing.md`, `cost-model.md`; `docs/TOOLS.md`. Path proposals owned by this directory: the ledger lives inside `hf/PROMPT.md` `<ledger>`; the timing ledger is `_work/timing_ledger.jsonl`; lessons go to `projects/LESSONS.md` and `projects/RULES.md` (outside `agent-content/`).
 
 ## 9. Honest status
 

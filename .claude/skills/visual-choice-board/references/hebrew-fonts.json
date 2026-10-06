@@ -236,5 +236,5 @@
    "variable": true
   }
  ],
- "e03_note": "e03_mean = mean 1-5 legibility at phone scale from experiment E03 (hebrew-captions-transcription/references/hebrew-typography.md section 3): one vision model's ratings, not a human panel. Fonts without it were not tested. Every offered font still needs the look-alike test at full size."
+ "e03_note": "e03_mean = mean 1-5 legibility at phone scale from experiment E03 (captions-transcription/references/hebrew-typography.md section 3): one vision model's ratings, not a human panel. Fonts without it were not tested. Every offered font still needs the look-alike test at full size."
 }

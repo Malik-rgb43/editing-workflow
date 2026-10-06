@@ -11,7 +11,7 @@ Status: specified; deterministic checks only; model eval not run (decision defau
 ## T2 Question loop, no reference
 - **Setup:** user message "make a launch video for my product" with no platform, length, tone, CTA or reference; no footage.
 - **Oracle:** the messages sent by the agent and the files in `hf/`.
-- **Pass:** the first reply is a round of 3-4 questions (FMT, LEN, BAR plus one more) with concrete options, the first marked recommended; no concept cards, no `<structure>` block in PROMPT.md, no code; after answers a `נעול | פתוח` line is shown; concept cards appear only after FMT, LEN, TON, BAR, CTA, FILE are locked (`ledger_check.py` blocking all `ok`).
+- **Pass:** the first reply is Round 0 (purpose, who decides, speech and caption language); once the user says "I define it", the next reply is a round of 3-4 questions (FMT, LEN, BAR plus one more) with concrete options, the first marked recommended; no concept cards, no `<structure>` block in PROMPT.md, no code; after answers a `נעול | פתוח` line is shown; concept cards appear only after FMT, LEN, TON, BAR, CTA, CAP are locked and a FILE row exists (`ledger_check.py` blocking all `ok`).
 - **Fail signals:** more than 4 questions in a round; length or platform assumed; concepts offered before the blocking rows exist.
 
 ## T3 Timed item
@@ -31,9 +31,16 @@ Status: specified; deterministic checks only; model eval not run (decision defau
 - **Pass:** a PROMPT.md draft is written and presented; no composition code or render exists; no `PROMPT_APPROVED` line until the user says yes; the agent offers a shorter PROMPT, not a skipped one.
 
 ## T6 Reference branch and sibling project
-- **Setup:** user shares a reference link and says "בסגנון של זה", and `projects/` already holds a project on the same source clip.
+- **Setup:** user shares a reference link and says "בסגנון של זה", and `projects/` already holds a project with a `hf/PROMPT.md` on the same source clip.
 - **Oracle:** messages sent and `_work/intake/INTAKE_LOG.md`.
-- **Pass:** asks which time range of the reference is "the style"; hands analysis to `reference-style-matching`; asks one line "new project or continuation of <name>?"; does not copy the sibling's PROMPT.
+- **Pass:** asks which time range of the reference is "the style"; hands analysis to `reference-style-matching`; asks one line "new project or continuation of <name>?"; does not copy the sibling's PROMPT; presents the three options of `reference-style-matching` and no Proven / Bold / Wild cards (one set of three).
+- **Fail signals:** two sets of three concepts; the folder question asked when no matching project has a PROMPT.md.
+
+## T7 Round 0 with the caption language
+- **Setup:** user message in English: "edit my 3 minute interview into a reel, you decide everything", one file `interview.mp4` (English speech), no project yet.
+- **Oracle:** the first message sent, `<project>/_work/intake/INTAKE_LOG.md`, the ledger, the project tree.
+- **Pass:** the first reply is ONE Round 0 message that asks the speech and caption language (not assumed Hebrew) and the missing facts for the end (link, phone or price), and asks nothing about format, length or music (full control); after the answer the ledger has a CAP row with the chosen language (`ledger_check.py` blocking `CAP: ok`), FILE, LEN and FMT are `D` rows said back on one "decisions taken" line, and the project was created with `new_project.py` without a folder question; `source_ls.txt` and `probe.json` exist under `<project>/_work/intake/`.
+- **Fail signals:** Hebrew captions assumed; a CTA phone number or price invented; a question about the file name; more than one Round 0 message.
 
 ## Deterministic checks (run now, no model)
-`python scripts/ledger_check.py --self-check` and `python scripts/source_inventory.py --self-check` must both print `self-check: ok`.
+`python scripts/ledger_check.py --self-check` and `python scripts/source_inventory.py --self-check` must both print `self-check: ok` (the ledger self-check covers CAP as a blocking row and FILE as a said-back default).

@@ -38,5 +38,16 @@ Status: specified; deterministic checks only; model eval not run (decision defau
 - **Oracle:** `round_check.py --patch ... --prompt ...`.
 - **Pass:** `code_before_prompt` error; the agent reverts, updates PROMPT first, repatches.
 
+## T8 Restructure asks before patching
+- **Setup:** an approved project with a 40 s draft; note: "too long, move the offer earlier" (the offer sits at 0:22 after two proof beats).
+- **Oracle:** `hf/CHANGELOG.md` round section, `hf/PROMPT.md` (`<structure>` and ledger), the patch file mtime, the chat log, `python scripts/round_check.py hf/CHANGELOG.md --prompt hf/PROMPT.md --patch tools/patch_rN.json`.
+- **Pass:** `class: restructure`; the new order is written in PROMPT.md `<structure>` and shown to the user (with the storyboard page if beats change) before any patch; the patch file is newer than the user's yes; the log line has `order:` and `asked:`; `round_check` exits 0.
+- **Fail signals:** beats moved in code before the user saw the new order; `round_check` reports `restructure_not_asked` or `no_order`.
+
+## T9 Music swap
+- **Setup:** note "use a calmer song"; the project has a premixed `mix.wav` and a licensed library track chosen by the user.
+- **Oracle:** CHANGELOG, the ledger, tool log, file mtimes.
+- **Pass:** `class: music-swap`, `render: none`, a `licence:` field pointing at a ledger licence row; remix + remux ran; no full-render line; loudness measured on the new file; cuts timed to the old beats, if any, appear as separate fix notes.
+
 ## Deterministic checks (run now, no model)
 `python scripts/round_check.py --self-check` and `python scripts/apply_patch.py --self-check` must print `self-check: ok`.

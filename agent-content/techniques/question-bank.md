@@ -12,13 +12,13 @@ The author's wording (O0305, 2026-09-29): *"אם אין סרטון רפרנס א
 2. **Every option is concrete** (numbers, names, a real track, a hex), never "something modern".
 3. **The first option is the recommended default**, labelled `(מומלץ)` / "(recommended)" with **one line why**.
 4. **A visual choice gets a preview** (an ASCII layout with safe zones and caption rail, a timeline strip, a still from `hf/references/`). When the person hesitates between fonts, caption animations, easings, palettes or transitions, build a **choice board** instead of arguing in chat (skill `visual-choice-board`; an owner idea, desk-tested only `[IDEA]`).
-5. **Never guess the four blockers:** platform/ratio, length, tone, CTA. Everything else may default and is marked `D`.
+5. **Never guess the blockers:** platform/ratio, length, tone, caption language (CAP, asked in Round 0), and the CTA's FACTS (a URL, a phone, a price, an offer). Under full control the CTA wording is decided and said back (`D`). Everything else may default and is marked `D`; the file name (FILE) is a said-back default, never a question.
 6. **The quality bar (BAR) is asked in round 1** — never after the spec is approved (a bar asked late forced a ~40 min rebuild).
 7. After each round print one line: `נעול: … | פתוח: …`.
 8. **Stop** when nothing material is open — typically 1–3 rounds. Do not ask infrastructure questions (tools, folders, models): decide and say why in one line.
 9. **"תמשיך"** (or "continue", "whatever you think") = take every recommended default, mark them `D`, and say so in ONE line. That counts as the person's choice, not a guess.
-10. **Round 0 first** (owner rule 2026-10-04): what the video is for, who decides the concept (full control / the person), and the caption language (never assume Hebrew). Full control = you decide every taste dimension, mark `D`, show the decisions in the draft.
-10. **Before asking, look**: `ls` the whole source folder, `ffprobe` the files, read the message. Never ask what is already known.
+10. **Round 0 first, in ONE message** (owner rule 2026-10-04): what the video is for, who decides the concept (full control / the person), the speech and caption language (never assume Hebrew), consent of people on camera when unclear, and any missing facts. Full control = you decide every taste dimension, mark `D`, show the decisions in the draft; facts are still asked.
+11. **Before asking, look**: `ls` the whole source folder, `ffprobe` the files, read the message. Never ask what is already known.
 
 ## 1. Round plan (default order)
 
@@ -27,8 +27,8 @@ The author's wording (O0305, 2026-09-29): *"אם אין סרטון רפרנס א
 | 1 | FMT · LEN · STR (footage) · **BAR** | COLOR is checked by the agent first (camera original? scopes) and asked only if unclear |
 | 2 | HOOK · TON · LOOK · MOT | with previews |
 | 3 | TYPE · 3D · BROLL · BRAND | BRAND: from files the person supplies; never invented |
-| 4 | CAP · MUS · SFX · CTA (+ VO) | CTA is always asked; `D` only on "תמשיך" |
-| 5 | FILE · VAR · DUE (+ RIGHTS/CONSENT/AIDISC) | the variant matrix is written into `<inputs>` |
+| 4 | MUS · SFX · CTA (+ VO) | CAP was settled in Round 0; CTA facts are always asked, the CTA wording is `D` under full control or "תמשיך" |
+| 5 | VAR · DUE (+ RIGHTS/AIDISC) | FILE is a said-back `D` default (`<name>_9x16.mp4`); CONSENT was asked in Round 0 when unclear; the variant matrix is written into `<inputs>` |
 
 Type-specific blocks (§4) replace or join the round where they belong. With a **reference video**, run the reference procedure first (§3) and ask only what a reference never answers: length, ratios, structure, CTA, file name, bar, music licence, deadline.
 

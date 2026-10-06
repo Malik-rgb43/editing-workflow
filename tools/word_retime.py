@@ -12,7 +12,7 @@ How (deterministic, local):
 The report lists each region's correction (``delta``) so the drift is visible, never hidden.
 
 Usage:
-    python tools/word_retime.py <voice.wav|video> --words words.json -o words_retimed.json [--min-pause 0.10] [--model-dir DIR --language he]
+    python tools/word_retime.py <voice.wav|video> --words words.json -o words_retimed.json [--min-pause 0.10] [--model-dir DIR [--language CODE]]
 Exit: 0 written, 2 refused (no audio, no words, no speech found), 3 tool error.
 """
 
@@ -53,7 +53,7 @@ def main(argv=None) -> int:
     ap.add_argument("-o", "--out", required=True)
     ap.add_argument("--min-pause", type=float, default=0.10)
     ap.add_argument("--model-dir", help="local CTranslate2 model: re-transcribe each chunk on its own")
-    ap.add_argument("--language", default="he")
+    ap.add_argument("--language", default=None, help="speech language for --model-dir; default: the language recorded in --words, else auto")
     ap.add_argument("--json", action="store_true")
     a = ap.parse_args(argv)
 
@@ -81,8 +81,12 @@ def main(argv=None) -> int:
     onsets = [vo.refine_onset(x, SR, r[0], thr) for r in regions]
     source = "words.json"
     if a.model_dir:
+        lang = a.language
+        if not lang and a.words and Path(a.words).is_file():
+            prev = json.loads(Path(a.words).read_text(encoding="utf-8"))
+            lang = prev.get("language") if isinstance(prev, dict) else None
         try:
-            words = transcribe_chunks(x, regions, a.model_dir, a.language)
+            words = transcribe_chunks(x, regions, a.model_dir, lang or "auto")
             source = f"per-chunk transcription ({Path(a.model_dir).name})"
         except Exception as exc:  # noqa: BLE001
             print(f"word_retime: {type(exc).__name__}: {exc}", file=sys.stderr)

@@ -17,7 +17,7 @@ A step whose inputs and command did not change since its last successful run is 
 Run ``--plan`` first to show the user what will run, where it writes and that nothing is downloaded.
 
 Usage:
-    python tools/prep.py <project-root> [--main FILE] [--steps sheet,asr,cuts,faces,scopes,refs] [--language he] [--model-dir DIR]
+    python tools/prep.py <project-root> [--main FILE] [--steps sheet,asr,cuts,faces,scopes,refs] [--language auto|he|en|...] [--ref-detail standard|full] [--model-dir DIR | --model-id ID --allow-download]
                          [--face-model yunet.onnx] [--lock-wait 900] [--step-timeout 1800] [--force] [--plan] [--json]
 Exit: 0 every selected step done, cached or skipped (refs without references), 1 some step not_run / failed (prep.json says why), 2 refused (no project, no or several main sources).
 """
@@ -83,6 +83,12 @@ def plan(root: Path, main: Path, refs: list[Path], a, faces_done: bool) -> list[
             cmd = [py, str(tools / "transcribe.py"), str(main), "-o", str(data / "words.json"), "--language", a.language]
             if a.model_dir:
                 cmd += ["--model-dir", a.model_dir]
+            if a.model_id:
+                cmd += ["--model-id", a.model_id]
+            if a.model_lang:
+                cmd += ["--model-lang", a.model_lang]
+            if a.allow_download:  # only after the user's yes to the shown download (transcribe prints the model id first)
+                cmd += ["--allow-download"]
             jobs.append({"step": step, "id": step, "cmd": cmd, "inputs": [main], "outputs": [data / "words.json"]})
         elif step == "cuts":
             jobs.append({"step": step, "id": step, "cmd": [py, str(tools / "source_cuts.py"), str(main), "-o", str(data / "src_cuts.json")],
@@ -103,7 +109,7 @@ def plan(root: Path, main: Path, refs: list[Path], a, faces_done: bool) -> list[
         elif step == "refs":
             for ref in refs:
                 out = root / n["work"] / "analysis" / slugify(ref.stem)
-                jobs.append({"step": step, "id": f"refs:{out.name}", "cmd": [py, str(tools / "analyze.py"), str(ref), "--out", str(out), "--detail", "standard", "--asr", "never", "--force"],
+                jobs.append({"step": step, "id": f"refs:{out.name}", "cmd": [py, str(tools / "analyze.py"), str(ref), "--out", str(out), "--detail", a.ref_detail, "--asr", "never", "--force"],
                              "inputs": [ref], "outputs": [out / "measurements.json", out / "report.md"]})
     return jobs
 
@@ -118,8 +124,13 @@ def main(argv=None) -> int:
     ap.add_argument("project")
     ap.add_argument("--main", help="the main source video (default: the only video in source/)")
     ap.add_argument("--steps", default=",".join(STEPS))
-    ap.add_argument("--language", default="he")
+    ap.add_argument("--ref-detail", choices=("quick", "standard", "full"), default="standard",
+                    help="detail of the reference analysis; full when reference-style-matching will measure the reference (saves a second run)")
+    ap.add_argument("--language", default="auto", help="speech language code from Round 0, or auto (detect); never assumed")
     ap.add_argument("--model-dir")
+    ap.add_argument("--model-id", help="forwarded to transcribe (for example the multilingual Systran/faster-whisper-large-v3)")
+    ap.add_argument("--model-lang", choices=("he", "multi"), help="forwarded to transcribe: what a local --model-dir is for")
+    ap.add_argument("--allow-download", action="store_true", help="forwarded to transcribe; ONLY after the user said yes to the shown model and size")
     ap.add_argument("--face-model")
     ap.add_argument("--lock-wait", type=float, default=900.0, help="seconds each step may wait for the heavy-job lock")
     ap.add_argument("--step-timeout", type=float, default=1800.0)

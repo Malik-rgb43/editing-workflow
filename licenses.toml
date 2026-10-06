@@ -27,7 +27,7 @@ note = "root-level owner-authored text/code (Q12: licence undecided)"
 globs = [
   "agent-content/**", "contracts/**", "src/**", "tools/**", "profiles/**", "scripts/**", "tests/**",
   "packaging/**", "fixtures/**", "install/**", "integrations/**", ".github/**", "docs/**", "templates/**",
-  ".claude/**", ".claude-plugin/**", "hf-blocks/**", ".codex/**", ".agents/**",
+  ".claude/**", ".claude-plugin/**", "hf-blocks/**", ".codex/**", ".agents/**", "hooks/**",
 ]
 origin = "owner"
 licence = "Apache-2.0"

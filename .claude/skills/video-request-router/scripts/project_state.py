@@ -27,10 +27,10 @@ from pathlib import Path
 
 VERSION = "0.1.0"
 OWNER = {
-    "scaffolded": "video-brief-intake",
-    "no_project": "video-brief-intake",
-    "intake_open": "video-brief-intake",
-    "prompt_drafted": "video-brief-intake (get PROMPT.md approved) then pro-video-editor",
+    "scaffolded": "pro-video-editor (Step 0: video-brief-intake)",
+    "no_project": "pro-video-editor (Step 0: video-brief-intake)",
+    "intake_open": "pro-video-editor (Step 0: continue the video-brief-intake rounds)",
+    "prompt_drafted": "pro-video-editor (get PROMPT.md approved; no code before it)",
     "prompt_approved": "pro-video-editor",
     "in_review": "revision-notes-handler",
     "delivered": "revision-notes-handler (notes) or video-variants-exporter (derivatives)",
@@ -122,6 +122,8 @@ def _self_check() -> int:
     with tempfile.TemporaryDirectory() as td:
         root = Path(td)
         check("empty dir is no_project", inspect(root / "nothing")["state"] == "no_project")
+        check("production has one owner: pro-video-editor, intake is its Step 0",
+              all(v.startswith(("pro-video-editor", "revision-notes-handler")) for v in OWNER.values()))
         p = root / "a"
         (p / "hf").mkdir(parents=True)
         check("hf only is scaffolded", inspect(p)["state"] == "scaffolded")

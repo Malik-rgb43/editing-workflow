@@ -6,8 +6,8 @@
 | Field | Value |
 |---|---|
 | Stage | 0 of 9 |
-| Owner skill | `video-brief-intake` (reached through `video-request-router`); references handled in wf-01 |
-| Artifacts (exact files) | `projects/<name>/hf/PROMPT.md` (the `<ledger>` block; the six frame blocks are written in wf-03), `projects/<name>/hf/BRIEF.md` (five lines, from [BRIEF.md template](../techniques/templates/BRIEF.md)), `_work/intake/source_ls.txt`, `_work/intake/probe.json`, `_work/STATE.md` |
+| Owner skill | `pro-video-editor` Step 0, with `video-brief-intake` as its intake overlay (reached through `video-request-router`); references handled in wf-01 |
+| Artifacts (exact files) | `<work_root>/projects/<slug>/hf/PROMPT.md` (the `<ledger>` block; the six frame blocks are written in wf-03), `<work_root>/projects/<slug>/hf/BRIEF.md` (five lines, from [BRIEF.md template](../techniques/templates/BRIEF.md)), `_work/intake/source_ls.txt`, `_work/intake/probe.json`, `_work/STATE.md` |
 | Exit gate | **G0 — ledger locked** (below) |
 | Target time | **10–20 min** (owner target, human answers + agent asks); never measured on a student |
 | Paid steps | none. Starting a trial or signing in to a provider here is **not** spend authorisation |
@@ -22,13 +22,13 @@ Turn what the person wrote into a **checkable Concept Ledger** and ask questions
 |---|---|---|
 | a request exists (message and/or files) and `video-request-router` chose a type | the routing line in chat | route first; never start building before it routed |
 | the toolkit setup gate has passed on this machine (five states reported; `not_run` ≠ pass) | `doctor` report path | run `doctor`; do not continue to render-time steps until the *first render* state is green |
-| `projects/<name>/` can be created under the **ASCII work root** | `new_project` output | pick an ASCII name; keep the Hebrew title only as display text. Never run `npx hyperframes init` under a path with Hebrew letters (it silently skips `index.html`) `[PROVEN-internal]` `[LOCAL-only]` |
+| `<work_root>/projects/<slug>/` can be created under the **ASCII work root** (`python tools/new_project.py`) | `new_project` output | pick an ASCII name; keep the Hebrew title only as display text. Never run `npx hyperframes init` under a path with Hebrew letters (it silently skips `index.html`) `[PROVEN-internal]` `[LOCAL-only]` |
 
 ## 3. Steps
 
 | # | Step | Who | Evidence / output |
 |---|---|---|---|
-| 0 | **Read what exists.** The message, attachments, and **`ls -R` of the whole source tree** (a 4K camera original sat unseen next to a 1080p, ~2.2 Mbps rough cut; a folder of 3D assets sat unseen too; the first build, ≈ 1 h, was discarded). `ffprobe` every media file (resolution, fps, rotation, bitrate, audio, colour tags). Check `projects/` for a sibling on the same source ("new project or a continuation of X?" — one line; never adopt a sibling's cut or PROMPT). Look in the person's own assets/transitions folder **before** stock. Source folders are read-only: copy, never move or touch. | agent | `_work/intake/source_ls.txt`, `_work/intake/probe.json` |
+| 0 | **Read what exists.** The message, attachments, and **`ls -R` of the whole source tree** (a 4K camera original sat unseen next to a 1080p, ~2.2 Mbps rough cut; a folder of 3D assets sat unseen too; the first build, ≈ 1 h, was discarded). `ffprobe` every media file (resolution, fps, rotation, bitrate, audio, colour tags). Only when an existing project with `hf/PROMPT.md` could match this source, ask "new project or a continuation of X?" (one line; never adopt a sibling's cut or PROMPT); otherwise create the project without asking. Look in the person's own assets/transitions folder **before** stock. Source folders are read-only: copy, never move or touch. | agent | `_work/intake/source_ls.txt`, `_work/intake/probe.json` |
 | 1 | **Create the project:** `new_project <name> <source files…>` (talking-head: add `` for a DRAFT PROMPT with the house preset typed in and every open question marked ASK); verify the copy (`ls source/`; the original once stopped on a busy folder without copying) and that `hf/index.html` exists. | agent | the listing quoted in chat |
 | 2 | **Parse the message into ledger rows** — every concrete word is a row (compound sentences split; the person's words verbatim in `said`; a measurable `spec`; an acceptance check; `src` U/R/D/A). Format and codes: [concept-ledger.md](../techniques/concept-ledger.md). | agent | draft `<ledger>` in `hf/PROMPT.md` |
 | 3 | **Branch on what arrived** (table below). | agent | the branch named in chat |
@@ -72,7 +72,7 @@ Why not everything at minute 0: matte + Blender + browser capture + generation t
 
 | Predicate | EVIDENCE (required field) | State rule |
 |---|---|---|
-| blocking dimensions are `locked` or `default`-by-"תמשיך": **FMT, LEN, TON, CTA, BAR**; footage adds **STR, COLOR**; and **FILE**; more than one output adds the **VAR matrix** | `hf/PROMPT.md` `<ledger>` with those rows; the reference checker exits 0 | any missing → `fail` |
+| blocking dimensions are `locked` or `default`-by-"תמשיך": **FMT, LEN, TON, CAP, BAR** and the CTA's facts (Round 0 settles CAP; the CTA wording and FILE are said-back `D` defaults under full control); footage adds **STR, COLOR**; more than one output adds the **VAR matrix** | `hf/PROMPT.md` `<ledger>` with those rows; the reference checker exits 0 | any missing → `fail` |
 | no reference and none requested → asked at least once | the question message id | else `fail` |
 | the whole source tree was listed | `_work/intake/source_ls.txt` exists, non-empty | else `fail` |
 | a person's consent/rights question was asked when a person, voice or third-party asset is involved | ledger rows RIGHTS/CONSENT or `n/a` with a reason | else `blocked` |

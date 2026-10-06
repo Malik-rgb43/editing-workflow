@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """fidelity_diff.py - the fidelity ledger: compare a draft's measurements with the Style DNA card, row by row.
 
-After EVERY render, re-measure the draft with video-analysis (same tool, same detail tier) and run this.
+On each round's full (draft) render, re-measure the draft with video-analysis (same tool, same detail tier) into
+<project>/_work/analysis/<draft-id>/ and run this.
 Each DNA row has its own tolerance (pct with an absolute floor, abs, exact, categorical, informational)
 instead of one blanket +/-20 %, or a written `deviate` reason. A row that cannot be measured on the draft
 is `not_measured`, never ok.
@@ -14,7 +15,7 @@ Usage:
   --draft   analysis folder of the DRAFT (measurements.json + audio.json from video-analysis)
   --manual  {"R04": 112, "R06": "#F2C230"} values for rows without a `source_key` (px_measure.py output,
             zoom reads); every manual value must be listed here, nothing is guessed
-  --out     write the ledger table as Markdown (put it in hf/QA.md or style/analysis/<id>/fidelity.md)
+  --out     write the ledger table as Markdown (put it in hf/QA.md or _work/style/<ref-id>/fidelity.md)
 
 Verdicts per row: ok | flag (outside tolerance) | deviate (declared, still reported) | info | not_measured.
 Exit codes: 0 PASS (no flag, no not_measured) | 1 FAIL (>= 1 flag) | 2 INSUFFICIENT_EVIDENCE (>= 1 not_measured,

@@ -11,8 +11,10 @@
 {"prompt":"the third caption is misspelled","should_trigger":false,"route_instead":"revision-notes-handler"}
 {"prompt":"render the approved draft for delivery","should_trigger":false,"route_instead":"render-qa-delivery"}
 {"prompt":"what is a LUFS","should_trigger":false,"route_instead":null}
-{"prompt":"תתרגם את הכתוביות לאנגלית","should_trigger":false,"route_instead":"hebrew-captions-transcription"}
+{"prompt":"תתרגם את הכתוביות לאנגלית","should_trigger":false,"route_instead":"captions-transcription"}
 {"prompt":"הסרטון משעמם בדקה 20, תחליף את הקטע","should_trigger":false,"route_instead":"revision-notes-handler"}
 {"prompt":"analyse this reference reel and tell me how many cuts it has","should_trigger":false,"route_instead":"video-analysis"}
 {"prompt":"how much will six Seedance shots cost","should_trigger":false,"route_instead":"paid-spend-gate"}
 {"prompt":"תקן את הצבע של הדובר, העור נראה ורוד","should_trigger":false,"route_instead":"speaker-color-correction"}
+{"prompt":"make a reel from my English interview, captions in English, you decide the rest","should_trigger":true,"route_instead":null}
+{"prompt":"סרטון חדש למסעדה שלי, הדיבור ברוסית וכתוביות בעברית","should_trigger":true,"route_instead":null}

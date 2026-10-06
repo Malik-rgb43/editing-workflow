@@ -1,6 +1,9 @@
 {"prompt": "write a Seedance prompt for this scene", "should_trigger": true, "route_instead": null}
-{"prompt": "/seedance תכין לי פרומפט לסצנה", "should_trigger": true, "route_instead": null}
+{"prompt": "/seedance תכין לי פרומפט לסצנה (I have my own seedance skill)", "should_trigger": false, "route_instead": null}
 {"prompt": "turn this script into shot-by-shot prompts", "should_trigger": true, "route_instead": null}
+{"prompt": "write a Kling prompt for the opening shot, start frame is the still we approved", "should_trigger": true, "route_instead": null}
+{"prompt": "תכתוב לי פרומפט לקלינג לשוט 3", "should_trigger": true, "route_instead": null}
+{"prompt": "Veo prompt for beat b2 of the storyboard", "should_trigger": true, "route_instead": null}
 {"prompt": "פרומפט קולנועי של 15 שניות", "should_trigger": true, "route_instead": null}
 {"prompt": "שוט אחר שוט לסרטון המוצר", "should_trigger": true, "route_instead": null}
 {"prompt": "camera and lens details for this beat", "should_trigger": true, "route_instead": null}

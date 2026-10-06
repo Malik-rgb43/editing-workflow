@@ -11,9 +11,15 @@ Usage:
         with --yes (only after the user said yes): downloads each font + its OFL.txt from the official google/fonts repository into
         DIR/<slug>/, checks the byte size against the catalogue, skips files already present with the right size.
   python hebrew_fonts.py spec --to DIR --text "the user's real line" -o spec.json [--default | --families "A,B,..."]
-                              [--keyword WORD] [--title T] [--project P] [--lang he|en]
+                              [--keyword WORD] [--title T] [--project P] [--lang he|en] [--caption-style] [--still FRAME.jpg]
         writes a visual-choice-board spec with ONE font decision whose options embed the fetched files (licence text included);
         build and serve it with make_board.py as usual. Refuses (exit 2) when a file was not fetched.
+        --font "Family=path/to/font.ttf=path/to/LICENSE.txt" (repeatable) adds a font that is not in the Hebrew catalogue (any script:
+        Latin, Arabic, Cyrillic ...) with its licence file; with only --font options no catalogue font is added. Use it for captions
+        that are not Hebrew, or for the user's own candidate fonts.
+        --caption-style adds the two other caption decisions, so ONE board settles the whole caption look before any caption is
+        built: the entrance/exit animation (every allowed `caption_anim`) and the height on the phone frame (`layout`, inside the
+        safe zone); --still puts the project's own frame behind them.
   python hebrew_fonts.py --self-check
 Catalogue: references/hebrew-fonts.json (sizes and licences verified on its `verified` date; all OFL-1.1). Stdlib only, Python 3.10+.
 Exit: 0 ok, 1 a download failed or a size did not match, 2 refused (unknown family, missing file, bad arguments).
@@ -95,8 +101,34 @@ def fetch(fams: list[dict], to: Path, base: str, timeout: float = 60.0) -> tuple
     return (1 if errors else 0), p
 
 
-def spec(fams: list[dict], to: Path, text: str, out: Path, keyword: str | None, title: str, project: str, lang: str) -> dict:
-    if len(fams) > len(LETTERS):
+CAPTION_ANIMS = (("rise", "עולה למקום", "rises into place"), ("slide_up", "מחליק מלמטה", "slides up"), ("blur_in", "מטושטש לחד", "blur to sharp"),
+                 ("scale_in", "גדל למקום", "scales in"), ("word_rise", "מילה אחרי מילה", "word by word"), ("karaoke", "קריוקי (מילה נצבעת)", "karaoke"),
+                 ("mask_wipe", "נחשף בניגוב", "mask wipe"))
+CAPTION_Y = ((72, "נמוך, מעל אזור הממשק", "low, above the app rail"), (64, "שליש תחתון", "lower third"), (56, "מתחת לפנים", "below the face"),
+             (46, "מרכז", "centre"))
+
+
+def caption_decisions(lang: str) -> list[dict]:
+    """The animation and height decisions of a caption-style board (the font decision is built from the fetched files)."""
+    he = lang == "he"
+    return [{"id": "anim", "title": "אנימציית כניסה ויציאה" if he else "Entrance and exit", "kind": "caption_anim",
+             "options": [{"id": f"M{i + 1}", "label": h if he else e, "anim": a} for i, (a, h, e) in enumerate(CAPTION_ANIMS)]},
+            {"id": "position", "title": "גובה הכתוביות" if he else "Caption height", "kind": "layout",
+             "options": [{"id": f"Y{y}", "label": (h if he else e) + f" · {y}%", "caption_y_pct": y} for y, h, e in CAPTION_Y]}]
+
+
+def parse_font(arg: str) -> dict:
+    """Pure: "Family=font.ttf=LICENSE.txt" -> {family, font, licence}."""
+    parts = arg.split("=")
+    if len(parts) != 3 or not all(x.strip() for x in parts):
+        raise SystemExit(f"hebrew_fonts: --font needs \"Family=font-file=licence-file\", got {arg!r}")
+    return {"family": parts[0].strip(), "font": Path(parts[1].strip()), "licence": Path(parts[2].strip())}
+
+
+def spec(fams: list[dict], to: Path, text: str, out: Path, keyword: str | None, title: str, project: str, lang: str,
+         caption_style: bool = False, still: str | None = None, extra: list[dict] | None = None) -> dict:
+    extra = extra or []
+    if len(fams) + len(extra) > len(LETTERS):
         raise SystemExit(f"hebrew_fonts: at most {len(LETTERS)} fonts on one board")
     if not text.strip():
         raise SystemExit("hebrew_fonts: --text must be the user's real line (no placeholder)")
@@ -112,8 +144,21 @@ def spec(fams: list[dict], to: Path, text: str, out: Path, keyword: str | None, 
                         "license": f"SIL Open Font License 1.1 - {f['family']}, github.com/google/fonts/{f['dir']}/OFL.txt (copy saved beside the font)"})
     if missing:
         raise SystemExit(f"hebrew_fonts: not fetched yet: {missing}; run `hebrew_fonts.py fetch ... --to {to}` (with the user's yes)")
+    for x in extra:
+        if not x["font"].is_file() or not x["licence"].is_file():
+            raise SystemExit(f"hebrew_fonts: --font {x['family']}: the font file and its licence file must both exist")
+        lic = x["licence"].read_text(encoding="utf-8", errors="replace").strip().splitlines()
+        rel = Path(__import__("os").path.relpath(x["font"].resolve(), out.parent.resolve())).as_posix()
+        options.append({"id": LETTERS[len(options)], "label": x["family"], "family": x["family"], "weight": 700, "fallback": "sans-serif",
+                        "font_file": rel, "license": f"{lic[0] if lic else 'licence'} - {x['licence'].name} (copy beside the font)"})
     sp = {"schema_version": 1, "project": project, "title": title, "lang": lang, "text": text,
           "decisions": [{"id": "font", "title": "פונט" if lang == "he" else "Font", "kind": "font", "options": options}]}
+    if caption_style:
+        sp["decisions"] += caption_decisions(lang)
+    if still:
+        if not Path(still).is_file():
+            raise SystemExit(f"hebrew_fonts: no still at {still}")
+        sp["still"] = Path(__import__("os").path.relpath(Path(still), out.parent)).as_posix()
     if keyword:
         sp["keyword"] = keyword
     out.parent.mkdir(parents=True, exist_ok=True)
@@ -131,13 +176,17 @@ def main(argv: list[str]) -> int:
         return 2
     cmd, rest = argv[0], argv[1:]
     opts = {"--to": None, "--text": None, "-o": None, "--keyword": None, "--title": None, "--project": "fonts", "--lang": "he",
-            "--families": None, "--style": None}
+            "--families": None, "--style": None, "--still": None}
+    extra_args: list[str] = []
     flags, names, i = set(), [], 0
     while i < len(rest):
         a = rest[i]
-        if a in ("--yes", "--default", "--json"):
+        if a in ("--yes", "--default", "--json", "--caption-style"):
             flags.add(a)
             i += 1
+        elif a == "--font" and i + 1 < len(rest):
+            extra_args.append(rest[i + 1])
+            i += 2
         elif a in opts and i + 1 < len(rest):
             opts[a], i = rest[i + 1], i + 2
         elif a.startswith("-"):
@@ -159,14 +208,15 @@ def main(argv: list[str]) -> int:
             print(f"* = on the default board. E03 = legibility at phone scale, 1-5 (one model's ratings; '-' = not tested). "
                   f"Verified {cat['verified']}; source: github.com/google/fonts")
         return 0
-    if not opts["--to"]:
+    if not opts["--to"] and not (cmd == "spec" and extra_args and not names and not opts["--families"] and "--default" not in flags):
         print(f"{cmd} needs --to DIR (for example _work/fonts)", file=sys.stderr)
         return 2
-    to = Path(opts["--to"])
+    to = Path(opts["--to"] or ".")
     if opts["--families"]:
         names += [n for n in opts["--families"].split(",") if n.strip()]
     try:
-        fams = pick(cat, names, "--default" in flags)
+        extra = [parse_font(x) for x in extra_args]
+        fams = [] if (extra and not names and "--default" not in flags) else pick(cat, names, "--default" in flags)
     except SystemExit as exc:
         print(exc, file=sys.stderr)
         return 2
@@ -184,9 +234,11 @@ def main(argv: list[str]) -> int:
     if not opts["-o"] or opts["--text"] is None:
         print("spec needs -o spec.json and --text \"the user's line\"", file=sys.stderr)
         return 2
-    title = opts["--title"] or ("איזה פונט?" if opts["--lang"] == "he" else "Which font?")
+    cs = "--caption-style" in flags
+    title = opts["--title"] or ({True: "איך הכתוביות ייראו?", False: "איזה פונט?"}[cs] if opts["--lang"] == "he" else
+                                {True: "How should the captions look?", False: "Which font?"}[cs])
     try:
-        res = spec(fams, to, opts["--text"], Path(opts["-o"]), opts["--keyword"], title, opts["--project"], opts["--lang"])
+        res = spec(fams, to, opts["--text"], Path(opts["-o"]), opts["--keyword"], title, opts["--project"], opts["--lang"], cs, opts["--still"], extra)
     except SystemExit as exc:
         print(exc, file=sys.stderr)
         return 2

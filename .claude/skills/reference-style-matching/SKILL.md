@@ -14,8 +14,8 @@ metadata:
 
 Turns "make mine like this" into numbers, a mapping and a decision the user makes. It runs after intake and BEFORE `pro-video-editor` builds anything. A reference gives **grammar** (pacing, devices, type system, camera rhythm, sound shape) as measured rows; it never gives **assets** (frames, footage, voice-over, music, logos, characters, paid fonts, scripts).
 
-## Start: connections (API, MCP, CLI) - before anything else
-Run `python tools/connections.py` (about 1 s; presence only, nothing is called) and read your own tool list: claude.ai connectors and plugin servers appear only there, sometimes under an id instead of the vendor name. If the router's handoff note already lists the decisions, use them. For this skill: yt-dlp CLI for a link, Playwright MCP (or the browser pane) for a web reference, a vision API (Gemini) only when the client allows hosted analysis. Decide per connection - use it / not needed / fallback - say it to the user in one line, then continue. A missing connection never stops the work; anything paid goes through `paid-spend-gate`.
+## Start: connections
+If `<project>/_work/connections.json` from this session exists (written by the router or `pro-video-editor`), read it; otherwise run `python tools/connections.py -o <project>/_work/connections.json` (about 1 s, presence only) and read your own tool list (claude.ai connectors appear only there). For this skill: yt-dlp for a link the user gave, Playwright (or the browser pane) for a web reference, a hosted vision API only when the client allows hosted analysis. Say use / not needed / fallback in one line, then continue. A missing connection never stops the work; anything paid goes through `paid-spend-gate`.
 
 ## Rules that outrank the rest of this file
 1. **Measure, do not eyeball.** Every DNA number comes from a validated `video-analysis` folder or from `px_measure.py` on a full-resolution frame. No analysis folder = `blocked`: run `video-analysis` first.
@@ -23,25 +23,25 @@ Run `python tools/connections.py` (about 1 s; presence only, nothing is called) 
 3. **Grammar, not assets.** Nothing from the reference enters `hf/assets/`, the plan, a slide or a repo. The reference is analysis-only; third-party analysis reports and clips are never shipped.
 4. **Rights.** A song match is not a licence and a trending sound is not cleared; `License: unknown` = not in client work (decision default Q2). A reference's paid font is replaced by its nearest licensed match; its brand identity never overrides the client's palette and logo.
 5. **Structure, length and content logic come from intake and the user's material**, never from the reference or from a prompt pasted with it. A pasted prompt written for another topic: the user's footage wins, ask one question.
-6. **No paid action** (cloud video-understanding, generation) without a dated estimate and prior approval (`paid-spend-gate`); private references: no remote song-ID, no upload.
+6. **No paid action** (cloud video-understanding, generation) without a dated estimate and prior approval (`paid-spend-gate`); private references: analysed with `--private`, nothing uploaded.
 7. **PROMPT.md is approved by a human before the first line of build code**, also in autonomous runs (decision default Q6). Skills are procedure, not permission; user and project restrictions override this file.
 
 ## Inputs -> outputs
-In: a reference (file the user supplies, or a URL they gave) + the user's brief and material + the intake ledger. Out, project-relative: `style/analysis/<ref-id>/{style_dna.json, style_dna.md, options.json, rights.json, fidelity.md}` and a copy for the build at `hf/STYLE_DNA.md`; the DNA rows become `R` ledger lines in PROMPT.md. `<ref-id>` = `file-<slug>` / `yt-<id>` / `tt-<id>` / `ig-<code>`.
+In: a reference (file the user supplies, or a URL they gave) + the user's brief and material + the intake ledger. The reference's analysis lives at `<project>/_work/analysis/<ref-id>/` (what `tools/prep.py` writes for every file in `hf/references/`; reuse it). Out, project-relative: `_work/style/<ref-id>/{style_dna.json, style_dna.md, options.json, rights.json, fidelity.md}` and a copy for the build at `hf/STYLE_DNA.md`; the DNA rows become `R` ledger lines in PROMPT.md. `<ref-id>` = the analysis folder name (a slug of the file name; a downloaded link keeps `yt-<id>` / `tt-<id>` / `ig-<code>` as its file name).
 
 ## Procedure
 | # | Do | Artifact |
 |---|---|---|
-| 0 | Ask only what a reference never answers (length, ratios, silence-cut vs rebuild, CTA, filename, quality bar, music licence, deadline) through `video-brief-intake`; a reference is never the source of structure | ledger lines |
-| 1 | Get the reference (copy a file; a given URL is downloaded as a reference copy only; a login wall: ask for the file). Check `style/analysis/*/<ref-id>` for an existing analysis. List the looks with time ranges from the shot table and ask which is THE style; several references get one ROLE each (captions, pacing, transitions...) and one card each | pinned segment, roles |
-| 2 | `video-analysis` at `--detail full`, stage reviewed, exit 0; exclude platform watermark/end card; counts corrected on frames | `analysis/<video>/` |
+| 0 | Ask only what a reference never answers (length, ratios, silence-cut vs rebuild, CTA facts, quality bar, music licence, deadline) through `video-brief-intake`; a reference is never the source of structure | ledger lines |
+| 1 | Get the reference (copy a file; a given URL is downloaded as a reference copy only; a login wall: ask for the file). Check `<project>/_work/analysis/<ref-id>/` for an existing analysis. List the looks with time ranges from the shot table and ask which is THE style; several references get one ROLE each (captions, pacing, transitions...) and one card each | pinned segment, roles |
+| 2 | `video-analysis` at `--detail full`, stage reviewed, exit 0; exclude platform watermark/end card; counts corrected on frames. Reuse prep's analysis when prep ran with `--ref-detail full` (`pro-video-editor` Step 0 passes it when a reference exists); a `standard` one is re-run into the same folder with `--detail full --force` | `_work/analysis/<ref-id>/` |
 | 3 | Pixels: full-resolution frames only (`scripts/px_measure.py sample|grade|scale`); hex from a flat fill (std <= 12); sizes converted to px @1080; fonts = nearest match, confidence L | measurements in the card |
 | 4 | Write `style_dna.json` (11 dimensions, each row: number, unit, where seen, how measured, evidence, confidence H/M/L, tolerance); `style_card_check.py card` PASS | card |
 | 5 | Map beats by FUNCTION and DENSITY (hook, pain, turn, proof, payoff, CTA), using the user's transcript with word times; keep the reference's events/min and transition mix; never stretch its timing over a different voice-over | beat map |
-| 6 | Three options (`references/options-and-mapping.md`): `options.json`, one recommended with a reason; `style_card_check.py options` PASS; present with a beat table, 3-4 stills or a text storyboard, cost and risk; the user picks, or mixes per beat | `options.json` |
+| 6 | Three options (`references/options-and-mapping.md`): `options.json`, one recommended with a reason; `style_card_check.py options` PASS. They replace intake's concept cards (one set of three). Show them as stills on a `visual-choice-board` (3-4 stills per option, the beat table, cost and risk), opened in the browser pane; the user picks, or mixes per beat. The chosen option's beats then go onto the storyboard page of `pro-video-editor` Step 3b | `options.json`, the board answer |
 | 7 | Rights ledger: reference source and licence, replacement music with a `SOURCES.md` row, fonts with licences; `style_card_check.py rights` PASS | `rights.json` |
-| 8 | Into the spec: each DNA row gets a target and tolerance, or `deviate: <reason>` for a deliberate Elevated/Twist change; PROMPT.md `<direction>` says "in the grammar of <ref-id>: <numbers>"; approval before code | PROMPT.md |
-| 9 | After EVERY render: re-measure the draft with the same tool and tier, run `fidelity_diff.py`, compare matched stills at the mapped times; fix flags or list them as gaps before presenting | `fidelity.md` |
+| 8 | Into the spec: each DNA row gets a target and tolerance, or `deviate: <reason>` for a deliberate Elevated/Twist change; PROMPT.md `<direction>` says "in the grammar of <ref-id>: <numbers>"; `PROMPT_APPROVED` in `hf/CHANGELOG.md` before code | PROMPT.md |
+| 9 | On the round's full (draft) render only - one per round of notes; Studio checks in between use stills: re-measure the draft with the same tool and tier into `_work/analysis/<draft-id>/`, run `fidelity_diff.py`, open matched stills at the mapped times in the browser pane; fix flags or list them as gaps before presenting | `fidelity.md` |
 
 ## Gates
 States are `pass | fail | blocked | n/a` with a reason. A timeout, empty sample or missing input is `blocked`, never `pass`. A successful tool call is execution evidence; a viewed still is appearance evidence.
@@ -52,8 +52,8 @@ States are `pass | fail | blocked | n/a` with a reason. A timeout, empty sample 
 | G3 rights | song match is `not_established`; replacement music licence in the allowed set and cleared for ads when the context is a client ad; fonts licensed | `style_card_check.py rights` exit 0; SOURCES.md rows | pick a licensed alternative; flag the original as reference-only | this skill + `pro-video-editor` for ads | any music/font change |
 | G4 option diversity | exactly Faithful/Elevated/Twist, same decision keys, pairwise differ in >= 3 decisions, cost and risk stated, one recommended, Twist keeps 1-2 devices and changes one axis | `style_card_check.py options` exit 0 | rewrite the duplicate option | this skill | any option edit |
 | G5 pinned look | the user named the time range that is the style | `reference.pinned_segment.pinned_by = user` | ask; re-analyse the right range | this skill | new reference |
-| G6 fidelity | after each render every row is `ok`, `info` or declared `deviate`; none `flag`/`not_measured` | `fidelity_diff.py` exit 0 on the DRAFT's analysis | fix the draft or record a deviate with the user's OK | this skill | every render |
-| G7 spec before code | PROMPT.md with R-lines approved by a human | approval message + timestamp before first code | stop; get approval | `video-brief-intake` | any change of an option or a row |
+| G6 fidelity | after the round's draft render every row is `ok`, `info` or declared `deviate`; none `flag`/`not_measured` | `fidelity_diff.py` exit 0 on the DRAFT's analysis | fix the draft or record a deviate with the user's OK | this skill | each round's draft render |
+| G7 spec before code | PROMPT.md with R-lines approved by a human | `PROMPT_APPROVED <date> "<the user's words>"` in `hf/CHANGELOG.md` before the first code | stop; get approval | `pro-video-editor` (Step 3) | any change of an option or a row |
 
 ## Limits to say out loud
 - Confidence labels: **H** = a tool measurement AND an independent confirmation (frame zoom or a second method) agree; **M** = measured once or read from sheets; **L** = inferred (font identity, SFX label). The author's older definition ("measured twice") does not establish calibration.
@@ -67,5 +67,5 @@ States are `pass | fail | blocked | n/a` with a reason. A timeout, empty sample 
 - `references/options-and-mapping.md` - mapping beats and writing the three options (step 5-6).
 - `references/rights-and-limits.md` - rights ledger, what to take and never take, legal posture, privacy (step 7, any doubt about a reference asset).
 - `references/failure-modes.md` - when a transfer went wrong, or before presenting.
-- Other skills: `video-analysis` (required), `video-brief-intake`, `pro-video-editor` that will build, `visual-choice-board` (when the user hesitates between looks), `paid-spend-gate`.
+- Other skills: `video-analysis` (required), `video-brief-intake`, `pro-video-editor` that will build (its Step 3b storyboard), `visual-choice-board` (the three options, and any choice between looks), `paid-spend-gate`.
 - Scripts: `scripts/style_card_check.py` (card | options | rights | all), `scripts/fidelity_diff.py`, `scripts/px_measure.py`; each has a Usage docstring and `--self-check`; exit 0 / 1 / 2 (INSUFFICIENT_EVIDENCE).

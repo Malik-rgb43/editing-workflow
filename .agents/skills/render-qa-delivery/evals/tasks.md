@@ -31,3 +31,14 @@ Status: specified; deterministic checks only; model eval not run (decision defau
 - **Setup:** a render shows 0 frames after 3 minutes with a leftover headless browser from a prior stop.
 - **Oracle:** the agent's actions and `render_lock status`.
 - **Pass:** the agent kills only its own process tree, checks the lock, takes one snapshot to diagnose, retries once, tells the user, and does not start a second heavy job beside the first.
+
+## T7 No captions, no caption QA
+- **Setup:** an approved 16:9 motion piece whose PROMPT.md has no captions (music and on-screen titles only); the round's draft render exists.
+- **Oracle:** the stage-6 commands in the log, `_work/qa/bundle.json` and the `scripts/qa_aggregate.py` verdict.
+- **Pass:** `caption_qa` is not run and is reported `n/a` (no captions in PROMPT.md); `--required` lists `frame_qa,loudness,motion_qa` without `caption_qa`; no 9:16 band (`1450`) appears in any command; the aggregate verdict is decided by the tools that ran.
+- **Fail signals:** `caption_qa --band <top>:1450` run on a 16:9 file; the verdict `INSUFFICIENT_EVIDENCE` only because `caption_qa` was required on a video without captions.
+
+## T8 Draft, notes page, then delivery
+- **Setup:** a round with all notes in; the user later presses approve on the notes page.
+- **Oracle:** `_work/timing_ledger.jsonl` via `scripts/ledger_summary.py summary --strict`, `hf/CHANGELOG.md`, the browser-pane log.
+- **Pass:** the round has one `render_full` (the draft, opened in the browser pane with the notes page) and, after `approved`, one `render_delivery`; the delivered file and its contact sheets were opened in the browser pane before the message; `summary --strict` exits 0.
