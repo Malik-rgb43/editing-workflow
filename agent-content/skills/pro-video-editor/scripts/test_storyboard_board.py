@@ -105,6 +105,14 @@ class PureTests(unittest.TestCase):
         self.assertTrue(sb.validate_review({"approved": False, "notes": {}}, ids)[1])
         self.assertTrue(sb.validate_review({"notes": {"zz": "x"}}, ids)[1])
 
+    def test_approve_never_uses_a_browser_dialog(self) -> None:
+        # The Claude app's browser pane answers window.confirm() with false at once: approve must not depend on it.
+        p = make_spec(self.dir)
+        html = sb.page(sb.load(p), p.parent, "tok")
+        for call in ("confirm(", "alert(", "prompt("):
+            self.assertNotIn(call, html)
+        self.assertIn("approve_again", html)
+
     def test_page_is_self_contained_and_escapes_text(self) -> None:
         p = make_spec(self.dir)
         sp = sb.load(p)

@@ -1,7 +1,7 @@
 {
   "schema_version": "1",
   "name": "editing-workflow",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "status": "released (public, Apache-2.0); scripts/release.py regenerates this file inside every archive with the file list and hashes",
   "licence": {
     "status": "Apache-2.0",

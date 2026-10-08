@@ -41,7 +41,7 @@ UI = {
            "now_ph": "הנקודה הנוכחית", "no_end": "בלי סוף (נקודה אחת)", "clear_range": "נקה זמנים", "general": "הערה כללית (לא לזמן מסוים)",
            "placeholder": "מה לשנות כאן?", "add": "הוסף הערה", "notes_title": "ההערות שלך", "count": "הערות", "all": "כללי",
            "empty": "עוד אין הערות. עצור את הסרטון בנקודה שצריך לשנות, או סמן התחלה וסוף, וכתוב.", "del": "מחק", "edit_tip": "לחץ כדי לערוך",
-           "play_range": "נגן קטע", "send": "שלח הערות", "approve": "מאשר, אין הערות ✓", "approve_q": "לאשר את הטיוטה בלי הערות?",
+           "play_range": "נגן קטע", "send": "שלח הערות", "approve": "מאשר, אין הערות ✓", "approve_q": "לאשר את הטיוטה בלי הערות? לחץ שוב לאישור.", "approve_again": "לחץ שוב לאישור ✓",
            "has_notes": "יש הערות ברשימה: שלח אותן או מחק אותן", "sending": "שולח לסוכן...", "sent": "ההערות נשלחו לסוכן. אפשר לסגור את הדף.",
            "approved": "הטיוטה אושרה. הסוכן קיבל את האישור, אפשר לסגור את הדף.", "fail": "השליחה לא הצליחה: ", "none": "אין הערות לשלוח",
            "out_first": "קודם סמן התחלה, והסוף צריך להיות אחריה", "play": "נגן / עצור", "mute": "השתק", "fs": "מסך מלא",
@@ -53,7 +53,7 @@ UI = {
            "now_ph": "the playhead", "no_end": "no end (one point)", "clear_range": "Clear times", "general": "General note (no specific time)",
            "placeholder": "What should change here?", "add": "Add note", "notes_title": "Your notes", "count": "notes", "all": "general",
            "empty": "No notes yet. Pause where something should change, or mark a start and an end, and type.", "del": "Delete", "edit_tip": "Click to edit",
-           "play_range": "Play range", "send": "Send notes", "approve": "Approved, no notes ✓", "approve_q": "Approve the draft with no notes?",
+           "play_range": "Play range", "send": "Send notes", "approve": "Approved, no notes ✓", "approve_q": "Approve the draft with no notes? Click again to confirm.", "approve_again": "Click again to approve ✓",
            "has_notes": "There are notes in the list: send or delete them", "sending": "Sending to the agent...", "sent": "Notes sent to the agent. You can close this page.",
            "approved": "Draft approved. The agent has it; you can close this page.", "fail": "Sending failed: ", "none": "No notes to send",
            "out_first": "Mark a start first; the end must come after it", "play": "Play / pause", "mute": "Mute", "fs": "Full screen",
@@ -427,7 +427,7 @@ ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px
 .act .svg{width:22px;height:22px}
 .act b{display:block;font-size:1rem}.act small{display:block;font-size:.82rem;opacity:.85;font-weight:400}
 .act.go{background:var(--pri);border-color:var(--pri);color:var(--pri-ink)}.act.go:hover:not(:disabled){background:var(--pri-h);border-color:var(--pri-h)}
-.act.ok{background:var(--surface)}.act.ok:hover:not(:disabled){border-color:var(--ok);background:var(--ok-soft)}.act.ok .svg{color:var(--ok)}
+.act.ok{background:var(--surface)}.act.ok:hover:not(:disabled){border-color:var(--ok);background:var(--ok-soft)}.act.ok .svg{color:var(--ok)}.act.ok.armed{border-color:var(--ok);background:var(--ok-soft)}
 #status{min-height:1.3em;font-size:.9rem;text-align:center;margin-top:8px}.okc{color:var(--ok)}.warnc{color:var(--warn)}
 @media (max-width:980px){.decide{position:sticky;bottom:0;z-index:2}}
 .done{position:fixed;inset:0;background:rgba(2,6,23,.78);display:none;place-items:center;z-index:9;padding:16px;backdrop-filter:blur(6px)}
@@ -467,7 +467,7 @@ ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px
   <p class="empty" id="empty"><svg class="svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>__U_empty__</p></div>
  <div class="card decide"><h2>__U_next_q__</h2>
   <button class="act go" id="send"><svg class="svg" viewBox="0 0 24 24" aria-hidden="true"><path d="m22 2-7 20-4-9-9-4z"/><path d="M22 2 11 13"/></svg><span><b id="sendLabel">__U_send__</b><small>__U_send_hint__</small></span></button>
-  <button class="act ok" id="approve"><svg class="svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span><b>__U_approve__</b><small>__U_approve_hint__</small></span></button>
+  <button class="act ok" id="approve"><svg class="svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span><b id="approveLabel">__U_approve__</b><small>__U_approve_hint__</small></span></button>
   <div id="status" role="status" aria-live="polite"></div></div>
 </aside>
 </main>
@@ -550,7 +550,8 @@ function post(body,okMsg){var x=new XMLHttpRequest();st(U.sending);$('#send').di
   else{st(U.fail+((r.errors||[]).join('; ')||x.status),'warnc');render()}};
  x.onerror=function(){st(U.fail+'offline','warnc');render()};x.send(JSON.stringify(body))}
 $('#send').onclick=function(){if(!notes.length){st(U.none,'warnc');return}post({duration:dur()||null,notes:notes},U.sent)};
-$('#approve').onclick=function(){if(notes.length)return;if(!confirm(U.approve_q))return;post({duration:dur()||null,approved:true,notes:[]},U.approved)};
+var armed=null;function disarm(){if(armed){clearTimeout(armed);armed=null}$('#approveLabel').textContent=U.approve;$('#approve').classList.remove('armed')}
+$('#approve').onclick=function(){if(notes.length||sent)return;if(!armed){$('#approveLabel').textContent=U.approve_again;$('#approve').classList.add('armed');st(U.approve_q);armed=setTimeout(function(){disarm();st('')},6000);return}disarm();post({duration:dur()||null,approved:true,notes:[]},U.approved)};
 load();render();fields();tick();
 })();
 </script></body></html>

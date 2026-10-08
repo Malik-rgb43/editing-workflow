@@ -53,6 +53,15 @@ class PureTests(unittest.TestCase):
         self.assertEqual((r[0], r[-1]), (3.5, 8.5))
         self.assertEqual(nb.strip_times(None, None, 30.0), [])
 
+    def test_approve_never_uses_a_browser_dialog(self) -> None:
+        # The Claude app's browser pane answers window.confirm() with false at once (measured 2026-10-08):
+        # a native dialog made "approve" silently do nothing. The page asks for a second click instead.
+        for lang in ("he", "en"):
+            p = nb.page(lang, 30.0, "t", "tok", "v.mp4")
+            for call in ("confirm(", "alert(", "prompt("):
+                self.assertNotIn(call, p, f"{lang}: {call} must not be used")
+            self.assertIn(nb.UI[lang]["approve_again"], p.replace("\\u", "\\u"))
+
     def test_page_is_offline_and_escapes_the_title(self) -> None:
         p = nb.page("he", 30.0, "<b>x</b>", "tok", "v.mp4")
         self.assertIn('dir="rtl"', p)

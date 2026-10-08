@@ -9,6 +9,11 @@ Dates and facts here are perishable; each entry states its source where it relie
 
 ## [Unreleased]
 
+## [0.6.1] - 2026-10-08
+
+### Fixed
+- **The "approve" button did nothing** on the notes page (`revision-notes-handler`) and on the storyboard page (`pro-video-editor`). The pages asked for confirmation with the browser's `confirm()` dialog, and the Claude app's browser pane answers it with "no" at once without showing it (measured 2026-10-08), so the approval was never sent. The pages now confirm on the page itself: the first click changes the button to "click again to approve", and the second click sends. No board uses a browser dialog any more (regression tests); checked live in the browser pane on both pages.
+
 ## [0.6.0] - 2026-10-08
 
 ### Added (owner decision 2026-10-08: ideas adopted after a review of another open-source video toolkit; everything written here, nothing copied)

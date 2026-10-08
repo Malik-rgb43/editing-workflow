@@ -73,7 +73,7 @@ UI = {
            "shows": "רואים", "move": "תנועה", "why": "למה", "source": "מקור", "cost": "עלות", "note_ph": "הערה על הפריים הזה (לא חובה)",
            "general_ph": "הערה כללית על הסגנון או הסדר (לא חובה)", "send": "שלח הערות", "send_hint": "הסוכן מתקן את הבורד ומראה שוב",
            "approve": "מאשר את הבורד ✓", "approve_hint": "הסוכן מתחיל לבנות את הסרטון לפי הבורד", "next_q": "מה הלאה?",
-           "has_notes": "יש הערות: שלח אותן או מחק אותן", "approve_q": "לאשר את הבורד בלי הערות?", "sending": "שולח לסוכן...",
+           "has_notes": "יש הערות: שלח אותן או מחק אותן", "approve_q": "לאשר את הבורד בלי הערות? לחץ שוב לאישור.", "approve_again": "לחץ שוב לאישור ✓", "sending": "שולח לסוכן...",
            "sent": "ההערות נשלחו לסוכן. אפשר לסגור את הדף.", "approved": "הבורד אושר. הסוכן מתחיל לבנות, אפשר לסגור את הדף.",
            "fail": "השליחה לא הצליחה: ", "saved": "נשמר הקובץ storyboard_review.json: צרף אותו לשיחה עם הסוכן.",
            "font_note": "תצוגה בדפדפן: הפונט האמיתי נבדק במנוע", "src": {"own": "צילום שלנו", "stock": "סטוק (רישיון לכל קובץ)",
@@ -86,7 +86,7 @@ UI = {
            "shows": "Shows", "move": "Move", "why": "Why", "source": "Source", "cost": "Cost", "note_ph": "A note on this frame (optional)",
            "general_ph": "A general note on the style or the order (optional)", "send": "Send notes", "send_hint": "The agent fixes the board and shows it again",
            "approve": "Approve the board ✓", "approve_hint": "The agent starts building the video from this board", "next_q": "What next?",
-           "has_notes": "There are notes: send or delete them", "approve_q": "Approve the board with no notes?", "sending": "Sending to the agent...",
+           "has_notes": "There are notes: send or delete them", "approve_q": "Approve the board with no notes? Click again to confirm.", "approve_again": "Click again to approve ✓", "sending": "Sending to the agent...",
            "sent": "Notes sent to the agent. You can close this page.", "approved": "Board approved. The agent starts building; you can close this page.",
            "fail": "Sending failed: ", "saved": "storyboard_review.json saved: attach it to the chat with the agent.",
            "font_note": "browser preview: the real font is checked in the engine", "src": {"own": "our footage", "stock": "stock (licence per file)",
@@ -613,7 +613,7 @@ textarea{width:100%;min-height:58px;resize:vertical;border:1px solid var(--line)
 <section class="card"><h2>__U_board__</h2><div class="grid" id="grid"></div></section>
 <section class="card decide"><textarea id="general" placeholder="__U_general_ph__"></textarea>
  <button class="act go" id="send"><span><b id="sendLabel">__U_send__</b><small>__U_send_hint__</small></span></button>
- <button class="act ok" id="approve"><span><b>__U_approve__</b><small>__U_approve_hint__</small></span></button>
+ <button class="act ok" id="approve"><span><b id="approveLabel">__U_approve__</b><small>__U_approve_hint__</small></span></button>
  <div id="status" role="status" aria-live="polite"></div></section>
 </main>
 <script>
@@ -649,7 +649,8 @@ function post(ok){var b=body(ok);if(!B.token){var a=document.createElement('a');
  var x=new XMLHttpRequest();st(U.sending);$('#send').disabled=true;$('#approve').disabled=true;x.open('POST','/review');x.setRequestHeader('Content-Type','application/json');x.setRequestHeader('X-Board-Token',B.token);
  x.onload=function(){var r={};try{r=JSON.parse(x.responseText)}catch(e){}if(x.status===200)finish(ok?U.approved:U.sent);else{st(U.fail+((r.errors||[]).join('; ')||x.status),'warnc');refresh()}};
  x.onerror=function(){st(U.fail+'offline','warnc');refresh()};x.send(JSON.stringify(b))}
-$('#send').onclick=function(){if(n())post(false)};$('#approve').onclick=function(){if(n())return;if(confirm(U.approve_q))post(true)};
+$('#send').onclick=function(){if(n())post(false)};var armed=null;function disarm(){if(armed){clearTimeout(armed);armed=null}$('#approveLabel').textContent=U.approve}
+$('#approve').onclick=function(){if(n()||sent)return;if(!armed){$('#approveLabel').textContent=U.approve_again;st(U.approve_q);armed=setTimeout(function(){disarm();st('')},6000);return}disarm();post(true)};
 refresh();
 })();
 </script></body></html>
