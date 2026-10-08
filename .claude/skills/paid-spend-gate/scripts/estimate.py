@@ -11,6 +11,9 @@ Usage:
   python estimate.py status   approval.json
   python estimate.py provenance --file out.mp4 --provider P --model EXACT_ID --mode MODE --plan PLAN
                               --price-date YYYY-MM-DD [--line S1] [--route R] [--out provenance.jsonl]
+  python estimate.py project --cuts-per-min 36 --length-s 30 [--floor 3] [--spread 0.2] [--generated-share 1.0]
+                              [--retry-cap 1] [--unit-cost 0.4 --wallet W --currency USD --price-date YYYY-MM-DD
+                               --price-source NAME | --pilot-spec SPEC.json --pilot P1] [--out project_estimate.json]
   python estimate.py --self-check
 
 SPEC.json (prices are INPUT supplied by the user or read from a provider page the same day;
@@ -24,8 +27,19 @@ this script contains no prices and promises none):
   calc = per_unit (quantity x unit_price) | fixed (unit_price per call) |
          tokens (ceil(width*height*(out_seconds+in_video_seconds)*fps_factor/divisor)/1000 x
                  price_per_1k_tokens x multiplier; fields: width height out_seconds in_video_seconds
-                 fps_factor divisor price_per_1k_tokens multiplier)
+                 fps_factor divisor price_per_1k_tokens multiplier) |
+         pilot_actual (the billed cost of ONE approved sample call, "pilot": "P1" -> spec "pilots")
 Totals are kept PER WALLET. Credits, API dollars and another vendor's price are never summed.
+
+Pilot first (exit 3, code pilot_first): when one provider + model + mode has more than 3 calls in a spec, every
+line of it must use calc pilot_actual: ONE representative sample (the hardest shot) was generated, billed and
+approved by the user first, and the batch is priced on what it really cost. spec "pilots":
+  {"P1": {"provider", "model", "mode", "wallet", "currency", "shot": "<the hardest shot>", "why_hardest": "...",
+          "file_sha256": "<64 hex of the delivered sample>", "approved_quote": "<the user's words on the sample>",
+          "actual_cost": "0.42", "attempts": 1, "billed_at": "YYYY-MM-DD"}}
+The user may skip the sample in writing: spec "pilot_waived": {"quote": "<their words>", "date": "YYYY-MM-DD"}
+(shown in the estimate). `project` turns a reference's cuts per minute and the target length into a shot range
+(never below --floor) and, with a dated unit cost or a billed pilot, a cost range with its assumptions.
 
 Refusals (exit 3): no approval token without an explicit --approved, a non-empty --approval-quote,
 the exact ceiling shown in the estimate, and a price source read today (--max-age-days, default 0 = the
@@ -107,8 +121,31 @@ def check_source(src: dict, today: date, max_age: int, sid: str) -> date:
     return d
 
 
+PILOT_BATCH = 3  # more calls than this on one provider + model + mode = a batch: one sample first (owner rule 2026-10-08)
+
+
+def check_pilot(pid: str, pl: dict, line: dict, today: date) -> Decimal:
+    for k in ("provider", "model", "mode", "wallet", "currency", "shot", "file_sha256", "approved_quote", "actual_cost", "billed_at"):
+        if not str(pl.get(k, "")).strip():
+            raise Refuse("pilot_incomplete", f"pilot {pid!r} lacks {k!r}", 3)
+    for k in ("provider", "model", "mode", "wallet", "currency"):
+        if str(pl[k]) != str(line.get(k, "")):
+            raise Refuse("pilot_mismatch", f"line {line.get('id')}: pilot {pid!r} {k} is {pl[k]!r}, the line has {line.get(k)!r}", 3)
+    if len(str(pl["file_sha256"])) != 64 or any(c not in "0123456789abcdef" for c in str(pl["file_sha256"])):
+        raise Refuse("pilot_incomplete", f"pilot {pid!r}: file_sha256 must be the 64-hex hash of the delivered sample", 3)
+    if parse_date(pl["billed_at"], f"pilot {pid!r} billed_at") > today:
+        raise Refuse("price_date_in_future", f"pilot {pid!r} billed_at is after today", 3)
+    cost = D(pl["actual_cost"])
+    if cost < 0:
+        raise Refuse("bad_number", f"pilot {pid!r}: actual_cost must be >= 0", 2)
+    return cost
+
+
 def calc_line(line: dict) -> tuple[Decimal, str]:
     calc = line.get("calc", "per_unit")
+    if calc == "pilot_actual":
+        cost = D(line.get("_pilot_cost"))
+        return cost, f"pilot {line.get('pilot')} actual {cost} per call (billed {line.get('_pilot_date')})"
     if calc == "per_unit":
         q, p = D(line.get("quantity")), D(line.get("unit_price"))
         if q <= 0 or p < 0:
@@ -130,7 +167,7 @@ def calc_line(line: dict) -> tuple[Decimal, str]:
         cost = Decimal(tokens) / 1000 * price * mult
         return cost, (f"tokens=ceil({w}x{h}x({out}+{inp})x{fpsf}/{div})={tokens}; "
                       f"{tokens}/1000 x {price} x {mult}")
-    raise Refuse("bad_calc", f"line {line.get('id')}: calc must be per_unit | fixed | tokens", 2)
+    raise Refuse("bad_calc", f"line {line.get('id')}: calc must be per_unit | fixed | tokens | pilot_actual", 2)
 
 
 def build_estimate(spec: dict, today: date, max_age: int) -> dict:
@@ -142,6 +179,13 @@ def build_estimate(spec: dict, today: date, max_age: int) -> dict:
     if default_retry < 0:
         raise Refuse("bad_number", "retry_cap must be >= 0", 2)
     lines, wallets, seen = [], {}, set()
+    pilots, waived, warnings = spec.get("pilots") or {}, spec.get("pilot_waived"), []
+    groups: dict[tuple, int] = {}
+    for ln in spec.get("lines") or []:
+        key = (str(ln.get("provider", "")), str(ln.get("model", "")), str(ln.get("mode", "")))
+        groups[key] = groups.get(key, 0) + int(ln.get("count", 1))
+    if waived and not (isinstance(waived, dict) and str(waived.get("quote", "")).strip()):
+        raise Refuse("pilot_waiver_unquoted", "pilot_waived needs the user's own words (quote) and a date", 3)
     for ln in spec.get("lines") or []:
         lid = str(ln.get("id", ""))
         if not lid or lid in seen:
@@ -156,7 +200,20 @@ def build_estimate(spec: dict, today: date, max_age: int) -> dict:
         retry = int(ln.get("retry_cap", default_retry))
         if count < 1 or retry < 0:
             raise Refuse("bad_number", f"line {lid}: count >= 1 and retry_cap >= 0 required", 2)
-        unit_cost, formula = calc_line({**ln, "id": lid})
+        key = (str(ln["provider"]), str(ln["model"]), str(ln.get("mode", "")))
+        extra = {}
+        if ln.get("calc") == "pilot_actual":
+            pid = str(ln.get("pilot", ""))
+            if pid not in pilots:
+                raise Refuse("pilot_missing", f"line {lid}: calc pilot_actual needs a known pilot id, got {pid!r}", 3)
+            extra = {"_pilot_cost": check_pilot(pid, pilots[pid], ln, today), "_pilot_date": pilots[pid]["billed_at"]}
+            att = int(pilots[pid].get("attempts", 1))
+            if att - 1 > retry:
+                warnings.append(f"line {lid}: the pilot needed {att} attempts; a retry_cap of {retry} may be too low for the batch")
+        elif groups[key] > PILOT_BATCH and not waived:
+            raise Refuse("pilot_first", f"line {lid}: {groups[key]} calls of {key[0]}/{key[1]}/{key[2] or '-'} is a batch: generate ONE "
+                         "sample of the hardest shot, get it approved, then price the batch on its billed cost (calc pilot_actual)", 3)
+        unit_cost, formula = calc_line({**ln, "id": lid, **extra})
         first, ceiling = unit_cost * count, unit_cost * count * (1 + retry)
         w = wallets.setdefault(ln["wallet"], {"currency": ln["currency"], "first_pass": Decimal(0), "ceiling": Decimal(0)})
         if w["currency"] != ln["currency"]:
@@ -183,6 +240,9 @@ def build_estimate(spec: dict, today: date, max_age: int) -> dict:
         "over_limit": over, "calls_planned": sum(x["count"] for x in lines),
         "calls_allowed": sum(x["attempts_allowed"] for x in lines),
         "status": "blocked_over_limit" if over else "estimate",
+        "pilot": ("waived: " + str(waived.get("quote"))) if waived else ({k: {"shot": v.get("shot"), "actual_cost": v.get("actual_cost"),
+                                                                           "billed_at": v.get("billed_at")} for k, v in pilots.items()} or None),
+        "warnings": warnings,
         "disclaimer": DISCLAIMER,
     }
     return est
@@ -197,6 +257,10 @@ def render_table(est: dict) -> str:
         rows.append(f"TOTAL {k} ({v['currency']}): first pass {v['first_pass']}, ceiling {v['ceiling']}"
                     + (f", limit {est['limits'][k]}" if k in est["limits"] else ""))
     rows.append(f"price date (oldest source): {est['price_date_oldest']}; status: {est['status']}")
+    if est.get("pilot"):
+        rows.append(f"pilot: {est['pilot']}")
+    for w in est.get("warnings") or []:
+        rows.append("note: " + w)
     rows.append(est["disclaimer"])
     return "\n".join(rows)
 
@@ -374,6 +438,42 @@ def do_provenance(a: argparse.Namespace) -> tuple[int, dict]:
     return 0, rec
 
 
+def project_estimate(cuts_per_min, length_s, floor=3, spread=0.2, generated_share=1.0, retry_cap=1,
+                     unit_cost=None, wallet=None, currency=None, price_date=None, price_source=None, today=None) -> dict:
+    """Shots from a reference's pacing: cuts/min x target length, never below `floor`, as a range (+/- spread)."""
+    cpm, length, spread, share = D(cuts_per_min), D(length_s), D(spread), D(generated_share)
+    if cpm <= 0 or length <= 0 or not (0 <= spread < 1) or not (0 <= share <= 1) or int(floor) < 1 or int(retry_cap) < 0:
+        raise Refuse("bad_number", "cuts-per-min and length-s > 0, 0 <= spread < 1, 0 <= generated-share <= 1, floor >= 1, retry-cap >= 0", 2)
+    mid = cpm * length / 60
+    lo = max(int(floor), math.floor(mid * (1 - spread)))
+    hi = max(int(floor), math.ceil(mid * (1 + spread)))
+    mid_i = max(int(floor), int(mid.to_integral_value()))
+    gen = {k: math.ceil(v * share) for k, v in (("low", lo), ("mid", mid_i), ("high", hi))}
+    out = {"kind": "project_estimate", "shots": {"low": lo, "mid": mid_i, "high": hi}, "generated_shots": gen,
+           "assumptions": [f"{cpm} cuts per minute (the reference's corrected count) x {length} s = about {fmt(mid)} shots",
+                           f"range +/- {fmt(spread * 100)} % for the count's own uncertainty; never below {int(floor)} shots",
+                           f"{fmt(share * 100)} % of shots need a generation (the rest: own footage, stock, stills pushed locally)",
+                           f"retry cap {int(retry_cap)} per shot in the high end"]}
+    if unit_cost is None:
+        out["cost"] = None
+        out["assumptions"].append("no cost: read a price today or bill one pilot sample, then run again")
+        return out
+    if not (wallet and currency and price_date and price_source):
+        raise Refuse("price_source_incomplete", "a unit cost needs --wallet, --currency, --price-date and --price-source", 3)
+    d = parse_date(price_date, "price-date")
+    today = today or date.today()
+    if d > today:
+        raise Refuse("price_date_in_future", f"price date {d} is after today {today}", 3)
+    if (today - d).days > 0 and not str(price_source).startswith("pilot:"):
+        raise Refuse("stale_price", f"the unit cost was read {(today - d).days} days ago: read it again today", 3)
+    u = D(unit_cost)
+    out["cost"] = {"wallet": wallet, "currency": currency, "unit_cost": fmt(u), "source": price_source, "date": d.isoformat(),
+                   "low": fmt(u * gen["low"]), "high": fmt(u * gen["high"] * (1 + int(retry_cap)))}
+    out["assumptions"].append(f"unit cost {fmt(u)} {currency} per shot from {price_source} ({d.isoformat()}); one wallet, never converted")
+    out["disclaimer"] = "A range for planning, not an approval: the batch still goes through estimate -> approve after one approved pilot."
+    return out
+
+
 def _ns(**kw) -> argparse.Namespace:
     return argparse.Namespace(**kw)
 
@@ -484,6 +584,47 @@ def _self_check() -> int:
             fails.append("provenance hash")
         pa2 = _ns(**{**vars(pa), "model": ""})
         expect("provenance needs exact model id", lambda: do_provenance(pa2), "provenance_incomplete")
+    # pilot first
+    pil = {"provider": "x", "model": "m1", "mode": "i2v", "wallet": "w_usd", "currency": "USD", "shot": "b4, two hands pouring, fast",
+           "why_hardest": "hands + liquid", "file_sha256": "a" * 64, "approved_quote": "this take is good", "actual_cost": "0.9", "attempts": 2,
+           "billed_at": "2026-10-02"}
+    batch = {"project": "b", "retry_cap": 1, "price_sources": {"p1": {**src, "checked_at": "2026-10-02"}},
+             "lines": [{"id": "B1", "provider": "x", "model": "m1", "mode": "i2v", "wallet": "w_usd", "currency": "USD", "price_source": "p1",
+                        "count": 6, "calc": "per_unit", "quantity": 5, "unit": "second", "unit_price": 0.1}]}
+    expect("a batch of 6 without a pilot is refused", lambda: build_estimate(batch, today, 0), "pilot_first", 3)
+    split = json.loads(json.dumps(batch)); split["lines"] = [dict(batch["lines"][0], id="B1", count=3), dict(batch["lines"][0], id="B2", count=3)]
+    expect("splitting the batch into lines of 3 is still a batch", lambda: build_estimate(split, today, 0), "pilot_first", 3)
+    three = json.loads(json.dumps(batch)); three["lines"][0]["count"] = 3
+    expect("3 calls need no pilot", lambda: build_estimate(three, today, 0))
+    withp = json.loads(json.dumps(batch)); withp["pilots"] = {"P1": pil}
+    withp["lines"][0].update(calc="pilot_actual", pilot="P1", count=5)
+    e2 = expect("batch priced on the pilot", lambda: build_estimate(withp, today, 0))
+    if e2 and (e2["lines"][0]["unit_cost"] != "0.9" or e2["totals"]["w_usd"]["ceiling"] != "9" or e2["warnings"]):
+        fails.append(f"pilot arithmetic: {e2['lines'][0]['unit_cost']} / {e2['totals']['w_usd']['ceiling']}")
+    bad = json.loads(json.dumps(withp)); bad["pilots"]["P1"]["approved_quote"] = ""
+    expect("pilot without the user's approval is refused", lambda: build_estimate(bad, today, 0), "pilot_incomplete")
+    bad = json.loads(json.dumps(withp)); bad["pilots"]["P1"]["model"] = "m2"
+    expect("pilot of another model is refused", lambda: build_estimate(bad, today, 0), "pilot_mismatch")
+    wv = json.loads(json.dumps(batch)); wv["pilot_waived"] = {"quote": "skip the sample, I know this model", "date": "2026-10-02"}
+    e3 = expect("a written waiver lets the batch be estimated", lambda: build_estimate(wv, today, 0))
+    if e3 and not str(e3.get("pilot", "")).startswith("waived"):
+        fails.append("the waiver must be shown in the estimate")
+    wv["pilot_waived"] = {"quote": ""}
+    expect("a waiver without the user's words is refused", lambda: build_estimate(wv, today, 0), "pilot_waiver_unquoted")
+    # project estimate from a reference
+    pe = expect("project range", lambda: project_estimate(36, 30))
+    if pe and (pe["shots"] != {"low": 14, "mid": 18, "high": 22} or pe["cost"] is not None):
+        fails.append(f"project range: {pe and pe['shots']}")
+    pe = expect("floor of a few shots", lambda: project_estimate(2, 20))
+    if pe and pe["shots"]["low"] != 3:
+        fails.append("floor not applied")
+    pe = expect("project cost range", lambda: project_estimate(36, 30, generated_share=0.5, unit_cost="0.9", wallet="w", currency="USD",
+                                                            price_date="2026-10-02", price_source="pilot:P1", today=today))
+    if pe and (pe["cost"]["low"] != "6.3" or pe["cost"]["high"] != "19.8"):
+        fails.append(f"project cost: {pe and pe['cost']}")
+    expect("project unit cost from an old price is refused", lambda: project_estimate(36, 30, unit_cost="1", wallet="w", currency="USD",
+                                                                                     price_date="2026-09-01", price_source="page", today=today), "stale_price")
+    expect("project unit cost without a source is refused", lambda: project_estimate(36, 30, unit_cost="1", today=today), "price_source_incomplete")
     for f in fails:
         print("FAIL:", f)
     print("self-check:", "FAILED" if fails else "ok")
@@ -504,6 +645,11 @@ def main(argv: list[str]) -> int:
     p = sub.add_parser("record"); p.add_argument("approval"); p.add_argument("--line", required=True)
     p.add_argument("--outcome", required=True); p.add_argument("--billed"); p.add_argument("--note")
     p = sub.add_parser("status"); p.add_argument("approval")
+    p = sub.add_parser("project"); p.add_argument("--cuts-per-min", required=True); p.add_argument("--length-s", required=True)
+    p.add_argument("--floor", type=int, default=3); p.add_argument("--spread", default="0.2"); p.add_argument("--generated-share", default="1.0")
+    p.add_argument("--retry-cap", type=int, default=1); p.add_argument("--unit-cost"); p.add_argument("--wallet"); p.add_argument("--currency")
+    p.add_argument("--price-date"); p.add_argument("--price-source"); p.add_argument("--pilot-spec"); p.add_argument("--pilot")
+    p.add_argument("--out"); p.add_argument("--today")
     p = sub.add_parser("provenance"); p.add_argument("--file", required=True)
     for k in ("provider", "model", "mode", "plan", "price-date", "line", "route"):
         p.add_argument(f"--{k}", default="")
@@ -526,6 +672,21 @@ def main(argv: list[str]) -> int:
             print(json.dumps({"status": "approved", "file": a.out, "expires_at": res["expires_at"],
                               "token_mode": res["token_mode"], "calls_allowed": res["calls_allowed"]}, indent=2))
             return code
+        if a.cmd == "project":
+            unit, wallet, cur, pdate, psrc = a.unit_cost, a.wallet, a.currency, a.price_date, a.price_source
+            if a.pilot_spec:
+                pl = (json.loads(Path(a.pilot_spec).read_text(encoding="utf-8")).get("pilots") or {}).get(a.pilot or "")
+                if not pl:
+                    raise Refuse("pilot_missing", f"pilot {a.pilot!r} not in {a.pilot_spec}", 3)
+                if not str(pl.get("approved_quote", "")).strip():
+                    raise Refuse("pilot_incomplete", f"pilot {a.pilot!r} was not approved by the user", 3)
+                unit, wallet, cur, pdate, psrc = pl.get("actual_cost"), pl.get("wallet"), pl.get("currency"), pl.get("billed_at"), f"pilot:{a.pilot}"
+            res = project_estimate(a.cuts_per_min, a.length_s, a.floor, a.spread, a.generated_share, a.retry_cap,
+                                   unit, wallet, cur, pdate, psrc, today)
+            if a.out:
+                Path(a.out).write_text(json.dumps(res, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+            print(json.dumps(res, ensure_ascii=False, indent=2))
+            return 0
         if a.cmd == "can-run":
             code, res = do_can_run(Path(a.approval), a.line, secret)
         elif a.cmd == "record":

@@ -5,7 +5,8 @@ The cue file (JSON, UTF-8) is the single source of truth for the mix; relative p
     {"duration": 30.0,
      "master": {"lufs": -14, "tp": -1.0},                         # house preset v1 (override per project)
      "vo":    [{"file": "assets/vo1.wav", "start": 0.5, "gain_db": 0}],
-     "music": {"file": "assets/bed.wav", "start": 0, "gain_db": -18, "duck_db": -10, "loop": true, "fade_out": 1.5},
+     "music": {"file": "assets/bed.wav", "start": 0, "in": 0, "gain_db": -18, "duck_db": -10, "loop": true, "fade_out": 1.5,
+               "dropouts": [[21.4, 23.4]]},
      "sfx":   [{"file": "assets/hit.wav", "at": 3.2, "gain_db": -22, "lead_frames": 2, "fps": 30},
                {"file": "assets/riser.wav", "at": 4.37, "align": "peak", "pre_s": 0.3, "post_s": 0.8}]}
 
@@ -49,6 +50,18 @@ def _f(v, name, default=None):
     return float(v)
 
 
+def _dropouts(v) -> list:
+    """Music dropouts: [[t0, t1], ...] in video seconds, t0 < t1, sorted; anything else is refused."""
+    if v in (None, []):
+        return []
+    if not isinstance(v, list) or not all(isinstance(x, (list, tuple)) and len(x) == 2 for x in v):
+        raise ValueError("music.dropouts must be a list of [start, end] pairs in seconds")
+    out = sorted((float(a), float(b)) for a, b in v)
+    if any(a < 0 or b <= a for a, b in out):
+        raise ValueError("music.dropouts: every pair needs 0 <= start < end")
+    return out
+
+
 def load_cues(path: Path) -> dict:
     d = json.loads(path.read_text(encoding="utf-8"))
     if not isinstance(d, dict):
@@ -64,7 +77,9 @@ def load_cues(path: Path) -> dict:
     m = d.get("music")
     music = None
     if m:
-        music = {"file": res(m["file"]), "start": _f(m.get("start"), "music.start", 0.0), "gain_db": _f(m.get("gain_db"), "music.gain_db", -18.0), "duck_db": _f(m.get("duck_db"), "music.duck_db", -10.0), "loop": bool(m.get("loop", True)), "fade_out": _f(m.get("fade_out"), "music.fade_out", 0.0)}
+        music = {"file": res(m["file"]), "start": _f(m.get("start"), "music.start", 0.0), "gain_db": _f(m.get("gain_db"), "music.gain_db", -18.0), "duck_db": _f(m.get("duck_db"), "music.duck_db", -10.0), "loop": bool(m.get("loop", True)), "fade_out": _f(m.get("fade_out"), "music.fade_out", 0.0),
+                 "in": _f(m.get("in"), "music.in", 0.0),  # offset INTO the track (music_fit's start_s): the bed starts there
+                 "dropouts": _dropouts(m.get("dropouts"))}  # video-time ranges where the music cuts to silence (a montage's emotional centre)
     sfx = []
     for x in d.get("sfx", []):
         fps = _f(x.get("fps"), "sfx.fps", 30.0)
@@ -122,7 +137,9 @@ def build_graph(c: dict, *, duck: bool = True, stem: str | None = None):
         k = add_input(m["file"], loop=m["loop"])
         ms = int(round(m["start"] * 1000))
         fade = f",afade=t=out:st={max(0.0, dur - m['fade_out']):.3f}:d={m['fade_out']:.3f}" if m["fade_out"] > 0 else ""
-        chains.append(f"[{k}:a]aformat=sample_rates=48000:channel_layouts=stereo,atrim=0:{dur:.3f},adelay={ms}|{ms},volume={m['gain_db']}dB{fade}[mus]")
+        trim = f"atrim=start={m['in']:.3f}:end={m['in'] + dur:.3f},asetpts=PTS-STARTPTS" if m["in"] > 0 else f"atrim=0:{dur:.3f}"
+        drops = "".join(f",volume=0:enable='between(t,{a:.3f},{b:.3f})'" for a, b in m["dropouts"])
+        chains.append(f"[{k}:a]aformat=sample_rates=48000:channel_layouts=stereo,{trim},adelay={ms}|{ms},volume={m['gain_db']}dB{fade}{drops}[mus]")
         if duck and vo_bus:
             chains.append(f"{vo_bus}asplit=2[vomix][vosc]")
             # threshold/ratio chosen so a VO at normal level pulls the bed down by roughly |duck_db|; verify with the measured report

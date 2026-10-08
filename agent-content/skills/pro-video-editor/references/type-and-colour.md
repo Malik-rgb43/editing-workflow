@@ -82,3 +82,10 @@ Load when: stressing a word on screen or building a glass or frosted surface. Mo
 |---|---|
 | A highlight box behind a word (it looks like a text selection) | Stress the word with colour, weight or a gradient and a faint glow |
 | Glass or frosted UI on a plain white page (it shows nothing) | Put something behind it: a slow pastel aura or a blurred wash of the picture |
+
+## Captions and on-screen text: one place for each word
+Load when: a captioned video also shows words on screen (a title card, kinetic type, a UI label being read, a lower third, a price badge). Written 2026-10-08; editorial practice, not measured.
+
+- **A caption never echoes on-screen text in the same window.** While the same words are already on screen, the caption for that line is left out (the caption track has a gap there, or that chunk is not built). Why: the viewer reads the same words twice in two places, the eye splits between them, and the graphic loses its moment.
+- How to check it: for every caption chunk, list the on-screen text visible during its start-end window (the composition's text layers in that range, or a still at the chunk's middle). When most of the chunk's words are on screen, drop the chunk; when only one keyword is shared, keep the caption and let the graphic carry the keyword alone (the caption's other words stay).
+- Plan it in the storyboard: a beat that shows the line as type (`text_only`, or kinetic type of the spoken words) is marked "no caption" in its `why`, so the caption builder (`captions-transcription`) skips that window.

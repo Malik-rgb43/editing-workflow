@@ -9,6 +9,42 @@ Dates and facts here are perishable; each entry states its source where it relie
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-10-08
+
+### Added (owner decision 2026-10-08: ideas adopted after a review of another open-source video toolkit; everything written here, nothing copied)
+- **No silent changes:**
+  - `pro-video-editor/scripts/promise_check.py` locks what was approved: length, aspect, captions, music, voice, and each storyboard beat's roll, source, shot and order.
+  - Before the draft it checks what was built against that lock. A change nobody asked for (a failed generation turned into a still, music dropped, a zoom swapped for a full screen) fails until it is asked and recorded with the user's words.
+- **Storyboard sameness warnings** (`storyboard_board.py`):
+  - runs of one shot size, or one shot size on more than half of the beats;
+  - the same image reused, too many text-only beats, repeated neighbouring beats;
+  - the signature device on more than 2 beats.
+  - New beat fields: `shot`, `signature`, `text_only`, `hero`.
+- **New tools:**
+  - `tools/music_fit.py` picks the window of a long track for the video's length: it starts on a downbeat, ends on a bar or fades, and puts the rise on the payoff. `hf_mix` gains music `in` (an offset into the track) and `dropouts`.
+  - `tools/speaker_turns.py` gives speaker labels per word from separate mic tracks or stereo channels, with no model.
+  - `tools/screen_zoom.py` maps a screen recording: where it changes, zoom keys ready for `camera_path`, dead time, and narration lines with no matching action.
+  - `tools/analyze.py` marks each shot `still`, `still_push` or `motion`.
+- **New kinds of video:**
+  - **Montage** (footage + music, no voice): register, holds counted in beats, hero shots, one dropout, ambience L-cuts.
+  - **Screen demo / tutorial**: playbook `wf-screen-demo.md`, a readability rule (UI text >= 40 px at 1080 width, <= 2x), dead time cut, the cue check on the cut timeline.
+  - Rubrics for both.
+- **Translated captions and language versions:**
+  - `captions-transcription` translate mode: a glossary of terms never translated, the translation approved before it is placed, layout mirroring on a direction change, claims re-checked; `scripts/translation_check.py`.
+  - `video-variants-exporter` gains a `language` axis.
+- **First requests:**
+  - After the install, and on a vague first message, the agent offers exactly 3 ready requests matched to what is connected.
+  - New gallery `docs/en|he/first-requests.md`.
+- **Reference feasibility:** the style options say per borrowed device: possible here locally / needs a connection (paid gate) / not reproducible.
+- **Paid pilot:** before a batch of more than 3 generations, one representative sample is approved first. A project estimate can be made from a reference's cut rate.
+- **Craft:**
+  - the critic sweeps the whole film for each kind of finding, and a blocking finding carries a concrete fix;
+  - voice samples start with the hardest line;
+  - room tone under joins;
+  - captions never repeat on-screen text;
+  - explainer story logic;
+  - stock search craft.
+
 ## [0.5.1] - 2026-10-06
 
 ### Changed (owner decision 2026-10-06)

@@ -17,6 +17,25 @@ Per line: first pass = per call x count; ceiling = first pass x (1 + retry_cap).
 Worked example (arithmetic only): 2 shots, 1280x720, 10 s output + 4 s supplied input video, example rate 0.0214 per 1,000 tokens, multiplier 0.6: tokens = ceil(1280x720x14x24/1024) = 302,400; per call 302.4 x 0.0214 x 0.6 = 3.882816; two calls 7.765632; plus 2 stills at 0.05 = 0.10; first pass 7.865632. With retry cap 1 the ceiling is 15.731264. `references/sample-spec.json` reproduces it.
 Reference scenario range from the same model: first-pass generation worksheet USD 0 to 15.28 across five reference briefs and three tiers (E07; time and accepted-output cost unmeasured).
 
+## 2b. One sample before a batch, and a project range from a reference
+**The pilot.** More than 3 calls on one provider + model + mode is a batch (lines are added up, so splitting a batch into lines of 3 does not avoid it). Order:
+1. Pick the hardest shot of the batch (most motion, hands, faces, liquid, the longest take, the most characters) and say why in one line. An easy sample proves nothing about the hard ones.
+2. Estimate and approve that ONE call like any other line (count 1), run it, `record` it, `provenance` the file.
+3. Show the take (the storyboard page or the Studio) and get the user's verdict on it. A rejected sample is a finding: change the prompt or the route, and run the sample again under the same rule; the batch waits.
+4. Write the approved sample into the spec as a pilot, and price the batch lines with `calc: pilot_actual`:
+```json
+"pilots": {"P1": {"provider": "example-provider", "model": "example-video-model-id", "mode": "image_to_video",
+                  "wallet": "example_api_usd", "currency": "USD", "shot": "b4: two hands pouring coffee, 5 s",
+                  "why_hardest": "hands and liquid", "file_sha256": "<64 hex of the delivered sample>",
+                  "approved_quote": "<the user's words on the sample>", "actual_cost": "<billed for the accepted take>",
+                  "attempts": 2, "billed_at": "YYYY-MM-DD"}},
+"lines": [{"id": "B1", "provider": "example-provider", "model": "example-video-model-id", "mode": "image_to_video",
+           "wallet": "example_api_usd", "currency": "USD", "price_source": "p1", "count": 7, "calc": "pilot_actual", "pilot": "P1"}]
+```
+The price source is still read today (the card can change between the sample and the batch). When the sample needed more attempts than the batch's retry cap allows, the estimate says so: raise the cap or expect to stop and ask. A written waiver (`"pilot_waived": {"quote": "<the user's words>", "date": "..."}`) is shown in the estimate; without the user's words it is refused.
+
+**A project range from a reference.** Before any shot list exists, the size of a video "like this reference" comes from the reference's pacing: `python estimate.py project --cuts-per-min <corrected cuts/min from video-analysis> --length-s <target length> [--generated-share 0.5] [--floor 3] [--spread 0.2]`. Shots = cuts per minute x length, as a range (+/- the spread, for the count's own uncertainty), never below the floor; generated shots = shots x the share that needs a generation (own footage, stock and stills pushed locally need none; `reference-style-matching` says which devices are local). A cost range appears only with a unit price read today (`--unit-cost --wallet --currency --price-date --price-source`) or a billed pilot (`--pilot-spec spec.json --pilot P1`). Show the range and every assumption line; it is a planning number, not an approval.
+
 ## 3. Accounting layers (record per project, never merge)
 | Layer | Contains |
 |---|---|
@@ -44,7 +63,7 @@ Approval is the user's reply naming or accepting that number. A bare "go" after 
 
 ## 5. Command sequence (all under `scripts/`, stdlib)
 1. Read the price card today (an MCP route: its own free quote or estimate tool, recorded as `mcp:<server>/<tool>`); write `spec.json` (see the docstring of `estimate.py`).
-2. `python estimate.py estimate spec.json --out cost_estimate.json` and show the table. Exit 4 = over the user's limit: nothing may be submitted.
+2. `python estimate.py estimate spec.json --out cost_estimate.json` and show the table. Exit 4 = over the user's limit: nothing may be submitted. Exit 3 `pilot_first` = a batch without an approved sample: run the sample first (section 2b).
 3. After the user's reply: `python estimate.py approve cost_estimate.json --approved --approval-quote "<their words>" --approved-amount <wallet>=<ceiling> --out .avc/approval.json`. Without `--approved` the script refuses to write a token.
 4. Before EVERY paid call: `python estimate.py can-run .avc/approval.json --line <id>`; non-zero means stop.
 5. After every call, including failures, rejections by the user and timeouts: `record ... --outcome ok|failed|rejected|timeout [--billed <amount>]`. After a timeout, check the provider's job list and record `--outcome reconciled` before any repeat.

@@ -100,3 +100,15 @@
 {"prompt": "תוסיף כתוביות לסרטון", "should_trigger": false, "route_instead": "captions-transcription"}
 {"prompt": "add Spanish subtitles to this clip, nothing else", "should_trigger": false, "route_instead": "captions-transcription"}
 {"prompt": "תערוך לי את הראיון הזה לרילס, הוא בספרדית", "should_trigger": true, "route_instead": null}
+{"prompt": "the Kling shot for beat 4 failed twice, can we just use a still there? the storyboard is already approved", "should_trigger": true, "route_instead": null}
+{"prompt": "הג'נרציה של הסצנה השלישית נכשלה, תחליף אותה בתמונה ותמשיך לרנדר", "should_trigger": true, "route_instead": null}
+{"prompt": "my storyboard feels like every shot is the same close-up, fix the variety before you build", "should_trigger": true, "route_instead": null}
+{"prompt": "הסטוריבורד נראה חוזר על עצמו, כל הפריימים אותו גודל", "should_trigger": true, "route_instead": null}
+{"prompt": "cut a 45 s recap of our company retreat from these clips, music only, no talking", "should_trigger": true, "route_instead": null}
+{"prompt": "תעשה לי מונטאז' מהטיול ליוון עם מוזיקה, בלי קריינות", "should_trigger": true, "route_instead": null}
+{"prompt": "סרטון סיכום לאירוע של החברה מהקליפים האלה", "should_trigger": true, "route_instead": null}
+{"prompt": "turn my screen recording into a short tutorial with zooms on the clicks", "should_trigger": true, "route_instead": null}
+{"prompt": "תערוך לי הקלטת מסך להדרכה, תחתוך המתנות ותעשה זומים על הכפתורים", "should_trigger": true, "route_instead": null}
+{"prompt": "make a product demo video from this screen capture of our dashboard", "should_trigger": true, "route_instead": null}
+{"prompt": "install OBS for me and set it up to record my screen", "should_trigger": false, "route_instead": null}
+{"prompt": "תמליץ לי על תוכנה להקלטת מסך", "should_trigger": false, "route_instead": null}

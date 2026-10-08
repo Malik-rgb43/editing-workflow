@@ -40,6 +40,21 @@ Pick the beat by the MEANING of the sentence being spoken, so the picture shows 
 | Licence row per asset in `hf/SOURCES.md`; `License: unknown` or CC-BY-NC = blocked for client work (Q2) | decision default Q2; rights are not inferred from a filename |
 | Owner's own transitions folder before stock (two film-burn ProRes clips, 24p -> 30p by hand so the white peak sits on the cut frame) | owner preference, local-only asset |
 
+### 4b. Searching stock (written 2026-10-08; editorial practice, not measured)
+- **The query: the subject first, 2-4 words, plus one point-of-view word.** For example "chef hands plating overhead", "runner shoes close-up", "harbour boats aerial". The subject goes first because the search ranks the first words highest; the point-of-view word (overhead, close-up, aerial, wide, side, POV) goes in because the angle decides whether the shot cuts with its neighbours. Search in English even for a Hebrew video: the libraries' tags are English.
+- **Score each candidate 1-5 against its beat, accept 3 or more:**
+
+| Score | The candidate |
+|---|---|
+| 5 | shows the sentence, from the planned point of view (the beat's `shot`), with a usable 2 s or longer window |
+| 4 | right subject and angle; a small fix (colour, a crop that keeps the action) |
+| 3 | right subject; needs a crop or a grade that still keeps the planned shot size |
+| 2 | wrong point of view or the wrong action |
+| 1 | off topic, or foreign text, a logo, a locale or a person that contradicts the line |
+
+- **A wrong point of view costs more than a wrong colour.** A grade fixes colour in minutes; a wrong angle cannot be fixed and breaks the cut with the shots around it (and trips the board's sameness warnings). Between a 4 with the wrong colour and a 3 with the wrong angle, the angle decides.
+- **Fallback order** when nothing scores 3: rephrase the query (a synonym for the subject, another point-of-view word); then a second library; then the student's own footage or a photo with a camera move; then a graphic or UI beat that shows the sentence; then a generated shot through `paid-spend-gate`. Stop at the first route that scores 3 or more, and write the query and the score beside the licence row in `hf/SOURCES.md`.
+
 ### 5. Overlay cards on the speaker
 Light cards (#F2F1F3 at 0.95, ink text), <= 860 px wide, body 27-38 px, under the chin, never crossing the face box, appear in place (no drop through the face), leave as ONE unit. Dark glass on a black shirt vanishes and reads as a censor bar. These numbers are proven in one project; `plan_lint` checks width and box-vs-face when the plan supplies boxes.
 

@@ -7,10 +7,10 @@ Every skill, workflow and tool in one place. Skills are specified with determini
 
 | skill | kind | version | what it is for |
 |---|---|---|---|
-| `captions-transcription` | process | 0.1.0 | Transcribe speech and build burned-in captions in any language (Hebrew deepest: the ivrit model, RTL and mixed English/number lines, look-alike letters). |
+| `captions-transcription` | process | 0.1.0 | Transcribe speech and build captions or subtitles in any language, or translated into another (Hebrew deepest: the ivrit model, RTL, look-alike letters). |
 | `image-prompt-writer` | tool | 0.1.0 | Write copy-ready text-to-image prompts for the stills-first stage of a video: keyframes, start frames, hero frames, character and location sheets, B-roll stills, thumbnails; one STYLE PREFIX per film, no text inside the… |
 | `paid-spend-gate` | gate | 0.1.0 | Use before any paid action runs - AI image, video or audio generation, upscales, paid APIs or MCP tools, cloud renders, credit purchases, trials that need a card - and when the user asks what it will cost. |
-| `pro-video-editor` | process | 0.2.0 | Use when editing any video into a finished piece - a speaker to camera, a testimonial, an ad or promo, a motion or launch piece, AI-generated takes, a podcast clip - from raw footage, a rough cut, a brief or a reference. |
+| `pro-video-editor` | process | 0.2.0 | Use when editing any video into a finished piece: a speaker to camera, a testimonial, an ad, a promo, a motion piece, AI takes, a podcast clip, a montage, a screen demo, from raw footage, a rough cut, a brief or a refer… |
 | `reference-style-matching` | gate | 0.1.0 | Make the user's footage, script or topic in the style of a reference video: measure it into a Style DNA card, map it onto the user's material, offer three ways to apply it (Faithful / Elevated / Twist); grammar, never a… |
 | `render-qa-delivery` | process | 0.1.0 | Run the cheap-first render, QA and delivery pipeline for a HyperFrames video: preflight, range renders, one full render, final-file loudness and mux, every-frame and visual QA, manifest, timing ledger. |
 | `revision-notes-handler` | process | 0.1.0 | Use when a round's draft has just been rendered and is presented (open the notes page then, unasked), or when the user sends notes, complaints or timed fixes on a draft or delivered video - boring, looks AI, the caption… |
@@ -19,10 +19,10 @@ Every skill, workflow and tool in one place. Skills are specified with determini
 | `video-brief-intake` | gate | 0.1.0 | Turn a new video idea, brief or list of specifics into a checkable Concept Ledger and ask questions until every parameter is precise, before any concept, prompt or build. |
 | `video-prompt-writer` | tool | 0.1.0 | Write shot-by-shot prompts for AI video models (Seedance deepest; Kling, Veo, Hailuo and others) from a script, scene or storyboard beat, with camera, lens and light per shot. |
 | `video-request-router` | router | 0.1.0 | Choose the one skill that owns a video request and hand it an explicit artifact. |
-| `video-variants-exporter` | process | 0.1.0 | Deliver one approved video as several outputs (other aspect ratios, hook variants, platform versions, no-music/no-captions versions) or run several videos in parallel, with one shared mix, strict naming and a manifest t… |
+| `video-variants-exporter` | process | 0.1.0 | Deliver one approved video as several outputs (other aspect ratios, hook variants, platform or language versions, no-music/no-captions versions) or run several videos in parallel. |
 | `visual-choice-board` | process | 0.1.0 | Build one HTML board showing every option of a visual choice (font, caption animation, easing, palette, transition, layout, hook text) on the user's real text and still, and read the pick back. |
 
-## Playbooks and workflows (13)
+## Playbooks and workflows (14)
 
 - `agent-content/playbooks/wf-00-intake.md` - wf-00 — Intake (קליטה)
 - `agent-content/playbooks/wf-01-references.md` - wf-01 — References and style (רפרנסים וסגנון)
@@ -36,6 +36,7 @@ Every skill, workflow and tool in one place. Skills are specified with determini
 - `agent-content/playbooks/wf-09-learn.md` - wf-09 — Learn (למידה וסיכום)
 - `agent-content/playbooks/wf-batch.md` - wf-batch — Many videos at once (עבודה בכמויות)
 - `agent-content/playbooks/wf-podcast-clip.md` - wf-podcast-clip — Clips from a long conversation (קליפים מפודקאסט)
+- `agent-content/playbooks/wf-screen-demo.md` - wf-screen-demo — A screen recording into a demo or tutorial (הדגמת מסך / הדרכה)
 - `agent-content/playbooks/wf-variants.md` - wf-variants — Ratios, hook variants and platform versions (גרסאות)
 
 ## Techniques (9)
@@ -50,13 +51,15 @@ Every skill, workflow and tool in one place. Skills are specified with determini
 - `agent-content/techniques/studio-review-loop.md` - Technique: the Studio-first review loop
 - `agent-content/techniques/timing-ledger.md` - Technique: the timing ledger
 
-## Benchmark rubrics (8)
+## Benchmark rubrics (10)
 
 - `agent-content/benchmarks/ad-promo.rubric.md` - Rubric: ad-promo (paid-social ads and promos; also UGC-unboxing and product-demo until they get their own)
 - `agent-content/benchmarks/ai-generated.rubric.md` - Rubric: ai-generated (videos built mainly from AI-generated shots)
 - `agent-content/benchmarks/critic-brief.md` - The critic brief (independent review of a finished draft)
+- `agent-content/benchmarks/montage.rubric.md` - Rubric: montage (footage + music, no voice: event recap, travel, behind the scenes)
 - `agent-content/benchmarks/motion-graphics.rubric.md` - Rubric: motion-graphics (product/app launch, kinetic type, UI explainer; also trailer-teaser and music-montage until they get their own)
 - `agent-content/benchmarks/podcast-clip.rubric.md` - Rubric: podcast-clip (a long episode or interview → short vertical clips)
+- `agent-content/benchmarks/screen-demo.rubric.md` - Rubric: screen demo / tutorial (a screen recording turned into a short tutorial)
 - `agent-content/benchmarks/talking-head.rubric.md` - Rubric: talking-head (speaker-to-camera reel; also tutorial and vlog until they get their own)
 - `agent-content/benchmarks/testimonial.rubric.md` - Rubric: testimonial (customer reviews, student success stories)
 - `agent-content/benchmarks/visual-review-4-axis.md` - Visual review on four axes
@@ -77,7 +80,7 @@ Every skill, workflow and tool in one place. Skills are specified with determini
 - `agent-content/references/platform-specs.md` - Platform specs, delivery presets and AI-disclosure — dated reference
 - `agent-content/references/three-d-routes.md` - 3D routes — dated reference
 
-## Tools (39)
+## Tools (42)
 
 | tool | purpose | usage |
 |---|---|---|
@@ -107,15 +110,18 @@ Every skill, workflow and tool in one place. Skills are specified with determini
 | `tools/ledger.py` | ledger - read and summarise the per-project timing ledger (JSONL, one line per stage). | python tools/ledger.py summarize <ledger.jsonl>... [--project NAME] [--json] python tools/ledger.py demo <ledger.jsonl>          (writes 3 sample lines; used by tests) |
 | `tools/motion_qa.py` | motion_qa - camera-motion stutter detector (pan/zoom jerk) with an explicit coverage statement. | python tools/motion_qa.py <video> [--max-width 480] [--accel-px 2.5] [--sigma 6] [--reversal-px 1.5] [--max-unmeasured 0.3] [--min-points 12] [--min-inliers 30] [--cuts 48,86 \| --cuts-from hf/data/src_cuts.json] [--timeout 900] [--json-out report.json] |
 | `tools/motion_scan.py` | motion_scan - flag B-roll that is "boring/static": windows >= N seconds with almost no temporal change. | python tools/motion_scan.py <video> [--window 1.5] [--min-ti 1.0] [--severity warning\|error] [--json-out r.json] |
+| `tools/music_fit.py` | music_fit - pick the part of a music track that fits a video: it starts on a downbeat and ends on a bar line or a one-bar fade. | python tools/music_fit.py <track> --length S [--hit T] [-o fit.json] [--beats-per-bar 4] [--end-tol 0.12] |
 | `tools/new_project.py` | new_project - scaffold ``<work_root>/projects/<slug>/{source,hf,final,_work}`` under an ASCII work root. | python tools/new_project.py "<title>" [--work-root DIR] [--copy FILE_OR_DIR ...] [--slug name] [--init-hyperframes] [--json] |
 | `tools/prep.py` | prep - minute-0 preparation of a project: every slow measurement runs in the background while the brief is still being written. | python tools/prep.py <project-root> [--main FILE] [--steps sheet,asr,cuts,faces,scopes,refs] [--language auto\|he\|en\|...] [--ref-detail standard\|full] [--model-dir DIR \| --model-id ID --allow-download] [--face-model yunet.onnx] [--lock-wait 900] [--step-timeout 1800] [--force] [--plan] [--json] |
 | `tools/qa_delivery.py` | qa_delivery - the delivery evidence gate: may THIS file be delivered? (aggregates the gate reports, fail-closed) | python tools/qa_delivery.py run <video> [--captions] [--expected-duration S] [--human-approved "words" --attested-by NAME] [--out-dir DIR] [--max-age-min 120] python tools/qa_delivery.py aggregate <contract.json> <report.json>... |
 | `tools/render_lock.py` | render_lock - the machine-wide single-heavy-job lock (kernel lock; replaces the original file-timestamp lock). | python tools/render_lock.py status [--json] python tools/render_lock.py run --job "render v3" [--wait 600] [--timeout 5400] -- <command> [args...] |
 | `tools/render_watch.py` | render_watch - wrap ANY heavy command with progress parsing, an ETA, a heartbeat file and a stall watchdog. | python tools/render_watch.py [--status _work/render.status.json] [--heartbeat 60] [--stall 600] [--timeout 5400] [--eta-after 60] [--job "render v3"] [--lock-wait 0] [--no-lock] -- <command> [args...] |
+| `tools/screen_zoom.py` | screen_zoom - for a screen recording: where things change on screen (zoom keys), dead time to cut, and narration with no screen change. | python tools/screen_zoom.py <recording> [--words words.json] -o zoom.json [--fps 4] [--min-crop 0.40] [--dead-s 1.5] [--cue-window 1.5] [--timeout 900] python tools/camera_path.py zoom.json <the camera_path_args from zoom.json> -o hf/camera      (the zoom keys become the camera path's windows) |
 | `tools/seg_diff.py` | seg_diff - prove that a re-render (a fix) changed NOTHING outside the range you meant to change. | python tools/seg_diff.py <before.mp4> <after.mp4> [--exclude 10.0:12.5 ...] [--min-ssim 0.995] [--json-out r.json] |
 | `tools/session_hint.py` | session_hint - the SessionStart hook of the editing-workflow plugin: find the HyperFrames projects this session may work on and | python tools/session_hint.py [--cwd DIR] [--toolkit DIR] [--text]      (the hook runs it with no arguments) |
 | `tools/sheet.py` | sheet - contact sheet with the frame number and real timestamp burned into every tile. | python tools/sheet.py <video> -o sheet.jpg [--every 15 \| --count 24 \| --times 1.5,3.0,9.25] [--cols 6] [--tile-width 240] |
 | `tools/source_cuts.py` | source_cuts - find the hidden cuts inside a rough-cut source video and the frame ranges a cover (B-roll / zoom) must hide. | python tools/source_cuts.py <video> [-o src_cuts.json] [--margin 6] [--min-diff 18] [--sigma 6] [--timeout 900] |
+| `tools/speaker_turns.py` | speaker_turns - label every word with who said it, from the level of each person's own mic track (or stereo channel). No model. | python tools/speaker_turns.py --words hf/data/words.json (--tracks a.wav b.wav \| --channels stereo.wav) [--names "Dana,Avi"] -o hf/data/words_speakers.json [--margin-db 6] (--channels with no file splits the single --tracks file into its channels) |
 | `tools/transcribe.py` | transcribe - word-level speech-to-text in any language (Hebrew deepest) with route auto-selection and a CPU route that always works. | python tools/transcribe.py <audio-or-video> -o words.json [--language auto\|he\|en\|...] [--model-dir DIR \| --allow-download] [--model-id ID] [--model-lang he\|multi] [--revision SHA] [--vad] [--beam 5] [--threads N] python tools/transcribe.py --check          (which routes are usable on this machine; imports nothing heavy beyond find_spec) |
 | `tools/ui.py` | ui - search and READ shadcn-registry components as source (nothing is installed), with the licence tier of each registry next to every hit. | python tools/ui.py registries [--query text] [--tier ok\|restricted\|excluded\|unknown] [--json] python tools/ui.py search "<english description>" [--registry @magicui ...] [--limit 20] [--json]     (default: the ok-tier registries) python tools/ui.py view @registry/item [--source] [--save DIR] [--json] python tools/ui.py add-command @registry/item                                                         (prints the command, runs nothing) common: [--offline] [--cache-dir DIR] [--timeout 20] |
 | `tools/vo_clean.py` | vo_clean - tighten and level a voice-over: long pauses cut to a set length, phrases levelled toward the median, gain moved only in pauses. | python tools/vo_clean.py <voice.wav> -o voice_clean.wav [--max-pause 0.28] [--target 0.20] [--amount 0.85] [--protect 3.2,7.9] [--words words.json --words-out words_clean.json] |

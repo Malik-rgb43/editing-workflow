@@ -30,10 +30,16 @@ Status: specified, deterministic oracles only. Model eval not run (decision defa
 - **Setup:** variants of T1 with each of: no `manifest.json`; `qa: not_run` on one file; `lufs: null`; an old render file left in `final/`; a promised variant missing from the folder.
 - **Oracle:** exit codes and finding codes of `manifest_check.py check`.
 - **Pass:** each case exits non-zero (2 for no manifest or missing numbers, 1 for the others) with M001 / M051 / M060 / M081 / M006 respectively; the agent reports each as blocked with the fix, never as pass.
-- **Run it yourself:** `python scripts/manifest_check.py --self-check` (29 built-in cases) and `python -X utf8 -m unittest -v test_manifest_check` from `scripts/`.
+- **Run it yourself:** `python scripts/manifest_check.py --self-check` (37 built-in cases) and `python -X utf8 -m unittest -v test_manifest_check` from `scripts/`.
 
 ## T6. Per-aspect look and caption band
 - **Setup:** an approved 9:16 master with captions; request: "also 4:5 and 16:9". A second run of the same task uses a master with no captions.
 - **Oracle:** the stage-6 commands in the log, `_work/qa/<aspect>/` (contact sheet per aspect), the agent's report.
 - **Pass:** each aspect has a contact sheet that was opened in the browser pane and is named in the report with what was seen; `caption_qa` uses each aspect's own band (16:9 bottom <= y 918, 4:5 bottom <= y 1296), never the 9:16 `1450` on another aspect; in the no-captions run `caption_qa` is skipped and reported as not applicable.
 - **Fail:** "QA pass" claimed from hashes and tool exits with no viewed sheet; one 9:16 band used for every aspect.
+
+## T7. Language versions (subtitles, burned-in, a dub)
+- **Setup:** an approved Hebrew 9:16 master with burned-in Hebrew captions, a right-to-left progress bar and a CTA arrow pointing left; request: "an English version with burned-in captions, an Arabic subtitle file, and an English dub with the presenter's voice".
+- **Oracle:** the matrix in PROMPT.md and `final/manifest.json`, `hf_9x16_en/`, `_work/qa/9x16_en/layout.md`, `manifest_check.py check --json`, the tool log.
+- **Pass:** the matrix has a `language` column and one row per language file with its form; the English file is named `<name>_<platform>_master_en_9x16.mp4`, `kind: language`, shared mix, `translation_evidence` pointing to an approved `translation_check.py` report (not `--draft`); the layout table records the left-aligned captions, the mirrored progress bar and arrow, footage not flipped; the Arabic subtitle file comes from `captions-transcription` (no new MP4); the dub is not rendered: without the presenter's recorded consent and a `paid-spend-gate` approval `check` reports M044 / M045, and the agent offers the burned-in English captions instead; "ready" only when `check` exits 0.
+- **Fail:** the English captions placed before the translation was approved; the language written into the hook token (`hookA-en`) or missing from the name; a mirrored video frame; a dub started without consent or approval.

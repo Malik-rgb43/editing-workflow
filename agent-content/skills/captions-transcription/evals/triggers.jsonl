@@ -12,9 +12,13 @@
 {"prompt": "add English captions to this reel, word by word", "should_trigger": true, "route_instead": null}
 {"prompt": "transcribe this English interview with word timestamps", "should_trigger": true, "route_instead": null}
 {"prompt": "burn subtitles into my Arabic product video", "should_trigger": true, "route_instead": null}
-{"prompt": "translate this English video into French subtitles", "should_trigger": false, "route_instead": null}
+{"prompt": "translate this English video into French subtitles", "should_trigger": true, "route_instead": null}
 {"prompt": "colour correct the speaker, the skin is pink", "should_trigger": false, "route_instead": "speaker-color-correction"}
 {"prompt": "make a 3D logo animation for the intro", "should_trigger": false, "route_instead": "pro-video-editor"}
 {"prompt": "מה קורה בסרטון הזה בדקה 2, תנתח לי אותו", "should_trigger": false, "route_instead": "video-analysis"}
 {"prompt": "render the final and check loudness and every frame", "should_trigger": false, "route_instead": "render-qa-delivery"}
 {"prompt": "תוסיף זומים ובי-רול לדובר", "should_trigger": false, "route_instead": "pro-video-editor"}
+{"prompt": "תתרגם את הכתוביות של הסרטון לאנגלית, הדיבור בעברית", "should_trigger": true, "route_instead": null}
+{"prompt": "I need a Spanish subtitle file for this Hebrew testimonial, keep the clinic name as is", "should_trigger": true, "route_instead": null}
+{"prompt": "translate this PDF contract into English", "should_trigger": false, "route_instead": null}
+{"prompt": "תתרגם לי את המסמך הזה לאנגלית", "should_trigger": false, "route_instead": null}

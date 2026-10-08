@@ -16,3 +16,5 @@
 {"prompt": "תפיק לי גרסאות של הסרטון ב-9:16 ו-1:1", "should_trigger": false, "route_instead": "video-variants-exporter"}
 {"prompt": "תערוך לי את הסרטון עם B-roll וזום, בלי רפרנס, פשוט תעשה יפה", "should_trigger": false, "route_instead": "pro-video-editor"}
 {"prompt": "copy this competitor's ad frame by frame and just swap the logo", "should_trigger": false, "route_instead": null}
+{"prompt": "make mine like this reel, but tell me which parts I can actually do here without paying", "should_trigger": true, "route_instead": null}
+{"prompt": "הרפרנס הזה עשוי מתמונות עם זום איטי? תעשה לי אותו סגנון", "should_trigger": true, "route_instead": null}

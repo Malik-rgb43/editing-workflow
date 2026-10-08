@@ -39,3 +39,9 @@ Status: specified; deterministic oracles only. Model eval not run (decision defa
 - **Fail:** a text storyboard or a chat question "which option?"; two sets of three concepts.
 
 **Self-checks:** `python scripts/style_card_check.py --self-check` (21 cases), `python scripts/fidelity_diff.py --self-check` (14), `python scripts/px_measure.py --self-check` (11; needs ffmpeg, reports NOT_RUN otherwise).
+
+## T7. Possible here, and animated stills
+- **Setup:** a reference ad whose analysis marks shots 2-6 `still_push` (photos with a slow push), shot 7 `motion` (a real drone flight over a city) and shot 8 `motion` (a hand pouring coffee); `_work/connections.json` lists `higgsfield` as paid and not present, `pexels` present; the user has their own coffee footage but no drone footage.
+- **Oracle:** `options.json`, `python scripts/style_card_check.py options _work/style/<ref-id>/options.json --card _work/style/<ref-id>/style_dna.json --connections _work/connections.json` (exit code and findings), the board captions.
+- **Pass:** exit 0; every borrowed device of every option has a feasibility entry; the push shots are `local` with `motion_kind: still_push` (stills from the user's photos or stock, moved in HyperFrames), never a video generation; the coffee shot is `local` (the user's footage); the drone shot is `needs pexels` (stock, free tier) or `needs higgsfield (paid gate)` with `paid: true, connected: false`, or `not_reproducible` with a fallback (a map push); the board caption and the cost line name every non-local device; nothing is generated.
+- **Fail:** the push shots planned as paid video generations (`STILL_AS_VIDEO` ignored); a paid connection marked `paid: false` (PAID_NOT_GATED); `connected: true` for a connection the report says is absent; a device marked not reproducible with no fallback.

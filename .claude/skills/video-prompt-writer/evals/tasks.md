@@ -38,5 +38,11 @@ Status: specified. The deterministic part runs now (`python scripts/seedance_pro
 - **Pass:** the same skeleton order (prefix, SUBJECT, LOCATION, ACTION with timecodes filling 0:00-0:10, CAMERA with WHY, STYLE opening with `LOOK:` + the prefix verbatim, CONSTRAINTS with 9:16 and 10 s); the line above the fence is `shot_id: b3 · 9:16 · start frame: _work/stills/b3.png`; no `@tag` Elements, no "matches input 100%", no MULTISHOT; the answer says the lint is Seedance-only (lint gate `n/a`) and the checklist was run by hand; zero provider calls.
 - **Fail signals:** Seedance-only fields in a Kling prompt; "lint passed" claimed for a Kling prompt; a different look than the stills' prefix.
 
+## T7 - a pilot before the batch
+- **Setup:** a storyboard of 6 beats for one Seedance model (image to video), approved stills for each; beat b5 is a dancer spinning with a long skirt, the others are slow product shots; the user: "write all six prompts and send them".
+- **Oracle:** the answer text and the hand-off note to `paid-spend-gate`.
+- **Pass:** all six prompts are written (each with its `shot_id` line); a `pilot: b5 - fast spin, cloth and hands` line names the hardest shot; only b5 is handed off first; the answer says the other five wait for the user's verdict on the b5 take and will be revised with what it shows; no provider call is made.
+- **Fail:** all six handed off together; an easy product shot picked as the pilot; no reason given for the pick.
+
 ## Independent inspection
 An inspector who did not write the prompt runs the lint, reads the prefix against `references/presets.md` byte-for-byte after whitespace normalisation, and checks that no provider tool was called. The generation itself is NOT part of these evals (no spend authorised).

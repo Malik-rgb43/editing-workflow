@@ -12,11 +12,13 @@ Usage:
   python manifest_check.py change <project_dir> --id M-001 --summary "text"      (after a MASTER fix)
   python manifest_check.py stamp  <project_dir> --hf <hf_subdir>                 (BEFORE every render)
   python manifest_check.py record <project_dir> --file <final/name.mp4> --hf <hf_subdir>
-          --kind master|relayout|hook|nomusic|nocaps|recut  [--route organic|ad|spark|other]
+          --kind master|relayout|hook|nomusic|nocaps|recut|language  [--route organic|ad|spark|other]
           [--mix-variant shared|nomusic|own-vo|recut] [--mix-note TEXT] [--round v3]
           [--applied-all | --applied M-001,M-002] --qa pass|fail|not_run [--qa-evidence PATH]
           [--lufs -14.0 --tp -1.3] [--width W --height H --duration-s D]
-          [--name-ledger-id L12 --platform all --hook master --aspect 9x16]   (a file name the user asked for)
+          [--name-ledger-id L12 --platform all --hook master --aspect 9x16 [--language en]]   (a file name the user asked for)
+          [--translation-evidence _work/translation/en.report.json]   (any file with a language token)
+          [--voice-consent "<who, date, scope>" --spend-approval .avc/approval.json]   (a dub: kind language + own-vo)
   python manifest_check.py check  <project_dir> [--final final] [--json]
   python manifest_check.py --self-check
 
@@ -64,14 +66,14 @@ SHARED_GLOBS = ["cues.js", "cues.json", "assets/mix.wav"]
 MIX_GLOB = "assets/mix.wav"
 
 ASPECTS = {"9x16": (1080, 1920), "4x5": (1080, 1350), "1x1": (1080, 1080), "16x9": (1920, 1080)}
-KINDS = {"master", "relayout", "hook", "nomusic", "nocaps", "recut"}
+KINDS = {"master", "relayout", "hook", "nomusic", "nocaps", "recut", "language"}
 MIX_VARIANTS = {"shared", "nomusic", "own-vo", "recut"}
 QA_STATES = {"pass", "fail", "not_run"}
 DEFAULT_PROFILE = {"lufs_target": -14.0, "lufs_tol": 0.5, "tp_max": -1.0}
 
 NAME_RE = re.compile(
     r"^(?P<name>[a-z0-9][a-z0-9_]*?)_(?P<platform>[a-z0-9]+)_"
-    r"(?P<hook>master|hook[A-Z](?:-[a-z0-9]+)*)_(?P<aspect>9x16|4x5|1x1|16x9)\.mp4$"
+    r"(?P<hook>master|hook[A-Z](?:-[a-z0-9]+)*)(?:_(?P<language>[a-z]{2,3}(?:-[a-z0-9]{2,8})?))?_(?P<aspect>9x16|4x5|1x1|16x9)\.mp4$"
 )
 _HFID = [re.compile(rb'\sdata-hf-id="[^"]*"'), re.compile(rb"\sdata-hf-id='[^']*'")]
 HEX64 = re.compile(r"^[0-9a-f]{64}$")
@@ -203,11 +205,15 @@ SHORT_RE = re.compile(r"^(?P<name>[a-z0-9][a-z0-9_]*?)_(?P<aspect>9x16|4x5|1x1|1
 
 
 def parse_name(filename: str):
-    """Canonical <name>_<platform>_<hook>_<aspect>.mp4, or the short per-ratio form <name>_<aspect>.mp4
-    (= platform `all`, hook `master`, as in the delivery playbook)."""
+    """Canonical <name>_<platform>_<hook>[_<language>]_<aspect>.mp4, or the short per-ratio form <name>_<aspect>.mp4
+    (= platform `all`, hook `master`, as in the delivery playbook). The language token (en, he, ar, pt-br ...)
+    is present only on a language version; absent = the master's own language. The short form has no language."""
     m = NAME_RE.match(filename)
     if m:
-        return m.groupdict()
+        d = m.groupdict()
+        if d.get("language") is None:
+            d.pop("language", None)
+        return d
     m = SHORT_RE.match(filename)
     if m:
         d = m.groupdict()
@@ -318,16 +324,19 @@ def check_project(project: Path, final_name: str = "final") -> dict:
                 parts = None
             else:
                 parts = {"platform": e["platform"], "hook": e["hook"], "aspect": e["aspect"]}
+                if e.get("language"):
+                    parts["language"] = e["language"]
         elif not parts:
             _f(findings, "M012_NAMING", "block", "name must match <name>_<platform>_<hook>_<aspect>.mp4 (or the short <name>_<aspect>.mp4; "
-               "hook = master | hookA[-nomusic|-nocaps]; aspect = 9x16|4x5|1x1|16x9), or carry name_override {ledger_id}", fn)
+               "hook = master | hookA[-nomusic|-nocaps]; optional _<language> before the aspect; aspect = 9x16|4x5|1x1|16x9), "
+               "or carry name_override {ledger_id}", fn)
         if parts:
-            for k in ("platform", "hook", "aspect"):
-                if e.get(k) != parts[k]:
-                    _f(findings, "M013_NAME_FIELD_MISMATCH", "block", f"{k} in entry ({e.get(k)!r}) differs from the name ({parts[k]!r})", fn)
-            key = (parts["platform"], parts["hook"], parts["aspect"])
+            for k in ("platform", "hook", "aspect", "language"):
+                if e.get(k) != parts.get(k):
+                    _f(findings, "M013_NAME_FIELD_MISMATCH", "block", f"{k} in entry ({e.get(k)!r}) differs from the name ({parts.get(k)!r})", fn)
+            key = (parts["platform"], parts["hook"], parts.get("language"), parts["aspect"])
             if key in seen_keys and seen_keys[key] != fn:
-                _f(findings, "M014_COLLISION", "block", f"same platform/hook/aspect as {seen_keys[key]}", fn)
+                _f(findings, "M014_COLLISION", "block", f"same platform/hook/language/aspect as {seen_keys[key]}", fn)
             seen_keys[key] = fn
         kind = e.get("kind")
         if kind not in KINDS:
@@ -339,6 +348,20 @@ def check_project(project: Path, final_name: str = "final") -> dict:
             _f(findings, "M012_NAMING", "block", "kind nocaps needs a hook token ending in -nocaps", fn)
         if kind == "master":
             has_master_file = True
+        lang = (parts or {}).get("language") or e.get("language")
+        if kind == "language" and not lang:
+            _f(findings, "M016_LANGUAGE", "block", "kind language needs a language token in the name (<name>_<platform>_<hook>_<language>_<aspect>.mp4)", fn)
+        if lang:
+            tev = e.get("translation_evidence")
+            if not isinstance(tev, str) or not tev or not (project / tev).is_file() or (project / tev).stat().st_size == 0:
+                _f(findings, "M046_TRANSLATION_EVIDENCE", "insufficient",
+                   "a language version needs translation_evidence: the translation_check report of the approved translation (captions-transcription)", fn)
+        if kind == "language" and e.get("mix_variant") == "own-vo":
+            if not str(e.get("voice_consent") or "").strip():
+                _f(findings, "M044_DUB_CONSENT", "block", "a dub (own-vo language version) needs voice_consent: who agreed, when, for what", fn)
+            sa = e.get("spend_approval")
+            if not isinstance(sa, str) or not sa or not (project / sa).is_file():
+                _f(findings, "M045_DUB_SPEND", "block", "a dub needs spend_approval: the paid-spend-gate approval file it was generated under", fn)
 
         # file on disk
         fpath = final / fn
@@ -377,7 +400,7 @@ def check_project(project: Path, final_name: str = "final") -> dict:
                 if cur != e.get("src_hash"):
                     _f(findings, "M034_CHANGED_AFTER_RENDER", "block",
                        f"source folder {hf} changed after this file was rendered (recorded {str(e.get('src_hash'))[:12]}, now {cur[:12]})", fn)
-                if kind in ("relayout", "hook", "nomusic", "nocaps") and master_shared is not None:
+                if (kind in ("relayout", "hook", "nomusic", "nocaps") or (kind == "language" and e.get("mix_variant") == "shared")) and master_shared is not None:
                     sh = shared_hash(hf_dir)
                     if sh is None:
                         _f(findings, "M035_NO_SHARED_FILES", "insufficient", f"{hf} has no cues/mix to compare with the master", fn)
@@ -399,7 +422,7 @@ def check_project(project: Path, final_name: str = "final") -> dict:
                 _f(findings, "M041_MIX_NOT_SHARED", "block", "declared shared mix but mix_sha256 differs from the master's", fn)
         elif mv in ("own-vo", "recut") and not e.get("mix_note"):
             _f(findings, "M042_MIX_NOTE", "block", f"mix_variant {mv} needs a mix_note explaining why the mix differs", fn)
-        if kind in ("relayout", "hook") and mv not in (None, "shared") and mv in MIX_VARIANTS and mv != "own-vo":
+        if kind in ("relayout", "hook", "language") and mv not in (None, "shared") and mv in MIX_VARIANTS and mv != "own-vo":
             _f(findings, "M043_MIX_KIND", "block", f"kind {kind} must share the master mix (or declare own-vo with a note)", fn)
 
         # QA
@@ -596,6 +619,8 @@ def cmd_record(a) -> int:
             print("BLOCKED: --name-ledger-id needs --platform, --hook and --aspect", file=sys.stderr)
             return 1
         parts = {"platform": a.platform, "hook": a.hook, "aspect": a.aspect}
+        if getattr(a, "language", None):
+            parts["language"] = a.language
     elif not parts:
         print("BLOCKED: file name must match <name>_<platform>_<hook>_<aspect>.mp4 (or <name>_<aspect>.mp4), or pass --name-ledger-id for a name the user asked for", file=sys.stderr)
         return 1
@@ -634,6 +659,11 @@ def cmd_record(a) -> int:
     }
     if a.mix_note:
         entry["mix_note"] = a.mix_note
+    if parts.get("language"):
+        entry["language"] = parts["language"]
+    for k in ("translation_evidence", "voice_consent", "spend_approval"):
+        if getattr(a, k, None):
+            entry[k] = getattr(a, k)
     if a.name_ledger_id:
         entry["name_override"] = {"ledger_id": a.name_ledger_id}
     entry = {k: v for k, v in entry.items() if v is not None}
@@ -666,7 +696,8 @@ def _args(**kw):
     ns = argparse.Namespace(final="final", round="v1", route="organic", mix_variant="shared", mix_note=None, applied=None,
                             applied_all=False, qa="pass", qa_evidence="_work/qa/report.json", lufs=-14.0, tp=-1.3,
                             width=None, height=None, duration_s=30.0, matrix=None, globs=None, algo=None,
-                            name_ledger_id=None, platform=None, hook=None, aspect=None)
+                            name_ledger_id=None, platform=None, hook=None, aspect=None, language=None,
+                            translation_evidence=None, voice_consent=None, spend_approval=None)
     for k, v in kw.items():
         setattr(ns, k, v)
     return ns
@@ -851,6 +882,42 @@ def _self_check_body():
         _write(p / "hf" / "cues.js", "const CUES={bed:5};")
         expect("cat-sha256-12: master edit -> STALE_MASTER", "M003_STALE_MASTER" in _status(p)[1])
         expect("parse_name splits from the right", parse_name("my_big_name_tiktok_hookA-nomusic_9x16.mp4") == {"name": "my_big_name", "platform": "tiktok", "hook": "hookA-nomusic", "aspect": "9x16"})
+        expect("parse_name reads a language token", parse_name("promo_meta_master_en_9x16.mp4") == {"name": "promo", "platform": "meta", "hook": "master", "language": "en", "aspect": "9x16"})
+        expect("parse_name reads a region language", (parse_name("promo_all_hookB-nocaps_pt-br_1x1.mp4") or {}).get("language") == "pt-br")
+
+        def add_language(p, name, kind="language", mix_variant="shared", **kw):
+            _write(p / "hf_he" / "index.html", '<div id="root">he</div>')
+            _write(p / "hf_he" / "compositions" / "a.html", "<p>scene he</p>")
+            _write(p / "hf_he" / "cues.js", "const CUES={bed:0};")
+            _write(p / "hf_he" / "assets" / "mix.wav", b"RIFF-mix-bytes" * 50 if mix_variant == "shared" else b"RIFF-dub-he" * 50)
+            _write(p / "_work" / "translation" / "he.report.json", '{"status":"PASS"}')
+            _write(p / "final" / name, ("mp4:" + name).encode() * 100)
+            m = load_json(p / "final" / "manifest.json")
+            m["matrix"].append(name)
+            save_json(p / "final" / "manifest.json", m)
+            cmd_stamp(_args(project=str(p), hf="hf_he"))
+            return cmd_record(_args(project=str(p), file=name, hf="hf_he", kind=kind, width=1080, height=1920, mix_variant=mix_variant, **kw))
+
+        p = fresh("lang_ok")
+        rc = add_language(p, "promo_meta_master_he_9x16.mp4", translation_evidence="_work/translation/he.report.json")
+        st, codes = _status(p)
+        expect("subtitled language version with evidence is READY", rc == 0 and st == "READY")
+        expect("the language is recorded in the entry", any(e.get("language") == "he" for e in load_json(p / "final" / "manifest.json")["files"]))
+        p = fresh("lang_noevidence")
+        add_language(p, "promo_meta_master_he_9x16.mp4")
+        expect("language version without translation evidence -> M046", "M046_TRANSLATION_EVIDENCE" in _status(p)[1])
+        p = fresh("lang_notoken")
+        add_language(p, "promo_meta_hookC_9x16.mp4", translation_evidence="_work/translation/he.report.json")
+        expect("kind language without a language token -> M016", "M016_LANGUAGE" in _status(p)[1])
+        p = fresh("dub_noconsent")
+        add_language(p, "promo_meta_master_he_9x16.mp4", mix_variant="own-vo", mix_note="Hebrew dub", translation_evidence="_work/translation/he.report.json")
+        c = _status(p)[1]
+        expect("dub without consent and spend approval -> M044 + M045", "M044_DUB_CONSENT" in c and "M045_DUB_SPEND" in c)
+        p = fresh("dub_ok")
+        _write(p / ".avc" / "approval.json", "{}")
+        add_language(p, "promo_meta_master_he_9x16.mp4", mix_variant="own-vo", mix_note="Hebrew dub", translation_evidence="_work/translation/he.report.json",
+                     voice_consent="presenter, 2026-10-08, this ad only", spend_approval=".avc/approval.json")
+        expect("dub with consent, approval and a note is READY", _status(p)[0] == "READY")
 
     return ok, fails
 
@@ -881,7 +948,10 @@ def build_parser():
             g.add_argument("--applied-all", dest="applied_all", action="store_true"); g.add_argument("--applied")
             sp.add_argument("--qa", required=True, choices=sorted(QA_STATES)); sp.add_argument("--qa-evidence", dest="qa_evidence")
             sp.add_argument("--name-ledger-id", dest="name_ledger_id", help="the file name was asked for by the user (ledger line id): overrides the naming convention")
-            sp.add_argument("--platform"); sp.add_argument("--hook"); sp.add_argument("--aspect")
+            sp.add_argument("--platform"); sp.add_argument("--hook"); sp.add_argument("--aspect"); sp.add_argument("--language")
+            sp.add_argument("--translation-evidence", dest="translation_evidence", help="translation_check report for a language version")
+            sp.add_argument("--voice-consent", dest="voice_consent", help="a dub: who agreed to the voice, when, for what")
+            sp.add_argument("--spend-approval", dest="spend_approval", help="a dub: the paid-spend-gate approval file")
             sp.add_argument("--lufs", type=float); sp.add_argument("--tp", type=float)
             sp.add_argument("--width", type=int); sp.add_argument("--height", type=int); sp.add_argument("--duration-s", dest="duration_s", type=float)
         if name == "check":

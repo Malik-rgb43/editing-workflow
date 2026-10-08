@@ -41,6 +41,7 @@ In: script, beat or storyboard beat (with its id), the approved start-frame stil
 4. **Camera:** one move per shot with angle, height, lens feel, movement and WHY; physics described broadly; slow motion off unless a specific beat asks.
 5. **Lint** (Seedance): `python scripts/seedance_prompt_lint.py draft.md --duration <s> --tags <list> --look-file <prefix.txt>`; fix; answer. A long scene splits into `Na/Nb`, same prefix, LOOK and tags, continuity inside the language.
 6. **Hand off.** Generation goes to `paid-spend-gate`. After it generates, the takes are shown in the browser pane (the storyboard page or the Studio), not described in chat.
+7. **One pilot before a batch.** More than 3 prompts for one model and mode: name ONE pilot, the hardest shot (most motion, hands, faces, liquid, the most characters, the longest take), on its own line `pilot: <shot_id> - <why it is the hardest>`, and hand off only that prompt first. After the user approves its take, fold what the take showed (what the model got wrong on this material) into the other prompts, then hand the rest to `paid-spend-gate` as one batch priced on the pilot's cost. Why: one take tests the prompt, the look and the model on the hardest case before the rest is paid for; the gate refuses the batch without it.
 
 ## Gates
 States `pass | fail | blocked | n/a` with a reason. A lint that could not run is `not_run`, never `pass`.
@@ -54,6 +55,7 @@ States `pass | fail | blocked | n/a` with a reason. A lint that could not run is
 | G4 plain text | output is code fences only | lint P13 | convert; strip HTML and tables | this skill | each answer |
 | G5 no spend | no provider or paid tool call; the hand-off is named | tool-call log | stop; hand off | `paid-spend-gate` | any "generate" wording |
 | G6 body hygiene | no age words, no named IP or real people, no text in the shot, no quality charms in the body | lint P07/P11/P12 | rewrite with a lens, light, movement or number | this skill | any edit |
+| G7 pilot first | > 3 prompts for one model: a `pilot:` line names the hardest shot and why; only it is handed off first; the rest are revised after its take is approved | the answer; the hand-off note | name the pilot; hold the batch | this skill + `paid-spend-gate` | shot list or model changes |
 
 `blocked` (not guessed): no script or beat, unknown ratio, a user prefix that is not supplied, the presets file unreadable.
 

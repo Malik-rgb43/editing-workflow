@@ -37,7 +37,7 @@ Master fix flow: edit the master -> `change --id M-001 --summary "..."` -> carry
 ```
 - `hash_policy.algo` (default `tree-sha256-v1`): `src_hash` = sha256 over (relative path, content hash) of every file matched by `hash_policy.globs`, sorted; 64 hex; `data-hf-id` attributes are ignored in HTML (Studio rewrites them; they are not a source change). `cat-sha256-12` reproduces the delivery playbook's recipe (`cat index.html compositions/*.html cues.js assets/mix.wav | sha256sum | cut -c1-12`, 12 hex, no normalisation) for projects that already use it: choose ONE recipe per project (`freeze --algo ...`), keep it in the manifest header, never mix. The two recipes give different values for the same folder. An empty match is an error, never a valid hash.
 - `name_override: {ledger_id}` on an entry marks a file name the user asked for (it must then carry explicit `platform`, `hook`, `aspect` fields). The short form `<name>_<aspect>.mp4` is read as platform `all`, hook `master`.
-- `kind`: `master | relayout | hook | nomusic | nocaps | recut`. `mix_variant`: `shared | nomusic | own-vo | recut` (`own-vo` and `recut` need `mix_note`).
+- `kind`: `master | relayout | hook | nomusic | nocaps | recut | language`. A file with a language token carries `language` (and `translation_evidence`, the approved translation's check report); a dub (`language` + `own-vo`) also carries `voice_consent` and `spend_approval`. `mix_variant`: `shared | nomusic | own-vo | recut` (`own-vo` and `recut` need `mix_note`).
 - `qa`: `pass | fail | not_run`; only `pass` with an existing evidence file is ready. `lufs`/`tp` are numbers measured on the FINAL file; `0.0` is a number, `null` is missing.
 - `route` is informational for rights (music scope, disclosure field) but must be filled; the tool does not judge licences (that is the editor's gate).
 
@@ -49,7 +49,10 @@ Master fix flow: edit the master -> `change --id M-001 --summary "..."` -> carry
 | M003_STALE_MASTER | block | master source changed after freeze | `change`, carry to copies, re-render, re-record |
 | M004_MASTER_MIX_CHANGED | block | master `mix.wav` changed after freeze | same as M003 (the mix is part of the master) |
 | M005_NO_MATRIX / M006 / M007 | insufficient / block | no matrix; promised file missing; unplanned file delivered | write the matrix at intake; render the missing file or amend the matrix with the user |
-| M011-M015 | block | duplicate, naming, entry/name mismatch, collision, bad kind | rename to `<name>_<platform>_<hook>_<aspect>.mp4`; one file per platform/hook/aspect |
+| M011-M015 | block | duplicate, naming, entry/name mismatch, collision, bad kind | rename to `<name>_<platform>_<hook>[_<language>]_<aspect>.mp4`; one file per platform/hook/language/aspect |
+| M016_LANGUAGE | block | kind `language` without a language token in the name | add the token (`..._master_en_9x16.mp4`) |
+| M044_DUB_CONSENT / M045_DUB_SPEND | block | a dub without the voice owner's recorded consent, or without the `paid-spend-gate` approval file | record both, or deliver subtitles instead |
+| M046_TRANSLATION_EVIDENCE | insufficient | a language version without the approved translation's check report | run `captions-transcription` translate mode; record `--translation-evidence` |
 | M020-M022 | block / insufficient | file missing, empty, hash missing, bytes changed after record | re-render and re-record; never swap a file by hand |
 | M031_STALE_DERIVATIVE | block | rendered from an older master | carry the master fix, re-render, re-record |
 | M032_MISSING_MASTER_FIX | block | `applied_changes` lacks a logged master fix | carry that fix; record with `--applied-all` only after doing so |

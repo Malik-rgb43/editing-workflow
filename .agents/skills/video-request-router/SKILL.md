@@ -25,11 +25,19 @@ If `<project>/_work/connections.json` from this session exists (written by the r
 7. **Unmeasured.** Routing accuracy is specified and deterministically checked only; no model eval has run (decision default Q4).
 
 ## Order of decision (first match wins)
+0. A vague first request with no file, link or idea: the three starter requests below, not an open question.
 1. Explicit invocation or named engine/skill.
 2. Project state (run `scripts/project_state.py` or list the folder): resume the phase that is open.
 3. Output contract: what artifact does the user want? MP4, editable scene, plan, analysis, prompt text, captions file, cost number.
 4. Still two plausible owners: ask ONE question that separates them, offer 2-3 concrete options, then stop.
 5. Nothing in the course owns it: say so in one line and answer as a generic assistant.
+
+## A vague first request ("what can you do?", "let's start", "מה אתה יודע לעשות?", "בוא נתחיל")
+Answer with exactly three requests the user can copy and fill in, in their language, then wait. If the install report already showed them earlier in this conversation, do not repeat them: say "pick one of the three above, or tell me your own video" in one line. The first two are always the same; the third fits what this computer has (read `_work/connections.json`, or run `tools/connections.py` without `-o`; first match wins):
+1. "Here is a video I love: <link> - make mine like it."
+2. "Here is my footage: <folder> - make a 30 s reel."
+3. Video generation connected (`higgsfield`): "Here is my product photo: <file> - make a 10 s ad from it." Voice (`elevenlabs`): "Here is my script: <text> - make a 30 s explainer with a voice-over." Stock (`pexels`): "Here is my voice note: <file> - cover it with stock B-roll and captions." Blender installed: "Here is my logo: <file> - make a 5 s 3D logo reveal." (a connected service comes before an app that is only installed) Nothing of these (the local route): "Here is a talking-head clip: <file> - cut the pauses and add captions in <language>."
+Say in one line that anything paid is estimated first (`paid-spend-gate`). The reply is then routed like any request. Why three ready requests: an open question gets a vague answer; a request to fill in starts a real project. More examples per video kind: `docs/en/first-requests.md` (toolkit docs).
 
 ## Route table (one row per output; full table with Hebrew/English cues: `references/route-table.md`)
 | Signal in the request | Owner | Overlays |

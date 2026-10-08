@@ -1,6 +1,6 @@
 ---
 name: pro-video-editor
-description: Use when editing any video into a finished piece - a speaker to camera, a testimonial, an ad or promo, a motion or launch piece, AI-generated takes, a podcast clip - from raw footage, a rough cut, a brief or a reference. Hebrew - תערוך, עריכה, סרטון, רילס, דובר, טוקינג הד, עדות לקוח, מודעה, פרומו, מושן, השקה, בי-רול, זומים. NOT for analysing a video only (video-analysis), captions only (captions-transcription) or notes on an existing draft (revision-notes-handler).
+description: Use when editing any video into a finished piece: a speaker to camera, a testimonial, an ad, a promo, a motion piece, AI takes, a podcast clip, a montage, a screen demo, from raw footage, a rough cut, a brief or a reference. Hebrew - תערוך, עריכה, סרטון, רילס, דובר, טוקינג הד, עדות לקוח, מודעה, פרומו, מושן, השקה, בי-רול, זומים, מונטאז', הקלטת מסך. NOT for analysing a video only (video-analysis), captions only (captions-transcription) or notes on an existing draft (revision-notes-handler).
 compatibility: Needs ffmpeg, Python 3.12 and the HyperFrames CLI pinned in the toolkit. Times quoted in references are measured on one reference machine; NVIDIA and Apple are unmeasured.
 metadata:
   version: "0.2.0"
@@ -41,6 +41,7 @@ The thinking loop for each decision: **intent** (what should the viewer feel her
 3. **Studio open while you work.** It is the FIRST action whenever this session starts or resumes work on a project (`python tools/hf_studio.py <project>/hf`, AGENTS.md rule 10): open the `studio_url` in a new browser-pane tab and tell the user in one line that they can watch the work there. No project yet: open it right after `new_project.py --init-hyperframes` creates `hf/index.html` (an empty scaffold is fine: the user watches it fill). One heavy job at a time under the render lock.
 4. **Fail closed.** A gate that cannot run is `not_run`, never pass. A tool call is execution evidence; a viewed frame is appearance evidence; a still cannot prove motion.
 5. **Show, don't describe.** Everything the user judges by eye opens on a screen in the browser pane, unasked: the caption style board, the moodboard + storyboard, the Studio, the takes, the draft, the notes page. A path or a description in chat is not showing. A visual choice with 2+ options goes on a `visual-choice-board`, not a chat question.
+6. **No silent changes.** What the user approved is locked right after `STORYBOARD APPROVED` (or `PROMPT_APPROVED` when there is no board): `scripts/promise_check.py lock <project> ...` writes the length, aspect, captions, music, voice source and each beat's source to `_work/promise.json`. Any planned change (a failed generation becoming a still, music dropped, a beat swapped, the length moved) is asked first, then recorded with the user's words (`promise_check.py record`). `check` runs before the draft render and again with `--render` on the draft before presenting; exit 1 = a change nobody asked for.
 
 ## Step 0 - Intake and the project
 1. **Studio:** a project already exists -> open its Studio first (rule 3).
@@ -82,10 +83,10 @@ Ask only the questions Round 0 and the material did not answer (`video-brief-int
 8. **Gotchas:** the failures you already know for this kind of video.
 9. **Start:** the checkpoint order (below), so the user approves the cheap things before the expensive ones.
 
-The kind of video changes the answers, not the method: **speaker / podcast clip** = cadence, a face-centred camera, hidden jump cuts; **testimonial** = result first, the witness's own words, proof shown original, consent; **ad** = the exact offer, ranked hooks with reasons, the compliance table, safe zones (`references/platforms-and-safe-zones.md`); **motion / launch** = a register (launch, kinetic, logo, explainer, calm), 3D decided per beat; **AI takes** = edited, not generated (`references/ai-footage.md`).
+The kind of video changes the answers, not the method: **speaker / podcast clip** = cadence, a face-centred camera, hidden jump cuts; **testimonial** = result first, the witness's own words, proof shown original, consent; **ad** = the exact offer, ranked hooks with reasons, the compliance table, safe zones (`references/platforms-and-safe-zones.md`); **motion / launch** = a register (launch, kinetic, logo, explainer, calm), 3D decided per beat; **explainer** = sections joined by "but" / "therefore", opened on the misconception; **montage** (footage + music, no voice: event recap, travel) = holds by tone, hero shots held longest, one music dropout at the emotional centre, one look across all sources (`references/cutting-and-rhythm.md`, Montage); **screen demo / tutorial** = the student's own recording (never install a recorder), zoom on the action and cut the dead time from `tools/screen_zoom.py`, UI text readable after the crop, the cue check before the draft (`agent-content/playbooks/wf-screen-demo.md`); **AI takes** = edited, not generated (`references/ai-footage.md`).
 
 ## Step 3b - The board: moodboard + storyboard, before any composition code
-**When:** the plan has ANY beat beyond the source footage, captions, music and cuts: a B-roll shot, a still, stock, a graphic or text beat, a generated shot, 3D. A plain edit (cuts, captions, music only) skips it.
+**When:** the plan has ANY beat beyond the source footage, captions, music and cuts: a B-roll shot, a still, stock, a graphic or text beat, a generated shot, 3D. A plain edit (cuts, captions, music only) skips it; a montage does not, because choosing the clips is the edit.
 **What:** ONE page (`scripts/storyboard_board.py`, spec in `references/storyboard-board.md`):
 - the look: the one-sentence story, the feel, the palette, the type on a real line, the signature device, and up to 6 references (labelled "not ours, mood only"; none given and full control = none, never a reason to stop);
 - a key frame for EVERY beat in time order, each marked A-roll / B-roll / graphic, with the line under it, what is seen, the move, why, the source and its cost;
@@ -93,20 +94,20 @@ The kind of video changes the answers, not the method: **speaker / podcast clip*
 
 Every frame is the real thing where it exists: A-roll = the real source frame (`storyboard_board.py grab`); own or stock B-roll = its real frame or thumbnail; a generated beat = a sketch card until a still is approved through `paid-spend-gate`; a graphic = a quick snapshot or a sketch card.
 
-**How:** the board goes out together with the PROMPT.md draft, so one round approves both (PROMPT.md holds the decisions in words, the board shows them). `check`, then `serve` as a BACKGROUND command, open its url in the browser pane, and tell the user: "this is how the video will look: approve, or write a note on any frame". The command exits with `approved` or the numbered notes. Notes: fix the spec and PROMPT.md, serve again. **No composition code before `STORYBOARD APPROVED <date>` in `hf/CHANGELOG.md`.** Later, each built beat's still is compared with its board frame.
+**How:** the board goes out together with the PROMPT.md draft, so one round approves both (PROMPT.md holds the decisions in words, the board shows them). Give every beat its `shot` size and mark the 1-2 signature beats. `check` (answer each sameness warning: runs of one shot size, a reused image, too many text-only cards, the signature device on more than 2 beats), then `serve` as a BACKGROUND command, open its url in the browser pane, and tell the user: "this is how the video will look: approve, or write a note on any frame". The command exits with `approved` or the numbered notes. Notes: fix the spec and PROMPT.md, serve again. **No composition code before `STORYBOARD APPROVED <date>` in `hf/CHANGELOG.md`;** then lock the promise (rule 6). Later, each built beat's still is compared with its board frame.
 
 ## Step 4 - Build, the user watching
 - Studio stays open; generate the composition from data (edit list, faces, beat table), so a re-cut regenerates instead of breaking.
 - Sources in order: what the student owns, then the toolkit blocks (`python tools/hf_blocks.py list`, e.g. `typed-caption`, `liquid-glass`, `caption`, `notification-stack`, `boarding-pass-stamp`), then connected sources (table below), then hand-built.
-- Voice-led pieces: `python tools/word_retime.py` before any caption or scene is placed; `python tools/vo_clean.py` for a VO track (never picture-locked dialogue); SFX in the `hf_mix` cues with `"align": "peak"`.
+- Voice-led pieces: `python tools/word_retime.py` before any caption or scene is placed; `python tools/vo_clean.py` for a VO track (never picture-locked dialogue); SFX in the `hf_mix` cues with `"align": "peak"`. A music bed is fitted to the length with `python tools/music_fit.py`; a piece with no bed gets room tone under its joins (`references/sound.md`).
 - Take stills at every decision point: `hyperframes snapshot --at <up to 5 times> --describe false`.
 - **The checkpoint ladder** (cheap before expensive; the user approves each rung):
   1. the script text;
-  2. the voice, with 2-4 takes opened in the browser pane to pick from (one bad line is regenerated alone and spliced in);
+  2. the voice, with 2-4 takes opened in the browser pane to pick from, each sample starting with the HARDEST line (the brand name, the number, the long sentence); one bad line is regenerated alone and spliced in; any later change of voice, model or speed means a new sample, asked and recorded (rule 6);
   3. the caption style board (when there are captions) and the moodboard + storyboard (Step 3b), before code;
   4. the draft in Studio, with 6-8 stills of the key beats checked against their board frames;
   5. range renders of the scenes that changed or carry a render-only risk: `python tools/hf_segment.py <project>/hf --from <s> --to <s> --qa` (widened to whole scenes; picture only);
-  6. the draft render: ONE `python tools/hf_deliver.py render <project>/hf --name <name> --draft`, which is the round's one full render, then the notes page on that file (Step 5.4);
+  6. the draft render, after `promise_check.py check` exits 0: ONE `python tools/hf_deliver.py render <project>/hf --name <name> --draft`, which is the round's one full render, then the notes page on that file (Step 5.4);
   7. the delivery render, only after the notes page returns `approved` (`render-qa-delivery`).
 
   A rung that does not apply is skipped and said in one line (for example no voice takes when the voice is the speaker's own). Never show a full render before the Studio draft.
@@ -115,7 +116,7 @@ Every frame is the real thing where it exists: A-roll = the real source frame (`
 1. **Look** at a still of every beat and every seam, then ask each the questions in `Common mistakes`.
 2. **Compare and score** before the draft render, so a replaced concept does not cost a second full render:
    - against the reference or benchmark at the same moments: what does the pro do there that you do not? Write it down, even when you keep your choice;
-   - against `agent-content/benchmarks/<kind>.rubric.md` (talking-head, testimonial, ad-promo, motion-graphics, ai-generated, podcast-clip), scored by a fresh-eyes reviewer: a separate agent that did not build the video, given `agent-content/benchmarks/critic-brief.md` section 3, the stills, the range renders and a contact sheet. Its six dimensions are scored 1-5; the release rule is an average of at least 4.0, no dimension below 3, every hard gate at 3 or more, no severe failure.
+   - against `agent-content/benchmarks/<kind>.rubric.md` (talking-head, testimonial, ad-promo, motion-graphics, ai-generated, podcast-clip, montage, screen-demo), scored by a fresh-eyes reviewer: a separate agent that did not build the video, given `agent-content/benchmarks/critic-brief.md` section 3, the stills, the range renders and a contact sheet. Its six dimensions are scored 1-5; the release rule is an average of at least 4.0, no dimension below 3, every hard gate at 3 or more, no severe failure.
    - A dimension below 4 means the beat concept behind it is replaced, not polished (3 reads as "looks like a template"). A severe failure or a hard gate at 2 or less is fixed first.
 3. **The draft render**, then QA on that file through `render-qa-delivery`. Each round: check in Studio, then ONE draft render (`python tools/hf_deliver.py ... --draft`), which is the round's one full render, then the notes page on that file (`revision-notes-handler`). The delivery render runs only after the notes page returns `approved`. A QA failure is fixed before presenting. Before showing anything, run three checks:
    - a contact sheet;
@@ -156,28 +157,29 @@ The table of needs -> the connected route -> the free fallback is in `references
 | The caption look picked silently ("full control") | The caption style board anyway, your pick as option A |
 | prep started before Round 0, or without the language | Round 0 first; then `prep.py --language <answer or auto>` (Step 0) |
 | The draft presented, then waiting to be asked for a notes page | Open the notes page in the same turn (Step 5.4) |
+| A failed generation quietly became a still; the music was dropped; the length moved (the user found it in the draft) | Ask first, record the yes (`promise_check.py record`), run `check` before the draft render (rule 6) |
 
 Camera, zoom and fade mistakes are in `references/camera-and-motion.md`; voice, SFX and caption-timing mistakes in `references/sound.md`; highlight and glass mistakes in `references/type-and-colour.md`.
 
 ## References (load when)
 - `references/scripts-by-step.md` - load when about to run a check in Steps 3-5: which script, at which step, checks what.
 - `references/connections-by-need.md` - load when Step 0 decides which connection serves which need, and its free fallback.
-- `references/storyboard-board.md` - load when the plan has any beat beyond footage + captions + music + cuts: the storyboard.json fields, where each frame comes from, serving and reading the answer.
+- `references/storyboard-board.md` - load when the plan has any beat beyond footage + captions + music + cuts: the storyboard.json fields (`shot`, `signature`), where each frame comes from, the sameness warnings, serving and reading the answer.
 - `references/reading-evidence.md` - reading QA or analysis output (frame_qa, motion_qa, the colour gate, loudness, source_cuts, transcripts) before you trust a number or a verdict.
 - `references/worked-example-launch-film.md` - writing PROMPT.md for a voice-and-music piece (launch, explainer, product film); seeing a strong spec next to the measured film it produced.
-- `references/story-and-structure.md` - the hook, the order, the length, what to cut, the ending; soundbites; ad blueprint; registers; rubrics.
-- `references/cutting-and-rhythm.md` - cutting, silence constants, joins, hidden cuts, clean windows of AI takes.
+- `references/story-and-structure.md` - the hook, the order, the length, what to cut, the ending; soundbites; ad blueprint; registers (incl. montage); explainer story logic; rubrics.
+- `references/cutting-and-rhythm.md` - cutting, silence constants, joins and room tone, hidden cuts, clean windows of AI takes, montage holds and music shape.
 - `references/camera-and-motion.md` - zooms, the camera path, seams and camera events, face audits, camera and fade mistakes.
-- `references/visual-beats.md` - choosing or replacing a beat, B-roll, UI rebuilt in code, 3D per beat.
+- `references/visual-beats.md` - choosing or replacing a beat, B-roll, searching and scoring stock, UI rebuilt in code, 3D per beat.
 - `references/cutout-matte.md` - any beat with graphics behind the speaker.
-- `references/type-and-colour.md` - the palette lock, the type system, Hebrew kinetic type, highlight and glass mistakes.
-- `references/sound.md` - music, effects, levels, licences, accessible captions and audio, TTS and caption-timing mistakes.
+- `references/type-and-colour.md` - the palette lock, the type system, Hebrew kinetic type, captions vs on-screen text, highlight and glass mistakes.
+- `references/sound.md` - music, effects, levels, licences, accessible captions and audio, voice samples, room tone, fitting music to the length, TTS and caption-timing mistakes.
 - `references/honesty-and-rights.md` - consent, claims, compliance, likeness and AI disclosure.
 - `references/ai-footage.md` - any shot that is generated.
 - `references/platforms-and-safe-zones.md` (+ `references/safe_zone_presets.json`, read by `scripts/safe_zone_check.py`) - layout for a platform; before saying a layout passes.
 - `references/render-traps.md` - writing composition code, patches, render vs preview differences.
 - `references/rounds-and-budget.md` - before a notes round; when reporting time.
 - `references/dated-facts.md` - before quoting any version, model route or measured number (perishable).
-- Rubrics: `agent-content/benchmarks/*.rubric.md`. Techniques: `agent-content/techniques/` (frame-spec prompt, clean smooth motion, screenshot rebuild, concept ledger, timing ledger).
+- Rubrics: `agent-content/benchmarks/*.rubric.md`. Screen demo / tutorial: `agent-content/playbooks/wf-screen-demo.md`. Techniques: `agent-content/techniques/` (frame-spec prompt, clean smooth motion, screenshot rebuild, concept ledger, timing ledger).
 
 Evidence: specified from four real speaker projects and the 2026-10-04 end-to-end runs; deterministic checks only; model eval not run.

@@ -7,17 +7,21 @@ unlicensed song into the plan never passes.
 
 Usage:
   python style_card_check.py card    <style_dna.json>  [--root DIR]
-  python style_card_check.py options <options.json>    --card <style_dna.json>
+  python style_card_check.py options <options.json>    --card <style_dna.json> [--connections _work/connections.json]
   python style_card_check.py rights  <rights.json>
   python style_card_check.py all     <style_dir> [--root DIR]     (style_dna.json + options.json + rights.json)
   python style_card_check.py --self-check
 
 Files (schema_version 1.0.0; field tables in references/style-dna-card.md and references/options-and-mapping.md):
   style_dna.json  reference{id, analysis_dir, analysis_sha256, pinned_segment, role}, rows[], beat_map[]
-  options.json    options[3]: Faithful | Elevated | Twist, each with decisions{}, cost, risk, ...
+  options.json    options[3]: Faithful | Elevated | Twist, each with decisions{}, cost, risk, feasibility[] ...
+                  feasibility[]: one entry per borrowed device {device_row, possible: local|needs|not_reproducible,
+                  connection + paid (needs), fallback (not_reproducible), motion_kind: still|still_push|motion, makes}
   rights.json     context, reference{}, assets_taken_from_reference[], music{}, fonts[], distribution{}
 
 --root is the project root that `analysis_dir` and evidence paths are relative to (default: current directory).
+--connections (default <root>/_work/connections.json when it exists): the presence report of tools/connections.py;
+a `needs` entry naming a connection the report lists as paid must say paid: true (it goes through paid-spend-gate).
 Layout: the analysis at <project>/_work/analysis/<ref-id>/, this skill's files at <project>/_work/style/<ref-id>/.
 Exit codes: 0 PASS | 1 FAIL | 2 INSUFFICIENT_EVIDENCE (file or analysis folder missing, hash not verifiable).
 Checks structure, provenance and consistency only; it cannot judge whether the style reading is right,
@@ -50,6 +54,29 @@ OK_LICENCES = {"CC0", "CC-BY", "OFL", "Mixkit", "Pixabay", "Pexels", "paid-subsc
 BAD_LICENCES = {"unknown", "CC-BY-NC", "", None}
 CONTEXTS = {"client_ad", "client_organic", "own_organic", "study"}
 FONT_METRICS = {"font", "typeface", "font_family"}
+POSSIBLE = {"local", "needs", "not_reproducible"}
+MOTION_KINDS = {"still", "still_push", "motion"}
+
+
+def load_connections(path):
+    """tools/connections.py JSON -> {id: {"cost", "present"}}; None when there is no readable report."""
+    try:
+        doc = load(Path(path))
+    except (OSError, ValueError):
+        return None
+    out = {}
+    for entries in (doc.get("groups") or {}).values():
+        for e in entries if isinstance(entries, list) else []:
+            if isinstance(e, dict) and e.get("id"):
+                out[str(e["id"])] = {"cost": str(e.get("cost") or ""), "present": e.get("present")}
+    return out
+
+
+def possible_here(f):
+    """The table cell: local / needs <connection> (paid gate) / not reproducible."""
+    if f.get("possible") == "needs":
+        return f"needs {f.get('connection')}" + (" (paid gate)" if f.get("paid") else "")
+    return "not reproducible" if f.get("possible") == "not_reproducible" else "local"
 
 
 def _no_const(n):
@@ -240,7 +267,48 @@ def _norm(s):
     return re.sub(r"\s+", " ", str(s).strip().lower())
 
 
-def check_options(opts, card_info):
+def check_feasibility(r, o, conns):
+    n = o["name"]
+    feas = o.get("feasibility")
+    if not isinstance(feas, list):
+        r.add("fail", "FEASIBILITY_MISSING", f"{n}: feasibility[] missing: one entry per borrowed device saying local / needs <connection> / not reproducible")
+        return
+    by_row = {}
+    for f in feas:
+        if isinstance(f, dict) and f.get("device_row"):
+            by_row[f["device_row"]] = f
+    for rid in o.get("borrowed_devices") or []:
+        if rid not in by_row:
+            r.add("fail", "FEASIBILITY_MISSING", f"{n}: borrowed device {rid} has no feasibility entry")
+    for rid, f in by_row.items():
+        poss = f.get("possible")
+        if poss not in POSSIBLE:
+            r.add("fail", "FEASIBILITY_VALUE", f"{n}/{rid}: possible must be one of {sorted(POSSIBLE)}")
+            continue
+        mk = f.get("motion_kind")
+        if mk is not None and mk not in MOTION_KINDS:
+            r.add("fail", "MOTION_KIND", f"{n}/{rid}: motion_kind must be one of {sorted(MOTION_KINDS)} (video-analysis, per shot)")
+        if poss == "needs":
+            cid = str(f.get("connection") or "").strip()
+            if not cid or not isinstance(f.get("paid"), bool):
+                r.add("fail", "FEASIBILITY_NEEDS", f"{n}/{rid}: needs names the connection and says paid: true/false")
+                continue
+            if conns is not None:
+                c = conns.get(cid)
+                if c is None:
+                    r.add("warn", "CONNECTION_UNKNOWN", f"{n}/{rid}: {cid!r} is not in connections.json (a claude.ai connector shows only in the tool list): confirm it there")
+                else:
+                    if "paid" in c["cost"] and f.get("paid") is not True:
+                        r.add("fail", "PAID_NOT_GATED", f"{n}/{rid}: {cid} is a paid connection: paid: true, and it goes through paid-spend-gate")
+                    if c["present"] is True and f.get("connected") is False or c["present"] is False and f.get("connected") is True:
+                        r.add("fail", "CONNECTED_WRONG", f"{n}/{rid}: connected={f.get('connected')} but connections.json says present={c['present']}")
+            if mk in ("still", "still_push") and f.get("makes") == "video":
+                r.add("warn", "STILL_AS_VIDEO", f"{n}/{rid}: the reference shot is an animated still ({mk}): a local push/pan on an owned or generated still reproduces it; a video generation is not needed for it")
+        if poss == "not_reproducible" and not str(f.get("fallback") or "").strip():
+            r.add("fail", "FEASIBILITY_FALLBACK", f"{n}/{rid}: not reproducible needs a fallback (what we do instead, or drop the device)")
+
+
+def check_options(opts, card_info, conns=None):
     r = R("options.json")
     if not isinstance(opts, dict) or opts.get("schema_version") != SCHEMA:
         r.add("fail", "SCHEMA", f"schema_version must be {SCHEMA}")
@@ -268,7 +336,8 @@ def check_options(opts, card_info):
         for rid in o.get("borrowed_devices") or []:
             if rows and rid not in rows:
                 r.add("fail", "UNKNOWN_ROW", f"{n}: borrowed device {rid} is not a DNA row")
-    if r.items:
+        check_feasibility(r, o, conns)
+    if any(i["severity"] == "fail" for i in r.items):
         return r
     if len(set(map(frozenset, keysets))) != 1:
         r.add("fail", "DECISION_KEYS", "all three options must decide the SAME set of decisions so they can be compared")
@@ -349,8 +418,10 @@ def check_rights(rj):
 
 
 # --------------------------------------------------------------------------- orchestration
-def run_all(style_dir: Path, root: Path):
+def run_all(style_dir: Path, root: Path, connections=None):
     reports = []
+    cpath = Path(connections) if connections else root / "_work" / "connections.json"
+    conns = load_connections(cpath) if cpath.is_file() else None
     card_info = None
     cp = style_dir / "style_dna.json"
     for name in ("style_dna.json", "options.json", "rights.json"):
@@ -368,7 +439,7 @@ def run_all(style_dir: Path, root: Path):
     op, rp = style_dir / "options.json", style_dir / "rights.json"
     if op.is_file():
         try:
-            reports.append(check_options(load(op), card_info))
+            reports.append(check_options(load(op), card_info, conns))
         except ValueError as e:
             r = R("options.json")
             r.add("fail", "BAD_JSON", str(e))
@@ -431,11 +502,13 @@ def _fixture(td: Path):
             "rows": rows, "beat_map": [{"ref_beat": "0-1.4", "function": "hook", "mapped_device": "number slam on the user's number"}]}
     dec = lambda **kw: {"pacing": "36/min", "hook": "offer first", "transitions": "whips", "type": "rounded heavy", "camera": "115% punch", "palette": "ref accent", "sound": "128 bpm bed"} | kw
     opts = {"schema_version": SCHEMA, "options": [
-        {"name": "Faithful", "pitch": "closest translation", "decisions": dec(), "cost": "no extra", "risk": "looks like a copy", "keeps_ledger": True, "borrowed_devices": ["R01", "R03"], "deviate_rows": []},
+        {"name": "Faithful", "pitch": "closest translation", "decisions": dec(), "cost": "no extra", "risk": "looks like a copy", "keeps_ledger": True, "borrowed_devices": ["R01", "R03"], "deviate_rows": [],
+         "feasibility": [{"device_row": "R01", "possible": "local", "motion_kind": "motion"}, {"device_row": "R03", "possible": "local"}]},
         {"name": "Elevated", "pitch": "grammar + upgrades", "decisions": dec(pacing="36/min + 3 breaths", transitions="whips + 3D match cut", camera="115% punch + depth push"), "cost": "+1 3D beat", "risk": "3D render time", "keeps_ledger": True, "recommended": True,
-         "recommend_reason": "premium bar", "upgrades": [{"device_row": "R03", "upgrade": "3D match cut", "why": "meaning of the offer"}], "borrowed_devices": ["R01"]},
+         "recommend_reason": "premium bar", "upgrades": [{"device_row": "R03", "upgrade": "3D match cut", "why": "meaning of the offer"}], "borrowed_devices": ["R01"],
+         "feasibility": [{"device_row": "R01", "possible": "local"}]},
         {"name": "Twist", "pitch": "one axis changed", "decisions": dec(hook="pain question", palette="duotone", sound="no bed, foley only", transitions="hard cuts only"), "cost": "ask user", "risk": "may miss the brief", "keeps_ledger": True,
-         "kept_devices": ["R01"], "changed_axis": "world", "borrowed_devices": ["R01"]}]}
+         "kept_devices": ["R01"], "changed_axis": "world", "borrowed_devices": ["R01"], "feasibility": [{"device_row": "R01", "possible": "local"}]}]}
     rights = {"schema_version": SCHEMA, "context": "client_ad", "reference": {"url_or_file": "user-supplied file", "acquisition": "user-supplied", "licence": "unknown", "use": "analysis-only", "private": True},
               "assets_taken_from_reference": [], "music": {"reference_song": {"status": "matched", "title": "T", "sync_licence": "not_established"},
               "replacement": {"file": "hf/assets/bed.wav", "source_md": "hf/SOURCES.md#bed", "licence": "CC0", "ads_allowed": True}},
@@ -564,6 +637,33 @@ def self_check() -> int:
         _edit(sd, "rights.json", lambda j: j["distribution"].update(analysis_reports_shipped=True))
         expect("shipping third-party analysis reports -> DISTRIBUTION", "DISTRIBUTION" in codes(run_all(sd, b)))
 
+        b, sd = fresh("nofeas")
+        _edit(sd, "options.json", lambda j: j["options"][0].pop("feasibility"))
+        expect("option without feasibility -> FEASIBILITY_MISSING", "FEASIBILITY_MISSING" in codes(run_all(sd, b)))
+
+        b, sd = fresh("feasrow")
+        _edit(sd, "options.json", lambda j: j["options"][0]["feasibility"].pop())
+        expect("a borrowed device without a feasibility entry -> FEASIBILITY_MISSING", "FEASIBILITY_MISSING" in codes(run_all(sd, b)))
+
+        b, sd = fresh("paid")
+        (b / "_work" / "connections.json").write_text(json.dumps({"tool": "connections", "groups": {"generated": [
+            {"id": "higgsfield", "cost": "paid", "present": True}, {"id": "blender", "cost": "free", "present": False}]}}), encoding="utf-8")
+        _edit(sd, "options.json", lambda j: j["options"][0]["feasibility"].__setitem__(1, {"device_row": "R03", "possible": "needs", "connection": "higgsfield", "paid": False}))
+        expect("a paid connection not marked paid -> PAID_NOT_GATED", "PAID_NOT_GATED" in codes(run_all(sd, b)))
+        _edit(sd, "options.json", lambda j: j["options"][0]["feasibility"].__setitem__(1, {"device_row": "R03", "possible": "needs", "connection": "higgsfield", "paid": True,
+                                                                                         "connected": True, "motion_kind": "still_push", "makes": "video"}))
+        rep = run_all(sd, b)
+        expect("paid + connected + gated passes", combine(rep)[1] == 0)
+        expect("an animated still sent to a video generator -> STILL_AS_VIDEO warning", "STILL_AS_VIDEO" in codes(rep))
+        _edit(sd, "options.json", lambda j: j["options"][0]["feasibility"].__setitem__(1, {"device_row": "R03", "possible": "needs", "connection": "blender", "paid": False, "connected": True}))
+        expect("connected claimed against the report -> CONNECTED_WRONG", "CONNECTED_WRONG" in codes(run_all(sd, b)))
+        _edit(sd, "options.json", lambda j: j["options"][0]["feasibility"].__setitem__(1, {"device_row": "R03", "possible": "not_reproducible"}))
+        expect("not reproducible without a fallback -> FEASIBILITY_FALLBACK", "FEASIBILITY_FALLBACK" in codes(run_all(sd, b)))
+        _edit(sd, "options.json", lambda j: j["options"][0]["feasibility"].__setitem__(1, {"device_row": "R03", "possible": "local", "motion_kind": "zoom"}))
+        expect("unknown motion_kind -> MOTION_KIND", "MOTION_KIND" in codes(run_all(sd, b)))
+        expect("possible-here cell text", possible_here({"possible": "needs", "connection": "higgsfield", "paid": True}) == "needs higgsfield (paid gate)"
+               and possible_here({"possible": "not_reproducible"}) == "not reproducible" and possible_here({"possible": "local"}) == "local")
+
         b, sd = fresh("dupe")
         (sd / "rights.json").write_text('{"schema_version":"1.0.0","schema_version":"1.0.0"}')
         out, code = combine(run_all(sd, b))
@@ -586,6 +686,7 @@ def main(argv=None) -> int:
         sp.add_argument("path")
         sp.add_argument("--root", default=".")
         sp.add_argument("--card")
+        sp.add_argument("--connections", help="tools/connections.py JSON (default <root>/_work/connections.json when present)")
         sp.add_argument("--json", action="store_true")
     a = ap.parse_args(argv)
     if a.self_check:
@@ -596,7 +697,7 @@ def main(argv=None) -> int:
     root = Path(a.root).resolve()
     try:
         if a.cmd == "all":
-            out, code = combine(run_all(Path(a.path), root))
+            out, code = combine(run_all(Path(a.path), root, a.connections))
         elif a.cmd == "card":
             r, _ = check_card(load(Path(a.path)), root)
             out, code = combine([r])
@@ -604,7 +705,9 @@ def main(argv=None) -> int:
             info = None
             if a.card:
                 _, info = check_card(load(Path(a.card)), root)
-            out, code = combine([check_options(load(Path(a.path)), info)])
+            cpath = Path(a.connections) if a.connections else root / "_work" / "connections.json"
+            conns = load_connections(cpath) if cpath.is_file() else None
+            out, code = combine([check_options(load(Path(a.path)), info, conns)])
         else:
             out, code = combine([check_rights(load(Path(a.path)))])
     except (OSError, ValueError) as e:

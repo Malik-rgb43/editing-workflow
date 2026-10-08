@@ -20,6 +20,7 @@ Load when: producing the text of the cut, building `edit.json`, checking a join,
 | Join check | ASR the FULL assembled VO after every re-cut (not isolated join snippets: snippets said "clean" while the full file heard residues "ז"/"כן", about 45 min lost). `join_diff`: word-level diff of the assembled-VO words vs the source words on chosen ranges; ANY extra token = fail; a kept sentence missing its first 2 or last 2 source words = error |
 | Majority vote | ambiguous words (a 4:2 split "של" vs "שלי") are decided by several ASR passes, then not flip-flopped |
 | Slivers | drop pieces under about 6 frames (4-frame fragments of another take caused a flash) |
+| Room tone | no music bed: one continuous room tone under the whole voice track, from a pause of the same recording, so a join never drops to digital silence (`references/sound.md`, "Voice samples, room tone") |
 | Similar framings | a cut between two similar framings of the same speaker reads as a glitch: cover it (film burn, two-sided zoom-through) or change scale >= 15 % |
 | Auto-flag A->A (proposed) | A-roll -> A-roll cut where the face box moves < 15 % in scale and > 20 px in position with no transition |
 | Fillers | "אה/אממ" usually do not appear in a Whisper transcript: detect voiced gaps between words and FLAG them; never auto-delete every occurrence of a discourse word ("כאילו", "בעצם") |
@@ -91,3 +92,40 @@ Frame 0 = the strongest AI image, moving by 0.5 s, with a Hebrew call-out of at 
 
 ### 6. Review rubric (R-G1..R-G8) - hard gates R-G1 (AI integrity), R-G3 (clean windows), R-G6 (one look)
 Release: average >= 4.0 including the 10 general dimensions, no dimension < 3, and R-G1/R-G3/R-G6 >= 3 (a 2 or lower on one of them blocks showing the video); at most 3 review rounds. Critic: frame by frame at every transformation, looking for hands, bones, text and a product that changes; a timecode and a concrete fix for every score under 4. Full text: `agent-content/benchmarks/ai-generated.rubric.md`. The numeric scorer (`benchmark`) treats the market profile as 16:9 long form: length is information only. Owner's signature to keep when upgrading an older series: the cyan/orange X-ray look, the real->AI match transition on the body, captions at about 72 % height, a real-person VO; add what it lacked (X-ray in frame 0, trimmed windows, an SFX layer, global grain, anatomy QA against a reference, no reverse, an end card, -14 LUFS).
+
+
+## Montage: footage and music, no voice (event recaps, travel)
+Load when: the video is footage cut to music with no voice to carry it: an event recap, a trip, a wedding or team day, a venue or product-in-use reel. Written 2026-10-08. The numbers are **house defaults, unmeasured**: a starting point to adjust by eye, not a measured norm.
+
+With no voice, the music is the timeline and the pictures are the story. Every choice below exists because the viewer has nothing else to follow.
+
+### 1. Hold lengths by tone
+Pick the tone at intake (it is a taste decision, `D` under full control) and write it into PROMPT.md `<direction>`. Count holds in beats of the chosen track (seconds shown at 120 BPM, where one beat = 0.5 s):
+
+| Tone | Typical hold | Hero shot hold | Feels like |
+|---|---|---|---|
+| high energy (party, sport, festival, a launch crowd) | 1-2 beats (0.5-1 s) | 3-4 beats (1.5-2 s) | the room's pulse |
+| warm (wedding, family day, team event) | 2-4 beats (1-2 s) | 6-8 beats (3-4 s) | being there with them |
+| calm (landscapes, a retreat, a memorial) | 4-8 beats (2-4 s) | 10-14 beats (5-7 s) | breathing |
+
+- **Hero shots are held longest.** Choose 2-4 hero shots before cutting (the best faces, the widest view, the moment of the day) and give them the hero hold; everything else is cut shorter around them. Why: equal holds flatten the film, and the viewer only learns what matters from what you let them look at.
+- Vary inside the tone: a short-short-long pattern reads as rhythm, a constant hold reads as a slideshow.
+
+### 2. Which part of each clip
+- **Use each clip's best sub-window**, not its start: the 1-3 s where the action peaks, the face is sharp and the camera is steady. Phone and camera clips usually hold the operator's start and stop shake in their first and last second. Mark the window per clip (`hf/TAKES.md` or the edit list) before cutting, the same way as the clean windows of AI takes above.
+- **Cut before the action ends:** leave a shot while its motion is still going (the toss still in the air, the turn of the head half done). Why: a finished action reads as an ending, and the next shot has to start the energy again; an unfinished one hands its energy across the cut.
+- **No frozen last frame.** A clip shorter than its slot is never padded with a held frame: pick a longer window, shorten the slot or use another clip. A frozen frame reads as a glitch on a phone. Check the last frames of every piece in the draft with `frame_qa` (a repeated frame at a piece's end is a fail).
+
+### 3. Music shape
+- Fit the track to the length first (`tools/music_fit.py`, `references/sound.md` section "Fit the music to the length"); the strongest rise lands on the hero moment.
+- **One music dropout at the emotional centre:** once, for 0.5-2 s, the music drops away and the clip's own sound carries alone (the laugh, the toast, the wave), then the music returns on a downbeat. Why: the contrast makes that moment the centre of the film; a second dropout turns it into a trick. Build: `hf_mix` music `"dropouts": [[t0, t1]]` (video seconds; the bed goes silent there) plus the clip's own sound as an `sfx` cue over the same range.
+- **The music fades under the last seconds:** it ends on the track's own final hit, or fades out over the last bar (2-4 s) under the closing shot. Never a hard stop mid-phrase.
+- Cut on beats and phrase starts, but not on every beat: hold through some beats so the cuts that do land on the beat are felt.
+
+### 4. One film from mixed sources
+- **One grade and one aspect across all sources** (phones, action cameras, drones, a borrowed camera): conform to one fps and one aspect (crop to fill, never black bars or a blurred fill), then one grade with matched whites and skin (`speaker-color-correction` for skin; one LUT for the rest). Why: a change of colour or frame shape at a cut reads as a different video, and with no voice there is nothing to hold the two together.
+- **Ambience L-cuts on the hardest joins:** where two neighbouring shots differ the most (inside to outside, night to day, quiet to loud), let the outgoing shot's ambience run 0.3-1 s under the incoming picture, or let the incoming sound start before its picture. Why: the sound bridges the visual jump so it reads as one place in time. Build: extract the outgoing clip's sound (`ffmpeg -ss <in> -t <len> -i clip -vn assets/amb_<id>.wav`) and place it as an `sfx` cue at the join, a few dB under the bed.
+
+### 5. Check before the draft render
+- The storyboard (Step 3b) marks each beat's `shot` and `hero: true` on the 2-4 hero shots; every montage clip is `roll: B`, `source: own`. Its sameness warnings catch runs of one shot size.
+- The draft passes when: every hero shot holds longer than its neighbours; no piece ends on a repeated frame; there is exactly one dropout; the last 2-4 s fade or end on the track's hit; all pieces share one fps, one aspect and one look on the contact sheet.

@@ -21,8 +21,13 @@ storyboard.json (schema avc.storyboard/1):
             "refs": [{"img": "path", "caption": "what to take from it"}]},
    "beats": [{"id": "b1", "t": 0.0, "end": 2.4, "roll": "A|B|G", "line": "the words under it", "shows": "what is seen",
               "img": "frames/b1.jpg", "source": "own|stock|generated|graphic|reference|sketch", "src_t": 12.4,
-              "move": "push 1.00->1.04", "why": "the reason", "cost": "free | ~$0.08 (paid-spend-gate)"}]}
+              "move": "push 1.00->1.04", "why": "the reason", "cost": "free | ~$0.08 (paid-spend-gate)",
+              "shot": "wide|medium|close|detail|graphic|screen", "signature": true, "text_only": true, "hero": true}]}
   roll: A = the speaker's / own footage, B = cut-away footage or stills, G = a graphic or text beat.
+  shot, signature, text_only, hero are optional (hero: a montage's longest-held shot; more than 4 is warned). Sameness warnings (check and serve print them; they never refuse): 3+ beats in a row
+  with the same `shot`; one shot on more than half of the beats (when 4+ beats carry a shot); the same image on two beats;
+  text-only graphic beats (`text_only`, or a G beat whose `shows` names text) on more than 40 % of the beats; two adjacent beats
+  with the same roll, shot and subject words; the signature device (`signature: true`) on more than 2 beats, or on none.
   Honesty rules (refused, exit 2): an A-roll beat is the project's OWN footage with a real frame; a "reference" image (someone else's) is
   mood only and is labelled so on the page; a beat without an image is allowed only as `sketch` or a not-yet-made `generated` beat and
   is shown as a planned card. Images: jpg/png/webp, <= 2.5 MB each, embedded as data URIs (nothing leaves the machine).
@@ -34,6 +39,7 @@ from __future__ import annotations
 
 import base64
 import datetime as _dt
+import hashlib
 import html
 import json
 import os
@@ -55,6 +61,10 @@ MAX_TEXT = 2000
 HEX_RE = re.compile(r"^#[0-9A-Fa-f]{6}$")
 ID_RE = re.compile(r"^[A-Za-z0-9_-]{1,24}$")
 PLACEHOLDER_RE = re.compile(r"(?i)lorem|ipsum|placeholder|todo|tbd|xxx")
+SHOTS = ("wide", "medium", "close", "detail", "graphic", "screen")
+TEXT_BEAT_RE = re.compile(r"(?i)\b(text|title|words?|caption|quote|headline|typography|lettering|type on)\b|כיתוב|טקסט|כותרת|מילים|ציטוט")
+STOPWORDS = {"the", "and", "with", "from", "into", "over", "under", "for", "his", "her", "its", "their", "this", "that", "then", "of",
+             "של", "עם", "על", "את", "זה", "הוא", "היא", "מול", "אל", "גם", "כל", "רק"}
 
 UI = {
     "he": {"dir": "rtl", "eyebrow": "מודבורד + סטוריבורד", "mood": "המראה", "feel": "התחושה", "palette": "פלטה", "type": "טיפוגרפיה",
@@ -68,7 +78,8 @@ UI = {
            "fail": "השליחה לא הצליחה: ", "saved": "נשמר הקובץ storyboard_review.json: צרף אותו לשיחה עם הסוכן.",
            "font_note": "תצוגה בדפדפן: הפונט האמיתי נבדק במנוע", "src": {"own": "צילום שלנו", "stock": "סטוק (רישיון לכל קובץ)",
            "generated": "ג'נרציה (בתשלום, באישור)", "graphic": "גרפיקה", "reference": "רפרנס", "sketch": "סקיצה"},
-           "roll": {"A": "A-roll", "B": "B-roll", "G": "גרפיקה"}},
+           "roll": {"A": "A-roll", "B": "B-roll", "G": "גרפיקה"},
+           "shot": {"wide": "רחב", "medium": "בינוני", "close": "קרוב", "detail": "פרט", "graphic": "גרפיקה", "screen": "מסך"}},
     "en": {"dir": "ltr", "eyebrow": "Moodboard + storyboard", "mood": "The look", "feel": "Feel", "palette": "Palette", "type": "Type",
            "signature": "Signature device", "refs": "References", "ref_badge": "reference: not ours, mood only", "story": "The story in one line",
            "board": "Key frames", "rhythm": "A-roll / B-roll rhythm across the video", "beats": "frames", "planned": "planned: not made yet",
@@ -80,7 +91,8 @@ UI = {
            "fail": "Sending failed: ", "saved": "storyboard_review.json saved: attach it to the chat with the agent.",
            "font_note": "browser preview: the real font is checked in the engine", "src": {"own": "our footage", "stock": "stock (licence per file)",
            "generated": "generated (paid, approved)", "graphic": "graphic", "reference": "reference", "sketch": "sketch"},
-           "roll": {"A": "A-roll", "B": "B-roll", "G": "graphic"}},
+           "roll": {"A": "A-roll", "B": "B-roll", "G": "graphic"},
+           "shot": {"wide": "wide", "medium": "medium", "close": "close", "detail": "detail", "graphic": "graphic", "screen": "screen"}},
 }
 
 
@@ -196,11 +208,93 @@ def validate(spec, base: Path) -> tuple[list[str], list[str]]:
             errors.append(f"{w}: no `img`; only a `sketch` or a not-yet-made `generated` beat may be shown without a frame")
         if src == "generated" and not _txt(b.get("cost")):
             errors.append(f"{w}: a generated beat states its `cost` (estimate through paid-spend-gate)")
+        if b.get("shot") is not None and b.get("shot") not in SHOTS:
+            errors.append(f"{w}: `shot` must be one of {list(SHOTS)}")
+        for k in ("signature", "text_only", "hero"):
+            if b.get(k) is not None and not isinstance(b.get(k), bool):
+                errors.append(f"{w}: `{k}` is true or false")
     if beats and not any(isinstance(b, dict) and b.get("roll") in ("B", "G") for b in beats):
         warnings.append("no B-roll or graphic beat: a plain edit (cuts, captions, music) does not need this board")
     if spec.get("title") and PLACEHOLDER_RE.search(_txt(spec.get("title"))):
         errors.append("`title` looks like placeholder text")
+    good = [b for b in beats if isinstance(b, dict) and isinstance(b.get("id"), str)]
+    if len(good) >= 3:
+        has_sig = bool(isinstance(mood, dict) and _txt(mood.get("signature")))
+        warnings.extend(sameness(good, base, has_sig))
     return errors, warnings
+
+
+def subject_words(text: str) -> set[str]:
+    """Content words of a `shows` line: lower case, no stop words; a Hebrew word of 4+ letters loses one prefix letter (ה, ו, ב, ל, מ, ש, כ)."""
+    out = set()
+    for w in re.findall(r"\w+", text.lower()):
+        if w in STOPWORDS or w.isdigit():
+            continue
+        if not w.isascii():
+            if len(w) >= 4 and w[0] in "הובלמשכ":
+                w = w[1:]
+            if len(w) >= 2:
+                out.add(w)
+        elif len(w) >= 3:
+            out.add(w)
+    return out
+
+
+def sameness(beats: list[dict], base: Path, has_signature: bool) -> list[str]:
+    """Pure (reads the image bytes only): warnings for a board whose beats look alike. They never refuse the board."""
+    out: list[str] = []
+    run: list[dict] = []
+
+    def flush() -> None:
+        if len(run) >= 3:
+            out.append(f"beats {run[0]['id']}-{run[-1]['id']}: {len(run)} `{run[0]['shot']}` shots in a row; change the size or the angle "
+                       "so each cut is felt")
+
+    for b in beats:
+        if b.get("shot") in SHOTS and run and run[-1].get("shot") == b["shot"]:
+            run.append(b)
+            continue
+        flush()
+        run = [b] if b.get("shot") in SHOTS else []
+    flush()
+    shots = [b["shot"] for b in beats if b.get("shot") in SHOTS]
+    if len(shots) >= 4:
+        top = max(sorted(set(shots)), key=shots.count)
+        if shots.count(top) / len(shots) > 0.5:
+            out.append(f"`{top}` is {shots.count(top)} of {len(shots)} beats: more than half the board in one shot size reads as one long shot")
+    seen: dict[str, list[str]] = {}
+    for b in beats:
+        rel = b.get("img")
+        if isinstance(rel, str) and rel.strip():
+            p = (base / rel).resolve()
+            try:
+                key = hashlib.sha1(p.read_bytes()).hexdigest() if p.is_file() else str(p)
+            except OSError:
+                key = str(p)
+            seen.setdefault(key, []).append(b["id"])
+    for ids in seen.values():
+        if len(ids) > 1:
+            out.append(f"beats {', '.join(ids)} use the same image: the viewer sees one picture twice; give each beat its own frame")
+    texty = [b["id"] for b in beats if b.get("text_only") is True or (b.get("roll") == "G" and b.get("text_only") is not False
+                                                                      and TEXT_BEAT_RE.search(_txt(b.get("shows"))))]
+    if len(texty) / len(beats) > 0.4:
+        out.append(f"{len(texty)} of {len(beats)} beats are text-only graphics ({', '.join(texty)}): show the thing itself in some of them")
+    for a, b in zip(beats, beats[1:]):
+        if a.get("roll") == b.get("roll") and a.get("shot") in SHOTS and a.get("shot") == b.get("shot"):
+            wa, wb = subject_words(_txt(a.get("shows"))), subject_words(_txt(b.get("shows")))
+            shared = wa & wb
+            if shared and len(shared) / max(1, min(len(wa), len(wb))) >= 0.5:
+                out.append(f"beats {a['id']}, {b['id']}: same roll, same `{a['shot']}` shot, same subject ({', '.join(sorted(shared)[:3])}): "
+                           "the second reads as a repeat; change the subject or the size, or merge them")
+    hero = [b["id"] for b in beats if b.get("hero") is True]
+    if len(hero) > 4:
+        out.append(f"{len(hero)} hero beats ({', '.join(hero)}): a hero is held longest because it is rare; keep 2-4")
+    sig = [b["id"] for b in beats if b.get("signature") is True]
+    if len(sig) > 2:
+        out.append(f"the signature device is marked on {len(sig)} beats ({', '.join(sig)}): keep it on 1-2 beats so it stays special")
+    elif has_signature and not sig:
+        out.append("no beat is marked `signature: true`: mark the 1-2 beats that carry the signature device")
+    return out
 
 
 def load(path: Path) -> dict:
@@ -274,7 +368,9 @@ def page(spec: dict, base: Path, token: str | None) -> str:
     for b in spec["beats"]:
         beats.append({"id": b["id"], "t": b["t"], "end": b["end"], "tc": f"{tc(b['t'])}-{tc(b['end'])}", "roll": b["roll"], "source": b["source"],
                       "line": _txt(b.get("line")), "shows": _txt(b.get("shows")), "move": _txt(b.get("move")), "why": _txt(b.get("why")),
-                      "cost": _txt(b.get("cost")), "img": data_uri(base, b["img"]) if b.get("img") else None})
+                      "cost": _txt(b.get("cost")), "img": data_uri(base, b["img"]) if b.get("img") else None,
+                      "shot": b.get("shot") if b.get("shot") in SHOTS else None, "sig": b.get("signature") is True,
+                      "hero": b.get("hero") is True})
     refs = [{"img": data_uri(base, r["img"]), "caption": _txt(r.get("caption"))} for r in mood.get("refs", [])]
     w, h = ASPECTS[spec.get("aspect", "9:16")]
     data = {"ui": u, "token": token, "beats": beats, "refs": refs, "palette": mood["palette"], "feel": _txt(mood.get("feel")),
@@ -538,7 +634,7 @@ B.beats.forEach(function(b){count[b.roll]++;var d=el('div','r'+b.roll,b.roll);d.
 $('#chips').appendChild(el('span','chip',B.beats.length+' '+U.beats));
 B.beats.forEach(function(b){var c=el('article','beat');c.id='beat-'+b.id;var f=el('div','frame');
  if(b.img){var i=el('img');i.src=b.img;i.alt=b.shows;f.appendChild(i)}else{var sk=el('div','sketch');sk.appendChild(el('b','',U.planned));sk.appendChild(el('p','',b.shows));f.appendChild(sk)}
- var tg=el('div','tags');tg.appendChild(el('span','tag '+b.roll,U.roll[b.roll]));tg.appendChild(el('span','tag',b.tc));f.appendChild(tg);c.appendChild(f);
+ var tg=el('div','tags');tg.appendChild(el('span','tag '+b.roll,U.roll[b.roll]+(b.shot?' · '+U.shot[b.shot]:'')+(b.sig?' ★':'')+(b.hero?' · hero':'')));tg.appendChild(el('span','tag',b.tc));f.appendChild(tg);c.appendChild(f);
  var bd=el('div','body');if(b.line)bd.appendChild(el('p','line','"'+b.line+'"'));
  [['shows',b.shows],['move',b.move],['why',b.why],['source',U.src[b.source]+(b.cost?' · '+b.cost:'')]].forEach(function(kv){if(!kv[1])return;var p=el('p','kv'),k=el('b','',U[kv[0]]+': ');p.appendChild(k);p.appendChild(document.createTextNode(kv[1]));bd.appendChild(p)});
  var ta=el('textarea');ta.placeholder=U.note_ph;ta.value=notes[b.id]||'';ta.oninput=function(){notes[b.id]=ta.value;c.classList.toggle('has',!!ta.value.trim());save();refresh()};

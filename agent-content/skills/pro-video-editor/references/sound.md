@@ -85,6 +85,24 @@ Load when: building or checking captions, the mix or the final loudness. Sources
 - **VO margin:** voice at least 5 dB above music plus SFX in the 1-4 kHz band per line (`hf_mix --report`); a 3 s short-term loudness step larger than about 3 LU at a cut without intent reads as a bug.
 - **Master:** -14 LUFS integrated +/- 0.5, true peak <= -1 dBTP, measured on the FINAL file after encode, labelled as the social house profile (no platform numeric requirement was verified; a client or broadcaster profile overrides). Fix levels in the mix and re-mux; do not chase loudness inside the composition. Two-pass loudnorm needs a pre-limited raw mix, otherwise it falls back to dynamic mode and crushes the loudness range.
 
+## Voice samples, room tone, fitting the music to the length
+Load when: picking a voice (TTS or a recorded voice-over read), cutting a piece that has no music bed, or choosing where a long track starts and ends. Written 2026-10-08; house practice, not measured on a corpus.
+
+### 1. Voice samples start with the hardest line
+- Every voice sample the user hears (ladder rung 2) opens with the HARDEST line of the script: the brand name, the number, the foreign or rare word, the longest sentence. Why: any voice sounds fine on "hi, welcome"; a mispronounced brand name or a rushed number shows up only on the hard line, and if the sample skips it the user finds out in the draft render.
+- Any later change of voice, model or speed is a NEW sample the user hears again, hardest line first. Why: each of these changes pronunciation, pace and pauses, so the approved sample no longer describes what will be built, and the word timings measured on the old take no longer hold (re-run `tools/word_retime.py` on the new take).
+- The change itself goes through the promise: ask, then `promise_check.py record --field voice ...` when the voice source changes (`scripts/promise_check.py`).
+
+### 2. Room tone under the joins (no music bed)
+- In a piece with no music bed (a dry speaker cut, an interview, a screen demo), lay one continuous room tone under the whole voice track: 1-2 s of the location's own quiet, taken from a pause in the same recording, looped with short crossfades. Why: every cut otherwise drops for a few frames to digital silence, and the ear hears each join as a hole even when the picture hides it.
+- House defaults (unmeasured): the room tone sits at the measured level of the source pauses (not louder); each voice join gets a 10-20 ms crossfade over it. A source with no clean pause (constant traffic, music in the room) gets a matching ambience from a licensed library instead, with its licence row.
+- Check: listen to every join on headphones at the delivery level; `hf_mix --report` flags dead air of 0.4 s or more.
+
+### 3. Fit the music to the length
+- `python tools/music_fit.py <track> --length <S> [--hit <T>] -o <project>/_work/music_fit.json` picks the window of a long track for a video of S seconds: it starts on a downbeat, ends on a bar or phrase end (or fades over one bar), and places the strongest rise near T, the call to action or the payoff, when T is given. It says when the track is too short (then it loops at a bar). Output: `start_s`, `end_s`, `fade_out_s`, `loop`, `bpm`, `score`, `reason`.
+- Put `start_s` into the `hf_mix` cue's `music.in` (the bed starts there inside the track) and `fade_out_s` into `music.fade_out`; no separate cut file is needed. With `loop: true` from music_fit, cut a bar-true loop at its `loop_points` instead, since `hf_mix` loops the whole file. Why: a track started at 0:00 and cut at the video's end stops mid-phrase, and a payoff that lands in a quiet verse loses its lift.
+- The tool proposes; the ear decides. Listen at the hit time and at the last 3 s before you write the window into PROMPT.md. Licence rules above still apply to the whole track.
+
 ## Common mistakes: voice, effects and caption timing
 Load when: placing a TTS voice, a long effect or word-timed captions. Moved from SKILL.md on 2026-10-06 (each cost time on a real project).
 

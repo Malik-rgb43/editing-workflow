@@ -2,7 +2,7 @@
   "$schema": "https://anthropic.com/claude-code/plugin.schema.json",
   "name": "editing-workflow",
   "displayName": "AI Video Editing Workflow",
-  "version": "0.5.1",
+  "version": "0.6.0",
   "description": "Skills for AI-assisted video editing: intake, talking-head, motion graphics, AI-generated video, Hebrew captions, render QA and delivery, with a paid-spend gate.",
   "author": { "name": "Malik-rgb43", "url": "https://github.com/Malik-rgb43" },
   "homepage": "https://github.com/Malik-rgb43/editing-workflow",

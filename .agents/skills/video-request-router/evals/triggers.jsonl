@@ -21,3 +21,5 @@
 {"prompt":"what does LUFS mean, in two sentences","should_trigger":false,"route_instead":null}
 {"prompt":"add English subtitles to my finished video","should_trigger":true,"route_instead":null}
 {"prompt":"תוסיף כתוביות בספרדית לסרטון","should_trigger":true,"route_instead":null}
+{"prompt": "I just installed the video editing toolkit, what can you do?", "should_trigger": true, "route_instead": null}
+{"prompt": "סיימנו להתקין, בוא נתחיל לערוך", "should_trigger": true, "route_instead": null}

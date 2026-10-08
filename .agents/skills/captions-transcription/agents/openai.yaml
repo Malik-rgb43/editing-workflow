@@ -1,5 +1,5 @@
 interface:
   display_name: "Captions Transcription"
-  short_description: "Transcribe speech and build burned-in captions in any language (Hebrew deepest: the ivrit model, RTL and mixed English/n"
+  short_description: "Transcribe speech and build captions or subtitles in any language, or translated into another (Hebrew deepest: the ivrit"
 policy:
   allow_implicit_invocation: false

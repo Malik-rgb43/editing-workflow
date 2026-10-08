@@ -17,5 +17,6 @@
 {"prompt": "make my video in the style of this reel", "should_trigger": false, "route_instead": "reference-style-matching"}
 {"prompt": "תתקן את הצבע של הדובר, הפנים כהות", "should_trigger": false, "route_instead": "speaker-color-correction"}
 {"prompt": "render the final file and check loudness", "should_trigger": false, "route_instead": "render-qa-delivery"}
-{"prompt": "תתרגם את הסרטון הזה לאנגלית ותדביב אותו", "should_trigger": false, "route_instead": null}
+{"prompt": "תתרגם את הסרטון הזה לאנגלית ותדביב אותו", "should_trigger": false, "route_instead": "captions-transcription"}
 {"prompt": "transcribe this Spanish interview and break down its cuts", "should_trigger": true, "route_instead": null}
+{"prompt": "is this reel real footage or just photos with a zoom? break it down shot by shot", "should_trigger": true, "route_instead": null}

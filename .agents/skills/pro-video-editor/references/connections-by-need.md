@@ -14,4 +14,7 @@ Presence comes from Step 0 (`_work/connections.json` + your own tool list); a li
 | Music | ElevenLabs: paid, through the gate | a licensed library track (licence row per placement) or silence |
 | Reference capture, preview QA | Playwright MCP | `hyperframes snapshot` |
 | A reference the student may analyse | yt-dlp | the file the student sends |
+| A screen recording (demo, tutorial) | none needed: no recorder is installed for it | the student's own recording, made with what their computer already has (`agent-content/playbooks/wf-screen-demo.md`) |
 A connection that is missing is never a reason to stop: say what it would add, use the fallback, and offer the connection once.
+
+**Stock search, whichever library is connected:** query subject first in 2-4 words plus one point-of-view word; score each candidate 1-5 against its beat and accept 3 or more; a wrong point of view costs more than a wrong colour; when nothing reaches 3, go in this order: rephrase, a second library, own footage or a photo with a move, a graphic or UI beat, a generated shot (paid, through the gate). The table and the reasons: `references/visual-beats.md` section 4b.

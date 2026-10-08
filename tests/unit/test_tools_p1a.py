@@ -81,6 +81,26 @@ class TestHfMix:
         _, graph_nd, _ = hf_mix.build_graph(c, duck=False)
         assert "sidechaincompress" in graph and "sidechaincompress" not in graph_nd
 
+    def test_music_in_offset_starts_the_bed_inside_the_track(self, mixdir):
+        import hf_mix
+
+        c = hf_mix.load_cues(write_cues(mixdir))
+        assert c["music"]["in"] == 0.0 and "atrim=0:" in hf_mix.build_graph(c, duck=False)[1]
+        c["music"]["in"] = 12.5  # music_fit's start_s
+        graph = hf_mix.build_graph(c, duck=False)[1]
+        assert f"atrim=start=12.500:end={12.5 + c['duration']:.3f},asetpts=PTS-STARTPTS" in graph
+
+    def test_music_dropout_silences_the_bed_in_its_range(self, mixdir):
+        import hf_mix
+
+        c = hf_mix.load_cues(write_cues(mixdir))
+        assert c["music"]["dropouts"] == [] and "between(t" not in hf_mix.build_graph(c, duck=False)[1]
+        c["music"]["dropouts"] = hf_mix._dropouts([[2.0, 3.5]])
+        assert "volume=0:enable='between(t,2.000,3.500)'" in hf_mix.build_graph(c, duck=False)[1]
+        for bad in ([[3, 2]], [[1]], "2-3"):
+            with pytest.raises(ValueError):
+                hf_mix._dropouts(bad)
+
     def test_sfx_is_placed_lead_frames_before_the_picture_event(self, mixdir):
         import hf_mix
 

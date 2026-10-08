@@ -169,10 +169,14 @@ Follow `docs/en/first-output.md` (Hebrew: `docs/he/first-output.md`; after insta
 
 <!-- step: install-14 -->
 ## install-14 - Report to the student, the five states, and `add`
-Finish with a short report in the student's language, always the same three blocks:
+Finish with a short report in the student's language, always the same four blocks:
 1. **What was installed** (a list: skills and where, toolkit folder, work folder, HyperFrames version, each connection they said yes to) and **what was downloaded** (hosts; "size not measured" where true).
 2. **What only you must do** (sign-ins, keys, the vendor plugins) and **what you were NOT asked** (hardware).
 3. **How to undo or update:** `uninstall` / `rollback` / `git pull` + re-run `apply`.
+4. **What works now, and three first requests** (8-12 lines in all; put it last, after the five states below). Run `<PY> install/bootstrap.py run -- python tools/connections.py` (presence only, about 1 s) and write from its output, not from memory:
+   * **What works now:** one line per ready job, each marked local or paid (editing their footage, captions in their language and the HyperFrames render are always local; analysing a reference link needs `yt-dlp`; generation, voice, 3D and stock only when that connection is present).
+   * **At most 2 suggested upgrades**, one line each: what it adds and the words to type (`connect <service>`). Pick the missing ones that serve what the student said they want; none when nothing useful is missing.
+   * **Exactly 3 ready first requests** to copy and fill in: always "Here is a video I love: <link> - make mine like it." and "Here is my footage: <folder> - make a 30 s reel.", plus ONE that fits what is connected, first match: video generation (`higgsfield`) -> "Here is my product photo: <file> - make a 10 s ad from it."; voice (`elevenlabs`) -> "Here is my script: <text> - make a 30 s explainer with a voice-over."; stock (`pexels`) -> "Here is my voice note: <file> - cover it with stock B-roll and captions."; Blender installed -> "Here is my logo: <file> - make a 5 s 3D logo reveal." (a service the student connected comes before an app that is only installed); none of these (the local route) -> "Here is a talking-head clip: <file> - cut the pauses and add captions in <their language>." (the same pick as `video-request-router`, "A vague first request"). More examples per kind of video: [docs/en/first-requests.md](docs/en/first-requests.md) (Hebrew: [docs/he/first-requests.md](docs/he/first-requests.md)).
 Always report all five states with evidence; `not_run` is not a pass:
 | # | State | How it becomes true |
 |---|---|---|
@@ -187,7 +191,7 @@ Connections are added **one at a time**, when the student says yes in install-10
 <PY> install/bootstrap.py add <id>              # read-only plan: what it does, cost, where credentials go, sign-up links, by-hand steps
 <PY> install/bootstrap.py add <id> --yes        # only the safe, non-spending part (register a no-secret connector, create a route env, with --install-missing a package-manager command)
 ```
-`<id>` is an integration id or add-on name from the catalogue (for example `playwright`, `higgsfield`, `elevenlabs`, `blender`, `matte-fast`, `stock-media`, `yt-dlp`). `add` never reads or stores a key, never signs in, never downloads model weights, never spends. Close with: "tell me the video you want (a clip, a reference link, or an idea)" - the `video-request-router` skill takes it from there.
+`<id>` is an integration id or add-on name from the catalogue (for example `playwright`, `higgsfield`, `elevenlabs`, `blender`, `matte-fast`, `stock-media`, `yt-dlp`). `add` never reads or stores a key, never signs in, never downloads model weights, never spends. Close with block 4 (the three first requests); the `video-request-router` skill takes the answer from there.
 
 <!-- step: install-15 -->
 ## install-15 - When something fails

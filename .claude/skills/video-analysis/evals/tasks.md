@@ -37,3 +37,9 @@ Status: specified; deterministic oracles only. Model eval not run (decision defa
 - **Oracle:** the command in the tool log, `transcript.json`, `breakdown.md`.
 - **Pass:** case 1: `analyze.py ... --language en` was passed; `transcript.json` `language: en`; no Hebrew model forced; case 2: the agent asked or ran with `--language auto` and says which language was detected; if the Hebrew-tuned model refused the speech, the multilingual route was offered with its download shown first, not taken silently; the breakdown's music line says no song was identified.
 - **Fail:** `--language he` on English speech; Hebrew assumed in the breakdown; a model download without the user's yes; a song title stated.
+
+## T7. Animated stills vs real footage (`motion_kind`)
+- **Setup:** a synthetic 20 s clip made with ffmpeg: shots 1-3 are still images with a slow uniform zoom, shot 4 is one still with no movement, shot 5 is real camera motion with parallax (a moving test pattern over a static background is enough), cut points known.
+- **Oracle:** the shot entries in `measurements.json` (their `motion_kind`), `breakdown.md` (shot table and summary), the `review` block.
+- **Pass:** shots 1-3 read `still_push`, shot 4 `still`, shot 5 `motion` (or the reader corrects a wrong label in the breakdown's section 7, uncertainties and corrections, with the parallax reason); the shot table has the motion column; the summary states the share of animated stills; no shot is called "footage" when it is a moved still.
+- **Fail:** the motion column missing; a label taken from the tool and repeated without a look at the frames when the tool and the frames disagree.

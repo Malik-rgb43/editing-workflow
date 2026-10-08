@@ -15,7 +15,7 @@ This is **repository 2 of 2**. Repository 1, `claude-code-setup`, prepares **Cla
 | `fixtures/`, `contracts/`, `templates/`, `profiles/` | synthetic owned fixtures (no client media), JSON schemas, project templates, hardware route profiles. |
 | `install/`, `integrations/`, `INSTALL.md` | the installer (`install/bootstrap.py`, Python stdlib only), the catalogue of integrations (`catalog.toml`) with sign-up links (`referrals.toml`), and the agent runbook that holds the optional-connection questions. |
 | `package.json`, `package-lock.json` | pin **HyperFrames 0.8.98** (HeyGen, Apache-2.0). Nothing of HyperFrames is stored here: `npm ci --ignore-scripts` downloads it from the official npm package. |
-| `docs/` | EN + HE: install (what is downloaded, what you answer), first output, legal and privacy guides, **from a timeline editor to AI-assisted editing**, **local vs paid (what replaces what, with verified download sources and sizes)**, uninstall, troubleshooting, decisions (ADRs). |
+| `docs/` | EN + HE: install (what is downloaded, what you answer), first output, **[first requests](docs/en/first-requests.md) (what to ask for first, per kind of video)**, legal and privacy guides, **from a timeline editor to AI-assisted editing**, **local vs paid (what replaces what, with verified download sources and sizes)**, uninstall, troubleshooting, decisions (ADRs). |
 
 ## Use without an agent
 ```text

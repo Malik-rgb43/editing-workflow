@@ -15,3 +15,5 @@
 {"prompt": "תסביר מה זה LUFS", "should_trigger": false, "route_instead": null}
 {"prompt": "תכתוב לי פרומפט לסידנס לשוט של 15 שניות, בלי לייצר", "should_trigger": false, "route_instead": "video-prompt-writer"}
 {"prompt": "המחיר של הסרטון ללקוח צריך להיות 800 שקל, תכין הצעת מחיר", "should_trigger": false, "route_instead": null}
+{"prompt": "generate all 12 shots of the storyboard on Kling now", "should_trigger": true, "route_instead": null}
+{"prompt": "כמה יעלה לי סרטון של 30 שניות כמו הרפרנס הזה עם שוטים מג׳ונרטים?", "should_trigger": true, "route_instead": null}

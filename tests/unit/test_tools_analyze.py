@@ -242,3 +242,16 @@ def test_beats_are_only_reported_where_the_grid_holds():
     assert m["present"] and abs(m["tempo_bpm"] - 120) < 3
     assert m["beat_regions_s"][0][0] >= 4.5 and m["beat_regions_s"][-1][1] >= 15.0, m["beat_regions_s"]
     assert min(m["beats_s"]) >= 4.5 and m["cut_on_beat"]["cuts"] == 1  # the cut at 3.0 s sits in speech and is not scored against beats
+
+
+@pytest.mark.ffmpeg
+def test_every_shot_has_a_motion_kind(clip):
+    """testsrc2 has moving parts (motion), smptebars never changes (still), the mandelbrot source is one uniform zoom (still_push)."""
+    out = clip["dir"] / "analysis" / "clip"
+    if not (out / "measurements.json").is_file():
+        assert run("analyze", clip["src"], "--out", out, "--asr", "never").returncode == 0
+    m = json.loads((out / "measurements.json").read_text(encoding="utf-8"))
+    shots = m["shots"]
+    assert [s["motion_kind"] for s in shots] == ["motion", "still", "still_push"], shots
+    assert [(s["start_frame"], s["end_frame"]) for s in shots] == [(0, 59), (60, 119), (120, 179)] and shots[-1]["end_s"] == pytest.approx(6.0)
+    assert m["shots_method"]["labels"] == ["still", "still_push", "motion"] and "house_defaults" in m["shots_method"]

@@ -25,7 +25,7 @@ JPEG = b"\xff\xd8\xff\xe0" + b"0" * 64
 def make_spec(d: Path, **over) -> Path:
     (d / "frames").mkdir(parents=True, exist_ok=True)
     for n in ("b1", "b2", "ref"):
-        (d / "frames" / f"{n}.jpg").write_bytes(JPEG)
+        (d / "frames" / f"{n}.jpg").write_bytes(JPEG + n.encode())
     spec = {"title": "השף - רילס השקה", "project": "chef_reel", "lang": "he", "aspect": "9:16",
             "story": "שף שפתח מסעדה מראה שכל מנה נבנית מול העיניים",
             "mood": {"feel": "חם, קרוב, אש וברזל", "palette": ["#1C1917", "#F5F0E8", "#D4A72C"], "type": {"family": "Rubik", "sample": "כל מנה נבנית מול העיניים"},
@@ -35,7 +35,7 @@ def make_spec(d: Path, **over) -> Path:
                       {"id": "b2", "t": 2.5, "end": 4.0, "roll": "B", "source": "own", "img": "frames/b2.jpg", "line": "כל מנה",
                        "shows": "ידיים מניחות עלה על הצלחת", "why": "מראה את המשפט"},
                       {"id": "b3", "t": 4.0, "end": 6.0, "roll": "G", "source": "sketch", "line": "נבנית מול העיניים",
-                       "shows": "כרטיס הזמנה נחתם", "why": "המכשיר החתימתי"}]}
+                       "shows": "כרטיס הזמנה נחתם", "why": "המכשיר החתימתי", "signature": True}]}
     for k, v in over.items():
         spec[k] = v
     p = d / "storyboard.json"
@@ -140,6 +140,87 @@ class PureTests(unittest.TestCase):
         self.assertEqual(sp["beats"][0]["img"], "frames/b1.jpg")
         self.assertEqual(sp["beats"][0]["src_t"], 1.25)
         self.assertGreater((self.dir / "frames" / "b1.jpg").stat().st_size, 100)
+
+
+class SamenessTests(unittest.TestCase):
+    def setUp(self) -> None:
+        self.dir = Path(tempfile.mkdtemp(prefix="sb same "))
+        p = make_spec(self.dir)
+        (self.dir / "frames" / "b4.jpg").write_bytes(JPEG + b"4")
+        (self.dir / "frames" / "b5.jpg").write_bytes(JPEG + b"5")
+        self.spec = sb.load(p)
+        shots = ["close", "detail", "graphic"]
+        for b, shot in zip(self.spec["beats"], shots):
+            b["shot"] = shot
+        self.spec["beats"] += [
+            {"id": "b4", "t": 6.0, "end": 7.5, "roll": "B", "source": "own", "img": "frames/b4.jpg", "shows": "the dining room at night, wide",
+             "why": "the place", "shot": "wide"},
+            {"id": "b5", "t": 7.5, "end": 9.0, "roll": "A", "source": "own", "img": "frames/b5.jpg", "shows": "the chef laughs", "why": "the promise",
+             "shot": "medium"}]
+
+    def tearDown(self) -> None:
+        shutil.rmtree(self.dir, ignore_errors=True)
+
+    def warns(self, spec=None) -> list[str]:
+        errors, warnings = sb.validate(spec or self.spec, self.dir)
+        self.assertEqual(errors, [])
+        return warnings
+
+    def test_hero_beats_are_shown_and_more_than_four_is_warned(self) -> None:
+        p = make_spec(self.dir)
+        sp = sb.load(p)
+        sp["beats"] = [dict(sp["beats"][1], id=f"h{i}", t=float(i), end=float(i) + 0.9, hero=True) for i in range(5)]
+        errors, warnings = sb.validate(sp, p.parent)
+        self.assertEqual(errors, [])
+        self.assertTrue(any("5 hero beats" in w for w in warnings), warnings)
+        sp["beats"][0]["hero"] = "yes"
+        self.assertTrue(any("`hero` is true or false" in e for e in sb.validate(sp, p.parent)[0]))
+
+    def test_a_varied_board_has_no_sameness_warning(self) -> None:
+        self.assertEqual(self.warns(), [])
+
+    def test_three_in_a_row_and_one_shot_over_half(self) -> None:
+        for b in self.spec["beats"][1:4]:
+            b["shot"] = "close"
+        w = self.warns()
+        self.assertTrue(any("b1-b4: 4 `close` shots in a row" in x for x in w), w)
+        self.assertTrue(any("`close` is 4 of 5 beats" in x for x in w), w)
+
+    def test_the_same_image_twice(self) -> None:
+        self.spec["beats"][3]["img"] = "frames/b2.jpg"
+        self.assertTrue(any("b2, b4 use the same image" in x for x in self.warns()))
+        (self.dir / "frames" / "copy.jpg").write_bytes(JPEG + b"b1")  # same bytes as b1.jpg under another name
+        self.spec["beats"][4]["img"] = "frames/copy.jpg"
+        self.assertTrue(any("b1, b5 use the same image" in x for x in self.warns()))
+
+    def test_text_only_graphics_over_40_percent(self) -> None:
+        self.spec["beats"][2]["shows"] = "כותרת גדולה: נבנית מול העיניים"
+        self.spec["beats"][3].update({"roll": "G", "source": "graphic", "shows": "the title card", "img": None, "source": "sketch"})
+        self.spec["beats"][4]["text_only"] = True
+        self.assertTrue(any("3 of 5 beats are text-only" in x for x in self.warns()))
+
+    def test_adjacent_repeat_and_the_signature_count(self) -> None:
+        self.spec["beats"][4].update({"roll": "B", "shot": "wide", "shows": "the dining room, wide, guests arrive", "source": "own"})
+        self.assertTrue(any("b4, b5: same roll, same `wide` shot" in x for x in self.warns()))
+        sp = sb.load(make_spec(self.dir))
+        for b in sp["beats"]:
+            b["signature"] = True
+        self.assertTrue(any("marked on 3 beats" in x for x in self.warns(sp)))
+        for b in sp["beats"]:
+            b.pop("signature")
+        self.assertTrue(any("no beat is marked `signature: true`" in x for x in self.warns(sp)))
+
+    def test_bad_optional_fields_refuse(self) -> None:
+        self.spec["beats"][0]["shot"] = "extreme"
+        self.spec["beats"][1]["signature"] = "yes"
+        errors, _ = sb.validate(self.spec, self.dir)
+        self.assertTrue(any("`shot` must be one of" in e for e in errors), errors)
+        self.assertTrue(any("`signature` is true or false" in e for e in errors), errors)
+
+    def test_the_card_shows_the_shot_and_the_signature(self) -> None:
+        html = sb.page(self.spec, self.dir, "tok")
+        self.assertIn('"shot": "close"', html)
+        self.assertIn('"sig": true', html)
 
 
 class ServeTests(unittest.TestCase):

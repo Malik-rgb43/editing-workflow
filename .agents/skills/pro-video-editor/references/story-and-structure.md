@@ -176,6 +176,7 @@ Source keys: d04 = distilled/04-engines-motion-3d-colour, d02 = distilled/02-wor
 | `logo` (reveal, sting) | one idea, 3-8 s | result visible by 0.4-0.75 s | one move + a settle | one morph that carries content | brand sound on the reveal, 3-step ending, ring-out |
 | `explainer` (graphics + UI) | a screen per idea, 3-6 s | 30-110 per minute | purposeful pans/zooms to the object being explained | motivated by meaning (shared element, match-move) | VO-led: SFX only on visible changes |
 | `calm` (brand film, wellness, clinic) | holds allowed | events can be sparse; stillness is a valid choice | slow or locked; no whip | ONE primary transition (0.5-0.8 s) + at most two accents | ONE continuous uniform bed + subtle foley; no risers, gaps or drops |
+| `montage` (footage + music, no voice: event recap, travel) | holds by tone: 1-2 beats (high energy), 2-4 (warm), 4-8 (calm); hero shots held longest (house defaults, unmeasured) | the cut is the event; each clip's best sub-window, left before its action ends | the footage's own motion; no added move on a moving shot | hard cuts on beats and phrase starts; one look and one aspect across all sources | music fitted to the length, one dropout at the emotional centre, fades under the last seconds; ambience L-cuts on the hardest joins (`references/cutting-and-rhythm.md`, Montage) |
 
 (src: d04 motion-design §0, §2.3, §2.3b, §6; d02 video-types §5.5-5.7. Owner launch rules are `[RULE-owner]`; the calm row is `[RULE-owner]` from one clinic film, 2026-09-30.) `[CONFLICT]` "always-moving camera" (owner, launches) vs "stillness over bad motion" (vendor product-launch doctrine): owner wins for `launch`; `calm` may hold.
 
@@ -215,6 +216,14 @@ crossfade; fade as a transition; bounce on text; glow on static text; small corn
 ### 7. Measuring density without lying
 Ledgers (proposal, `[IDEA]`): Scene, Shot, Event, Seam. Report separately: hard cuts per second, semantic events per second and the busiest 1 s window, camera-only motion duration, concurrent attention targets per event window, essential copy hold. `motion_scan` (planned tool) flags >= 1.5 s with < 1 event/s. Until it exists, the Events table + a frame-sample at three times per scene is the evidence. The "event every 0.5 s" is a style target, not an export failure in every genre. (src: d04 motion-design §10)
 
+
+## Explainer story logic
+Load when: writing the script or paper edit of an explainer, a tutorial or a "how it works" piece (voice-led, with graphics, UI or a speaker). Written 2026-10-08; editorial practice, not measured.
+
+1. **Join the sections with "but" or "therefore", never "and then".** Write one line per section, then read them in order joined only by those two words. Each section should either complicate the last ("but") or follow from it ("therefore"). Where only "and then" fits, merge, reorder or cut that section. Why: "and then" makes a list, and a viewer can leave a list at any item; "but" and "therefore" make each section the reason for the next.
+2. **Open on the misconception.** The first line names what the viewer most likely believes now, and why it is a fair belief ("most people think a bigger battery means longer life"). Why: an explanation needs something to overturn, and a viewer who hears their own belief stays to see it tested.
+3. **Silence after the key insight.** The one line that carries the insight is followed by 0.5-1.5 s with no new words (house default, unmeasured); the picture holds or shows the result. Why: a new sentence on top of the insight replaces it before it lands. Mark it as a `breath` in the Events table so the gap check passes honestly.
+4. **Cut the interesting but off-topic.** Test each passage against the one-sentence story; a true, fascinating fact that does not serve it goes, even when it was the best thing in the research. Why: every extra idea competes with the one the viewer must keep, and the viewer cannot tell which one mattered.
 
 ## Ad rubric A1-A8, mute test and numbers
 <!-- source: pro-video-editor/references/story-and-structure.md -->

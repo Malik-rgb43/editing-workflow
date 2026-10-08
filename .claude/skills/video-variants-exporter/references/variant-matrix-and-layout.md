@@ -5,24 +5,25 @@ Load when: writing the matrix at intake, laying out another aspect, or building 
 ## 1. The matrix (write it at intake, not at delivery)
 Every axis that is not asked costs a rebuild. In one past project two structure versions were built because "silence-cut only vs reorganise" was asked late (about 4 h wasted); a 16:9 request that arrived at delivery was dropped. Ask, in one round:
 1. **Ratios**, and which one is the **master** (the one the piece is designed for; the others are re-laid out from it).
-2. **Variants:** hooks A/B/C (default 3 for ads), platforms with different cuts (Meta vs TikTok), `nomusic`, `nocaps`, lengths (for example 15 s + 30 s).
+2. **Variants:** hooks A/B/C (default 3 for ads), platforms with different cuts (Meta vs TikTok), `nomusic`, `nocaps`, lengths (for example 15 s + 30 s), **languages** (which ones, and per language the form: a subtitle file, burned-in captions, or a dub).
 3. **Route per file:** organic, auction ad, Spark, other. It decides which music licence applies (a TikTok Commercial Music Library track is TikTok-only), which AI-disclosure field applies, and which safe-zone row you must satisfy (`agent-content/references/platform-specs.md`, dated).
 4. **Structure:** silence-cut only vs reorganise (decided once for the master).
 5. **How many different videos** and what they share (DESIGN.md, music, 3D, caption kit are built once and copied). A different video from the same source = a separate project with its own ledger.
 
 Matrix table (one row = one file = one ledger id; copy into PROMPT.md `<inputs>`):
 
-| File | Aspect | Platform | Route | Variant | Derived from | Source folder |
-|---|---|---|---|---|---|---|
-| `promo_meta_master_16x9.mp4` | 16:9 | meta | organic | master | none | `hf/` |
-| `promo_meta_master_9x16.mp4` | 9:16 | meta | ad | re-layout | master | `hf_9x16/` |
-| `promo_meta_hookB_9x16.mp4` | 9:16 | meta | ad | hook B | `hf_9x16/` | `hf_9x16/` (variables) |
-| `promo_tiktok_hookA-nomusic_9x16.mp4` | 9:16 | tiktok | ad | hook A, own mix | `hf_9x16/` | `hf_9x16/` |
+| File | Aspect | Platform | Route | Variant | Language | Derived from | Source folder |
+|---|---|---|---|---|---|---|---|
+| `promo_meta_master_16x9.mp4` | 16:9 | meta | organic | master | master's (he) | none | `hf/` |
+| `promo_meta_master_9x16.mp4` | 9:16 | meta | ad | re-layout | master's | master | `hf_9x16/` |
+| `promo_meta_hookB_9x16.mp4` | 9:16 | meta | ad | hook B | master's | `hf_9x16/` | `hf_9x16/` (variables) |
+| `promo_tiktok_hookA-nomusic_9x16.mp4` | 9:16 | tiktok | ad | hook A, own mix | master's | `hf_9x16/` | `hf_9x16/` |
+| `promo_meta_master_en_9x16.mp4` | 9:16 | meta | ad | language, burned-in captions | en | `hf_9x16/` | `hf_9x16_en/` |
 
 The same list goes into `manifest.json` as `matrix`, so a promised file that never arrives blocks "ready" (finding M006) and a delivered file nobody planned is flagged (M007).
 
 ## 2. Naming
-`<name>_<platform>_<hook>_<aspect>.mp4`. Parsing is from the right, so `<name>` may contain underscores. `<hook>` is `master` (no hook test), `hookA`, `hookB`, ... with an optional `-nomusic` or `-nocaps` suffix (hyphen, so the file still has exactly four underscore-separated fields at the tail). A platform token is mandatory when Meta and TikTok cuts differ; use `all` when one cut serves every platform. The delivery playbook (`agent-content/playbooks/wf-08-deliver.md`) also shows the short per-ratio form `<name>_9x16.mp4` (accepted: platform `all`, hook `master`) and writes the "without" versions as `<name>_hookA_nomusic_9x16.mp4`; this skill uses the hook-token suffix `hookA-nomusic` so every file keeps the four-field shape, and a file named in the playbook style is recorded with `--name-ledger-id`. Finals folder = finals + `manifest.json` only; drafts go to `_work/drafts/`, raw renders to `_work/`, the previous delivery to `_work/delivered/v<N>/`.
+`<name>_<platform>_<hook>[_<language>]_<aspect>.mp4`. Parsing is from the right, so `<name>` may contain underscores. The language token sits between the hook and the aspect, only on a language version (`promo_meta_master_en_9x16.mp4`, `promo_all_hookB_pt-br_1x1.mp4`); a file without it is in the master's language. The short form `<name>_<aspect>.mp4` never carries a language. `<hook>` is `master` (no hook test), `hookA`, `hookB`, ... with an optional `-nomusic` or `-nocaps` suffix (hyphen, so the file still has exactly four underscore-separated fields at the tail). A platform token is mandatory when Meta and TikTok cuts differ; use `all` when one cut serves every platform. The delivery playbook (`agent-content/playbooks/wf-08-deliver.md`) also shows the short per-ratio form `<name>_9x16.mp4` (accepted: platform `all`, hook `master`) and writes the "without" versions as `<name>_hookA_nomusic_9x16.mp4`; this skill uses the hook-token suffix `hookA-nomusic` so every file keeps the four-field shape, and a file named in the playbook style is recorded with `--name-ledger-id`. Finals folder = finals + `manifest.json` only; drafts go to `_work/drafts/`, raw renders to `_work/`, the previous delivery to `_work/delivered/v<N>/`.
 
 ## 3. Re-layout of an aspect (what changes, what must not)
 A re-layout is a copy of the master source with these changed, and only these:
@@ -55,6 +56,14 @@ A row with identical boxes in two different aspects is a red flag for a crop.
 - **`nomusic`:** a separate premix with the bed removed (declared `mix_variant: nomusic`); captions and picture unchanged. **`nocaps`:** the caption layer off through a variable (or the clean master), mix unchanged. Deliver a timed text file (SRT) alongside where the platform supports native captions (YouTube, LinkedIn, X Media Studio per the platform module) instead of relying on burned-in text alone.
 - **Length variants (15 s from a 30 s master):** these are NEW edits, not re-layouts. They get their own ledger lines and PROMPT rows, their own mix (`mix_variant: recut`, with a note), are derived from the frozen master's assets, and pass full QA as a master would.
 - **Ranking and compliance of the hooks themselves** belong to `pro-video-editor` (`pro-video-editor`); this skill only guarantees the copies are consistent.
+
+## 4b. Language versions
+A language version is a copy of the master source (or of an aspect copy) where only the words change, plus the layout when the reading direction changes. It is `kind: language` in the manifest and carries the language token in its name.
+- **The text** comes from `captions-transcription` translate mode: source transcript, glossary, the translated lines approved by the user, claims re-checked. Its `translation_check.py` report is recorded with `record --translation-evidence <path>`; without it `check` reports M046 and "ready" is blocked.
+- **What changes in the copy:** captions (from `hf/data/words_<lang>.json`), on-screen titles, the CTA, the end card wording, lower thirds. What does not: cues, picture timing, the footage, numbers (a translated price is the same price), the palette.
+- **Direction change (RTL <-> LTR):** mirror alignment, the caption rail side, arrows, progress bars, timelines and the reading order of sequential cards; never flip the footage or the logo. Each mirrored element is a row in `_work/qa/<aspect>_<lang>/layout.md` with its zone check.
+- **Form per file:** a subtitle file next to the clean master (no new MP4; the sidecar is listed in the delivery note), burned-in captions (a `language` file on the shared mix), or a dub (`--mix-variant own-vo --mix-note "<lang> dub"`, `--voice-consent "<who, date, scope>"` and `--spend-approval <the paid-spend-gate approval file>`; missing either = M044 / M045). A dub is generated only after `paid-spend-gate` and the recorded consent of the person whose voice is used.
+- **QA:** the same per-output QA as any file, with the caption band of its aspect; an RTL copy also passes the RTL caption rules of `captions-transcription`.
 
 ## 5. Several different videos in parallel
 The procedure is the SKILL.md "N masters" branch: one project, matrix and manifest per master; one machine-wide render queue (see `parallel-and-agents.md`). Several sessions on the same source (a bake-off): never message or stop another session; report to the user only; one session owns shared rule files.

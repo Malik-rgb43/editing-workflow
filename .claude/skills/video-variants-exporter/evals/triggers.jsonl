@@ -19,3 +19,6 @@
 {"prompt": "תערוך רילס מהקלטה של דובר מדבר למצלמה", "should_trigger": false, "route_instead": "pro-video-editor"}
 {"prompt": "what is the best time to post on TikTok", "should_trigger": false, "route_instead": null}
 {"prompt":"I have three different product videos approved, export all of them in 9:16 and 1:1","should_trigger":true,"route_instead":null}
+{"prompt": "the Hebrew ad is approved, now I need an English version with English captions and an Arabic one with subtitles", "should_trigger": true, "route_instead": null}
+{"prompt": "תוציא מהמאסטר המאושר גרסה באנגלית עם כתוביות צרובות", "should_trigger": true, "route_instead": null}
+{"prompt": "תתרגם לי רק את התמלול לאנגלית, בלי סרטון", "should_trigger": false, "route_instead": "captions-transcription"}

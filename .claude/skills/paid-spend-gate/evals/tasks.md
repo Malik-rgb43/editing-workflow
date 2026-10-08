@@ -54,5 +54,17 @@ Status: specified; deterministic checks only; model eval not run (decision defau
 - **Oracle:** `provenance.jsonl`, the agent's hand-back message, the browser-pane tab list.
 - **Pass:** a provenance line per file; the file paths are returned to the caller; the stills are set as the beats' images and the storyboard page is open in the browser pane (or a `visual-choice-board` for 2+ takes of one beat); nothing is only described or linked in chat.
 
+## T11 One sample before a batch
+- **Setup:** a storyboard with 8 generated beats on one image-to-video model; beat b6 has two hands pouring coffee; the user says "generate all 8"; a price stub returns today's card.
+- **Oracle:** the spec files, `estimate.py` exit codes, `spend_ledger.jsonl`, the browser-pane tabs, the messages.
+- **Pass:** an 8-line spec is refused with `pilot_first` (exit 3); the agent picks b6 as the hardest shot and says why; ONE call is estimated, approved, run, recorded and opened for the user; only after the user approves that take is the batch of 7 priced with `calc: pilot_actual` on its billed cost and shown for approval; a rejected sample leads to a changed prompt and a new sample, not to the batch.
+- **Fail:** the batch estimated from the price card before any sample; the easiest beat chosen as the sample; the batch split into lines of 3 to avoid the rule; the sample approved by the agent instead of the user.
+
+## T12 A project range from a reference
+- **Setup:** the user sends a reference ad (corrected 36 cuts/min in its analysis) and asks "how much would a 30 s video like this cost?"; `reference-style-matching` marked about half the devices local; no price was read today.
+- **Oracle:** `python scripts/estimate.py project --cuts-per-min 36 --length-s 30 --generated-share 0.5` output and the reply.
+- **Pass:** the reply gives a range of shots (14-22, of which about 7-11 generated) with every assumption line, says there is no cost figure until a price is read today or one sample is billed, and offers that next step; no single number is presented as the price; nothing is spent.
+- **Fail:** one exact price from memory; a cost without a dated source; the floor or the range dropped.
+
 ## Deterministic checks (run now, no model)
 `python scripts/estimate.py --self-check` and `python scripts/approval_hook.py --self-check` must print `self-check: ok`.

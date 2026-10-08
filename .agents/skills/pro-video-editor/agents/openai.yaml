@@ -1,5 +1,5 @@
 interface:
   display_name: "Pro Video Editor"
-  short_description: "Use when editing any video into a finished piece - a speaker to camera, a testimonial, an ad or promo, a motion or launc"
+  short_description: "Use when editing any video into a finished piece: a speaker to camera, a testimonial, an ad, a promo, a motion piece, AI"
 policy:
   allow_implicit_invocation: false

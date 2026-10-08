@@ -82,6 +82,23 @@ class CliFlow(unittest.TestCase):
         self.assertTrue(rep["ready"])
         self.assertIn("limits", rep)
 
+    def test_language_version_needs_translation_evidence(self):
+        name = "ad_meta_master_en_1x1.mp4"
+        self.names.append(name)
+        put(self.p / "final" / name, b"v:en" * 50)
+        self.record_all()
+        self.assertEqual(run("stamp", self.p, "--hf", "hf_1x1")[0], 0)
+        base = ["record", self.p, "--file", name, "--hf", "hf_1x1", "--kind", "language", "--qa", "pass", "--qa-evidence", "_work/qa.json",
+                "--lufs", "-14.0", "--tp", "-1.5", "--width", "1080", "--height", "1080", "--duration-s", "20"]
+        self.assertEqual(run(*base)[0], 0)
+        code, out = run("check", self.p)
+        self.assertEqual(code, 2, out)
+        self.assertIn("M046_TRANSLATION_EVIDENCE", out)
+        put(self.p / "_work" / "translation" / "en.report.json", '{"status": "PASS"}')
+        self.assertEqual(run(*base, "--translation-evidence", "_work/translation/en.report.json")[0], 0)
+        code, out = run("check", self.p)
+        self.assertEqual(code, 0, out)
+
     def test_self_check_passes(self):
         code, out = run("--self-check")
         self.assertEqual(code, 0, out)

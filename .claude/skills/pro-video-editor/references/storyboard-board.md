@@ -1,6 +1,6 @@
 # The moodboard + storyboard page
 
-Load when the plan has any beat beyond the source footage, captions, music and cuts (Step 3b). Tool: `scripts/storyboard_board.py` (stdlib; `grab` needs ffmpeg). Built 2026-10-06; tested by its unit tests and one demo spec in a browser; no real user session measured yet.
+Load when the plan has any beat beyond the source footage, captions, music and cuts (Step 3b). Tool: `scripts/storyboard_board.py` (stdlib; `grab` needs ffmpeg). Built 2026-10-06 (sameness warnings 2026-10-08); tested by its unit tests and one demo spec in a browser; no real user session measured yet.
 
 ## Why it exists
 The user judges the video by eye. A beat table in chat ("0:02 B-roll: hands plating") lets each person picture something different, and they only find out at the draft, after the expensive work. The board shows the look and a real frame of every beat before any composition code. It turns "I imagined something else" into a cheap note on one card.
@@ -25,21 +25,41 @@ Frames are about 540 px wide (each image at most 2.5 MB). Every image is embedde
           "type": {"family": "Rubik", "sample": "the real caption or title line"}, "signature": "an order ticket stamped on every dish",
           "refs": [{"img": "refs/side-light.jpg", "caption": "the yellow side light"}]},
  "beats": [{"id": "b1", "t": 0.0, "end": 2.2, "roll": "A", "source": "own", "src_t": 41.3, "line": "I opened a restaurant",
-            "shows": "the chef to camera, close", "move": "push 1.00->1.04", "why": "the face is the promise"},
+            "shows": "the chef to camera, close", "move": "push 1.00->1.04", "why": "the face is the promise", "shot": "close"},
            {"id": "b2", "t": 2.2, "end": 3.6, "roll": "B", "source": "own", "img": "frames/b2.jpg", "line": "every dish",
-            "shows": "hands placing a leaf on the plate", "why": "shows the sentence"},
+            "shows": "hands placing a leaf on the plate", "why": "shows the sentence", "shot": "detail"},
            {"id": "b3", "t": 3.6, "end": 5.0, "roll": "G", "source": "sketch", "line": "is built in front of you",
-            "shows": "the order ticket gets stamped", "why": "the signature device"}]}
+            "shows": "the order ticket gets stamped", "why": "the signature device", "shot": "graphic", "signature": true}]}
 ```
 - `t`/`end` are the output timeline seconds, in order. They are the same beats as PROMPT.md `<structure>`: one source of truth, so write both together.
 - `line` is the voice under the beat (from the word table), `why` is the editor's reason (principle 3), and `move` is the camera or transition with its numbers.
+
+| Beat field | Required | What it holds |
+|---|---|---|
+| `id`, `t`, `end` | yes | a unique id; output seconds, in time order |
+| `roll` | yes | `A` own / speaker footage, `B` cut-away, `G` graphic or text |
+| `source` | yes | `own`, `stock`, `generated`, `graphic`, `reference` (mood only), `sketch` |
+| `shows`, `why` | yes | what is seen; the editor's reason |
+| `line`, `move`, `img`, `src_t`, `cost` | no (`img` yes for A-roll, `cost` yes for generated) | the voice under it; the move with numbers; the frame; the source time; the dated estimate |
+| `shot` | no, but fill it on every beat | `wide`, `medium`, `close`, `detail`, `graphic` or `screen`: the size the viewer sees. It feeds the sameness warnings and is shown on the card |
+| `signature` | no | `true` on the 1-2 beats that carry the signature device (shown as a star) |
+| `text_only` | no | `true` on a graphic beat that is only words (a G beat whose `shows` names text counts too) |
+| `hero` | no | `true` on the 2-4 shots a montage holds longest (shown on the card; more than 4 is warned) |
 - `check` refuses the following:
   - an A-roll beat that is not own footage, or that has no real frame;
   - a beat without an image that is not a sketch or a planned generated beat;
   - a generated beat with no `cost`;
   - placeholder text;
   - fewer than 3 beats;
-  - a palette that is not `#RRGGBB`.
+  - a palette that is not `#RRGGBB`;
+  - a `shot` outside the six sizes, or a `signature` / `text_only` that is not true or false.
+- `check` and `serve` also print **sameness warnings** (they never refuse; answer each one before you show the board, or say why it stays):
+  - 3 or more beats in a row with the same `shot`;
+  - one shot on more than half of the beats (counted when 4 or more beats carry a `shot`);
+  - the same image on two beats (compared by content, so a renamed copy counts);
+  - text-only graphic beats on more than 40 % of the beats;
+  - two adjacent beats with the same roll, the same shot and the same subject words in `shows`;
+  - the signature device marked on more than 2 beats, or on none when `mood.signature` names one.
 
 ## 3. Serving and the answer
 ```
@@ -56,5 +76,6 @@ python scripts/storyboard_board.py serve _work/storyboard/storyboard.json --out 
 ## 4. What a good board looks like
 - The A/B rhythm bar shows contrast: no stretch of more than about 6 s of one roll unless the face is the point (principle 5).
 - Every B-roll beat shows its sentence (principle 14). If you cannot name what a frame proves, the beat is generic: replace it before you show the board.
-- One signature device, visible on at least one card.
+- One signature device, carried by 1-2 beats (`signature: true`). On one beat it is a moment the viewer remembers; on most of them it becomes the wallpaper and stops meaning anything.
+- Shot sizes vary: a close after a wide, a detail after a medium. A run of the same size makes the cuts invisible and the video feels like one long shot (the sameness warnings point at the runs).
 - The board's palette and type are the ones that DESIGN.md will lock. The caption style board (when there are captions) comes before this board, and its picks appear here.

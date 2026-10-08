@@ -35,6 +35,7 @@ A playbook is the **procedure** for one stage: entry gate, steps, artifact, exit
 | — | [wf-variants](wf-variants.md) | `video-variants-exporter` | `hf_<ratio>/`, per-output files | **GV** all variants from the frozen master | agent; person names the matrix at intake | not measured |
 | — | [wf-batch](wf-batch.md) | `video-request-router` + queue | `BATCH.md`, `_shared/` | **GB** each video has its own record | agent supervises; person approves each prompt | not measured |
 | — | [wf-podcast-clip](wf-podcast-clip.md) | selection here + `pro-video-editor` | `_work/selection.md`, per-clip projects | **GP** chosen clips only, stand-alone ≥ 4 | person chooses clips; agent proposes | not measured; rubric provisional |
+| — | [wf-screen-demo](wf-screen-demo.md) | `pro-video-editor` + zoom/dead-time/cue steps here | `_work/zoom.json`, `_work/promise.json`, the draft | **GS** every narrated action visible and readable, no dead time, no cue miss | person records the screen and approves; agent cuts, zooms, checks | not measured; rubric borrowed, provisional |
 
 "Owner target" = the author's stated target for a premium project; "modelled" = computed from measurements; "measured" = timed on OM. A target is **not** a measured student result.
 
@@ -68,6 +69,7 @@ Rules: `pass` requires **resolvable evidence** (a file path, a command and its o
 | built from type, shapes, product UI | motion-graphics | [motion-graphics.rubric.md](../benchmarks/motion-graphics.rubric.md) | same |
 | made of generated clips | ai-generated | [ai-generated.rubric.md](../benchmarks/ai-generated.rubric.md) | same |
 | short clips from a long conversation | podcast-clip | [podcast-clip.rubric.md](../benchmarks/podcast-clip.rubric.md) (provisional) | [wf-podcast-clip.md](wf-podcast-clip.md) |
+| a screen recording made into a demo or tutorial | screen-demo | none of its own: the closest of [motion-graphics.rubric.md](../benchmarks/motion-graphics.rubric.md) / [talking-head.rubric.md](../benchmarks/talking-head.rubric.md), labelled provisional | [wf-screen-demo.md](wf-screen-demo.md) |
 
 ## 6. The two protocols every project uses
 

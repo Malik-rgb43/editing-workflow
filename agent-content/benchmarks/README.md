@@ -4,7 +4,7 @@
 
 | File | What it is |
 |---|---|
-| `talking-head.rubric.md` · `testimonial.rubric.md` · `ad-promo.rubric.md` · `motion-graphics.rubric.md` · `ai-generated.rubric.md` · `podcast-clip.rubric.md` | per-type rubrics in the **six dimensions** (meaning/story · caption/language · composition/brand · motion/edit · audio · integrity/continuity), anchors at 1/3/5, hard gates, severe-failure list, mapping to the author's original criteria. Talking-head and podcast-clip are **derived and provisional** (the author has no rubric for them) |
+| `talking-head.rubric.md` · `testimonial.rubric.md` · `ad-promo.rubric.md` · `motion-graphics.rubric.md` · `ai-generated.rubric.md` · `podcast-clip.rubric.md` · `montage.rubric.md` · `screen-demo.rubric.md` | per-type rubrics in the **six dimensions** (meaning/story · caption/language · composition/brand · motion/edit · audio · integrity/continuity), anchors at 1/3/5, hard gates, severe-failure list, mapping to the author's original criteria. Talking-head, podcast-clip, montage and screen-demo are **derived and provisional** (the author has no rubric for them) |
 | `bands.json` | per-type metric bands (market and owner profiles, p25/median/p75, `n`), each with a source and a `house_preset` flag; QA tool thresholds; delivery profile. **Descriptive, not a quality score.** Unmeasured = `null` |
 | `critic-brief.md` | the independent critic: creator ≠ verifier, changed ranges only after round 1, coverage declared, evidence classes, output contract |
 | `visual-review-4-axis.md` | the four-axis review on all-frame sheets, severities, length scaling |

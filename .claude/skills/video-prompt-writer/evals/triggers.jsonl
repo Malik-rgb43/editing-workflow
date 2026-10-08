@@ -17,3 +17,4 @@
 {"prompt": "write a still-image prompt for GPT Image of the keeper's portrait", "should_trigger": false, "route_instead": null}
 {"prompt": "which is better for this shot, Kling or Seedance?", "should_trigger": false, "route_instead": "pro-video-editor"}
 {"prompt": "תכין לי לוח בחירה אינטראקטיבי של סגנונות פרומפט", "should_trigger": false, "route_instead": "visual-choice-board"}
+{"prompt": "turn these 8 storyboard beats into Kling prompts, we will generate them all", "should_trigger": true, "route_instead": null}
