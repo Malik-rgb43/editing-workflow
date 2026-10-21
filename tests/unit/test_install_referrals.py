@@ -18,8 +18,8 @@ def _with_referral(env, service, url):
     text = (REPO / "integrations" / "referrals.toml").read_text(encoding="utf-8")
     block = 'id = "%s"\n' % service
     i = text.index(block)
-    j = text.index('referral_url = ""', i)
-    p.write_text(text[:j] + 'referral_url = "%s"' % url + text[j + len('referral_url = ""'):], encoding="utf-8")
+    m = re.compile(r'referral_url = "[^"]*"').search(text, i)
+    p.write_text(text[:m.start()] + 'referral_url = "%s"' % url + text[m.end():], encoding="utf-8")
 
 
 def test_referrals_file_is_well_formed_and_holds_no_secrets():
@@ -43,6 +43,7 @@ def test_every_paid_entry_is_covered_or_explicitly_excluded():
 
 
 def test_without_a_referral_only_the_plain_link_is_shown(env):
+    _with_referral(env, "higgsfield", "")
     rc, out = env.json("add", "higgsfield")
     assert rc == 0
     sg = out["results"][0]["signup"]

@@ -21,7 +21,7 @@ id = "higgsfield"
 name = "Higgsfield"
 entries = ["higgsfield", "higgsfield-cli"]
 plain_url = "https://higgsfield.ai"
-referral_url = ""
+referral_url = "https://higgsfield.ai?fpr=gabriel-c5d7b4"
 
 [[service]]
 id = "elevenlabs"
