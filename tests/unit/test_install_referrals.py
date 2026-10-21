@@ -59,7 +59,7 @@ def test_a_referral_link_is_labelled_disclosed_and_never_opened(env):
     assert "referral link" in out["disclosure"]["en"] and "supports" in out["disclosure"]["en"]
     assert out["disclosure"]["he"]
     rc, human, _ = env.run("add", "higgsfield")
-    assert "referral link: https://example.com/ref/abc" in human and "plain link: https://higgsfield.ai" in human
+    assert "referral link: https://example.com/ref/abc" in human and "plain link" not in human
     assert "Disclosure: this is a referral link" in human and "Open nothing without their yes" in human
     rc, he, _ = env.run("add", "higgsfield", "--lang", "he")
     assert "לינק הפניה" in he and "גילוי נאות" in he

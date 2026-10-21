@@ -66,7 +66,7 @@ MSG = {
         "state_render": "first render", "state_inspect": "inspection passed", "state_paid": "ready for paid generation",
         "signup": "sign-up (paid service)", "link_referral": "referral link", "link_plain": "plain link",
         "referral_note": "Disclosure: this is a referral link - signing up through it supports this project at no extra cost to you.",
-        "signup_ask": "Ask the student which link to use (or to skip: they may already have an account). Open nothing without their yes.",
+        "signup_ask": "Ask the student whether to sign up through this link (or to skip: they may already have an account). Open nothing without their yes.",
     },
     "he": {
         "plan_title": "תוכנית התקנה (קריאה בלבד - שום דבר לא שונה)",
@@ -78,7 +78,7 @@ MSG = {
         "state_render": "רינדור ראשון", "state_inspect": "בדיקה עברה", "state_paid": "מוכן ליצירה בתשלום",
         "signup": "הרשמה (שירות בתשלום)", "link_referral": "לינק הפניה", "link_plain": "לינק רגיל",
         "referral_note": "גילוי נאות: זה לינק הפניה - הרשמה דרכו תומכת בפרויקט הזה, בלי עלות נוספת עבורך.",
-        "signup_ask": "שואלים את התלמיד באיזה לינק להשתמש (או לדלג: אולי כבר יש לו חשבון). לא פותחים שום דבר בלי שהוא אישר.",
+        "signup_ask": "שואלים את התלמיד אם להירשם דרך הלינק הזה (או לדלג: אולי כבר יש לו חשבון). לא פותחים שום דבר בלי שהוא אישר.",
     },
 }
 
@@ -1793,7 +1793,8 @@ def cmd_add(args) -> int:
                 emit("    %s: %s" % (tr(args.lang, "signup"), sv["service"]))
                 if sv["referral_url"]:
                     emit("      %s: %s" % (tr(args.lang, "link_referral"), sv["referral_url"]))
-                emit("      %s: %s" % (tr(args.lang, "link_plain"), sv["plain_url"]))
+                else:
+                    emit("      %s: %s" % (tr(args.lang, "link_plain"), sv["plain_url"]))
             if any(sv["referral_url"] for sv in r["signup"]):
                 emit("    " + tr(args.lang, "referral_note"))
             if r["signup"]:
