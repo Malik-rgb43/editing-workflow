@@ -27,6 +27,7 @@ python install/bootstrap.py uninstall --yes
 * כניסות: מבטלים גישת חיבורים בהגדרות החשבון אצל כל ספק (Higgsfield, ‏ElevenLabs) ומוחקים מפתחות API שיצרת (Pexels, ‏21st.dev, ‏Gemini) - ההתקנה מעולם לא שמרה אותם.
 * משתני סביבה שהגדרת בידיים (Windows: התחל -> "Edit environment variables for your account"; ‏macOS: הקובץ `~/.zshrc` שלך).
 * חבילות שאישרת ממנהל חבילות (`winget uninstall <id>` / ‏`brew uninstall <name>`): ‏Node, ‏FFmpeg, ‏uv, ‏Git הם כלים כלליים - מסירים רק אם שום דבר אחר לא זקוק להם.
+* מחסן הלקוחות, אם הדלקת אותו: מריצים קודם `python tools/warehouse_link.py set --remove` ו-`python tools/warehouse_link.py shortcut --remove` (הם מבטלים את ההגדרה ומוחקים את המפעיל משולחן העבודה). ההערות, הגרסאות והציורים נשארים ב-`~/.avc/warehouse-state`; מוחקים את התיקייה הזו רק כשלא צריך אותם יותר.
 * תיקיית השכפול ו-`~/avc-work` כשאין צורך יותר בפרויקטים. מחיקת תיקיית עבודה מוחקת את הסרטונים שלך: מעתיקים קודם מה שרוצים.
 
 <!-- step: uninstall-05 -->

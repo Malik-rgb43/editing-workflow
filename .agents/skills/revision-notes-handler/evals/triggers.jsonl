@@ -1,6 +1,8 @@
 {"prompt":"the hook at 0:03 is boring","should_trigger":true,"route_instead":null}
 {"prompt":"תתקן: הכתובית ב-0:12 מאוחרת","should_trigger":true,"route_instead":null}
 {"prompt":"it looks AI-generated, change it","should_trigger":true,"route_instead":null}
+{"prompt":"the client left notes in the warehouse, fix them","should_trigger":true,"route_instead":null}
+{"prompt":"המחסן שלח לי הערות על הטיוטה, תתקן","should_trigger":true,"route_instead":null}
 {"prompt":"משעמם בדקה 20","should_trigger":true,"route_instead":null}
 {"prompt":"here are 9 notes on the draft","should_trigger":true,"route_instead":null}
 {"prompt":"תחליף את הפונט ואת האנימציה בכותרת","should_trigger":true,"route_instead":null}

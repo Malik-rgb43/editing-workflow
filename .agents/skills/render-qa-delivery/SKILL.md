@@ -31,6 +31,7 @@ If `<project>/_work/connections.json` from this session exists (written by the r
 ## Inputs -> outputs
 Entries: a round ready for its draft render (stages 0-7, then `revision-notes-handler` opens the notes page); `approved` from the notes page (stage 0, stage 1 preflight, the delivery render at stage 5, stage 6 on that file, stage 9); more outputs after approval go to `video-variants-exporter` stage 1 (freeze).
 In: `hf/` project, approved PROMPT.md, `assets/mix.wav` (or the render's audio), the ledger. Out: `final/<name>_<platform>_<hook>_<aspect>.mp4`, `final/manifest.json`, `_work/qa/<ver>/` (envelopes, sheets), `_work/timing_ledger.jsonl`, a QA report with coverage statements.
+**Warehouse (optional).** With the client warehouse connected (`python tools/warehouse_link.py status`), `final/` is what it archives and shows as the project's finished videos, and its `approved` is the notes page's `approved` (`revision-notes-handler`, 'With the warehouse'). After stage 9, when the skill `approved-to-client-folder` is installed (it ships with the toolkit and works only with the warehouse on), run it: it is the one write into the user's own client library. Without the warehouse nothing changes.
 
 ## Stages (details and commands: `references/pipeline-stages.md`)
 Times per stage: `references/volatile-facts.md`.

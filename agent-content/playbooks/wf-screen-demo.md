@@ -1,6 +1,6 @@
 # wf-screen-demo — A screen recording into a demo or tutorial (הדגמת מסך / הדרכה)
 
-> Status: **provisional** — specified, deterministic checks only; model eval not run (decision default Q4). Written 2026-10-08. There is no owner rubric for this type yet: score it with the closest one (`motion-graphics.rubric.md` for a voice-led product demo, `talking-head.rubric.md` when a face cam carries it) and label the result provisional. All numbers below are **house defaults, unmeasured**.
+> Status: **provisional** — specified, deterministic checks only; model eval not run (decision default Q4). Written 2026-10-08. Its rubric is `screen-demo.rubric.md` (also provisional); `motion-graphics.rubric.md` or `talking-head.rubric.md` can add a second view when a voice-led demo or a face cam carries it. All numbers below are **house defaults, unmeasured**.
 > Legend: see [README.md](README.md). `[RULE-owner]` · `[PROVEN-internal]` · `[IDEA]` · `[CONFLICT]` · 💲 = paid step · OM = the reference machine (one Windows laptop; hardware details are intentionally not published).
 
 | Field | Value |

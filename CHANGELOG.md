@@ -9,6 +9,14 @@ Dates and facts here are perishable; each entry states its source where it relie
 
 ## [Unreleased]
 
+### Added
+- **The client warehouse now ships with the toolkit** (2026-10-23, at the request of its author Gabriel Gelman): a copy of `GabrielGel/video-warehouse` (commit 2cc04d2) lives in `tools/warehouse/` and is OFF until the user says yes. `warehouse_link.py set --bundled` turns it on (after the page's own `--self-check`), `library <folder>` sets the user's client folders (writes only the warehouse's `config.json`), `shortcut` writes a Desktop launcher (Windows). Its page key, caches and config live in `~/.avc/warehouse-state` (`AVC_WAREHOUSE_STATE`), so a toolkit update never wipes them. Changed from the original: no personal default paths (`library_root` is empty until set), the state folder, an ASCII launcher name. New skill `approved-to-client-folder` (15 skills). INSTALL.md install-10 asks the question; NOTICE credits the author (BOM class: owner-authored contribution, covered by the `tools/**` rule). Open: the source repository has no LICENSE file; ask the author to add one.
+- **Optional client warehouse** (the local review room for every client video; first built as a link to the separate repository, see the entry above for the bundled copy):
+  - `tools/warehouse_link.py` finds it (`--repo`, `AVC_WAREHOUSE_REPO`, or `~/.avc/warehouse.json` written by `set`, which runs the warehouse's own `--self-check` first), reports `status` (found, projects folder, port, page running, notes waiting) and runs its commands (`run -- serve|add|wait|inbox|reply|url`) with the toolkit's projects folder and `AVC_WAREHOUSE_PORT`. Not connected is a normal state.
+  - `revision-notes-handler` gets the section 'With the warehouse': `inbox` at session start, `add` + `wait` instead of `notes_board.py`, note kinds (fix / keep exactly as is / consider) and drawings, `reply --resolve` after each fix, approval to `render-qa-delivery`. `video-brief-intake` and `pro-video-editor` continue a project the warehouse already made ("יש גלם חדש במחסן: <slug>") instead of running `new_project.py`; `render-qa-delivery` points at the warehouse's `approved-to-client-folder` after delivery; the router has the rows and cues.
+  - `connections.py` lists it as an optional local tool; the SessionStart hook lists projects whose notes or approval arrived while the agent was away (read-only).
+  - New docs `docs/en|he/client-warehouse.md`; AGENTS.md rule 13 and the repository paragraph mention it.
+
 ## [0.6.1] - 2026-10-08
 
 ### Fixed

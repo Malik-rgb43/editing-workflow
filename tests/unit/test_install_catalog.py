@@ -136,7 +136,8 @@ def test_install_md_has_no_hardware_menu_and_only_uses_real_flags_and_ids():
     bs = load_bootstrap()
     helptext = bs.build_parser().format_help()
     foreign = {"--describe", "--depth", "--branch", "--ff-only", "--locked", "--no-project", "--python", "--tags", "--ignore-scripts", "--source", "--id",
-               "--check", "--project", "--no-dev", "--json-x", "--version", "--dangerously-skip-permissions", "--transport"}
+               "--check", "--project", "--no-dev", "--json-x", "--version", "--dangerously-skip-permissions", "--transport",
+                   "--bundled"}  # --bundled: tools/warehouse_link.py set (install-10 asks the warehouse question)
     for flag in set(re.findall(r"(--[a-z][a-z\-]+)", text)):
         assert flag in helptext or flag in foreign, flag
     known = {e["id"] for e in ENTRIES} | {a for e in ENTRIES for a in e.get("addons", [])}

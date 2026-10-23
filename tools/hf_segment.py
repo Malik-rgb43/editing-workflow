@@ -282,7 +282,7 @@ def main(argv=None) -> int:
         print(json.dumps(summary, indent=2))
         return 0
     seg = hf / "index.seg.html"
-    out = Path(args.out) if args.out else hf.parent / "_work" / f"seg_{A:.2f}-{B:.2f}.mp4"
+    out = Path(args.out).resolve() if args.out else hf.parent / "_work" / f"seg_{A:.2f}-{B:.2f}.mp4"
     out.parent.mkdir(parents=True, exist_ok=True)
     seg.write_text(rewrite(text, A, B, actions, fps=fps), encoding="utf-8")
     try:

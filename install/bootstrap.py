@@ -41,7 +41,7 @@ TOOLKIT_INCLUDE = [
     "tools", "src", "contracts", "profiles", "templates", "fixtures", "hf-blocks",
     "docs/en", "docs/he", "docs/TOOLS.md", "docs/decisions",
     "pyproject.toml", "uv.lock", "package.json", "package-lock.json", "toolkit.toml",
-    "AGENTS.md", "SYSTEM.md", "editing.md", "release-manifest.json", "LICENSE", "THIRD_PARTY_NOTICES.md",
+    "AGENTS.md", "SYSTEM.md", "release-manifest.json", "LICENSE", "NOTICE", "THIRD_PARTY_NOTICES.md",
 ]
 # The installer and the integrations catalogue travel with the toolkit so `add` and `verify` work from the toolkit home.
 SETUP_INCLUDE = ["integrations", "install"]
@@ -1048,7 +1048,7 @@ def build_plan(args, repo=None) -> tuple:
         dup = sorted(n for n in skills if (lay.claude_skills / n / MARKER).is_file())
         if dup:
             warnings.append("%d skill folder(s) installed earlier by this toolkit still exist in %s (for example %s). With the plugin they would load twice; run `python install/bootstrap.py uninstall --yes` first, or install again with --skills-via copy." % (len(dup), lay.claude_skills, dup[0]))
-    if lay.scope == "project" and lay.project_dir and (lay.project_dir == repo or repo in lay.project_dir.parents or lay.project_dir in repo.parents and lay.project_dir == repo):
+    if lay.scope == "project" and lay.project_dir and (lay.project_dir == repo or repo in lay.project_dir.parents):
         blockers.append("--scope project must point at your own video project folder, not at the toolkit repo itself (%s)." % repo)
     if args.scope == "project" and not args.project_dir:
         warnings.append("--scope project without --project-dir: using the current directory %s" % lay.project_dir)
@@ -1923,7 +1923,7 @@ def undo_journal(j: dict, dry: bool) -> list:
 def cmd_rollback(args) -> int:
     lay = make_layout(args)
     bdir = lay.state_dir / "backups"
-    stamps = sorted(d.name for d in bdir.iterdir() if (d / "journal.json").is_file() and not d.name.startswith("uninstall-")) if bdir.is_dir() else []
+    stamps = sorted((d.name for d in bdir.iterdir() if (d / "journal.json").is_file() and not d.name.startswith("uninstall-")), key=lambda n: n[4:] if n.startswith("add-") else n) if bdir.is_dir() else []  # newest stamp last, whatever the prefix
     if not stamps:
         return refuse("no journals under %s; nothing to roll back" % bdir)
     stamp = args.to or stamps[-1]

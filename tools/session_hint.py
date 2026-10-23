@@ -3,7 +3,8 @@ remind the agent to open the Studio FIRST, so the user watches the work from the
 
 It only looks: it never starts a server, never calls the engine, never writes a file. It reads the folder the session started in
 (a project, its ``hf/``, or a work root with ``projects/``) and the configured work root (``AVC_PATHS_WORK_ROOT`` or ``[paths] work_root``
-in toolkit.toml), and prints the hook's JSON with ``additionalContext``. No project found -> it prints nothing (exit 0).
+in toolkit.toml), and prints the hook's JSON with ``additionalContext``. When the optional client warehouse is connected (``tools/warehouse_link.py``) it also lists the projects whose notes or approval were sent
+while the agent was away (read-only). Nothing to say -> it prints nothing (exit 0).
 
 Usage:
     python tools/session_hint.py [--cwd DIR] [--toolkit DIR] [--text]      (the hook runs it with no arguments)
@@ -25,11 +26,13 @@ TOOLKIT = Path(__file__).resolve().parents[1]
 
 def configured_work_root(toolkit: Path) -> Path | None:
     raw = os.environ.get("AVC_PATHS_WORK_ROOT", "").strip()
-    if not raw:
+    for name in ("toolkit.local.toml", "toolkit.toml"):  # the per-machine file the installer writes wins over the shipped default
+        if raw:
+            break
         try:
-            text = (toolkit / "toolkit.toml").read_text(encoding="utf-8")
+            text = (toolkit / name).read_text(encoding="utf-8")
         except OSError:
-            text = ""
+            continue
         sect = re.search(r"(?ms)^\[paths\]\s*$(.*?)(?=^\[|\Z)", text)
         m = re.search(r'(?m)^\s*work_root\s*=\s*"([^"]*)"', sect.group(1)) if sect else None
         raw = m.group(1).strip() if m else ""
@@ -80,6 +83,27 @@ def hint(projects: list[Path], toolkit: Path) -> str:
     return "\n".join(lines)
 
 
+def warehouse_lines(toolkit: Path) -> list[str]:
+    """Notes or an approval waiting in the optional client warehouse (``warehouse_link status`` -> the warehouse's read-only ``inbox``).
+    Silent when the warehouse is not connected or nothing waits."""
+    try:
+        sys.path.insert(0, str(toolkit / "tools"))
+        import warehouse_link as wl
+
+        tool, _ = wl.find()
+        if tool is None:
+            return []
+        items = wl.waiting(tool)["items"]
+    except Exception:  # noqa: BLE001 - a hook never blocks the session
+        return []
+    if not items:
+        return []
+    rows = [f"- {i['project']} ({i.get('client') or i.get('title')}): " + ("APPROVED" if i.get("approved") else f"{i.get('notes', 0)} note(s)") for i in items[:MAX_LISTED]]
+    return ["The client warehouse has feedback the user sent while you were away:", *rows,
+            f'Read each with `python "{toolkit / "tools" / "warehouse_link.py"}" run -- wait <project>` (returns at once and marks it read), then follow '
+            "revision-notes-handler 'With the warehouse'. Do not start new work on those projects before you have read them."]
+
+
 def main(argv: list[str]) -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     ap.add_argument("--cwd", default=None)
@@ -90,9 +114,13 @@ def main(argv: list[str]) -> int:
         cwd = Path(a.cwd or os.environ.get("CLAUDE_PROJECT_DIR") or os.getcwd())
         toolkit = Path(a.toolkit)
         projects = find_projects(cwd, configured_work_root(toolkit))
-        if not projects:
+        parts = [hint(projects, toolkit)] if projects else []
+        wh = warehouse_lines(toolkit)
+        if wh:
+            parts.append("\n".join(wh))
+        if not parts:
             return 0
-        text = hint(projects, toolkit)
+        text = "\n\n".join(parts)
         if a.text:
             print(text)
         else:

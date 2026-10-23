@@ -69,7 +69,7 @@ Rules: `pass` requires **resolvable evidence** (a file path, a command and its o
 | built from type, shapes, product UI | motion-graphics | [motion-graphics.rubric.md](../benchmarks/motion-graphics.rubric.md) | same |
 | made of generated clips | ai-generated | [ai-generated.rubric.md](../benchmarks/ai-generated.rubric.md) | same |
 | short clips from a long conversation | podcast-clip | [podcast-clip.rubric.md](../benchmarks/podcast-clip.rubric.md) (provisional) | [wf-podcast-clip.md](wf-podcast-clip.md) |
-| a screen recording made into a demo or tutorial | screen-demo | none of its own: the closest of [motion-graphics.rubric.md](../benchmarks/motion-graphics.rubric.md) / [talking-head.rubric.md](../benchmarks/talking-head.rubric.md), labelled provisional | [wf-screen-demo.md](wf-screen-demo.md) |
+| a screen recording made into a demo or tutorial | screen-demo | [screen-demo.rubric.md](../benchmarks/screen-demo.rubric.md) (provisional) | [wf-screen-demo.md](wf-screen-demo.md) |
 
 ## 6. The two protocols every project uses
 
@@ -80,11 +80,11 @@ Rules: `pass` requires **resolvable evidence** (a file path, a command and its o
 
 ## 7. Techniques and benchmarks used by the playbooks
 
-Techniques: [../techniques/README.md](../techniques/README.md) (frame-spec prompt, clean-smooth motion, screenshot rebuild, concept ledger, question bank, caption collision, cheap-first QA, Studio review loop, timing ledger, DESIGN/BRIEF templates). Benchmarks: [../benchmarks/README.md](../benchmarks/README.md) (six rubrics, `bands.json`, critic brief, four-axis visual review, briefs B01–B06).
+Techniques: [../techniques/README.md](../techniques/README.md) (frame-spec prompt, clean-smooth motion, screenshot rebuild, concept ledger, question bank, caption collision, cheap-first QA, Studio review loop, timing ledger, DESIGN/BRIEF templates). Benchmarks: [../benchmarks/README.md](../benchmarks/README.md) (eight rubrics, `bands.json`, critic brief, four-axis visual review, briefs B01–B06).
 
 ## 8. Cross-references assumed to files owned elsewhere
 
-Written in backticks (not links) because other builders own them: skills `video-request-router`, `video-brief-intake`, `reference-style-matching`, `video-analysis`, `edit-*`, `speaker-color-correction`, `captions-transcription`, `render-qa-delivery`, `revision-notes-handler`, `paid-spend-gate`, `video-prompt-writer`, `visual-choice-board`, `video-variants-exporter`; references `agent-content/references/platform-specs.md`, `talking-head-beats.md`, `qa-thresholds.md`, `model-routing.md`, `cost-model.md`; `docs/TOOLS.md`. Path proposals owned by this directory: the ledger lives inside `hf/PROMPT.md` `<ledger>`; the timing ledger is `_work/timing_ledger.jsonl`; lessons go to `projects/LESSONS.md` and `projects/RULES.md` (outside `agent-content/`).
+Written in backticks (not links) because other builders own them: skills `video-request-router`, `video-brief-intake`, `reference-style-matching`, `video-analysis`, `pro-video-editor`, `speaker-color-correction`, `captions-transcription`, `render-qa-delivery`, `revision-notes-handler`, `paid-spend-gate`, `video-prompt-writer`, `visual-choice-board`, `video-variants-exporter`; references `agent-content/references/platform-specs.md`, `talking-head-beats.md`, `qa-thresholds.md`, `model-routing.md`, `cost-model.md`; `docs/TOOLS.md`. Path proposals owned by this directory: the ledger lives inside `hf/PROMPT.md` `<ledger>`; the timing ledger is `_work/timing_ledger.jsonl`; lessons go to `projects/LESSONS.md` and `projects/RULES.md` (outside `agent-content/`).
 
 ## 9. Honest status
 

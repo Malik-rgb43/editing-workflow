@@ -137,7 +137,7 @@ def main(argv=None) -> int:
     if use_matte and matte_seek < -1e-6:
         print(f"color_render: the matte starts at source {a.matte_offset:.3f} s but the render starts at {start or 0.0:.3f} s (pre-roll included): make the matte cover the pre-roll too", file=sys.stderr)
         return 2
-    graph = build_graph(size, a.fps, gcube, scube, use_matte, canvas, a.matte_blur, a.matte_erode, a.subject_everywhere, matte_extract)
+    graph = build_graph(size, str(fps), gcube, scube, use_matte, canvas, a.matte_blur, a.matte_erode, a.subject_everywhere, matte_extract)
     cmd = [find_ffmpeg(), "-hide_banner", "-nostdin", "-v", "error", "-y"]
     if start is not None:
         cmd += ["-ss", f"{start:.6f}"]
@@ -148,7 +148,7 @@ def main(argv=None) -> int:
         cmd += [*matte_args, "-i", str(Path(a.matte).resolve())]
     if a.to is not None:
         cmd += ["-t", f"{a.to - (start or 0.0):.6f}"]
-    cmd += ["-filter_complex", graph, "-map", "[v]", "-map", "0:a?", "-c:v", "libx264", "-crf", str(a.crf), "-preset", "medium", "-pix_fmt", "yuv420p", "-g", "15", "-r", a.fps, "-fps_mode", "cfr", "-c:a", "copy", "-movflags", "+faststart"]
+    cmd += ["-filter_complex", graph, "-map", "[v]", "-map", "0:a?", "-c:v", "libx264", "-crf", str(a.crf), "-preset", "medium", "-pix_fmt", "yuv420p", "-g", "15", "-r", str(fps), "-fps_mode", "cfr", "-c:a", "copy", "-movflags", "+faststart"]
     if a.threads:
         cmd += ["-threads", str(a.threads)]
     cmd.append(str(out))

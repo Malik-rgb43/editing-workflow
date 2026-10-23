@@ -405,7 +405,7 @@ def run_doctor(mode, work_root):
         agg, code = "not_green", 2
     return {
         "doctor": VERSION, "mode": mode, "generated_utc": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"),
-        "host": _redact(json.dumps(host, ensure_ascii=False)) and host, "checks": checks, "aggregate": agg, "required": list(REQUIRED),
+        "host": json.loads(_redact(json.dumps(host, ensure_ascii=False))), "checks": checks, "aggregate": agg, "required": list(REQUIRED),
         "recommendation": recommend(host, by_id), "duration_s": round(time.monotonic() - t0, 2),
         "note": "green = every required check passed; a required check that did not run keeps it non-green. Unmeasured routes are labelled as such.",
     }, code

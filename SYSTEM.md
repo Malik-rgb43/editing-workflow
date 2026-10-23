@@ -3,10 +3,11 @@
 
 Every skill, workflow and tool in one place. Skills are specified with deterministic checks only; model evaluation has not been run (decision default Q4). Nothing here grants permission: user and project restrictions on spend, installs and publication always win.
 
-## Skills (14)
+## Skills (15)
 
 | skill | kind | version | what it is for |
 |---|---|---|---|
+| `approved-to-client-folder` | process | 0.1.0 | After a video is approved and delivered, hard-link the final into the user's client folder under the month's `מוכנים` folder with a clear name. |
 | `captions-transcription` | process | 0.1.0 | Transcribe speech and build captions or subtitles in any language, or translated into another (Hebrew deepest: the ivrit model, RTL, look-alike letters). |
 | `image-prompt-writer` | tool | 0.1.0 | Write copy-ready text-to-image prompts for the stills-first stage of a video: keyframes, start frames, hero frames, character and location sheets, B-roll stills, thumbnails; one STYLE PREFIX per film, no text inside the… |
 | `paid-spend-gate` | gate | 0.1.0 | Use before any paid action runs - AI image, video or audio generation, upscales, paid APIs or MCP tools, cloud renders, credit purchases, trials that need a card - and when the user asks what it will cost. |
@@ -80,7 +81,7 @@ Every skill, workflow and tool in one place. Skills are specified with determini
 - `agent-content/references/platform-specs.md` - Platform specs, delivery presets and AI-disclosure — dated reference
 - `agent-content/references/three-d-routes.md` - 3D routes — dated reference
 
-## Tools (42)
+## Tools (43)
 
 | tool | purpose | usage |
 |---|---|---|
@@ -125,6 +126,7 @@ Every skill, workflow and tool in one place. Skills are specified with determini
 | `tools/transcribe.py` | transcribe - word-level speech-to-text in any language (Hebrew deepest) with route auto-selection and a CPU route that always works. | python tools/transcribe.py <audio-or-video> -o words.json [--language auto\|he\|en\|...] [--model-dir DIR \| --allow-download] [--model-id ID] [--model-lang he\|multi] [--revision SHA] [--vad] [--beam 5] [--threads N] python tools/transcribe.py --check          (which routes are usable on this machine; imports nothing heavy beyond find_spec) |
 | `tools/ui.py` | ui - search and READ shadcn-registry components as source (nothing is installed), with the licence tier of each registry next to every hit. | python tools/ui.py registries [--query text] [--tier ok\|restricted\|excluded\|unknown] [--json] python tools/ui.py search "<english description>" [--registry @magicui ...] [--limit 20] [--json]     (default: the ok-tier registries) python tools/ui.py view @registry/item [--source] [--save DIR] [--json] python tools/ui.py add-command @registry/item                                                         (prints the command, runs nothing) common: [--offline] [--cache-dir DIR] [--timeout 20] |
 | `tools/vo_clean.py` | vo_clean - tighten and level a voice-over: long pauses cut to a set length, phrases levelled toward the median, gain moved only in pauses. | python tools/vo_clean.py <voice.wav> -o voice_clean.wav [--max-pause 0.28] [--target 0.20] [--amount 0.85] [--protect 3.2,7.9] [--words words.json --words-out words_clean.json] |
+| `tools/warehouse_link.py` | warehouse_link - turn on and drive the OPTIONAL client-video warehouse ("מחסן העבודות") from the toolkit. | python tools/warehouse_link.py status [--json] [--repo DIR] python tools/warehouse_link.py set --bundled \| REPO_OR_warehouse.py \| --remove python tools/warehouse_link.py library [FOLDER \| --clear]       # the user's existing client folders (read-only in the page) python tools/warehouse_link.py shortcut [--remove]              # a Desktop launcher (Windows) python tools/warehouse_link.py run [--repo DIR] -- serve\|add\|wait\|inbox\|reply\|url ARGS... |
 | `tools/word_retime.py` | word_retime - make a word table frame-true: cut the read at every pause, pin each chunk's first word to its MEASURED onset. | python tools/word_retime.py <voice.wav\|video> --words words.json -o words_retimed.json [--min-pause 0.10] [--model-dir DIR [--language CODE]] |
 
 ## Ideal pipeline

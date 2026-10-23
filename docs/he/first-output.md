@@ -1,6 +1,6 @@
 # פלט ראשון - רינדור פיקסצ'ר
 
-> נכתב ב-2026-10-02. המטרה: להוכיח על המחשב *שלך* שהמסלול התקנה -> רינדור -> בדיקה עובד, עם מקורות סינתטיים בבעלותנו (בלי חומרי לקוח, בלי עלות). הכול מקומי וחינמי. מספרי זמנים ומהירות במאגר הזה נמדדו על מחשב אחד (one reference machine) ולא מועברים אליך. English: [docs/en/first-output.md](../en/first-output.md). קודם מתקינים: install (`claude-code-setup`, docs/he/install.md).
+> נכתב ב-2026-10-02. המטרה: להוכיח על המחשב *שלך* שהמסלול התקנה -> רינדור -> בדיקה עובד, עם מקורות סינתטיים בבעלותנו (בלי חומרי לקוח, בלי עלות). הכול מקומי וחינמי. מספרי זמנים ומהירות במאגר הזה נמדדו על מחשב אחד (one reference machine) ולא מועברים אליך. English: [docs/en/first-output.md](../en/first-output.md). קודם מתקינים לפי [install](install.md).
 
 הפקודות משתמשות במפעיל `run` כדי להתנהג זהה ב-PowerShell, ב-CMD וב-bash: הפקודה `python install/bootstrap.py run -- <command>` רצה מתיקיית הערכה המותקנת עם סביבת ה-Python של הערכה ומחליפה את `{work_root}` בתיקיית העבודה שלך (נתיב לטיני).
 
@@ -47,4 +47,4 @@ python install/bootstrap.py mark inspection_passed --evidence "<path to the QA j
 
 <!-- step: first-output-07 -->
 ## first-output-07 - שומרים את הזמנים
-רושמים דקות של הקמה, טעינה, רינדור, בדיקה וסקירה (הרשומה הראשונה ביומן הזמנים שלך; מודול `ledger` של הערכה מסכם אותם: `python install/bootstrap.py run -- python -m core ledger summarize <file>`). אלה המספרים שלך; לא משווים אותם לשום דבר אחר. אם רינדור בודד לוקח יותר מהצפוי, לא מנסים שוב באופן עיוור: קוראים את `troubleshooting` (in the `claude-code-setup` repository, docs/he/troubleshooting.md).
+רושמים דקות של הקמה, טעינה, רינדור, בדיקה וסקירה (הרשומה הראשונה ביומן הזמנים שלך; מודול `ledger` של הערכה מסכם אותם: `python install/bootstrap.py run -- python -m core ledger summarize <file>`). אלה המספרים שלך; לא משווים אותם לשום דבר אחר. אם רינדור בודד לוקח יותר מהצפוי, לא מנסים שוב באופן עיוור: קוראים את [troubleshooting](troubleshooting.md).

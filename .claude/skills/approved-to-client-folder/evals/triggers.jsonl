@@ -1,0 +1,13 @@
+{"prompt":"the client approved v2 and the final render passed QA, put it in the ready folder","should_trigger":true,"route_instead":null}
+{"prompt":"תשים במוכנים את הסרטון שאושר","should_trigger":true,"route_instead":null}
+{"prompt":"תיקיית מוכנים של החודש, שים שם את המאושרים","should_trigger":true,"route_instead":null}
+{"prompt":"file the approved cut in the client's month folder","should_trigger":true,"route_instead":null}
+{"prompt":"the video is approved and delivered, link it under the client's ready folder with a clear name","should_trigger":true,"route_instead":null}
+{"prompt":"אושר ונמסר, תכניס את הקובץ הסופי לתיקיית הלקוח","should_trigger":true,"route_instead":null}
+{"prompt":"after delivery, hard-link the final into the library's מוכנים folder","should_trigger":true,"route_instead":null}
+{"prompt":"שים את הגרסה המאושרת בתיקייה של הלקוח תחת מוכנים","should_trigger":true,"route_instead":null}
+{"prompt":"render the final delivery version of the approved cut","should_trigger":false,"route_instead":"render-qa-delivery"}
+{"prompt":"הלקוח שלח הערות על הטיוטה, תתקן","should_trigger":false,"route_instead":"revision-notes-handler"}
+{"prompt":"put this draft in the ready folder so the client sees it","should_trigger":false,"route_instead":"revision-notes-handler"}
+{"prompt":"תעשה לי כתוביות לסרטון","should_trigger":false,"route_instead":"captions-transcription"}
+{"prompt":"delete the old versions from the client's folder","should_trigger":false,"route_instead":null}

@@ -27,7 +27,7 @@ Cause: on Windows `python` can be a Store stub (exit code 9009); macOS `python3`
 
 <!-- step: troubleshooting-05 -->
 ## troubleshooting-05 - NVENC / QSV are listed but do not work
-A hardware encoder in the `ffmpeg -encoders` list only means it was compiled in. On the the reference machine's AMD machine NVENC and QSV were **listed but failed to initialise**; AMF H.264/HEVC worked [measured]. The toolkit chooses encoders by a **real mini-encode**, never by the list, and falls back to CPU `libx264`. NVIDIA and Apple hardware encoders are **unmeasured**. Do not "fix" it by installing drivers for the agent's sake: report `doctor` output.
+A hardware encoder in the `ffmpeg -encoders` list only means it was compiled in. On the reference machine NVENC and QSV were **listed but failed to initialise**; AMF H.264/HEVC worked [measured]. The toolkit chooses encoders by a **real mini-encode**, never by the list, and falls back to CPU `libx264`. NVIDIA and Apple hardware encoders are **unmeasured**. Do not "fix" it by installing drivers for the agent's sake: report `doctor` output.
 
 <!-- step: troubleshooting-07 -->
 ## troubleshooting-07 - Skills are not discovered
@@ -53,7 +53,7 @@ Applies to Higgsfield, ElevenLabs. In your agent run `/mcp`, pick the server, au
 
 <!-- step: troubleshooting-10 -->
 ## troubleshooting-10 - Port conflicts
-Blender's connector listens on `localhost:9876` and has **no authentication**: if the port is taken, find the author (Windows `netstat -ano | findstr 9876`, macOS/Linux `lsof -i :9876`) and close that program; never forward the port and never expose it to a network. The engine's preview server prints the address it uses; if a port is busy, stop the old preview before starting another (one heavy job at a time).
+Blender's connector listens on `localhost:9876` and has **no authentication**: if the port is taken, find the program that holds it (Windows `netstat -ano | findstr 9876`, macOS/Linux `lsof -i :9876`) and close that program; never forward the port and never expose it to a network. The engine's preview server prints the address it uses; if a port is busy, stop the old preview before starting another (one heavy job at a time).
 
 <!-- step: troubleshooting-11 -->
 ## troubleshooting-11 - `npm ci` or the engine fails

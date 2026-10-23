@@ -60,7 +60,7 @@ Status: specified; deterministic checks only; model eval not run (decision defau
 - **Setup:** right after install; `tools/connections.py` reports `elevenlabs` present and no `higgsfield`; no project exists; user message: "what can you do?" (second run: "בוא נתחיל" with nothing connected).
 - **Oracle:** the reply text and the tool log.
 - **Pass:** the reply is exactly three requests to fill in, in the user's language: the reference one ("here is a video I love: <link> - make mine like it"), the footage one ("here is my footage: <folder> - make a 30 s reel") and, because a voice service is connected, the script + voice-over one (second run: the local talking-head + captions one); one line says paid work is estimated first; no open question, no list of skills, no project created, nothing rendered.
-- **Fail signals:** "what would you like to make?"; a list of all fourteen skills; a third request for a service that is not connected.
+- **Fail signals:** "what would you like to make?"; a list of all the skills; a third request for a service that is not connected.
 
 ## Deterministic check (runs now, no model)
 `python scripts/project_state.py --self-check` must print `self-check: ok`.

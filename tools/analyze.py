@@ -267,7 +267,10 @@ def run_asr(video, language, model_dir, allow_download, timeout, tmp):
         cmd += ["--model-dir", str(model_dir)]
     if allow_download:
         cmd += ["--allow-download"]
-    r = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", timeout=timeout + 60)
+    try:
+        r = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", timeout=timeout + 60)
+    except subprocess.TimeoutExpired:
+        return {"status": "not_run", "reason": f"ASR did not finish within {timeout + 60} s"}, "cpu-ct2"
     if r.returncode != 0 or not out.is_file():
         reason = (r.stderr or r.stdout or "").strip().splitlines()[-1:] or ["transcribe failed"]
         return {"status": "not_run", "reason": f"ASR did not run: {reason[0][:300]}"}, "cpu-ct2"

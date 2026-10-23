@@ -93,7 +93,7 @@ confidence: "owner rules plus SOURCED-unverified platform policy summaries; not 
 
 ### The blocking compliance table for ads
 
-Load when: step 2 of the procedure (before scripting) and again before presenting any draft. Sources: distilled 02 video-types §3.9 (owner rules), distilled 08 platform-specs-and-ai-disclosure §8-§9 and legal-and-licensing §6, §9 (2026-10-01). **A row at `fail` or `blocked` blocks presenting the draft**, whatever the rubric average says. Checked mechanically (the table shape, evidence, cross-consistency) by `scripts/ad_gate_check.py`; the judgment is human.
+Load when: step 2 of the procedure (before scripting) and again before presenting any draft. Sources: distilled 02 video-types §3.9 (owner rules), distilled 08 platform-specs-and-ai-disclosure §8-§9 and legal-and-licensing §6, §9 (2026-10-01). **A row at `fail` or `blocked` blocks presenting the draft**, whatever the rubric average says. Checked by a human reading each row (the table shape, evidence, cross-consistency); there is no script for it.
 
 | Field | Value |
 |---|---|

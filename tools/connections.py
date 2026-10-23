@@ -46,7 +46,8 @@ JOBS = {
     "speech and cutout (local)": ["faster-whisper", "ivrit-ct2", "matte-fast"],
     "publishing code": ["gh"],
 }
-BLENDER_DIRS = ["C:/Program Files/Blender Foundation/Blender*/blender.exe", "/Applications/Blender.app/Contents/MacOS/Blender"]
+BLENDER_DIRS = [os.environ.get("ProgramFiles", "C:/Program Files").replace("\\", "/") + "/Blender Foundation/Blender*/blender.exe",
+                "/Applications/Blender.app/Contents/MacOS/Blender"]
 
 
 def load_catalog(path: Path = CATALOG) -> list:
@@ -130,12 +131,29 @@ def check(entry: dict, mcp_names: dict) -> dict:
     return row
 
 
+LOCAL_JOB = "client review room and archive (optional, a separate local tool)"
+
+
+def warehouse_row(home: Path | None) -> dict:
+    """The client-video warehouse: found by ``warehouse_link`` (env / ~/.avc/warehouse.json); not in the catalogue because nothing is installed by us."""
+    row = {"id": "warehouse", "kind": "local-tool", "name": "video warehouse", "cost": "free",
+           "role": "numbered notes with drawings, versions, footage intake, approved archive (revision-notes-handler 'With the warehouse')"}
+    try:
+        import warehouse_link as wl
+
+        st = wl.status(home=home, probe=False)
+    except Exception as exc:  # noqa: BLE001 - a report, never a gate
+        return {**row, "present": None, "how": f"could not check ({exc.__class__.__name__})"}
+    return {**row, "present": st["connected"], "how": (f"{st['how']}: {st['warehouse_py']}" if st["connected"] else st["how"])}
+
+
 def report(cwd: Path, home: Path | None = None, entries: list | None = None) -> dict:
     home = home or Path.home()
     entries = load_catalog() if entries is None else entries
     names = configured_mcp(home, cwd)
     rows = {e["id"]: check(e, names) for e in entries}
     groups = {job: [rows[i] for i in ids if i in rows] for job, ids in JOBS.items()}
+    groups[LOCAL_JOB] = [warehouse_row(home)]
     other = sorted(set(names) - {r.get("server") for r in rows.values()})
     return {"tool": "connections", "groups": groups, "other_mcp_servers": other,
             "note": "presence only, nothing was called. claude.ai connectors and plugin servers are not in config files and may carry an id "

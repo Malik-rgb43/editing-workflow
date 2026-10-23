@@ -5,3 +5,7 @@ skills, playbooks and tools for AI video editing with Claude Code / Codex.
 Licensed under the Apache License, Version 2.0 (see LICENSE).
 
 Third-party components are referenced, not bundled; see THIRD_PARTY_NOTICES.md.
+
+tools/warehouse/ is the client-video warehouse written by Gabriel Gelman
+(https://github.com/GabrielGel/video-warehouse), included at his request and
+changed as listed in licenses.toml.

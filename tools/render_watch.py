@@ -98,6 +98,7 @@ def main(argv=None) -> int:
             lock_cm = acquire(load_config().lock_path, job=a.job, timeout=a.lock_wait)
         try:
             proc = spawn(cmd, stdin=__import__("subprocess").DEVNULL)
+            state["t_change"] = time.monotonic()  # the lock wait must not count as a stall
         except (ToolkitError, OSError) as exc:
             print(f"render_watch: could not start: {exc}", file=sys.stderr)
             return 2

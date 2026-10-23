@@ -1,0 +1,5 @@
+interface:
+  display_name: "Approved To Client Folder"
+  short_description: "After a video is approved and delivered, hard-link the final into the user's client folder under the month's `מוכנים` fo"
+policy:
+  allow_implicit_invocation: false

@@ -43,12 +43,14 @@ Say in one line that anything paid is estimated first (`paid-spend-gate`). The r
 | Signal in the request | Owner | Overlays |
 |---|---|---|
 | Any production: a new video, a brief or concept, raw footage + "תערוך לי", a reference to copy ("בסגנון של"), speaker, testimonial, ad/promo, launch/motion, AI shots, podcast clip, tutorial, vlog (the kind and any reference are context in the note) | `pro-video-editor` | `video-brief-intake` (its Step 0: Round 0 + project); `paid-spend-gate` if generation is planned |
-| Notes, complaints, timestamps on a draft | `revision-notes-handler` | |
+| Notes, complaints, timestamps on a draft; notes waiting in the client warehouse (`python tools/warehouse_link.py run -- inbox`) | `revision-notes-handler` | |
+| Footage landed in the client warehouse ("יש גלם חדש במחסן: <slug>") | `pro-video-editor` (the project already exists: resume it) | `video-brief-intake` (Step 0, no `new_project.py`) |
 | Only a video-generation prompt (Seedance), `/seedance` | `video-prompt-writer` | `paid-spend-gate` before any generation |
 | Only a still-image prompt: keyframe, start frame, character sheet, thumbnail | `image-prompt-writer` | `paid-spend-gate` before any generation |
 | Skin, sky, tinted blacks on real footage, nothing else | `speaker-color-correction` | |
 | Only captions or subtitles, in any language (Hebrew, English, a translation), or a transcript for captions | `captions-transcription` | |
 | Render, loudness, export, final check, deliver | `render-qa-delivery` | |
+| An approved, delivered video to file in the client's own folder ("תשים במוכנים", "put the approved ones in ready"); needs the client warehouse turned on | `approved-to-client-folder` | `render-qa-delivery` first when the final is not delivered yet |
 | Several ratios, hook variants, platform versions of a finished master | `video-variants-exporter` | |
 | Torn between fonts, palettes, easings, hooks | `visual-choice-board` | |
 | Analyse, transcribe, "what happens in this clip" | `video-analysis` | |

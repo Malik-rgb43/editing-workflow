@@ -1,6 +1,6 @@
 # Install - what happens, what is downloaded, what you answer
 
-> Written 2026-10-03. The installer (`install/bootstrap.py`) is covered by mocked unit tests and runs in CI on Windows, macOS and Ubuntu; a clean-clone install was run once on a one reference machine. A clean macOS and Linux install have **not** been run yet. The agent-side runbook is [INSTALL.md](../../INSTALL.md); this page is the same flow for you. Hebrew: [docs/he/install.md](../he/install.md).
+> Written 2026-10-03. The installer (`install/bootstrap.py`) is covered by mocked unit tests and runs in CI on Windows, macOS and Ubuntu; a clean-clone install was run once on one machine (the reference machine). A clean macOS and Linux install have **not** been run yet. The agent-side runbook is [INSTALL.md](../../INSTALL.md); this page is the same flow for you. Hebrew: [docs/he/install.md](../he/install.md).
 
 **Two repositories, two links.** First `claude-code-setup` (it prepares Claude Code: saves credits, adds a browser tool and a skills plugin). Then **this** repository, the editing toolkit. You paste the link into Claude Code or Codex and say "install this". The agent looks at your computer **by itself** - you are never asked about your GPU, RAM or operating system.
 
@@ -50,7 +50,7 @@ The installer picks the safest setup that works on every computer:
 * **Speech-to-text**: a local CPU route (`asr-cpu`, faster-whisper int8) is available and is installed **only if you choose local** in the next step. Model weights are never downloaded until you approve their size.
 * **Speaker cut-out**: the engine's own CPU route - nothing extra to install.
 * **Video encoder**: CPU `libx264`, proven by the real mini-encode.
-* Connectors, providers, Blender: not installed by the install; they are your choice in install-05 and install-10.
+* Connectors, providers, Blender: not installed by the install; they are your choice in install-05, install-09 and install-10.
 
 <!-- step: install-05 -->
 ## install-05 - How do you want to work: local, connected or both?
@@ -79,7 +79,7 @@ HyperFrames renders in a headless Chrome. The agent asks before downloading it, 
 <!-- step: install-10 -->
 ## install-10 - What to connect
 After the install works the agent asks, **one choice at a time**. Nothing is pre-selected; "none" and "not now" are fine.
-* **If you chose local:** the free local extras - reference videos from links (YouTube, TikTok, Instagram), a faster cut-out of people (`matte-fast`), faster transcription on your graphics card (only if your computer showed a working faster route), Blender for 3D (Three.js needs nothing to install).
+* **If you chose local:** the free local extras - reference videos from links (YouTube, TikTok, Instagram), a faster cut-out of people (`matte-fast`), faster transcription on your graphics card (only if your computer showed a working faster route), Blender for 3D (Three.js needs nothing to install), and the client warehouse (one local review page for all your clients' videos; it ships with the toolkit and is turned on only if you say yes, see [client-warehouse](client-warehouse.md)).
 * **If you chose connected (or both):** a list to pick from, any number or none.
   | Group | Services | Cost |
   |---|---|---|

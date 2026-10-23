@@ -58,3 +58,9 @@ desktop.ini
 
 # NOTE: .claude/skills/ and .agents/skills/ are GENERATED but TRACKED on purpose (a plain clone must
 # work without a build step); scripts/build_agent_adapters.py --check proves they match agent-content/.
+
+# ---- the bundled warehouse keeps its token, caches and client-folder config here when run from the folder itself ----
+tools/warehouse/.token
+tools/warehouse/config.json
+tools/warehouse/_cache/
+tools/warehouse/_library/

@@ -107,7 +107,7 @@ def main(argv=None) -> int:
     out = Path(a.out)
     sdir = out / "sheets"
     sdir.mkdir(parents=True, exist_ok=True)
-    n = 1 + len(list(sdir.glob("zoom_*.jpg")))
+    n = 1 + max([int(p.stem.split("_")[-1]) for p in sdir.glob("zoom_*.jpg") if p.stem.split("_")[-1].isdigit()] or [0])
     fname = f"sheets/zoom_{n:03d}.jpg"
     sheet.save(str(out / fname), quality=92)
     entry = {"file": fname, "kind": "zoom", "t_start_s": round(float(clock.time_of(frames[0])), 3), "t_end_s": round(float(clock.time_of(frames[-1])), 3), "tiles": len(tiles), "tile_px": tw,

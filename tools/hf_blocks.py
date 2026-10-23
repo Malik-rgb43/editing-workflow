@@ -115,8 +115,6 @@ def cmd_add(a) -> int:
     missing = [k for k in m.get("replace", {}) if k not in sets]
     if name != a.block:
         src = rename_block(src, a.block, name)
-    dest.parent.mkdir(parents=True, exist_ok=True)
-    dest.write_text(src, encoding="utf-8", newline="\n")
     types = {v["id"]: v["type"] for v in m["variables"]}
     values = {}
     for kv in a.var or []:
@@ -125,6 +123,8 @@ def cmd_add(a) -> int:
             print(f"hf_blocks: {a.block} has no variable {k!r}; it has: {', '.join(types)}", file=sys.stderr)
             return 2
         values[k] = coerce(v, types[k])
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    dest.write_text(src, encoding="utf-8", newline="\n")
     dur = a.duration if a.duration is not None else m["duration_s"]
     if "duration" in types and "duration" not in values:
         values["duration"] = dur

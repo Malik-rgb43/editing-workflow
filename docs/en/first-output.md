@@ -1,6 +1,6 @@
 # First output - the fixture render
 
-> Written 2026-10-02. Goal: prove on YOUR machine that install -> render -> inspection works, using owned synthetic sources (no client footage, no cost). Everything is local and free. Timing and speed numbers elsewhere in this repo come from one machine (one reference machine) and do not transfer to yours. Hebrew: [docs/he/first-output.md](../he/first-output.md). Install first with the `claude-code-setup` repository (its install guide).
+> Written 2026-10-02. Goal: prove on YOUR machine that install -> render -> inspection works, using owned synthetic sources (no client footage, no cost). Everything is local and free. Timing and speed numbers elsewhere in this repo come from one machine (one reference machine) and do not transfer to yours. Hebrew: [docs/he/first-output.md](../he/first-output.md). Install first, following [install](install.md).
 
 Commands use the `run` launcher so they behave the same in PowerShell, CMD and bash: `python install/bootstrap.py run -- <command>` runs from the installed toolkit folder with the toolkit's own Python environment and replaces `{work_root}` with your ASCII work folder.
 
@@ -47,4 +47,4 @@ python install/bootstrap.py mark inspection_passed --evidence "<path to the QA j
 
 <!-- step: first-output-07 -->
 ## first-output-07 - Keep the timings
-Write down setup, load, render, QA and review minutes (the first entry of your timing ledger; the toolkit's `ledger` module summarises them: `python install/bootstrap.py run -- python -m core ledger summarize <file>`). These are your numbers; compare them to nothing else. If a single render takes longer than expected, do not retry blindly: read `troubleshooting` (in the `claude-code-setup` repository, docs/en/troubleshooting.md).
+Write down setup, load, render, QA and review minutes (the first entry of your timing ledger; the toolkit's `ledger` module summarises them: `python install/bootstrap.py run -- python -m core ledger summarize <file>`). These are your numbers; compare them to nothing else. If a single render takes longer than expected, do not retry blindly: read [troubleshooting](troubleshooting.md).
