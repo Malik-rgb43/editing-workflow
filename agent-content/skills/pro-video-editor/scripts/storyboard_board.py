@@ -354,6 +354,8 @@ def ui_css() -> str:
     try:
         b64 = base64.b64encode((ui / "heebo-he-latin.woff2").read_bytes()).decode("ascii")
         css = '@font-face{font-family:"Heebo UI";src:url(data:font/woff2;base64,' + b64 + ') format("woff2");font-weight:100 900;font-display:swap}\n' + css
+        kb64 = base64.b64encode((ui / "karantina-700-he-latin.woff2").read_bytes()).decode("ascii")
+        css = '@font-face{font-family:"Karantina UI";src:url(data:font/woff2;base64,' + kb64 + ') format("woff2");font-weight:700;font-display:swap}\n' + css
     except OSError:
         pass
     return css
@@ -577,7 +579,7 @@ h2{font-size:1rem;margin:0 0 14px;font-weight:600}
 .badge{position:absolute;top:6px;inset-inline-start:6px;background:rgba(5,8,17,.75);color:#E8EDF5;font-size:.7rem;padding:2px 8px;border-radius:6px}
 .rhythm{display:flex;height:34px;border-radius:10px;overflow:hidden;border:1px solid var(--line);direction:ltr}
 .rhythm div{display:grid;place-items:center;font:600 .72rem/1 var(--mono);color:#0C0A09;min-width:2px;border-inline-end:1px solid rgba(0,0,0,.25);cursor:pointer}
-.rA{background:#D9C79A}.rB{background:#D4A72C}.rG{background:#A8A29E}
+.rA{background:#B8A8FF}.rB{background:#7C5CFF}.rG{background:#ABA4BF}
 .legend{display:flex;gap:16px;margin-top:8px;font-size:.84rem;color:var(--muted)}.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-inline-end:6px;vertical-align:-1px}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:16px}
 .beat{background:var(--raised);border:1px solid var(--line);border-radius:14px;overflow:hidden;display:flex;flex-direction:column}
@@ -587,7 +589,7 @@ h2{font-size:1rem;margin:0 0 14px;font-weight:600}
 .sketch{position:absolute;inset:0;display:grid;place-items:center;padding:16px;text-align:center;background:repeating-linear-gradient(45deg,var(--sunken),var(--sunken) 10px,var(--surface) 10px,var(--surface) 20px);color:var(--fg);font-size:.95rem}
 .tags{position:absolute;top:8px;inset-inline:8px;display:flex;justify-content:space-between;gap:6px}
 .tag{background:rgba(5,8,17,.78);color:#E8EDF5;font:600 .72rem/1 var(--mono);padding:4px 8px;border-radius:6px;direction:ltr}
-.tag.A{background:#D9C79A;color:#0C0A09}.tag.B{background:#D4A72C;color:#0C0A09}.tag.G{background:#A8A29E;color:#0C0A09}
+.tag.A{background:#B8A8FF;color:#0B0910}.tag.B{background:#9A82FF;color:#0B0910}.tag.G{background:#ABA4BF;color:#0B0910}
 .body{padding:12px;display:flex;flex-direction:column;gap:6px;font-size:.9rem;flex:1}
 .line{font-size:1rem;font-weight:600;margin:0}
 .kv{margin:0;color:var(--muted)}.kv b{color:var(--fg);font-weight:600}

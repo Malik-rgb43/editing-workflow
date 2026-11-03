@@ -381,6 +381,8 @@ def ui_css() -> str:
     try:
         b64 = base64.b64encode((ui / "heebo-he-latin.woff2").read_bytes()).decode("ascii")
         css = '@font-face{font-family:"Heebo UI";src:url(data:font/woff2;base64,' + b64 + ') format("woff2");font-weight:100 900;font-display:swap}\n' + css
+        kb64 = base64.b64encode((ui / "karantina-700-he-latin.woff2").read_bytes()).decode("ascii")
+        css = '@font-face{font-family:"Karantina UI";src:url(data:font/woff2;base64,' + kb64 + ') format("woff2");font-weight:700;font-display:swap}\n' + css
     except OSError:
         pass
     return css

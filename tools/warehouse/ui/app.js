@@ -92,7 +92,7 @@ function toast(msg, kind) {
 function confetti() {
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   const box = h('div', { class: 'confetti' });
-  const cols = ['#7c6cff', '#34d399', '#fbbf24', '#ff6b6b', '#a597ff', '#7dd3fc'];
+  const cols = ['#7c5cff', '#34d399', '#fbbf24', '#ff6b6b', '#9a82ff', '#7dd3fc'];
   for (let i = 0; i < 90; i++) {
     box.appendChild(h('i', { style: `left:${Math.random() * 100}%;background:${cols[i % cols.length]};--dx:${(Math.random() - .5) * 240}px;--rot:${Math.random() * 900}deg;animation-delay:${Math.random() * .35}s;animation-duration:${1.3 + Math.random()}s` }));
   }
@@ -398,7 +398,7 @@ function deleteClient(client, list) {
 /* ---------------------------------------------------------------- review */
 const KIND = { fix: { label: 'לתקן', emoji: '👎' }, like: { label: 'אהבתי', emoji: '👍' }, note: { label: 'הערה', emoji: '💬' } };
 const STATE = { pending: 'טיוטה', open: 'פתוח', resolved: 'טופל', sent: 'נשלח' };
-const COLORS = ['#ff4d4d', '#ffd23f', '#34d399', '#ffffff', '#7c6cff'];
+const COLORS = ['#ff4d4d', '#ffd23f', '#34d399', '#ffffff', '#7c5cff'];
 
 async function review(slug, vidWanted) {
   app.innerHTML = '';
