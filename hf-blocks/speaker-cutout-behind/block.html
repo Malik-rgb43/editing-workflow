@@ -34,11 +34,15 @@
           var txt = document.getElementById("speaker-cutout-behind-text");
           txt.textContent = String(v.text == null ? "" : v.text);
           txt.style.fontSize = (Number(v.size) || 230) + "px";
+          // designer curves (cubic-bezier, the motion kit's kit.* values): a curve per move, never a named preset
+          var BZ = function (x1, y1, x2, y2) { var cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx, cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+            return function (p) { if (p <= 0) return 0; if (p >= 1) return 1; var lo = 0, hi = 1, t = p; for (var i = 0; i < 24; i++) { var x = ((ax * t + bx) * t + cx) * t; if (x < p) lo = t; else hi = t; t = (lo + hi) / 2; } return ((ay * t + by) * t + cy) * t; }; };
+          var LAND = BZ(0.1, 0.75, 0.15, 1), LEAVE = BZ(0.55, 0, 0.9, 0.35), HEAVY = BZ(0.75, 0, 0.18, 1), DRIFT = BZ(0.4, 0, 0.6, 1), WIND = BZ(0.45, 0, 0.55, 1);
           var tl = gsap.timeline({ paused: true });
-          tl.fromTo("#speaker-cutout-behind-dim", { opacity: 0 }, { opacity: dim, duration: 0.4, ease: "power2.out" }, 0.1);
-          tl.fromTo("#speaker-cutout-behind-text", { opacity: 0, scale: 1.25, y: 40 }, { opacity: 1, scale: 1, y: 0, duration: 0.55, ease: "power3.out" }, 0.25);
-          tl.to("#speaker-cutout-behind-text", { opacity: 0, y: -30, duration: 0.35, ease: "power2.in" }, D - 0.45);
-          tl.to("#speaker-cutout-behind-dim", { opacity: 0, duration: 0.35, ease: "power2.in" }, D - 0.4);
+          tl.fromTo("#speaker-cutout-behind-dim", { opacity: 0 }, { opacity: dim, duration: 0.4, ease: DRIFT }, 0.1);
+          tl.fromTo("#speaker-cutout-behind-text", { opacity: 0, scale: 1.25 }, { opacity: 1, scale: 1, duration: 0.6, ease: LAND }, 0.25);
+          tl.to("#speaker-cutout-behind-text", { opacity: 0, y: -30, duration: 0.35, ease: LEAVE }, D - 0.45);
+          tl.to("#speaker-cutout-behind-dim", { opacity: 0, duration: 0.35, ease: DRIFT }, D - 0.4);
           window.__timelines = window.__timelines || {};
           window.__timelines["speaker-cutout-behind"] = tl;
         })();

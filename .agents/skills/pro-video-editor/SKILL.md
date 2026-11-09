@@ -100,6 +100,8 @@ Every frame is the real thing where it exists: A-roll = the real source frame (`
 - Studio stays open; generate the composition from data (edit list, faces, beat table), so a re-cut regenerates instead of breaking.
 - Sources in order: what the student owns, then the toolkit blocks (`python tools/hf_blocks.py list`, e.g. `typed-caption`, `liquid-glass`, `caption`, `notification-stack`, `boarding-pass-stamp`), then connected sources (table below), then hand-built.
 - Voice-led pieces: `python tools/word_retime.py` before any caption or scene is placed; `python tools/vo_clean.py` for a VO track (never picture-locked dialogue); SFX in the `hf_mix` cues with `"align": "peak"`. A music bed is fitted to the length with `python tools/music_fit.py`; a piece with no bed gets room tone under its joins (`references/sound.md`).
+- Motion: copy `motion-kit/motion-kit.js` into `hf/assets/` and author every move with it (a curve per move, duration from distance, uneven reactions; never linear, never one preset on everything). Rules in `motion-kit/RULES.md`, curves in `motion-kit/LIBRARY.md`, summary in `references/camera-and-motion.md`.
+- No AI look, above all in captions and graphics: build them by `references/anti-ai-look.md` (emphasis only where it carries the point, chunks by meaning, no preset motion, no glow / gradient text / feature pills / vibe-coded cards), and run `python agent-content/skills/pro-video-editor/scripts/ai_look_scan.py <project>/hf` before the draft render: fix each tell or write its reason in PROMPT.md.
 - Take stills at every decision point: `hyperframes snapshot --at <up to 5 times> --describe false`.
 - **The checkpoint ladder** (cheap before expensive; the user approves each rung):
   1. the script text;
@@ -113,7 +115,7 @@ Every frame is the real thing where it exists: A-roll = the real source frame (`
   A rung that does not apply is skipped and said in one line (for example no voice takes when the voice is the speaker's own). Never show a full render before the Studio draft.
 
 ## Step 5 - Review like an editor, then prove it
-1. **Look** at a still of every beat and every seam, then ask each the questions in `Common mistakes`.
+1. **Look** at a still of every beat and every seam, then ask each the questions in `Common mistakes` and the checks in `references/anti-ai-look.md` section 5 (three frames in a row that could come from any video = generic beats: replace them).
 2. **Compare and score** before the draft render, so a replaced concept does not cost a second full render:
    - against the reference or benchmark at the same moments: what does the pro do there that you do not? Write it down, even when you keep your choice;
    - against `agent-content/benchmarks/<kind>.rubric.md` (talking-head, testimonial, ad-promo, motion-graphics, ai-generated, podcast-clip, montage, screen-demo), scored by a fresh-eyes reviewer: a separate agent that did not build the video, given `agent-content/benchmarks/critic-brief.md` section 3, the stills, the range renders and a contact sheet. Its six dimensions are scored 1-5; the release rule is an average of at least 4.0, no dimension below 3, every hard gate at 3 or more, no severe failure.
@@ -169,7 +171,9 @@ Camera, zoom and fade mistakes are in `references/camera-and-motion.md`; voice, 
 - `references/worked-example-launch-film.md` - writing PROMPT.md for a voice-and-music piece (launch, explainer, product film); seeing a strong spec next to the measured film it produced.
 - `references/story-and-structure.md` - the hook, the order, the length, what to cut, the ending; soundbites; ad blueprint; registers (incl. montage); explainer story logic; rubrics.
 - `references/cutting-and-rhythm.md` - cutting, silence constants, joins and room tone, hidden cuts, clean windows of AI takes, montage holds and music shape.
-- `references/camera-and-motion.md` - zooms, the camera path, seams and camera events, face audits, camera and fade mistakes.
+- `references/anti-ai-look.md` - building captions or any graphic, before the draft render, and on any note like "looks AI / generic / template / CapCut": the tells and what to do instead, with the `ai_look_scan.py` rule ids.
+- `references/camera-and-motion.md` - easing and timing with the motion kit, zooms, the camera path, seams and camera events, face audits, camera and fade mistakes.
+- `motion-kit/` (`RULES.md`, `LIBRARY.md`, `motion-kit.js`; MIT, Hugh Phan) - before writing any animation: curves by name, timing from distance, reactions, text treatments.
 - `references/visual-beats.md` - choosing or replacing a beat, B-roll, searching and scoring stock, UI rebuilt in code, 3D per beat.
 - `references/cutout-matte.md` - any beat with graphics behind the speaker.
 - `references/type-and-colour.md` - the palette lock, the type system, Hebrew kinetic type, captions vs on-screen text, highlight and glass mistakes.

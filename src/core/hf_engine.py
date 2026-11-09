@@ -6,9 +6,14 @@ Why this module exists (found by a live run, 2026-10-03):
 * when the engine is installed under a path with non-ASCII letters (a Windows user name in Hebrew), ``hyperframes init`` finishes
   without an error and without writing ``index.html``.
 
+* (live run 2026-10-08) tools run from a git clone that has no ``node_modules`` fell through to ``npx --no-install hyperframes``
+  with no version: npx asked for the newest release (0.8.141), refused, and render / Studio / ``init`` all failed, although the
+  pinned engine sat in the installed toolkit home (``~/.avc/toolkit/node_modules``).
+
 Search order for the engine: ``AVC_HYPERFRAMES_CLI`` (a ``.mjs``/``.js`` file or an executable) -> ``<toolkit root>/node_modules/hyperframes``
-(the folder ``npm ci --ignore-scripts`` fills) -> ``npx --no-install hyperframes`` (a project-local install only, never a download).
-Nothing here installs or downloads anything.
+(the folder ``npm ci --ignore-scripts`` fills) -> the installed toolkit home(s) (from ``install-manifest.json``, then the installer's
+default folders), only when they hold the pinned version -> ``npx --no-install hyperframes@<pin>`` (a local install of exactly the
+pin, never a download; without a pin there is no npx fallback at all). Nothing here installs or downloads anything.
 """
 
 from __future__ import annotations
@@ -59,6 +64,34 @@ def installed_version(root: Path) -> str | None:
         return None
 
 
+def installed_homes() -> list:
+    """Toolkit homes the installer may have filled (``install/bootstrap.py``): the one recorded in ``~/.avc/install-manifest.json``,
+    then its defaults ``~/.avc/toolkit`` and the ASCII fallback used when the home path has non-ASCII letters."""
+    state = Path.home() / ".avc"
+    out = []
+    try:
+        rec = json.loads((state / "install-manifest.json").read_text(encoding="utf-8")).get("paths", {}).get("toolkit_home")
+        if rec:
+            out.append(Path(rec))
+    except (OSError, ValueError, AttributeError):
+        pass
+    out.append(state / "toolkit")
+    base = os.environ.get("AVC_ASCII_BASE")
+    if base:
+        out.append(Path(base) / "avc-toolkit")
+    elif os.name == "nt":
+        out.append(Path("C:/avc-toolkit"))
+    else:
+        out += [Path("/Users", "Shared", "avc-toolkit"), Path("/var/tmp/avc-toolkit")]  # macOS shared folder / Linux (bootstrap.ascii_fallback)
+    seen, uniq = set(), []
+    for p in out:
+        key = os.path.normcase(str(p))
+        if key not in seen:
+            seen.add(key)
+            uniq.append(p)
+    return uniq
+
+
 def is_ascii_path(p) -> bool:
     try:
         str(p).encode("ascii")
@@ -89,12 +122,20 @@ def find(root: Path | None = None, env: dict | None = None) -> Engine | None:
         if exe:
             return Engine((exe,), "env", None, pinned_version(root), None)
         return None
+    pin = pinned_version(root)
     cli = root / "node_modules" / "hyperframes" / "bin" / "hyperframes.mjs"
     if cli.is_file() and node:
-        return Engine((node, str(cli)), "toolkit", installed_version(root), pinned_version(root), root)
+        return Engine((node, str(cli)), "toolkit", installed_version(root), pin, root)
+    # A clone without node_modules: use the installed toolkit home, but only one that holds exactly the pinned version.
+    for home in installed_homes() if node else ():
+        cli = home / "node_modules" / "hyperframes" / "bin" / "hyperframes.mjs"
+        ver = installed_version(home)
+        if cli.is_file() and (pin is None or ver == pin):
+            return Engine((node, str(cli)), "toolkit", ver, pin, home)
     npx = shutil.which("npx")
-    if npx:
-        return Engine((npx, "--no-install", "hyperframes"), "project-local", None, pinned_version(root), None)
+    if npx and pin:
+        # A bare `hyperframes` makes npx want the newest release; `@<pin>` + --no-install only accepts a local copy of the pin.
+        return Engine((npx, "--no-install", f"hyperframes@{pin}"), "project-local", None, pin, None)
     return None
 
 

@@ -108,18 +108,22 @@
           box.style.fontSize = Math.round(H * 0.34) + "px";
           if (on("rtl", false)) { box.style.direction = "rtl"; }
           var chars = Array.from(text), typeOn = on("type_on", true), at = Number(v.type_at) || 0.5, cps = Math.max(1, Number(v.cps) || 18);
+          // designer curves (cubic-bezier, the motion kit's kit.* values): a curve per move, never a named preset
+          var BZ = function (x1, y1, x2, y2) { var cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx, cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+            return function (p) { if (p <= 0) return 0; if (p >= 1) return 1; var lo = 0, hi = 1, t = p; for (var i = 0; i < 24; i++) { var x = ((ax * t + bx) * t + cx) * t; if (x < p) lo = t; else hi = t; t = (lo + hi) / 2; } return ((ay * t + by) * t + cy) * t; }; };
+          var LAND = BZ(0.1, 0.75, 0.15, 1), LEAVE = BZ(0.55, 0, 0.9, 0.35), HEAVY = BZ(0.75, 0, 0.18, 1), DRIFT = BZ(0.4, 0, 0.6, 1), WIND = BZ(0.45, 0, 0.55, 1);
           var tl = gsap.timeline({ paused: true });
           chars.forEach(function (ch, ci) {
             var c = document.createElement("span"); c.className = "lg-ch"; c.id = "lg-ch-" + ci; c.setAttribute("data-layout-allow-overlap", ""); c.textContent = ch; box.appendChild(c);
             tl.set("#lg-ch-" + ci, { opacity: 1 }, typeOn ? at + ci / cps : 0);
           });
-          // enter eased (>= 0.3 s, never a pop), a slow drift of the aura, leave eased
-          tl.fromTo(["#lg-glass", "#lg-edge", "#lg-frost"], { opacity: 0, y: 24, scale: 0.97 }, { opacity: 1, y: 0, scale: 1, duration: 0.45, ease: "power3.out" }, 0);
+          // enter with a scale settle on a decelerating curve (never a fade-up preset), a slow drift of the aura, leave eased
+          tl.fromTo(["#lg-glass", "#lg-edge", "#lg-frost"], { opacity: 0, scale: 0.94 }, { opacity: 1, scale: 1, duration: 0.5, ease: LAND }, 0);
           if (on("aura", true)) {
             aura.style.top = (TOP + H / 2 - 450) + "px";
-            tl.fromTo("#lg-aura", { opacity: 0, x: -40, rotation: -4 }, { opacity: 0.9, x: 40, rotation: 4, duration: D, ease: "sine.inOut" }, 0);
+            tl.fromTo("#lg-aura", { opacity: 0, x: -40, rotation: -4 }, { opacity: 0.9, x: 40, rotation: 4, duration: D, ease: DRIFT }, 0);
           }
-          tl.to(["#lg-glass", "#lg-edge", "#lg-frost"], { opacity: 0, duration: 0.3, ease: "power2.in" }, Math.max(0.5, D - 0.3));
+          tl.to(["#lg-glass", "#lg-edge", "#lg-frost"], { opacity: 0, scale: 0.97, duration: 0.3, ease: LEAVE }, Math.max(0.5, D - 0.3));
           window.__timelines = window.__timelines || {};
           window.__timelines["liquid-glass"] = tl;
         })();

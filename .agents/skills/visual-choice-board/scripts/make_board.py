@@ -44,7 +44,7 @@ VERSION = "0.1.0"
 KINDS = {"font", "caption_anim", "easing", "palette", "transition", "layout", "text", "image"}
 MAX_IMAGES, MAX_IMAGE_KB = 4, 1500
 BANNED_DEFAULT = ["bounce", "crossfade"]
-ANIMS = {"rise", "slide_up", "blur_in", "scale_in", "word_rise", "karaoke", "mask_wipe", "bounce"}
+ANIMS = {"cut", "settle", "rise", "slide_up", "blur_in", "scale_in", "word_rise", "karaoke", "mask_wipe", "bounce"}
 TRANS = {"wipe", "push", "iris", "slide_up", "crossfade"}
 WORD_ANIMS = {"word_rise", "karaoke"}
 LOREM = re.compile(r"lorem|ipsum|dolor sit|טקסט לדוגמה|כאן יבוא", re.I)
@@ -688,10 +688,12 @@ html.served #copy,html.served #json-out{display:none}html.served.sendfail #copy,
 @keyframes t-iris{0%,10%{clip-path:circle(0% at 50% 50%)}50%,85%{clip-path:circle(75% at 50% 50%)}100%{clip-path:circle(0% at 50% 50%)}}
 @keyframes t-slide{0%,10%{transform:translateY(100%)}50%,85%{transform:translateY(0)}100%{transform:translateY(100%)}}
 @keyframes t-xfade{0%,10%{opacity:0}50%,85%{opacity:1}100%{opacity:0}}
-[data-anim=rise]{animation:a-rise 2.6s infinite}[data-anim=blur_in]{animation:a-blur 2.6s infinite}[data-anim=scale_in]{animation:a-scale 2.6s infinite}
+[data-anim=cut]{animation:a-cut 2.6s infinite}[data-anim=settle]{animation:a-settle 2.6s infinite}[data-anim=rise]{animation:a-rise 2.6s infinite}[data-anim=blur_in]{animation:a-blur 2.6s infinite}[data-anim=scale_in]{animation:a-scale 2.6s infinite}
 [data-anim=slide_up]{animation:a-slide 2.6s infinite}[data-anim=mask_wipe]{animation:a-mask 2.6s infinite}[data-anim=bounce]{animation:a-bounce 2.6s infinite}
 [data-anim=word_rise] .w{display:inline-block;animation:a-rise 2.6s infinite;animation-delay:calc(var(--i) * 90ms)}
 [data-anim=karaoke] .w{display:inline-block;animation:a-kara 2.6s infinite;animation-delay:calc(var(--i) * 260ms)}
+@keyframes a-cut{0%,11%{opacity:0}12%,84%{opacity:1}85%,100%{opacity:0}}
+@keyframes a-settle{0%,11%{opacity:0;transform:translateY(8px)}12%{opacity:1;transform:translateY(8px);animation-timing-function:cubic-bezier(.1,.75,.15,1)}24%,84%{opacity:1;transform:none}85%,100%{opacity:0}}
 @keyframes a-rise{0%{opacity:0;transform:translateY(40%)}22%,78%{opacity:1;transform:none}100%{opacity:0;transform:translateY(40%)}}
 @keyframes a-blur{0%{opacity:0;filter:blur(10px)}22%,78%{opacity:1;filter:none}100%{opacity:0;filter:blur(10px)}}
 @keyframes a-scale{0%{opacity:0;transform:scale(.86)}22%,78%{opacity:1;transform:none}100%{opacity:0;transform:scale(.86)}}

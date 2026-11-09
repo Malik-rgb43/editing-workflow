@@ -1,6 +1,6 @@
 # Word-timed caption (`caption`)
 
-Captions that show a few words at a time (a chunk never crosses a sentence break or a pause of 0.35 s or more) and light up the word being spoken. Works for Hebrew (RTL set on the text, never on the root) and English.
+Captions that show a few words at a time (a chunk never crosses a sentence break or a pause of 0.35 s or more). A chunk swaps on at its first word and off when the next one starts (a cut); next to a pause it gets a short entrance or exit on a designed curve (in AND out, never a fade-up preset); only the words named in `stress` take the accent colour, and karaoke on every word is optional (off by default). Works for Hebrew (RTL set on the text, never on the root) and English.
 
 - Duration: 3 s by default (set the host `data-duration` and the `duration` variable together). Canvas: 1080x1920 (elements are positioned from the centre/edges; for another size review the px values).
 - Files: `block.html` (the sub-composition), `demo.html` (a 3-second empty-project demo that embeds it as `compositions/caption.html`), `block.json` (manifest), `SOURCE.md`.
@@ -10,6 +10,8 @@ Captions that show a few words at a time (a chunk never crosses a sentence break
 - rtl (true for Hebrew)
 - chunk (at most this many words at a time; a chunk also ends at punctuation and before a pause of 0.35 s or more)
 - size (px)
+- karaoke (true lights up every word as it is spoken; off by default: emphasis on every word reads as auto-captions)
+- stress (comma-separated words to set in the accent colour; only the words that carry the point)
 - bottom (px)
 - duration (s)
 

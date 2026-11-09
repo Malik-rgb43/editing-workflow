@@ -11,7 +11,7 @@
       #notification-stack { position: absolute; inset: 0; overflow: hidden; font-family: var(--hfb-font, sans-serif); }
       #notification-stack .ns-item { position: absolute; left: 50%; top: 260px; width: 940px; margin-left: -470px; height: 168px; border-radius: 40px; padding: 26px 34px;
         background: var(--hfb-card, rgba(40, 42, 48, 0.94)); color: var(--hfb-fg, #f4f4f5); box-shadow: 0 18px 50px rgba(0, 0, 0, 0.4); opacity: 0; }
-      #notification-stack .ns-top { display: flex; align-items: center; gap: 16px; font-size: 26px; color: var(--hfb-muted, #9aa1ad); text-transform: uppercase; letter-spacing: 2px; }
+      #notification-stack .ns-top { display: flex; align-items: center; gap: 16px; font-size: 26px; color: var(--hfb-muted, #9aa1ad); text-transform: uppercase; letter-spacing: 2px; } /* ai-look-ok: the real phone notification header is set this way */
       #notification-stack .ns-dot { width: 34px; height: 34px; border-radius: 9px; background: var(--hfb-accent, #34d399); }
       #notification-stack .ns-title { font-size: 40px; font-weight: 700; margin-top: 10px; unicode-bidi: plaintext; }
       #notification-stack .ns-body { font-size: 34px; color: var(--hfb-muted, #c3c8d1); margin-top: 2px; unicode-bidi: plaintext; }
@@ -38,12 +38,16 @@
             el.querySelector(".ns-body").textContent = String(it.body || "");
             list.appendChild(el);
           });
+          // designer curves (cubic-bezier, the motion kit's kit.* values): a curve per move, never a named preset
+          var BZ = function (x1, y1, x2, y2) { var cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx, cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+            return function (p) { if (p <= 0) return 0; if (p >= 1) return 1; var lo = 0, hi = 1, t = p; for (var i = 0; i < 24; i++) { var x = ((ax * t + bx) * t + cx) * t; if (x < p) lo = t; else hi = t; t = (lo + hi) / 2; } return ((ay * t + by) * t + cy) * t; }; };
+          var LAND = BZ(0.1, 0.75, 0.15, 1), LEAVE = BZ(0.55, 0, 0.9, 0.35), HEAVY = BZ(0.75, 0, 0.18, 1), DRIFT = BZ(0.4, 0, 0.6, 1), WIND = BZ(0.45, 0, 0.55, 1);
           var tl = gsap.timeline({ paused: true });
           items.forEach(function (_, i) {
             var t0 = 0.2 + i * gap;
-            tl.fromTo("#notification-stack-item-" + i, { y: -STEP, opacity: 0, scale: 0.94 }, { y: 0, opacity: 1, scale: 1, duration: 0.5, ease: "power3.out" }, t0);
+            tl.fromTo("#notification-stack-item-" + i, { y: -STEP, opacity: 0, scale: 0.94 }, { y: 0, opacity: 1, scale: 1, duration: 0.5, ease: LAND }, t0);
             for (var j = 0; j < i; j++) { // every older card slides down one slot when this one arrives
-              tl.to("#notification-stack-item-" + j, { y: (i - j) * STEP, opacity: Math.max(0.35, 1 - (i - j) * 0.22), duration: 0.5, ease: "power3.out" }, t0);
+              tl.to("#notification-stack-item-" + j, { y: (i - j) * STEP, opacity: Math.max(0.35, 1 - (i - j) * 0.22), duration: 0.55, ease: HEAVY }, t0 + 0.05 * (i - j)); // the older cards react, a little later the further down
             }
           });
           window.__timelines = window.__timelines || {};

@@ -268,8 +268,8 @@ def check_node():
         hv, pin = info.get("version"), info.get("pinned")
         drift = f"; installed {hv} differs from the pin {pin} (run `npm ci --ignore-scripts` in the toolkit folder)" if hv and pin and hv != pin else ""
         return c.set("pass" if hv else "not_run", f"node {ver}; hyperframes v{hv} (pinned {pin}){drift}", observed=ver, executable=node)
-    npx = shutil.which("npx")
-    hf = _run([npx, "--no-install", "hyperframes", "--version"], 25) if npx else None
+    # The same pinned `npx --no-install hyperframes@<pin>` the tools use; a bare `hyperframes` would ask npm for the newest release.
+    hf = _run(list(info["argv"]) + ["--version"], 25) if info.get("found") else None
     hv = (hf.stdout.strip() if hf and hf.returncode == 0 else None)
     return c.set("pass" if hv else "not_run", f"node {ver}; hyperframes {'v' + hv if hv else 'not installed locally (nothing was downloaded)'}", observed=ver, executable=node,
                  remediation=None if hv else "installed by `python install/bootstrap.py apply` (it runs `npm ci --ignore-scripts` from package.json + package-lock.json)")

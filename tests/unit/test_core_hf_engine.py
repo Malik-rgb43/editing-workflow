@@ -23,6 +23,12 @@ def fake_toolkit(root: Path, installed="0.8.98", pinned="0.8.98") -> Path:
     return root
 
 
+@pytest.fixture(autouse=True)
+def no_installed_homes(monkeypatch):
+    # The machine running the tests may have a real ~/.avc/toolkit: keep every test independent of it.
+    monkeypatch.setattr(hf_engine, "installed_homes", lambda: [])
+
+
 @pytest.fixture
 def with_node(monkeypatch):
     real = shutil.which
@@ -45,9 +51,46 @@ def test_toolkit_engine_preferred_over_npx(tmp_path, with_node):
 
 
 def test_command_never_uses_a_downloading_npx(tmp_path, with_node):
+    (tmp_path / "package.json").write_text(json.dumps({"dependencies": {"hyperframes": "0.8.98"}}), encoding="utf-8")
     eng = hf_engine.find(tmp_path, env={})  # no node_modules
     assert eng.source == "project-local" and "--no-install" in eng.argv
     assert hf_engine.command(["render", "x"], tmp_path, env={})[-2:] == ["render", "x"]
+
+
+def test_npx_fallback_is_always_pinned(tmp_path, with_node):
+    # Live failure 2026-10-08: a bare `npx --no-install hyperframes` asked npm for 0.8.141 and refused; the pin must be in the spec.
+    (tmp_path / "package.json").write_text(json.dumps({"dependencies": {"hyperframes": "0.8.98"}}), encoding="utf-8")
+    argv = hf_engine.command(["render", "."], tmp_path, env={})
+    assert "hyperframes@0.8.98" in argv and "hyperframes" not in argv
+    # No exact pin -> no npx at all (npx would pick a version on its own).
+    (tmp_path / "package.json").write_text(json.dumps({"dependencies": {"hyperframes": "^0.8.98"}}), encoding="utf-8")
+    assert hf_engine.find(tmp_path, env={}) is None
+    with pytest.raises(hf_engine.EngineMissing):
+        hf_engine.command(["render", "."], tmp_path, env={})
+
+
+def test_clone_without_node_modules_uses_the_installed_toolkit(tmp_path, with_node, monkeypatch):
+    clone = tmp_path / "clone"
+    clone.mkdir()
+    (clone / "package.json").write_text(json.dumps({"dependencies": {"hyperframes": "0.8.98"}}), encoding="utf-8")
+    (tmp_path / "old").mkdir()
+    (tmp_path / "home").mkdir()
+    drifted = fake_toolkit(tmp_path / "old", installed="0.8.141")
+    home = fake_toolkit(tmp_path / "home")
+    monkeypatch.setattr(hf_engine, "installed_homes", lambda: [tmp_path / "missing", drifted, home])
+    eng = hf_engine.find(clone, env={})
+    assert eng.source == "toolkit" and eng.root == home and eng.version == "0.8.98"
+    assert eng.argv == ("/fake/node", str(home / "node_modules" / "hyperframes" / "bin" / "hyperframes.mjs"))
+    assert hf_engine.describe(clone)["version_matches_pin"] is True
+
+
+def test_installed_homes_reads_the_install_manifest(tmp_path, monkeypatch):
+    monkeypatch.undo()  # the real function, with a fake home folder
+    monkeypatch.setattr(hf_engine.Path, "home", classmethod(lambda cls: tmp_path))
+    monkeypatch.setenv("AVC_ASCII_BASE", str(tmp_path / "ascii"))
+    (tmp_path / ".avc").mkdir()
+    (tmp_path / ".avc" / "install-manifest.json").write_text(json.dumps({"paths": {"toolkit_home": str(tmp_path / "custom")}}), encoding="utf-8")
+    assert hf_engine.installed_homes() == [tmp_path / "custom", tmp_path / ".avc" / "toolkit", tmp_path / "ascii" / "avc-toolkit"]
 
 
 def test_missing_engine_raises_instead_of_downloading(tmp_path, monkeypatch):

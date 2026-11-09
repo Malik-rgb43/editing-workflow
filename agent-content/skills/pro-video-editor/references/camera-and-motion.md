@@ -3,6 +3,17 @@
 Merged on 2026-10-04 from the former type skills (one source per section, kept whole). Principles, not a template: use what fits the video in front of you and write the reason for each choice into PROMPT.md.
 
 
+## Easing and timing: the motion kit (never linear, never one house preset)
+Load when: writing any animation (GSAP in HyperFrames, CSS, three.js, Blender keys), and when a note says the motion looks robotic, cheap, "AI" or the same everywhere.
+
+Agent-made motion looks the same because of defaults: every element fades up about 24 px on `power3.out` over 0.4-0.6 s, 0.08 s apart, then nothing moves. HyperFrames' own guide sets that default. The kit in `motion-kit/` (bundled from motion-kit by Hugh Phan, MIT) replaces it:
+1. Read `motion-kit/RULES.md`, then `motion-kit/LIBRARY.md` (registers, curves, springs, timing, devices, text treatments, the checklist in section 8).
+2. Copy `motion-kit/motion-kit.js` into the composition (`<project>/hf/assets/motion-kit.js`) and load it with a `<script>` right after GSAP. It is seek-safe (`fromTo` on a paused timeline).
+3. Author every move with it: a curve chosen per move and per property (`MotionKit.curve('kit.land')`, a named system curve or `MotionKit.bez(...)`), duration from distance and weight (`dur(px, weight)`), exits about 0.65x the entrance and accelerating out, a lead with uneven reactions (`react(i)`), holds kept alive, most text cut on and written text typed on.
+4. Linear (`ease: "none"`) is only for a proxy that is not itself the motion, such as the per-frame face-follow below; a visible move is never linear and never starts or stops dead.
+
+When a number elsewhere in this file conflicts with the kit on curves or timing, the kit wins; the camera rules below (one spline per scene, move length, face-centring) still hold.
+
 ## Camera, zoom rhythm and face-centring
 <!-- source: pro-video-editor/references/camera-and-motion.md -->
 Load when: designing zooms in PROMPT.md, solving `camera_path`, auditing centring, debugging "the camera moves in jerks". Facts dated 2026-10-02; "d06-th" = distilled 06 talking-head-and-footage. All px/s^2 and px figures below were measured on ONE swaying take on the reference machine and are a gate calibration, not a universal law.
@@ -29,7 +40,7 @@ const paint = () => { const x = (540 - CFX[Math.max(0, Math.min(CFX.length-1, Ma
   pans.forEach(el => el.style.transform = "translate(" + x + "px,0)"); };
 paint();
 tl.fromTo(pv, { i: 0 }, { i: CFX.length-1, duration: (CFX.length-1)/30, ease: "none", onUpdate: paint, immediateRender: false }, 0);
-// zooms: tl.fromTo("#zoom", {scale:a}, {scale:b, ease:"sine.inOut"}); a hard scale change only ON a cut
+// zooms: tl.fromTo("#zoom", {scale:a}, {scale:b, ease:MotionKit.curve('kit.heavy')}); a hard scale change only ON a cut
 ```
 Per-frame `tl.set(..., f/30)` misses frames under seek (jitter 4 -> 0 after switching to one proxy tween). Alternatives: `transformOrigin = faceX` gives x = 540 - faceX; origin at 540 gives x = scale*(540 - faceX). Edge cover: minimum scale `1/(1 - max|540 - faceX|/540)`; edges stay covered while `|540 - faceX| <= 540*(1 - 1/scale)`; `--scale` = the SMALLEST zoom the shot uses. A pull-back (behind-the-speaker beats, scale 0.72-0.8) must keep `CAM x push >= 540/(540*sc - |X|)` or a navy edge shows.
 
@@ -64,7 +75,7 @@ A motion PROMPT without these three tables is not ready for approval (owner rule
 
 ### 0. The three tables a motion PROMPT.md carries
 - The six blocks `<inputs> <direction> <structure> <build> <gotchas> <start>` (frame-spec skeleton: `agent-content/techniques/frame-spec-prompt.md`). `<direction>` carries `W x H @fps (N frames)`, >= 2 hex colours and a `Banned:` line.
-- `<structure>`: every beat starts a line with its frame range (`f0-f29 ...`) and names a px size/position, an easing (`expo.out`, `power3.in`, `spline`, ...), a sound (SFX, music, VO, silence) and the transition out (cut, whip, match-move, zoom-through, ...); the ranges cover f0..N with no gap (overlap is allowed: the next scene starts under the previous). "About"/"~" numbers are warned.
+- `<structure>`: every beat starts a line with its frame range (`f0-f29 ...`) and names a px size/position, an easing (a motion-kit curve such as `kit.land`, `kit.leave`, a `bez(...)`, or `spline`; see the motion kit section above), a sound (SFX, music, VO, silence) and the transition out (cut, whip, match-move, zoom-through, ...); the ranges cover f0..N with no gap (overlap is allowed: the next scene starts under the previous). "About"/"~" numbers are warned.
 - The three tables below, with exactly these header words (extra columns are fine).
 - A line `APPROVAL: <who> <date>` once the human approves (the checker returns `blocked`, exit 2, when it is missing or a placeholder).
 - Pass `--fps` when the delivery is not 30 fps and `--register` for the piece (`launch` is strictest). A checker pass means the spec is internally consistent, not that the render will look right.

@@ -101,9 +101,10 @@ def fetch(fams: list[dict], to: Path, base: str, timeout: float = 60.0) -> tuple
     return (1 if errors else 0), p
 
 
-CAPTION_ANIMS = (("rise", "עולה למקום", "rises into place"), ("slide_up", "מחליק מלמטה", "slides up"), ("blur_in", "מטושטש לחד", "blur to sharp"),
-                 ("scale_in", "גדל למקום", "scales in"), ("word_rise", "מילה אחרי מילה", "word by word"), ("karaoke", "קריוקי (מילה נצבעת)", "karaoke"),
-                 ("mask_wipe", "נחשף בניגוב", "mask wipe"))
+# cut on first: it is what professional captions mostly do; blur-in and bounce are left out (they read as auto-captions)
+CAPTION_ANIMS = (("cut", "מתחלף בחיתוך (כניסה קצרה רק אחרי הפסקה)", "swaps on a cut (a short entrance only after a pause)"), ("settle", "נחתך ומתיישב קלות", "cuts on with a small settle"),
+                 ("rise", "עולה למקום", "rises into place"), ("mask_wipe", "נחשף בניגוב", "mask wipe"),
+                 ("word_rise", "מילה אחרי מילה", "word by word"), ("karaoke", "קריוקי (מילה נצבעת)", "karaoke"))
 CAPTION_Y = ((72, "נמוך, מעל אזור הממשק", "low, above the app rail"), (64, "שליש תחתון", "lower third"), (56, "מתחת לפנים", "below the face"),
              (46, "מרכז", "centre"))
 

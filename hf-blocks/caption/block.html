@@ -4,13 +4,15 @@
   {"id":"rtl","type":"boolean","label":"Right-to-left text (Hebrew)","default":false},
   {"id":"chunk","type":"number","label":"Words shown at a time","default":3},
   {"id":"size","type":"number","label":"Font size in px","default":88},
+  {"id":"karaoke","type":"boolean","label":"Light up every word as it is spoken (off by default: emphasis on every word reads as auto-captions)","default":false},
+  {"id":"stress","type":"string","label":"Words to emphasise in the accent colour, comma separated (only the words that carry the point; empty = none)","default":""},
   {"id":"bottom","type":"number","label":"Distance of the caption block from the bottom edge, px","default":340},
   {"id":"duration","type":"number","label":"Seconds the block lasts (must match the host data-duration)","default":3}
 ]'>
   <head>
     <meta charset="UTF-8" />
     <style>
-      /* Word-timed captions: a chunk of N words appears, the word being spoken lights up. RTL (Hebrew) is set on the TEXT element only - never on the composition root.
+      /* Word-timed captions: a chunk swaps on at its first word (a short entrance / exit only next to a pause); only the words named in `stress` take the accent colour (karaoke on every word is optional and off by default). RTL (Hebrew) is set on the TEXT element only - never on the composition root.
          The font comes from the page: define @font-face in the host page and set --hfb-font (a file in hf/fonts/, never a font by name).
          palette = CSS variables set on the host page: --hfb-fg, --hfb-accent, --hfb-caption-bg */
       #caption { position: absolute; inset: 0; overflow: hidden; font-family: var(--hfb-font, sans-serif); }
@@ -27,11 +29,18 @@
           var D = Math.max(0.5, Number(v.duration) || 3);
           var size = Number(v.size) || 88, bottom = Number(v.bottom) || 340, n = Math.max(1, Math.round(Number(v.chunk) || 3));
           var rtl = v.rtl === true || v.rtl === "true";
+          var karaoke = v.karaoke === true || v.karaoke === "true";
+          var norm = function (x) { return String(x).replace(/[.,!?;:"'״׳()\[\]…]+/g, "").toLowerCase(); };
+          var stress = String(v.stress || "").split(",").map(norm).filter(Boolean);
           var words;
           try { words = JSON.parse(v.words); } catch (e) { words = []; }
           words = (Array.isArray(words) ? words : []).filter(function (w) { return w && typeof w.w === "string" && isFinite(w.start) && isFinite(w.end); })
             .map(function (w) { return { w: w.w, start: Math.max(0, +w.start), end: Math.max(+w.start, +w.end) }; });
           var root = document.getElementById("caption");
+          // designer curves (cubic-bezier, the motion kit's kit.* values): a curve per move, never a named preset
+          var BZ = function (x1, y1, x2, y2) { var cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx, cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+            return function (p) { if (p <= 0) return 0; if (p >= 1) return 1; var lo = 0, hi = 1, t = p; for (var i = 0; i < 24; i++) { var x = ((ax * t + bx) * t + cx) * t; if (x < p) lo = t; else hi = t; t = (lo + hi) / 2; } return ((ay * t + by) * t + cy) * t; }; };
+          var LAND = BZ(0.1, 0.75, 0.15, 1), LEAVE = BZ(0.55, 0, 0.9, 0.35), HEAVY = BZ(0.75, 0, 0.18, 1), DRIFT = BZ(0.4, 0, 0.6, 1), WIND = BZ(0.45, 0, 0.55, 1);
           var tl = gsap.timeline({ paused: true });
           // a chunk ends after n words, at a word ending in punctuation, or before a pause of 0.35 s or more - never across a sentence break
           var chunks = [], cur = [];
@@ -57,12 +66,21 @@
               el.appendChild(s);
             });
             root.appendChild(el);
-            tl.fromTo("#caption-chunk-" + c, { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.14, ease: "power2.out" }, t0);
+            // a chunk that takes over from the previous one swaps on the same frame (a cut); one that starts after a pause gets a short
+            // entrance and one that leaves before a pause a short exit (the house law: in AND out), on designed curves, never a fade-up preset
+            var prevEnd = c > 0 ? chunks[c - 1][chunks[c - 1].length - 1].end : -1;
+            var afterPause = c === 0 || t0 - prevEnd >= 0.35;
+            if (afterPause) { tl.fromTo("#caption-chunk-" + c, { opacity: 0, y: 6 }, { opacity: 1, y: 0, duration: 0.14, ease: LAND }, t0); }
+            else { tl.set("#caption-chunk-" + c, { opacity: 1 }, t0); }
             group.forEach(function (w, k) {
-              tl.set("#caption-hl-" + c + "-" + k, { opacity: 1 }, w.start);
-              tl.set("#caption-hl-" + c + "-" + k, { opacity: 0 }, Math.max(w.start + 0.02, w.end));
+              if (stress.indexOf(norm(w.w)) >= 0) { tl.set("#caption-hl-" + c + "-" + k, { opacity: 1 }, w.start); }
+              else if (karaoke) {
+                tl.set("#caption-hl-" + c + "-" + k, { opacity: 1 }, w.start);
+                tl.set("#caption-hl-" + c + "-" + k, { opacity: 0 }, Math.max(w.start + 0.02, w.end));
+              }
             });
-            tl.to("#caption-chunk-" + c, { opacity: 0, duration: 0.1, ease: "none" }, Math.max(t0 + 0.2, t1 - 0.1));
+            if (next && next.start <= t1 + 0.001) { tl.set("#caption-chunk-" + c, { opacity: 0 }, Math.max(t0 + 0.2, t1)); } // the next chunk takes over: a cut
+            else { tl.to("#caption-chunk-" + c, { opacity: 0, duration: 0.12, ease: LEAVE }, Math.max(t0 + 0.2, t1 - 0.12)); } // a pause follows: a short exit
           }
           if (!words.length) { tl.to("#caption", { opacity: 1, duration: D }, 0); } // an empty list still has to give the timeline a length
           window.__timelines = window.__timelines || {};

@@ -16,7 +16,7 @@ Load when a note arrives and you must decide what it means, which file or cue ca
 | SFX loud, music loud | gain above the speech margin | `hf_mix --report` (audio-only branch) |
 | caption late or early | cue timing, not frame literal | `caption_qa`, word cue in the captions JSON |
 | wrong word, typo | text fact differs from the spec | grep the HTML for the string; compare to PROMPT facts; zero proofreading errors is the bar |
-| boring, looks AI, static, "לא אהבתי" | the beat's concept itself | replace-concept (section 3) |
+| boring, looks AI, static, "לא אהבתי" | the beat's concept itself; for "looks AI" also every tell in `agent-content/skills/pro-video-editor/references/anti-ai-look.md` (run `ai_look_scan.py`) | replace-concept (section 3) |
 | too long, shorter, move this earlier | the order or length of beats | restructure (section 3) |
 | another song, the music doesn't fit | the track itself, not its level | music-swap (section 3) |
 | wrong caption word / captions in another language | the caption text / the caption language | fix / global-rule (section 3) |

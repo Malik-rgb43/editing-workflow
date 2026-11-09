@@ -2,7 +2,7 @@
   "schema": "avc.hf-block/1",
   "name": "caption",
   "title": "Word-timed caption",
-  "description": "Captions that show a few words at a time (a chunk never crosses a sentence break or a pause of 0.35 s or more) and light up the word being spoken. Works for Hebrew (RTL set on the text, never on the root) and English.",
+  "description": "Captions that show a few words at a time (a chunk never crosses a sentence break or a pause of 0.35 s or more). A chunk swaps on at its first word and off when the next one starts (a cut); next to a pause it gets a short entrance or exit on a designed curve (in AND out, never a fade-up preset); only the words named in `stress` take the accent colour, and karaoke on every word is optional (off by default). Works for Hebrew (RTL set on the text, never on the root) and English.",
   "duration_s": 3,
   "size": [
     1080,
@@ -29,6 +29,16 @@
       "id": "size",
       "type": "number",
       "default": 88
+    },
+    {
+      "id": "karaoke",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "id": "stress",
+      "type": "string",
+      "default": ""
     },
     {
       "id": "bottom",

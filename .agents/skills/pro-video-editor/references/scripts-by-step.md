@@ -16,6 +16,7 @@ Stdlib, `--self-check`, Usage in each docstring. They check numbers and text, ne
 | 4, whenever the plan has to change | `promise_check.py record` | the user's words and the time for one change (a failed generation becoming a still, music dropped, a beat swapped, the length moved), recorded only after you asked |
 | 4 (AI takes) | `probe_takes.py`, then `cutlist_check.py` | fps, colour tags and VFR/HDR flags of each take; then clean windows, no reverse, artifacts covered, native fps |
 | 4 (every patch) | `seek_safe_scan.py` | composition state that cannot be seeked (clocks, random, rAF, loops, transitions) |
+| 4, before the draft render | `ai_look_scan.py` | the code-level tells of the AI look (preset easing, fade-up, even staggers, linear moves, blur-in, glow / gradient text, emoji, feature pills, default UI font): warnings, see `references/anti-ai-look.md` |
 | 4 and 5 | `palette_audit.py` | every colour in the composition against the one locked DESIGN.md palette |
 | 4, before the draft render (and 5, with `--render` on the draft before presenting) | `promise_check.py check` | measures the composition (length and size from its root), the captions, the mix cues and the storyboard against the promise; with `--render` the draft file's own length, aspect and audio. Exit 1 = a change nobody asked for: ask, record or rebuild, then check again. `not_measured` rows are confirmed by eye or ear |
 | 5 (text, CTA, price, logo) | `safe_zone_check.py` | each box against the safe-zone preset; passes only with an overlay snapshot you looked at |

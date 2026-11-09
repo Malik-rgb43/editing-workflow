@@ -10,7 +10,7 @@
 # `licence = "Apache-2.0"` is the decision default Q12: the author has not chosen a licence for
 # owner-authored code and content, the repository stays private until that decision. This file does NOT
 # pick a licence. Third-party material needs origin = "third_party", a `source`, and (once a register is
-# supplied to gen_bom) a `register_id` whose row is cleared. The only bundled third-party file is the Heebo font subset (rule at the end of this file).
+# supplied to gen_bom) a `register_id` whose row is cleared. Bundled third-party files (font subsets, motion-kit) have their own rules at the end of this file.
 
 schema = 1
 
@@ -79,3 +79,11 @@ licence = "OFL-1.1"
 allow = ["font"]
 source = "https://github.com/google/fonts/tree/main/ofl/karantina (Karantina Bold TTF v13 from fonts.gstatic.com, 47,652 B); subset to Hebrew + Basic Latin as WOFF2 with fontTools on 2026-11-03; OFL.txt shipped beside it"
 note = "embedded as base64 in the generated HTML pages and served by the warehouse; the OFL allows bundling and subsetting"
+
+# ---- bundled third-party code: motion-kit (Hugh Phan, MIT) - easing curves and motion rules for pro-video-editor ----
+[[rule]]
+globs = ["**/pro-video-editor/motion-kit/**"]
+origin = "third_party"
+licence = "MIT"
+source = "https://github.com/hughminhphan/motion-kit (commit 6173e5c, skills/motion-designer: motion-kit.js unchanged, LIBRARY.md one pointer changed, SKILL.md -> RULES.md without front matter; LICENSE shipped as LICENSE-motion-kit.txt)"
+note = "copied into a composition's hf/assets by the agent; the MIT licence allows bundling and changes with the notice kept"

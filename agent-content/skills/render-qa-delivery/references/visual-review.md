@@ -4,7 +4,7 @@ Load when: before reviewing or presenting a draft, when briefing a reviewer or c
 
 ## 1. Four axes
 1. **Cropping / composition:** safe zone, finishes clean, speaker centred, head not cut, nothing cut by the frame edge or another element (a word entering half out of frame, a wipe stopping halfway, a plane cropped in a card photo).
-2. **Fidelity to DESIGN.md and the vision:** palette only; fonts and weights of the project (default Rubik 400/900, <= 2 weights per frame); radii and shadows from tokens; no AI look; one focus per frame; what PROMPT.md promised at that moment is there.
+2. **Fidelity to DESIGN.md and the vision:** palette only; fonts and weights of the project (default Rubik 400/900, <= 2 weights per frame); radii and shadows from tokens; no AI look (the tells in `agent-content/skills/pro-video-editor/references/anti-ai-look.md`); one focus per frame; what PROMPT.md promised at that moment is there.
 3. **Clean animation:** no pops, no overlapping text/cards > 3 frames, no word entering wrong and fixing itself, entrance/exit consistent with the tokens (expo/power2, no bounce on text, exit shorter than entrance), no transition repeated back-to-back, no sudden camera stop, word >= 0.25 s and card >= 0.9 s.
 4. **Readability:** contrast, size, numbers and UI details readable, the first 3 s hook, the end card clean.
 Report each problem as: time or frame, axis, description, severity (blocker / major / minor), concrete fix.

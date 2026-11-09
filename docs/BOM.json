@@ -2,15 +2,16 @@
   "schema": 1,
   "tool": "scripts/gen_bom.py",
   "status": "PASS",
-  "file_count": 926,
-  "total_bytes": 9072916,
+  "file_count": 946,
+  "total_bytes": 9286324,
   "by_origin": {
-    "generated": 383,
-    "owner": 503,
-    "third_party": 40
+    "generated": 387,
+    "owner": 507,
+    "third_party": 52
   },
   "by_licence": {
-    "Apache-2.0": 884,
+    "Apache-2.0": 892,
+    "MIT": 12,
     "OFL-1.1": 40,
     "generated-lockfile": 2
   },
@@ -74,7 +75,7 @@
     {
       "path": ".agents/skills/captions-transcription/.GENERATED-DO-NOT-EDIT",
       "size": 308,
-      "sha256": "dbe598c8fc57a1472d760ce9b2c88478b57bb8181461cf3ac3523419a48fd062",
+      "sha256": "a09a62b50f6ebfcbfccaaf47217675ab89d3ff1e57d87fbdb2cb6fdbba8c9b60",
       "class": "text",
       "origin": "generated",
       "licence": "Apache-2.0",
@@ -83,8 +84,8 @@
     },
     {
       "path": ".agents/skills/captions-transcription/SKILL.md",
-      "size": 14483,
-      "sha256": "9daa75ca041a9fbb85ed630887cba1fa46f9ffc298607b61a2648488660ef940",
+      "size": 14771,
+      "sha256": "ca9b3b272f6d13c1c021b8d2b0c8c8297da67d180fbb4fd7f22c261a3c69ee3c",
       "class": "text",
       "origin": "generated",
       "licence": "Apache-2.0",
@@ -414,7 +415,7 @@
     {
       "path": ".agents/skills/pro-video-editor/.GENERATED-DO-NOT-EDIT",
       "size": 302,
-      "sha256": "3c5276012081c8cc68c8c42ee1a2b92f13d37338165944c79a90b4975ff5a88f",
+      "sha256": "c9fbead56cddd89e084a740eecdb44d8c6adf7b83b29dd4f8f8ea05f4775b180",
       "class": "text",
       "origin": "generated",
       "licence": "Apache-2.0",
@@ -423,8 +424,8 @@
     },
     {
       "path": ".agents/skills/pro-video-editor/SKILL.md",
-      "size": 29396,
-      "sha256": "0758b019c0989960582f17fc9f415a2aea4da7666f3c1804d029a2490f2d44e5",
+      "size": 30687,
+      "sha256": "127bbdf5d73174a00f9ff247db59ee3e09f2ebac8dcd734c48700e82f7cc3e88",
       "class": "text",
       "origin": "generated",
       "licence": "Apache-2.0",
@@ -462,6 +463,50 @@
       "flags": []
     },
     {
+      "path": ".agents/skills/pro-video-editor/motion-kit/LIBRARY.md",
+      "size": 15112,
+      "sha256": "62d1e94223236d37adc85bc122c5757c0c9d3b08e6c1987efc262889a873d326",
+      "class": "text",
+      "origin": "third_party",
+      "licence": "MIT",
+      "rule": 9,
+      "flags": [],
+      "source": "https://github.com/hughminhphan/motion-kit (commit 6173e5c, skills/motion-designer: motion-kit.js unchanged, LIBRARY.md one pointer changed, SKILL.md -> RULES.md without front matter; LICENSE shipped as LICENSE-motion-kit.txt)"
+    },
+    {
+      "path": ".agents/skills/pro-video-editor/motion-kit/LICENSE-motion-kit.txt",
+      "size": 1087,
+      "sha256": "eb6ebdd1320305c7ef950156e01dfdb6c349a5f1e3d425c25b36e6379da55191",
+      "class": "text",
+      "origin": "third_party",
+      "licence": "MIT",
+      "rule": 9,
+      "flags": [],
+      "source": "https://github.com/hughminhphan/motion-kit (commit 6173e5c, skills/motion-designer: motion-kit.js unchanged, LIBRARY.md one pointer changed, SKILL.md -> RULES.md without front matter; LICENSE shipped as LICENSE-motion-kit.txt)"
+    },
+    {
+      "path": ".agents/skills/pro-video-editor/motion-kit/RULES.md",
+      "size": 5257,
+      "sha256": "1acaccc91d2f3380c7ac51c52ba2799a6b43d2e44d801bbe559a5f95df57350f",
+      "class": "text",
+      "origin": "third_party",
+      "licence": "MIT",
+      "rule": 9,
+      "flags": [],
+      "source": "https://github.com/hughminhphan/motion-kit (commit 6173e5c, skills/motion-designer: motion-kit.js unchanged, LIBRARY.md one pointer changed, SKILL.md -> RULES.md without front matter; LICENSE shipped as LICENSE-motion-kit.txt)"
+    },
+    {
+      "path": ".agents/skills/pro-video-editor/motion-kit/motion-kit.js",
+      "size": 20721,
+      "sha256": "7aa00aea52a626b325b5ee011eeeda073ea77508830470e7c34c0693ba64101e",
+      "class": "text",
+      "origin": "third_party",
+      "licence": "MIT",
+      "rule": 9,
+      "flags": [],
+      "source": "https://github.com/hughminhphan/motion-kit (commit 6173e5c, skills/motion-designer: motion-kit.js unchanged, LIBRARY.md one pointer changed, SKILL.md -> RULES.md without front matter; LICENSE shipped as LICENSE-motion-kit.txt)"
+    },
+    {
       "path": ".agents/skills/pro-video-editor/references/ai-footage.md",
       "size": 15246,
       "sha256": "11ac20996b07cd1bd77c8fa5064e831224b860fd13257bdfac0a3d02a08420ef",
@@ -472,9 +517,19 @@
       "flags": []
     },
     {
+      "path": ".agents/skills/pro-video-editor/references/anti-ai-look.md",
+      "size": 7449,
+      "sha256": "ec4d8d9ce2b1e0127b233e7881df5c2007aeecacc47e2e066fa67bd33010ddfb",
+      "class": "text",
+      "origin": "generated",
+      "licence": "Apache-2.0",
+      "rule": 4,
+      "flags": []
+    },
+    {
       "path": ".agents/skills/pro-video-editor/references/camera-and-motion.md",
-      "size": 14965,
-      "sha256": "a9470728ab8b29a999d2490653b7817bdeb22d08f180d42203ee64f0db3b00a4",
+      "size": 16660,
+      "sha256": "db65d5abda7f9819775d19e56c512cf46bb65d31791ef53c5932b95e026f73ad",
       "class": "text",
       "origin": "generated",
       "licence": "Apache-2.0",
@@ -583,8 +638,8 @@
     },
     {
       "path": ".agents/skills/pro-video-editor/references/scripts-by-step.md",
-      "size": 2703,
-      "sha256": "8c61054ae61b8fb1c8eb5c6e58a3be314a15927fe5a9ad347261542d688d35ca",
+      "size": 2939,
+      "sha256": "e8c6548a50ef1049cedd1b0ae445b8c926cc5cac0b45d903a7360c292f9fa488",
       "class": "text",
       "origin": "generated",
       "licence": "Apache-2.0",
@@ -645,6 +700,16 @@
       "path": ".agents/skills/pro-video-editor/references/worked-example-launch-film.md",
       "size": 6952,
       "sha256": "f60370bc5173acb8fe85c011f1afe1b73955e2c80b35d7330a896910e4ace7e1",
+      "class": "text",
+      "origin": "generated",
+      "licence": "Apache-2.0",
+      "rule": 4,
+      "flags": []
+    },
+    {
+      "path": ".agents/skills/pro-video-editor/scripts/ai_look_scan.py",
+      "size": 11090,
+      "sha256": "57bc01b5567e9e3cbd3a949cd5374b1636bd099f2b1c97ede7ab8ba99b8a2c8f",
       "class": "text",
       "origin": "generated",
       "licence": "Apache-2.0",
@@ -968,7 +1033,7 @@
     {
       "path": ".agents/skills/render-qa-delivery/.GENERATED-DO-NOT-EDIT",
       "size": 304,
-      "sha256": "2f05700342f21507774d1e597509aa5fe075f5526515ac6c414abc53e471be85",
+      "sha256": "0ace9b667bb5ed43df9252214dd2793cb7b99d2264226cdfbc8e367d3528c581",
       "class": "text",
       "origin": "generated",
       "licence": "Apache-2.0",
@@ -1057,8 +1122,8 @@
     },
     {
       "path": ".agents/skills/render-qa-delivery/references/visual-review.md",
-      "size": 4702,
-      "sha256": "af5b3f8cb4ea7fa24999f5929b252679b0f3f6b3501ae393d181d758e69925a8",
+      "size": 4784,
+      "sha256": "49743ed5e73d48e635119371a0d7e8ddcb62dcf7fd536a46159637e8ab0a09ae",
       "class": "text",
       "origin": "generated",
       "licence": "Apache-2.0",
@@ -1098,7 +1163,7 @@
     {
       "path": ".agents/skills/revision-notes-handler/.GENERATED-DO-NOT-EDIT",
       "size": 308,
-      "sha256": "5c1c00196ec603a28482ac5e8498d7280695dc858061fbbb61c106233c750b58",
+      "sha256": "21bdf1d9a56528d37b4254754c12b432307882eead9d22fc147a305c760b3db6",
       "class": "text",
       "origin": "generated",
       "licence": "Apache-2.0",
@@ -1147,8 +1212,8 @@
     },
     {
       "path": ".agents/skills/revision-notes-handler/references/diagnosis-and-classification.md",
-      "size": 5471,
-      "sha256": "2cc7a48e3ced7db27971e9d557ae1a5d9b61e52dd67687f83b499796df510b62",
+      "size": 5597,
+      "sha256": "92e7a79101399e203f953aef8da8e9449dd7510d80298fd18572a5b6723e57be",
       "class": "text",
       "origin": "generated",
       "licence": "Apache-2.0",
@@ -1922,7 +1987,7 @@
     {
       "path": ".agents/skills/visual-choice-board/.GENERATED-DO-NOT-EDIT",
       "size": 305,
-      "sha256": "5df90d7a40a5fe21134c077bf3613d4f04b24880e3ef3407b97e0f227a665223",
+      "sha256": "99cbc7cef9ee09fd63cca008ec10a4ccfaab32aeed1a5d67b57a943d2e9d0bde",
       "class": "text",
       "origin": "generated",
       "licence": "Apache-2.0",
@@ -2031,8 +2096,8 @@
     },
     {
       "path": ".agents/skills/visual-choice-board/scripts/hebrew_fonts.py",
-      "size": 14035,
-      "sha256": "031b8d285d4b5ec89b96971640921ed062acf1a0f6a11fe72d2bbc2a5a520b8c",
+      "size": 13971,
+      "sha256": "fa8f6f17c0d36a66f246220080a92c52fe106cef223d2d8a6e3611cc2c6905e0",
       "class": "text",
       "origin": "generated",
       "licence": "Apache-2.0",
@@ -2041,8 +2106,8 @@
     },
     {
       "path": ".agents/skills/visual-choice-board/scripts/make_board.py",
-      "size": 59252,
-      "sha256": "b6af69cb6481b02c6290721f83773fde411016a574ab049a0d4d6f0750711c13",
+      "size": 58729,
+      "sha256": "9b4231c031b5487fa3f3585d575d3f42b442297071b0d2c9ce3df832c591e1d2",
       "class": "text",
       "origin": "generated",
       "licence": "Apache-2.0",
@@ -2136,7 +2201,7 @@
     {
       "path": ".claude-plugin/plugin.json",
       "size": 724,
-      "sha256": "4aac50939725cde4fa51623aa7b063fa6e1e3fb5a26e063a3eb48a83d17b57f8",
+      "sha256": "fa596df6421f3c89f2864f3465ddb0a52fce2ece8d5bf6d9f2b52719d2d578d6",
       "class": "text",
       "origin": "owner",
       "licence": "Apache-2.0",
@@ -2186,7 +2251,7 @@
     {
       "path": ".claude/skills/captions-transcription/.GENERATED-DO-NOT-EDIT",
       "size": 308,
-      "sha256": "dbe598c8fc57a1472d760ce9b2c88478b57bb8181461cf3ac3523419a48fd062",
+      "sha256": "a09a62b50f6ebfcbfccaaf47217675ab89d3ff1e57d87fbdb2cb6fdbba8c9b60",
       "class": "text",
       "origin": "generated",
       "licence": "Apache-2.0",
@@ -2195,8 +2260,8 @@
     },
     {
       "path": ".claude/skills/captions-transcription/SKILL.md",
-      "size": 14483,
-      "sha256": "9daa75ca041a9fbb85ed630887cba1fa46f9ffc298607b61a2648488660ef940",
+      "size": 14771,
+      "sha256": "ca9b3b272f6d13c1c021b8d2b0c8c8297da67d180fbb4fd7f22c261a3c69ee3c",
       "class": "text",
       "origin": "generated",
       "licence": "Apache-2.0",
@@ -2496,7 +2561,7 @@
     {
       "path": ".claude/skills/pro-video-editor/.GENERATED-DO-NOT-EDIT",
       "size": 302,
-      "sha256": "3c5276012081c8cc68c8c42ee1a2b92f13d37338165944c79a90b4975ff5a88f",
+      "sha256": "c9fbead56cddd89e084a740eecdb44d8c6adf7b83b29dd4f8f8ea05f4775b180",
       "class": "text",
       "origin": "generated",
       "licence": "Apache-2.0",
@@ -2505,8 +2570,8 @@
     },
     {
       "path": ".claude/skills/pro-video-editor/SKILL.md",
-      "size": 29396,
-      "sha256": "0758b019c0989960582f17fc9f415a2aea4da7666f3c1804d029a2490f2d44e5",
+      "size": 30687,
+      "sha256": "127bbdf5d73174a00f9ff247db59ee3e09f2ebac8dcd734c48700e82f7cc3e88",
       "class": "text",
       "origin": "generated",
       "licence": "Apache-2.0",
@@ -2534,6 +2599,50 @@
       "flags": []
     },
     {
+      "path": ".claude/skills/pro-video-editor/motion-kit/LIBRARY.md",
+      "size": 15112,
+      "sha256": "62d1e94223236d37adc85bc122c5757c0c9d3b08e6c1987efc262889a873d326",
+      "class": "text",
+      "origin": "third_party",
+      "licence": "MIT",
+      "rule": 9,
+      "flags": [],
+      "source": "https://github.com/hughminhphan/motion-kit (commit 6173e5c, skills/motion-designer: motion-kit.js unchanged, LIBRARY.md one pointer changed, SKILL.md -> RULES.md without front matter; LICENSE shipped as LICENSE-motion-kit.txt)"
+    },
+    {
+      "path": ".claude/skills/pro-video-editor/motion-kit/LICENSE-motion-kit.txt",
+      "size": 1087,
+      "sha256": "eb6ebdd1320305c7ef950156e01dfdb6c349a5f1e3d425c25b36e6379da55191",
+      "class": "text",
+      "origin": "third_party",
+      "licence": "MIT",
+      "rule": 9,
+      "flags": [],
+      "source": "https://github.com/hughminhphan/motion-kit (commit 6173e5c, skills/motion-designer: motion-kit.js unchanged, LIBRARY.md one pointer changed, SKILL.md -> RULES.md without front matter; LICENSE shipped as LICENSE-motion-kit.txt)"
+    },
+    {
+      "path": ".claude/skills/pro-video-editor/motion-kit/RULES.md",
+      "size": 5257,
+      "sha256": "1acaccc91d2f3380c7ac51c52ba2799a6b43d2e44d801bbe559a5f95df57350f",
+      "class": "text",
+      "origin": "third_party",
+      "licence": "MIT",
+      "rule": 9,
+      "flags": [],
+      "source": "https://github.com/hughminhphan/motion-kit (commit 6173e5c, skills/motion-designer: motion-kit.js unchanged, LIBRARY.md one pointer changed, SKILL.md -> RULES.md without front matter; LICENSE shipped as LICENSE-motion-kit.txt)"
+    },
+    {
+      "path": ".claude/skills/pro-video-editor/motion-kit/motion-kit.js",
+      "size": 20721,
+      "sha256": "7aa00aea52a626b325b5ee011eeeda073ea77508830470e7c34c0693ba64101e",
+      "class": "text",
+      "origin": "third_party",
+      "licence": "MIT",
+      "rule": 9,
+      "flags": [],
+      "source": "https://github.com/hughminhphan/motion-kit (commit 6173e5c, skills/motion-designer: motion-kit.js unchanged, LIBRARY.md one pointer changed, SKILL.md -> RULES.md without front matter; LICENSE shipped as LICENSE-motion-kit.txt)"
+    },
+    {
       "path": ".claude/skills/pro-video-editor/references/ai-footage.md",
       "size": 15246,
       "sha256": "11ac20996b07cd1bd77c8fa5064e831224b860fd13257bdfac0a3d02a08420ef",
@@ -2544,9 +2653,19 @@
       "flags": []
     },
     {
+      "path": ".claude/skills/pro-video-editor/references/anti-ai-look.md",
+      "size": 7449,
+      "sha256": "ec4d8d9ce2b1e0127b233e7881df5c2007aeecacc47e2e066fa67bd33010ddfb",
+      "class": "text",
+      "origin": "generated",
+      "licence": "Apache-2.0",
+      "rule": 4,
+      "flags": []
+    },
+    {
       "path": ".claude/skills/pro-video-editor/references/camera-and-motion.md",
-      "size": 14965,
-      "sha256": "a9470728ab8b29a999d2490653b7817bdeb22d08f180d42203ee64f0db3b00a4",
+      "size": 16660,
+      "sha256": "db65d5abda7f9819775d19e56c512cf46bb65d31791ef53c5932b95e026f73ad",
       "class": "text",
       "origin": "generated",
       "licence": "Apache-2.0",
@@ -2655,8 +2774,8 @@
     },
     {
       "path": ".claude/skills/pro-video-editor/references/scripts-by-step.md",
-      "size": 2703,
-      "sha256": "8c61054ae61b8fb1c8eb5c6e58a3be314a15927fe5a9ad347261542d688d35ca",
+      "size": 2939,
+      "sha256": "e8c6548a50ef1049cedd1b0ae445b8c926cc5cac0b45d903a7360c292f9fa488",
       "class": "text",
       "origin": "generated",
       "licence": "Apache-2.0",
@@ -2717,6 +2836,16 @@
       "path": ".claude/skills/pro-video-editor/references/worked-example-launch-film.md",
       "size": 6952,
       "sha256": "f60370bc5173acb8fe85c011f1afe1b73955e2c80b35d7330a896910e4ace7e1",
+      "class": "text",
+      "origin": "generated",
+      "licence": "Apache-2.0",
+      "rule": 4,
+      "flags": []
+    },
+    {
+      "path": ".claude/skills/pro-video-editor/scripts/ai_look_scan.py",
+      "size": 11090,
+      "sha256": "57bc01b5567e9e3cbd3a949cd5374b1636bd099f2b1c97ede7ab8ba99b8a2c8f",
       "class": "text",
       "origin": "generated",
       "licence": "Apache-2.0",
@@ -3030,7 +3159,7 @@
     {
       "path": ".claude/skills/render-qa-delivery/.GENERATED-DO-NOT-EDIT",
       "size": 304,
-      "sha256": "2f05700342f21507774d1e597509aa5fe075f5526515ac6c414abc53e471be85",
+      "sha256": "0ace9b667bb5ed43df9252214dd2793cb7b99d2264226cdfbc8e367d3528c581",
       "class": "text",
       "origin": "generated",
       "licence": "Apache-2.0",
@@ -3109,8 +3238,8 @@
     },
     {
       "path": ".claude/skills/render-qa-delivery/references/visual-review.md",
-      "size": 4702,
-      "sha256": "af5b3f8cb4ea7fa24999f5929b252679b0f3f6b3501ae393d181d758e69925a8",
+      "size": 4784,
+      "sha256": "49743ed5e73d48e635119371a0d7e8ddcb62dcf7fd536a46159637e8ab0a09ae",
       "class": "text",
       "origin": "generated",
       "licence": "Apache-2.0",
@@ -3150,7 +3279,7 @@
     {
       "path": ".claude/skills/revision-notes-handler/.GENERATED-DO-NOT-EDIT",
       "size": 308,
-      "sha256": "5c1c00196ec603a28482ac5e8498d7280695dc858061fbbb61c106233c750b58",
+      "sha256": "21bdf1d9a56528d37b4254754c12b432307882eead9d22fc147a305c760b3db6",
       "class": "text",
       "origin": "generated",
       "licence": "Apache-2.0",
@@ -3189,8 +3318,8 @@
     },
     {
       "path": ".claude/skills/revision-notes-handler/references/diagnosis-and-classification.md",
-      "size": 5471,
-      "sha256": "2cc7a48e3ced7db27971e9d557ae1a5d9b61e52dd67687f83b499796df510b62",
+      "size": 5597,
+      "sha256": "92e7a79101399e203f953aef8da8e9449dd7510d80298fd18572a5b6723e57be",
       "class": "text",
       "origin": "generated",
       "licence": "Apache-2.0",
@@ -3904,7 +4033,7 @@
     {
       "path": ".claude/skills/visual-choice-board/.GENERATED-DO-NOT-EDIT",
       "size": 305,
-      "sha256": "5df90d7a40a5fe21134c077bf3613d4f04b24880e3ef3407b97e0f227a665223",
+      "sha256": "99cbc7cef9ee09fd63cca008ec10a4ccfaab32aeed1a5d67b57a943d2e9d0bde",
       "class": "text",
       "origin": "generated",
       "licence": "Apache-2.0",
@@ -4003,8 +4132,8 @@
     },
     {
       "path": ".claude/skills/visual-choice-board/scripts/hebrew_fonts.py",
-      "size": 14035,
-      "sha256": "031b8d285d4b5ec89b96971640921ed062acf1a0f6a11fe72d2bbc2a5a520b8c",
+      "size": 13971,
+      "sha256": "fa8f6f17c0d36a66f246220080a92c52fe106cef223d2d8a6e3611cc2c6905e0",
       "class": "text",
       "origin": "generated",
       "licence": "Apache-2.0",
@@ -4013,8 +4142,8 @@
     },
     {
       "path": ".claude/skills/visual-choice-board/scripts/make_board.py",
-      "size": 59252,
-      "sha256": "b6af69cb6481b02c6290721f83773fde411016a574ab049a0d4d6f0750711c13",
+      "size": 58729,
+      "sha256": "9b4231c031b5487fa3f3585d575d3f42b442297071b0d2c9ce3df832c591e1d2",
       "class": "text",
       "origin": "generated",
       "licence": "Apache-2.0",
@@ -4177,8 +4306,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 32364,
-      "sha256": "46aa5bbf51ac656e10b62dd647a97f236ca6bfcc99cc83513ad4159d54bf51e1",
+      "size": 35005,
+      "sha256": "b06e6fb8c156d4c40c5fbe79c56aba1bafe7beb5afc3a735c67f8d9bc1ac2bef",
       "class": "text",
       "origin": "owner",
       "licence": "Apache-2.0",
@@ -4217,8 +4346,8 @@
     },
     {
       "path": "NOTICE",
-      "size": 450,
-      "sha256": "db19e8dbf5b5c9edd97da0ead9289df549bd43efdcf0fd6fc4a1bb4c58fd7741",
+      "size": 658,
+      "sha256": "5b7a8fe5e61cd6eaff1d880263e6c36e3a5bc014ed3f4f12b75bfe3627b2b52a",
       "class": "text",
       "origin": "owner",
       "licence": "Apache-2.0",
@@ -4247,8 +4376,8 @@
     },
     {
       "path": "THIRD_PARTY_NOTICES.md",
-      "size": 15262,
-      "sha256": "28003d2080007dc48a64730b1cddbd0d8bc7d1ee32b8b72c0dd1f8e72d8db0b8",
+      "size": 18901,
+      "sha256": "df4badeabd9e337add6f6199dff1317556cfb3923827786c61984a74ceb08405",
       "class": "text",
       "origin": "owner",
       "licence": "Apache-2.0",
@@ -4357,8 +4486,8 @@
     },
     {
       "path": "agent-content/benchmarks/critic-brief.md",
-      "size": 13657,
-      "sha256": "7807a0eeb860eb94ec64782257cdab5962daefec4178fdef20d9ea641ea82471",
+      "size": 13883,
+      "sha256": "e9cdf0cc2358d4ef6c2f8b354ae171a051a50d6261b806f601d8862d34aac742",
       "class": "text",
       "origin": "owner",
       "licence": "Apache-2.0",
@@ -4757,8 +4886,8 @@
     },
     {
       "path": "agent-content/skills/captions-transcription/SKILL.md",
-      "size": 14483,
-      "sha256": "9daa75ca041a9fbb85ed630887cba1fa46f9ffc298607b61a2648488660ef940",
+      "size": 14771,
+      "sha256": "ca9b3b272f6d13c1c021b8d2b0c8c8297da67d180fbb4fd7f22c261a3c69ee3c",
       "class": "text",
       "origin": "owner",
       "licence": "Apache-2.0",
@@ -5037,8 +5166,8 @@
     },
     {
       "path": "agent-content/skills/pro-video-editor/SKILL.md",
-      "size": 29396,
-      "sha256": "0758b019c0989960582f17fc9f415a2aea4da7666f3c1804d029a2490f2d44e5",
+      "size": 30687,
+      "sha256": "127bbdf5d73174a00f9ff247db59ee3e09f2ebac8dcd734c48700e82f7cc3e88",
       "class": "text",
       "origin": "owner",
       "licence": "Apache-2.0",
@@ -5066,6 +5195,50 @@
       "flags": []
     },
     {
+      "path": "agent-content/skills/pro-video-editor/motion-kit/LIBRARY.md",
+      "size": 15112,
+      "sha256": "62d1e94223236d37adc85bc122c5757c0c9d3b08e6c1987efc262889a873d326",
+      "class": "text",
+      "origin": "third_party",
+      "licence": "MIT",
+      "rule": 9,
+      "flags": [],
+      "source": "https://github.com/hughminhphan/motion-kit (commit 6173e5c, skills/motion-designer: motion-kit.js unchanged, LIBRARY.md one pointer changed, SKILL.md -> RULES.md without front matter; LICENSE shipped as LICENSE-motion-kit.txt)"
+    },
+    {
+      "path": "agent-content/skills/pro-video-editor/motion-kit/LICENSE-motion-kit.txt",
+      "size": 1087,
+      "sha256": "eb6ebdd1320305c7ef950156e01dfdb6c349a5f1e3d425c25b36e6379da55191",
+      "class": "text",
+      "origin": "third_party",
+      "licence": "MIT",
+      "rule": 9,
+      "flags": [],
+      "source": "https://github.com/hughminhphan/motion-kit (commit 6173e5c, skills/motion-designer: motion-kit.js unchanged, LIBRARY.md one pointer changed, SKILL.md -> RULES.md without front matter; LICENSE shipped as LICENSE-motion-kit.txt)"
+    },
+    {
+      "path": "agent-content/skills/pro-video-editor/motion-kit/RULES.md",
+      "size": 5257,
+      "sha256": "1acaccc91d2f3380c7ac51c52ba2799a6b43d2e44d801bbe559a5f95df57350f",
+      "class": "text",
+      "origin": "third_party",
+      "licence": "MIT",
+      "rule": 9,
+      "flags": [],
+      "source": "https://github.com/hughminhphan/motion-kit (commit 6173e5c, skills/motion-designer: motion-kit.js unchanged, LIBRARY.md one pointer changed, SKILL.md -> RULES.md without front matter; LICENSE shipped as LICENSE-motion-kit.txt)"
+    },
+    {
+      "path": "agent-content/skills/pro-video-editor/motion-kit/motion-kit.js",
+      "size": 20721,
+      "sha256": "7aa00aea52a626b325b5ee011eeeda073ea77508830470e7c34c0693ba64101e",
+      "class": "text",
+      "origin": "third_party",
+      "licence": "MIT",
+      "rule": 9,
+      "flags": [],
+      "source": "https://github.com/hughminhphan/motion-kit (commit 6173e5c, skills/motion-designer: motion-kit.js unchanged, LIBRARY.md one pointer changed, SKILL.md -> RULES.md without front matter; LICENSE shipped as LICENSE-motion-kit.txt)"
+    },
+    {
       "path": "agent-content/skills/pro-video-editor/references/ai-footage.md",
       "size": 15246,
       "sha256": "11ac20996b07cd1bd77c8fa5064e831224b860fd13257bdfac0a3d02a08420ef",
@@ -5076,9 +5249,19 @@
       "flags": []
     },
     {
+      "path": "agent-content/skills/pro-video-editor/references/anti-ai-look.md",
+      "size": 7449,
+      "sha256": "ec4d8d9ce2b1e0127b233e7881df5c2007aeecacc47e2e066fa67bd33010ddfb",
+      "class": "text",
+      "origin": "owner",
+      "licence": "Apache-2.0",
+      "rule": 2,
+      "flags": []
+    },
+    {
       "path": "agent-content/skills/pro-video-editor/references/camera-and-motion.md",
-      "size": 14965,
-      "sha256": "a9470728ab8b29a999d2490653b7817bdeb22d08f180d42203ee64f0db3b00a4",
+      "size": 16660,
+      "sha256": "db65d5abda7f9819775d19e56c512cf46bb65d31791ef53c5932b95e026f73ad",
       "class": "text",
       "origin": "owner",
       "licence": "Apache-2.0",
@@ -5187,8 +5370,8 @@
     },
     {
       "path": "agent-content/skills/pro-video-editor/references/scripts-by-step.md",
-      "size": 2703,
-      "sha256": "8c61054ae61b8fb1c8eb5c6e58a3be314a15927fe5a9ad347261542d688d35ca",
+      "size": 2939,
+      "sha256": "e8c6548a50ef1049cedd1b0ae445b8c926cc5cac0b45d903a7360c292f9fa488",
       "class": "text",
       "origin": "owner",
       "licence": "Apache-2.0",
@@ -5249,6 +5432,16 @@
       "path": "agent-content/skills/pro-video-editor/references/worked-example-launch-film.md",
       "size": 6952,
       "sha256": "f60370bc5173acb8fe85c011f1afe1b73955e2c80b35d7330a896910e4ace7e1",
+      "class": "text",
+      "origin": "owner",
+      "licence": "Apache-2.0",
+      "rule": 2,
+      "flags": []
+    },
+    {
+      "path": "agent-content/skills/pro-video-editor/scripts/ai_look_scan.py",
+      "size": 11090,
+      "sha256": "57bc01b5567e9e3cbd3a949cd5374b1636bd099f2b1c97ede7ab8ba99b8a2c8f",
       "class": "text",
       "origin": "owner",
       "licence": "Apache-2.0",
@@ -5621,8 +5814,8 @@
     },
     {
       "path": "agent-content/skills/render-qa-delivery/references/visual-review.md",
-      "size": 4702,
-      "sha256": "af5b3f8cb4ea7fa24999f5929b252679b0f3f6b3501ae393d181d758e69925a8",
+      "size": 4784,
+      "sha256": "49743ed5e73d48e635119371a0d7e8ddcb62dcf7fd536a46159637e8ab0a09ae",
       "class": "text",
       "origin": "owner",
       "licence": "Apache-2.0",
@@ -5691,8 +5884,8 @@
     },
     {
       "path": "agent-content/skills/revision-notes-handler/references/diagnosis-and-classification.md",
-      "size": 5471,
-      "sha256": "2cc7a48e3ced7db27971e9d557ae1a5d9b61e52dd67687f83b499796df510b62",
+      "size": 5597,
+      "sha256": "92e7a79101399e203f953aef8da8e9449dd7510d80298fd18572a5b6723e57be",
       "class": "text",
       "origin": "owner",
       "licence": "Apache-2.0",
@@ -6435,8 +6628,8 @@
     },
     {
       "path": "agent-content/skills/visual-choice-board/scripts/hebrew_fonts.py",
-      "size": 14035,
-      "sha256": "031b8d285d4b5ec89b96971640921ed062acf1a0f6a11fe72d2bbc2a5a520b8c",
+      "size": 13971,
+      "sha256": "fa8f6f17c0d36a66f246220080a92c52fe106cef223d2d8a6e3611cc2c6905e0",
       "class": "text",
       "origin": "owner",
       "licence": "Apache-2.0",
@@ -6445,8 +6638,8 @@
     },
     {
       "path": "agent-content/skills/visual-choice-board/scripts/make_board.py",
-      "size": 59252,
-      "sha256": "b6af69cb6481b02c6290721f83773fde411016a574ab049a0d4d6f0750711c13",
+      "size": 58729,
+      "sha256": "9b4231c031b5487fa3f3585d575d3f42b442297071b0d2c9ce3df832c591e1d2",
       "class": "text",
       "origin": "owner",
       "licence": "Apache-2.0",
@@ -7089,8 +7282,8 @@
     },
     {
       "path": "hf-blocks/boarding-pass-stamp/block.html",
-      "size": 6255,
-      "sha256": "e81202a6f0ce66832d094210109038223c75a4b778c5975d627e7c0431fd4686",
+      "size": 6941,
+      "sha256": "7e41695b8a0d8d5c8a38fe940d55c02619b86070bd1a989de2cf3bef4b39c6cb",
       "class": "text",
       "origin": "owner",
       "licence": "Apache-2.0",
@@ -7119,8 +7312,8 @@
     },
     {
       "path": "hf-blocks/caption/README.md",
-      "size": 1503,
-      "sha256": "3392766dd7cce8d147c911765ec3c6a1d4d493692ef6425d1afc7526db96c70f",
+      "size": 1980,
+      "sha256": "98bb9acf7f993ea5aa8aa3af0e5a02850860d3fe3994127dab84cf59f5c7b31e",
       "class": "text",
       "origin": "owner",
       "licence": "Apache-2.0",
@@ -7139,8 +7332,8 @@
     },
     {
       "path": "hf-blocks/caption/block.html",
-      "size": 5343,
-      "sha256": "1f35a559ff9e6ad470ed56738521e5296c259c1d4bbdba11e8116a804620598f",
+      "size": 7668,
+      "sha256": "d43f52a6c2af70a3c9fabeece17eb11012d990374c78a89254b15172524be368",
       "class": "text",
       "origin": "owner",
       "licence": "Apache-2.0",
@@ -7149,8 +7342,8 @@
     },
     {
       "path": "hf-blocks/caption/block.json",
-      "size": 1340,
-      "sha256": "5c4b7ed73e994169281d29e1470f9beee7f82ad577766ed61580966faf913364",
+      "size": 1765,
+      "sha256": "dcb8148f0bc64d37207a8d7e592a11312b301ba41189d1b1d160f2e9ccf92007",
       "class": "text",
       "origin": "owner",
       "licence": "Apache-2.0",
@@ -7189,8 +7382,8 @@
     },
     {
       "path": "hf-blocks/film-burn/block.html",
-      "size": 3878,
-      "sha256": "c8c437b1a49f7a881097a21c723796f2baaf1242e827c0e08b6a9a6a77943578",
+      "size": 4534,
+      "sha256": "d5e6807441cdb311aab3fb6c2ae21f596cbba7dcf2e4c43e16892456de9d3843",
       "class": "text",
       "origin": "owner",
       "licence": "Apache-2.0",
@@ -7239,8 +7432,8 @@
     },
     {
       "path": "hf-blocks/liquid-glass/block.html",
-      "size": 10490,
-      "sha256": "43c8922011c74e1fe6215815154c9dd7b36274856d78594d3d3176f50748b811",
+      "size": 11219,
+      "sha256": "868ace2dedb30c6905a36ca06f69b7941cbf49991282fe3c28375be3a847d333",
       "class": "text",
       "origin": "owner",
       "licence": "Apache-2.0",
@@ -7289,8 +7482,8 @@
     },
     {
       "path": "hf-blocks/notification-stack/block.html",
-      "size": 3926,
-      "sha256": "d823bc1192abe7685d03bd6399871047c8da59131e0b6c3cb2e6de4dc36e4580",
+      "size": 4768,
+      "sha256": "e3b8aa82a9a0ada5dfcf59054049293f29122fef75e4973917248e8c56250b65",
       "class": "text",
       "origin": "owner",
       "licence": "Apache-2.0",
@@ -7339,8 +7532,8 @@
     },
     {
       "path": "hf-blocks/speaker-cutout-behind/block.html",
-      "size": 3741,
-      "sha256": "6bec2c4f02caed3680a887c32cc323d92c781d49d8b08968e8d34a630f08559e",
+      "size": 4412,
+      "sha256": "8c226d4427d4b16fe9980c600993fb693340e471bd2f79898868a2291baaa141",
       "class": "text",
       "origin": "owner",
       "licence": "Apache-2.0",
@@ -7389,8 +7582,8 @@
     },
     {
       "path": "hf-blocks/task-steps/block.html",
-      "size": 4340,
-      "sha256": "65409dc28200e4c7ee7aa0d1b8ea69db18eb852882133ef3af197a8fb5a3e0f6",
+      "size": 5200,
+      "sha256": "4db99cac5e1f6ff5d55b1877f1b366f3702134f998e9961fad25e783ec7c6bab",
       "class": "text",
       "origin": "owner",
       "licence": "Apache-2.0",
@@ -7419,8 +7612,8 @@
     },
     {
       "path": "hf-blocks/typed-caption/README.md",
-      "size": 1294,
-      "sha256": "cddc408a75853ec75d26d8ff88a69a7eda91826fe89d615ce34e24601ee5c9a7",
+      "size": 1317,
+      "sha256": "899cea7efe3cfd10a2bfbf1086ce0e124f396d50e4c7aab1d7d1638ee052b147",
       "class": "text",
       "origin": "owner",
       "licence": "Apache-2.0",
@@ -7439,8 +7632,8 @@
     },
     {
       "path": "hf-blocks/typed-caption/block.html",
-      "size": 8248,
-      "sha256": "2bc4b8af7eeccc0533425bbd5a68186f64ac953f7f88c6c53eac3301421005f5",
+      "size": 8115,
+      "sha256": "f5e7faddb27b95eae3920b94e99f7efc2479f1757136178aebc80fc564d8865c",
       "class": "text",
       "origin": "owner",
       "licence": "Apache-2.0",
@@ -7449,8 +7642,8 @@
     },
     {
       "path": "hf-blocks/typed-caption/block.json",
-      "size": 1663,
-      "sha256": "e151ea5ad95fca11eb0a8b589cf024c087d29825245130e9991d667a2db9d8e3",
+      "size": 1669,
+      "sha256": "f074e3b4044973ae6ab1c4531acc8f038730c1efd774c18d83c1367d2cda8492",
       "class": "text",
       "origin": "owner",
       "licence": "Apache-2.0",
@@ -7489,8 +7682,8 @@
     },
     {
       "path": "hf-blocks/voice-orb/block.html",
-      "size": 3979,
-      "sha256": "3da917affb81e8aac1d9647fc0988eb8e014b053c1cc578bee4ff7725acc7256",
+      "size": 4682,
+      "sha256": "04d9d2b7ff86993f851c6e790fc2bffe15803df760a559372f594d1c937a8540",
       "class": "text",
       "origin": "owner",
       "licence": "Apache-2.0",
@@ -7569,8 +7762,8 @@
     },
     {
       "path": "licenses.toml",
-      "size": 4733,
-      "sha256": "499da9c003c284f461d28d03b7d695310312fa48f64443292616f57e11eec232",
+      "size": 5320,
+      "sha256": "800bfe0bfe9d3a2fd626ae70554df1b326d296a0576ae88b2dbd691042381b33",
       "class": "text",
       "origin": "owner",
       "licence": "Apache-2.0",
@@ -7760,7 +7953,7 @@
     {
       "path": "release-manifest.json",
       "size": 2456,
-      "sha256": "a030d6aba3e29d26b6f369e672e3389081782a20e0a00280bd1af4a0fd98a4f5",
+      "sha256": "4ef50e295ea78734bac31bd07e4a46827b95f6ae80c8e5c05311a96277053c5d",
       "class": "text",
       "origin": "owner",
       "licence": "Apache-2.0",
@@ -8158,6 +8351,16 @@
       "flags": []
     },
     {
+      "path": "tests/unit/test_ai_look.py",
+      "size": 2411,
+      "sha256": "06bb67aabb52994d4a24274c2685a7675df3832a8e9d216079307e50bf8dd290",
+      "class": "text",
+      "origin": "owner",
+      "licence": "Apache-2.0",
+      "rule": 2,
+      "flags": []
+    },
+    {
       "path": "tests/unit/test_core_cli_startup.py",
       "size": 2131,
       "sha256": "12a34dc163f764c7c0c8be7eabb7e4be0f392c877f0be740bd6b213f92fd9392",
@@ -8398,6 +8601,16 @@
       "flags": []
     },
     {
+      "path": "tests/unit/test_motion_kit_bundle.py",
+      "size": 2390,
+      "sha256": "91a7d222ac1b090121553674c1d12eb5325cb3eb672182f77640485e63ed1cc7",
+      "class": "text",
+      "origin": "owner",
+      "licence": "Apache-2.0",
+      "rule": 2,
+      "flags": []
+    },
+    {
       "path": "tests/unit/test_plugin_manifest.py",
       "size": 2275,
       "sha256": "37bf2439a179e49092cabdc3be1bcfe03a9d458067e857bfd0978ea92d57bdb6",
@@ -8429,8 +8642,8 @@
     },
     {
       "path": "tests/unit/test_scripts_bom.py",
-      "size": 15551,
-      "sha256": "bc9fbdc6444e138c06a46efa3f4149717bbc2a1662a12cd6db49eb6b4e206558",
+      "size": 15864,
+      "sha256": "80932fedc3359c0cdfabaaf9851fb86db0ba9880fada126a0b43cd8d0b4c5c81",
       "class": "text",
       "origin": "owner",
       "licence": "Apache-2.0",
@@ -9231,8 +9444,8 @@
     },
     {
       "path": "tools/warehouse/ui/app.css",
-      "size": 26502,
-      "sha256": "791510b414ecc8c9c701f1fab10f41721467da5717f01d67fd790062d94b64c3",
+      "size": 27684,
+      "sha256": "ff3f475945566cf14d6187a32705e7869ed16a45eab621f14cb0ceed95474714",
       "class": "text",
       "origin": "owner",
       "licence": "Apache-2.0",

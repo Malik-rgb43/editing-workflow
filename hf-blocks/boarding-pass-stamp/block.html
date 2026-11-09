@@ -62,13 +62,17 @@
           set("boarding-pass-gate", v.gate); set("boarding-pass-seat", v.seat); set("boarding-pass-stamp-mark", v.stamp);
           var D = Math.max(1, Number(v.duration) || 3.5);
           var at = Math.min(D - 0.5, Math.max(0.6, Number(v.stamp_at) || 1.6));
+          // designer curves (cubic-bezier, the motion kit's kit.* values): a curve per move, never a named preset
+          var BZ = function (x1, y1, x2, y2) { var cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx, cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+            return function (p) { if (p <= 0) return 0; if (p >= 1) return 1; var lo = 0, hi = 1, t = p; for (var i = 0; i < 24; i++) { var x = ((ax * t + bx) * t + cx) * t; if (x < p) lo = t; else hi = t; t = (lo + hi) / 2; } return ((ay * t + by) * t + cy) * t; }; };
+          var LAND = BZ(0.1, 0.75, 0.15, 1), LEAVE = BZ(0.55, 0, 0.9, 0.35), HEAVY = BZ(0.75, 0, 0.18, 1), DRIFT = BZ(0.4, 0, 0.6, 1), WIND = BZ(0.45, 0, 0.55, 1);
           var tl = gsap.timeline({ paused: true });
-          tl.fromTo("#boarding-pass-card", { y: 160, rotation: -4, opacity: 0 }, { y: 0, rotation: 0, opacity: 1, duration: 0.6, ease: "power3.out" }, 0);
+          tl.fromTo("#boarding-pass-card", { y: 160, rotation: -4, opacity: 0 }, { y: 0, rotation: 0, opacity: 1, duration: 0.6, ease: LAND }, 0);
           if (v.stamp) { // the stamp slams: big and transparent to full size, then the card shakes once
-            tl.fromTo("#boarding-pass-stamp-mark", { scale: 2.6, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.14, ease: "power4.in" }, at);
-            tl.fromTo("#boarding-pass-card", { x: 0 }, { x: -14, duration: 0.05, ease: "none" }, at + 0.14);
-            tl.to("#boarding-pass-card", { x: 10, duration: 0.06, ease: "none" }, at + 0.19);
-            tl.to("#boarding-pass-card", { x: 0, duration: 0.08, ease: "power2.out" }, at + 0.25);
+            tl.fromTo("#boarding-pass-stamp-mark", { scale: 2.6, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.14, ease: LEAVE }, at);
+            tl.fromTo("#boarding-pass-card", { x: 0 }, { x: -14, duration: 0.05, ease: WIND }, at + 0.14);
+            tl.to("#boarding-pass-card", { x: 10, duration: 0.06, ease: WIND }, at + 0.19);
+            tl.to("#boarding-pass-card", { x: 0, duration: 0.08, ease: LAND }, at + 0.25);
           }
           window.__timelines = window.__timelines || {};
           window.__timelines["boarding-pass-stamp"] = tl;

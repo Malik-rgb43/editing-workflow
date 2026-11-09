@@ -2,7 +2,7 @@
   "schema": "avc.hf-block/1",
   "name": "typed-caption",
   "title": "Typed caption (word by word, from measured onsets)",
-  "description": "Every word types letter by letter from its measured onset with a caret; the previous line steps back smaller and grey; the stressed word in a gradient with a faint glow. Hebrew via rtl (on the text only).",
+  "description": "Every word types letter by letter from its measured onset with a caret; the previous line steps back smaller and grey; the stressed word takes the accent colour and weight (no gradient, no glow). Hebrew via rtl (on the text only).",
   "duration_s": 3,
   "size": [
     1080,
@@ -49,11 +49,10 @@
   "replace": {},
   "demo_assets": [],
   "palette": [
+    "--hfb-accent",
     "--hfb-caret",
     "--hfb-dim",
     "--hfb-font",
-    "--hfb-grad-a",
-    "--hfb-grad-b",
     "--hfb-ink"
   ],
   "license": "Apache-2.0 (written for this toolkit)"

@@ -344,9 +344,13 @@ def test_the_real_repository_licenses_toml_is_valid_and_has_no_blocked_rules():
     real = Path(__file__).resolve().parents[2] / "licenses.toml"
     rules = gen_bom.load_licenses(real)
     assert rules and all(r["origin"] in gen_bom.ORIGINS for r in rules)
-    # the ONLY third-party file allowed is the Heebo UI font subset (owner decision 2026-10-04): open licence, a source, its licence text beside it
+    # the only bundled third-party material (owner decisions): the Heebo and Karantina UI font subsets (2026-10-04,
+    # 2026-11-03) and motion-kit (2026-11-09). Each has an open licence, a source and its licence text beside it.
     third = [r for r in rules if r["origin"] == "third_party"]
-    assert len(third) == 1
-    r = third[0]
-    assert r["licence"] == "OFL-1.1" and "github.com/google/fonts" in r["source"]
-    assert sorted(r["globs"]) == ["**/scripts/ui/OFL-Heebo.txt", "**/scripts/ui/heebo-he-latin.woff2"]
+    assert sorted(r["licence"] for r in third) == ["MIT", "OFL-1.1", "OFL-1.1"]
+    for r in third:
+        assert r.get("source", "").startswith("https://")
+    fonts = [r for r in third if r["licence"] == "OFL-1.1"]
+    assert all("github.com/google/fonts" in r["source"] for r in fonts)
+    kit = next(r for r in third if r["licence"] == "MIT")
+    assert kit["globs"] == ["**/pro-video-editor/motion-kit/**"] and "hughminhphan/motion-kit" in kit["source"]

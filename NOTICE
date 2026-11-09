@@ -9,3 +9,7 @@ Third-party components are referenced, not bundled; see THIRD_PARTY_NOTICES.md.
 tools/warehouse/ is the client-video warehouse written by Gabriel Gelman
 (https://github.com/GabrielGel/video-warehouse), included at his request and
 changed as listed in licenses.toml.
+
+agent-content/skills/pro-video-editor/motion-kit/ is motion-kit by Hugh Phan
+(https://github.com/hughminhphan/motion-kit), MIT licence (LICENSE-motion-kit.txt
+beside it), changed as listed in licenses.toml.
