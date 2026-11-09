@@ -7,8 +7,10 @@ original took > 45 s: E04-L01).
 
 Routes (ADR 0002: selected automatically; the student chooses nothing):
   faster-whisper   CPU CTranslate2 int8 - ALWAYS available when the ``asr-cpu`` extra is installed. The default.
-Model weights are NEVER downloaded implicitly: pass ``--model-dir DIR`` (or set [models] asr_model_dir) or add ``--allow-download`` to let
-faster-whisper fetch the named model (size is large; the repo id is shown first). Hebrew default model id: ``ivrit-ai/whisper-large-v3-turbo-ct2``
+Model weights are NEVER downloaded implicitly. Where the model comes from, in order: ``--model-dir DIR``, [models] asr_model_dir, a copy already
+in the Hugging Face cache (found automatically, no download, the pinned revision preferred), or ``--allow-download``. To download it ONCE ahead
+of time (the install step does this after the student's yes): ``--fetch-model`` prints the size and downloads nothing; ``--fetch-model --yes``
+downloads the pinned revision into the Hugging Face cache, where every later run finds it. Hebrew default model id: ``ivrit-ai/whisper-large-v3-turbo-ct2``
 (Apache-2.0 per its model card as of 2026-10-02; PIN the revision you test - `--revision`). VAD is OFF by default (E08: it hurt speed and WER on the
 test corpus); ``--vad`` enables it per clip. Accuracy: WER ~18 % on FLEURS Hebrew (68 clips, the reference machine) - always spot-check names/numbers.
 
@@ -21,7 +23,8 @@ name contains "ivrit"; ``--model-lang he|multi`` overrides that guess for a loca
 Usage:
     python tools/transcribe.py <audio-or-video> -o words.json [--language auto|he|en|...] [--model-dir DIR | --allow-download]
                                [--model-id ID] [--model-lang he|multi] [--revision SHA] [--vad] [--beam 5] [--threads N]
-    python tools/transcribe.py --check          (which routes are usable on this machine; imports nothing heavy beyond find_spec)
+    python tools/transcribe.py --check          (which routes are usable and whether the model is already on this computer)
+    python tools/transcribe.py --fetch-model [--model-id ID] [--yes]   (show the download; with --yes download it once, before any edit)
 Exit: 0 transcribed, 2 refused (no model, no download permission, missing input, no words, a language the model is not for), 3 tool error.
 """
 
@@ -40,6 +43,73 @@ import _common  # noqa: F401
 
 DEFAULT_HE_MODEL = "ivrit-ai/whisper-large-v3-turbo-ct2"
 MULTILINGUAL_MODEL = "Systran/faster-whisper-large-v3"
+# Pinned revisions and sizes (catalogue ivrit-ct2 / docs local-vs-paid, verified 2026-10-03): shown before any download.
+KNOWN_MODELS = {
+    DEFAULT_HE_MODEL: {"revision": "72ad623a37947395efcc3933132353790e5a12f5", "bytes": 1_621_667_540, "license": "Apache-2.0"},
+    MULTILINGUAL_MODEL: {"revision": None, "bytes": 3_087_284_237, "license": "MIT"},
+}
+
+
+def hf_cache_roots(env=None) -> list[Path]:
+    """Pure (given env): the Hugging Face hub cache folders to look in, most specific first."""
+    env = os.environ if env is None else env
+    roots = []
+    if env.get("HF_HUB_CACHE"):
+        roots.append(Path(env["HF_HUB_CACHE"]))
+    if env.get("HF_HOME"):
+        roots.append(Path(env["HF_HOME"]) / "hub")
+    roots.append(Path.home() / ".cache" / "huggingface" / "hub")
+    return roots
+
+
+def cached_model_dir(model_id: str, revision: str | None = None, roots: list[Path] | None = None) -> str | None:
+    """A complete local copy of ``model_id`` already in the HF cache (a snapshot folder holding model.bin), or None. The pinned revision
+    wins when present; otherwise the newest complete snapshot. Never downloads. Seen 2026-11-09: the model sat in the cache and the tool
+    still said "no model", so the agent asked the student to download 1.6 GB again."""
+    if "/" not in model_id:
+        return None
+    revision = revision or (KNOWN_MODELS.get(model_id) or {}).get("revision")
+    name = "models--" + model_id.replace("/", "--")
+    for root in roots if roots is not None else hf_cache_roots():
+        snaps = root / name / "snapshots"
+        if not snaps.is_dir():
+            continue
+        if revision and (snaps / revision / "model.bin").is_file():
+            return str(snaps / revision)
+        ok = [d for d in snaps.iterdir() if (d / "model.bin").is_file()]
+        if ok:
+            return str(max(ok, key=lambda d: d.stat().st_mtime))
+    return None
+
+
+def fetch_model(model_id: str, revision: str | None, yes: bool) -> int:
+    """--fetch-model: without --yes print what would be downloaded (nothing is fetched); with --yes download it once into the HF cache."""
+    info = KNOWN_MODELS.get(model_id, {})
+    revision = revision or info.get("revision")
+    have = cached_model_dir(model_id, revision)
+    plan = {"model_id": model_id, "revision": revision or "UNPINNED", "bytes": info.get("bytes", "unknown (check the model page)"),
+            "license": info.get("license", "check the model page"), "source": f"https://huggingface.co/{model_id}", "already_here": have}
+    if have:
+        print(json.dumps({**plan, "status": "already on this computer, nothing to download"}, indent=2))
+        return 0
+    if not yes:
+        print(json.dumps({**plan, "status": "nothing was downloaded: show this to the user; after their yes run the same command with --yes"}, indent=2))
+        return 0
+    try:
+        from huggingface_hub import snapshot_download  # installed with faster-whisper
+    except ImportError:
+        print("transcribe: huggingface_hub is missing: install the speech-to-text route first (`uv sync --extra asr-cpu`).", file=sys.stderr)
+        return 2
+    try:
+        path = snapshot_download(model_id, revision=revision)
+    except Exception as exc:  # noqa: BLE001
+        print(f"transcribe: download failed: {type(exc).__name__}: {exc}", file=sys.stderr)
+        return 3
+    if not (Path(path) / "model.bin").is_file():
+        print(f"transcribe: downloaded {path} but it holds no model.bin", file=sys.stderr)
+        return 3
+    print(json.dumps({**plan, "status": "downloaded", "path": path}, indent=2))
+    return 0
 
 
 def hebrew_only(model_ref: str, model_lang: str | None) -> bool:
@@ -60,6 +130,38 @@ def language_refusal(requested: str, detected: str | None, model_ref: str, model
     return (f"transcribe: the speech language is {lang!r} ({how}), but {model_ref!r} is tuned for Hebrew only; nothing was written. "
             f"For {lang!r} use a multilingual model: --language {lang} --model-id {MULTILINGUAL_MODEL} --allow-download (a large download: "
             f"show it to the user and get their yes first), or --model-dir <a local multilingual model> --model-lang multi.")
+
+
+def venv_python(venv: str | Path | None) -> Path | None:
+    """The Python inside a virtualenv folder (Windows Scripts/python.exe or POSIX bin/python), or None."""
+    if not venv:
+        return None
+    for rel in (("Scripts", "python.exe"), ("bin", "python3"), ("bin", "python")):
+        cand = Path(venv).joinpath(*rel)
+        if cand.is_file():
+            return cand
+    return None
+
+
+def asr_venv_python() -> Path | None:
+    """The installer's separate speech-to-text environment ([models] asr_venv, written by `apply --local`), if it exists and is not
+    the Python already running. Seen 2026-11-09 (review): `--local` installed faster-whisper there, but this tool only looked at the
+    current Python, so the student was told to install a route that was already installed."""
+    try:
+        from core.config import load_config
+
+        v = load_config().path("models.asr_venv")
+    except Exception:  # noqa: BLE001 - no config is a normal state
+        return None
+    py = venv_python(v)
+    if py is None:
+        return None
+    try:
+        if Path(sys.executable).resolve() == py.resolve():
+            return None
+    except OSError:
+        return None
+    return py
 
 
 def available_routes() -> dict:
@@ -120,11 +222,20 @@ def main(argv=None) -> int:
     ap.add_argument("--threads", type=int)
     ap.add_argument("--timeout", type=float, default=7200.0)
     ap.add_argument("--check", action="store_true")
+    ap.add_argument("--fetch-model", action="store_true", help="download the model once (shows the size; needs --yes to download)")
+    ap.add_argument("--yes", action="store_true", help="with --fetch-model: the user approved the shown download")
     a = ap.parse_args(argv)
+    if a.fetch_model:
+        return fetch_model(a.model_id, a.revision, a.yes)
 
     routes = available_routes()
     if a.check:
-        print(json.dumps({"routes": routes, "default": choose_route(routes), "default_model_id": DEFAULT_HE_MODEL, "multilingual_model_id": MULTILINGUAL_MODEL}, indent=2))
+        if choose_route(routes) is None and not os.environ.get("AVC_ASR_REEXEC") and asr_venv_python() is not None:
+            import subprocess
+
+            return subprocess.call([str(asr_venv_python()), "-X", "utf8", str(Path(__file__).resolve()), "--check"], env={**os.environ, "AVC_ASR_REEXEC": "1"})
+        print(json.dumps({"routes": routes, "default": choose_route(routes), "default_model_id": DEFAULT_HE_MODEL, "multilingual_model_id": MULTILINGUAL_MODEL,
+                          "model_on_this_computer": {m: cached_model_dir(m) for m in (DEFAULT_HE_MODEL, MULTILINGUAL_MODEL)}}, indent=2))
         return 0 if choose_route(routes) else 2
     if not a.media or not a.out:
         ap.error("need <media> and -o words.json")
@@ -132,6 +243,14 @@ def main(argv=None) -> int:
         print(f"transcribe: input not found: {a.media}", file=sys.stderr)
         return 2
     route = choose_route(routes)
+    if route is None and not os.environ.get("AVC_ASR_REEXEC"):
+        py = asr_venv_python()
+        if py is not None:  # run the same command inside the installed speech-to-text environment
+            import subprocess
+
+            print(f"transcribe: running inside the installed speech-to-text environment ({py})", file=sys.stderr)
+            return subprocess.call([str(py), "-X", "utf8", str(Path(__file__).resolve()), *(sys.argv[1:] if argv is None else argv)],
+                                   env={**os.environ, "AVC_ASR_REEXEC": "1"})
     if route is None:
         print("transcribe: no usable route. Install the CPU route: `uv sync --extra asr-cpu` (or pip install faster-whisper).", file=sys.stderr)
         return 2
@@ -143,6 +262,10 @@ def main(argv=None) -> int:
         print(f"transcribe: {model_dir} is not a CTranslate2 model folder (no model.bin). Point --model-dir (or [models] asr_model_dir) at the folder "
               "that holds model.bin, or use --allow-download.", file=sys.stderr)
         return 2
+    if not model_dir:
+        model_dir = cached_model_dir(a.model_id, a.revision)
+        if model_dir:
+            print(f"transcribe: using the copy of {a.model_id!r} already on this computer ({model_dir}); nothing downloaded", file=sys.stderr)
     model_ref = model_dir or a.model_id
     early = language_refusal(a.language, None, model_ref, a.model_lang)
     if early:
@@ -158,7 +281,9 @@ def main(argv=None) -> int:
             words, facts = run_faster_whisper(a.media, a.model_id, a, local=False)
             model_label = a.model_id + (f"@{a.revision}" if a.revision else " (UNPINNED)")
         else:
-            print(f"transcribe: no model. Pass --model-dir DIR (or [models] asr_model_dir), or --allow-download to fetch {a.model_id!r} (shown before download; weights are never fetched implicitly).", file=sys.stderr)
+            print(f"transcribe: the model {a.model_id!r} is not on this computer yet (not in --model-dir, [models] asr_model_dir or the Hugging Face cache). "
+                  f"Run `python tools/transcribe.py --fetch-model --model-id {a.model_id}` to show the user its size, and after their yes the same "
+                  "command with --yes (a one-time download; every later run finds it). Nothing was downloaded.", file=sys.stderr)
             return 2
     except Exception as exc:  # noqa: BLE001
         print(f"transcribe: {type(exc).__name__}: {exc}", file=sys.stderr)

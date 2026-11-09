@@ -126,7 +126,27 @@ def _selector_hits(selector: str, el: El) -> bool:
     return False
 
 
-def lint_html(text: str, path: Path, *, rail_bottom=1450.0, canvas_height=1920.0, probe_dur=None):
+def project_css_vars(texts) -> dict:
+    """Custom properties set anywhere in the project's files (CSS rules and inline styles): name -> last value seen."""
+    out = {}
+    for t in texts:
+        for m in re.finditer(r"(--[A-Za-z0-9_-]+)\s*:\s*([^;}\"]+)", t):
+            out[m.group(1)] = m.group(2).strip()
+    return out
+
+
+def project_font_faces(texts) -> set:
+    """Font families declared by @font-face anywhere in the project's files (lower case)."""
+    out = set()
+    for t in texts:
+        for m in re.finditer(r"@font-face\s*\{([^}]*)\}", t, flags=re.S | re.I):
+            fam = re.search(r"font-family\s*:\s*['\"]?([^;'\"]+)", m.group(1), re.I)
+            if fam:
+                out.add(fam.group(1).strip().lower())
+    return out
+
+
+def lint_html(text: str, path: Path, *, rail_bottom=1450.0, canvas_height=1920.0, probe_dur=None, css_vars=None, declared_extra=None):
     """Return a list of (code, severity, message, line, data). Pure; unit-tested."""
     d = Doc()
     d.feed(text)
@@ -197,6 +217,14 @@ def lint_html(text: str, path: Path, *, rail_bottom=1450.0, canvas_height=1920.0
         target = m.group(2).strip()
         if (target.startswith("#") and target[1:] in vid_ids) or (target.startswith(".") and target[1:] in vid_cls) or target == "video":
             add("tween_on_video", "warning", f"GSAP tween targets the <video> directly ({target!r}): tween a wrapper element instead")
+    # -- media files that are not there (2026-11-09 review: a missing plate gave a black frame and only an "info" note)
+    for el in d.els:
+        if el.tag in ("video", "audio", "img", "source") and el.attrs.get("src"):
+            src = el.attrs["src"].strip()
+            if not src or src.startswith(("data:", "blob:", "#")) or re.match(r"^([a-z]+:)?//", src, re.I) or "{" in src:
+                continue
+            if not (path.parent / src.split("?")[0].split("#")[0]).exists():
+                add("media_file_missing", "error", f"<{el.tag} src={src!r}> does not exist: the frame would render black/empty (replace the placeholder with the real file)", el.line, src=src)
     # -- clip longer than source
     if probe_dur is not None:
         for el in d.els:
@@ -204,6 +232,8 @@ def lint_html(text: str, path: Path, *, rail_bottom=1450.0, canvas_height=1920.0
                 src = el.attrs["src"]
                 if re.match(r"^[a-z]+://", src, re.I):
                     continue
+                if not (path.parent / src).exists():
+                    continue  # reported above as media_file_missing
                 dur = probe_dur((path.parent / src).resolve())
                 if dur is None:
                     add("source_not_probed", "info", f"could not read the duration of {src!r}; clip-length check skipped", el.line)
@@ -257,13 +287,20 @@ def lint_html(text: str, path: Path, *, rail_bottom=1450.0, canvas_height=1920.0
                 continue
             if not (path.parent / url.split("?")[0].split("#")[0]).exists():
                 add("font_file_missing", "error", f"@font-face file not found: {url!r} (fonts come from files in hf/fonts/)", None, url=url)
-    used = set()
-    for _, body in rules:
-        for m in re.finditer(r"font-family\s*:\s*([^;]+)", body):
-            used |= _named_families(m.group(1))
-    for el in d.els:
-        for m in re.finditer(r"font-family\s*:\s*([^;]+)", el.style_text):
-            used |= _named_families(m.group(1))
+    declared |= set(declared_extra or ())
+    used, vars_seen = set(), set()
+    values = [m.group(1) for _, body in rules for m in re.finditer(r"font-family\s*:\s*([^;]+)", body)]
+    values += [m.group(1) for el in d.els for m in re.finditer(r"font-family\s*:\s*([^;]+)", el.style_text)]
+    for v in values:
+        used |= _named_families(v)
+        vars_seen |= set(re.findall(r"var\(\s*(--[A-Za-z0-9_-]+)", v))
+    if css_vars is not None:  # a font that comes through a custom property (blocks: var(--hfb-font, sans-serif))
+        for var in sorted(vars_seen):
+            if var not in css_vars:
+                add("font_var_unset", "warning", f"font-family uses var({var}) but no file sets {var}: the text renders in the fallback font, "
+                    f"not the chosen one (set {var} in the host page to a family with an @font-face file)", None, var=var)
+            else:
+                used |= _named_families(css_vars[var])
     for f in sorted(used - declared):
         add("font_not_declared", "warning", f"font-family {f!r} is used but has no @font-face file (the renderer's Chrome does not find fonts by name)", None, family=f)
     return out
@@ -319,9 +356,12 @@ def run(args, b):
     b.set_input_sha256(sha256_file(files[0]) if len(files) == 1 else __import__("hashlib").sha256(b"".join(sha256_file(f).encode() for f in files)).hexdigest())
     b.extra["files"] = [str(f) for f in files]
     sev_map = {"error": Severity.ERROR, "warning": Severity.ERROR if args.strict else Severity.WARNING, "info": Severity.INFO}
+    texts = {f: f.read_text(encoding="utf-8", errors="strict") for f in files}
+    css_vars, faces = project_css_vars(texts.values()), project_font_faces(texts.values())
     for f in files:
-        text = f.read_text(encoding="utf-8", errors="strict")
-        for code, sev, msg, line, data in lint_html(text, f, rail_bottom=args.rail_bottom, canvas_height=args.canvas_height, probe_dur=_probe_duration):
+        text = texts[f]
+        for code, sev, msg, line, data in lint_html(text, f, rail_bottom=args.rail_bottom, canvas_height=args.canvas_height, probe_dur=_probe_duration,
+                                                    css_vars=css_vars, declared_extra=faces):
             data = dict(data, file=f.name)
             b.add(Finding(code, f"[{f.name}] {msg}", sev_map[sev], data=data) if line is None else Finding(code, f"[{f.name}:{line}] {msg}", sev_map[sev], data=dict(data, line=line)))
 

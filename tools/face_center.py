@@ -17,6 +17,7 @@ never follow the face frame by frame (measured 139 vs 2782 px/s^2 acceleration, 
 
 Usage:
     python tools/face_center.py source <video> -o faces.json [--model yunet.onnx] [--every 5] [--max-width 480] [--min-coverage 0.5] [--timeout 900]
+    python tools/face_center.py fetch-model [--yes]   (233 KB once, into the shared models folder; without --yes nothing is downloaded)
     python tools/face_center.py audit <faces.json> [--tol 0.08] [--min-run 6] [--json-out r.json]
 Exit: source 0 written / 2 insufficient; audit 0 PASS / 1 FAIL / 2 INSUFFICIENT_EVIDENCE.
 """
@@ -29,6 +30,30 @@ import sys
 from pathlib import Path
 
 import _common  # noqa: F401
+
+YUNET_FILE = "face_detection_yunet_2023mar.onnx"
+YUNET_URL = "https://github.com/opencv/opencv_zoo/raw/main/models/face_detection_yunet/" + YUNET_FILE
+YUNET_BYTES = 232_589  # verified 2026-10-03 (docs/en/local-vs-paid.md); MIT licence
+
+
+def find_face_model(explicit: str | None = None) -> str | None:
+    """Where the YuNet file is, in order: --model, AVC_FACE_MODEL, [models] face_model, the shared models folder. None = not on this
+    computer. Before 2026-11-09 only the first two were read, so a file downloaded once was asked for again in every project."""
+    import os
+
+    for cand in (explicit, os.environ.get("AVC_FACE_MODEL")):
+        if cand:
+            return cand  # explicit wins even when wrong: the caller reports "not found" instead of silently using another file
+    try:
+        from core.config import load_config, user_models_dir
+
+        cfg = load_config().path("models.face_model")
+        if cfg and Path(cfg).is_file():
+            return str(cfg)
+        default = user_models_dir() / YUNET_FILE
+        return str(default) if default.is_file() else None
+    except Exception:  # noqa: BLE001 - no config is a normal state
+        return None
 
 
 def off_centre_runs(samples, tol=0.08, min_run=6):
@@ -61,7 +86,7 @@ def cmd_source(a) -> int:
     import os
 
     detect, detector_name = None, None
-    model = a.model or os.environ.get("AVC_FACE_MODEL")
+    model = find_face_model(a.model)
     if model:
         if not Path(model).is_file():
             print(f"face_center: face model not found: {model}", file=sys.stderr)
@@ -92,7 +117,8 @@ def cmd_source(a) -> int:
         detector_name = "opencv-haar-frontalface (fallback; frontal faces only; quality unmeasured)"
     else:
         print("face_center: no face detector available. This OpenCV build has no Haar CascadeClassifier (OpenCV 5 dropped it): download the YuNet ONNX model from the OpenCV model zoo "
-              "(face_detection_yunet, MIT licence; not bundled here) and pass --model <file> (or set AVC_FACE_MODEL).", file=sys.stderr)
+              "(face_detection_yunet, MIT licence; not bundled here): `python tools/face_center.py fetch-model` shows it, and after the user's yes the same with --yes "
+              "(233 KB, once; every project then finds it).", file=sys.stderr)
         return 2
     try:
         info = probe(a.video)
@@ -166,12 +192,19 @@ def main(argv=None) -> int:
     s.add_argument("--max-width", type=int, default=480)
     s.add_argument("--min-coverage", type=float, default=0.5)
     s.add_argument("--timeout", type=float, default=900.0)
+    fm = sub.add_parser("fetch-model", help="show the YuNet download (233 KB, MIT); with --yes download it once into the shared models folder")
+    fm.add_argument("--yes", action="store_true", help="the user approved the shown download")
     u = sub.add_parser("audit")
     u.add_argument("faces")
     u.add_argument("--tol", type=float, default=0.08)
     u.add_argument("--min-run", type=int, default=6)
     u.add_argument("--json-out")
     a = ap.parse_args(argv)
+    if a.cmd == "fetch-model":
+        from _models import fetch_file
+        from core.config import user_models_dir
+
+        return fetch_file(YUNET_URL, user_models_dir() / YUNET_FILE, YUNET_BYTES, a.yes, "YuNet face detector (opencv_zoo)", "MIT")
     return cmd_source(a) if a.cmd == "source" else cmd_audit(a)
 
 

@@ -12,7 +12,7 @@ skills read them (``hf/data/``, pro-video-editor stage 1), looks go to ``_work/p
     refs     analysis of every video in hf/references/                      -> _work/analysis/<ref-id>/    (tools/analyze.py --asr never)
 
 Nothing is downloaded: the transcript needs an installed ASR model (``--model-dir`` or the installed default) and faces need a YuNet
-file (``--face-model`` or AVC_FACE_MODEL). A step that cannot run is recorded as ``not_run`` with the tool's own reason, never as done.
+file (``--face-model``, AVC_FACE_MODEL, [models] face_model, or the shared models folder where ``face_center.py fetch-model --yes`` puts it). A step that cannot run is recorded as ``not_run`` with the tool's own reason, never as done.
 A step whose inputs and command did not change since its last successful run is skipped (``cached``); ``--force`` reruns it.
 Run ``--plan`` first to show the user what will run, where it writes and that nothing is downloaded.
 
@@ -36,8 +36,8 @@ import _common  # noqa: F401
 STEPS = ("sheet", "asr", "cuts", "faces", "scopes", "refs")
 VIDEO_EXT = {".mp4", ".mov", ".mkv", ".webm", ".m4v", ".avi", ".mxf"}
 HINTS = {
-    "asr": "the transcript needs the ASR model: `python tools/transcribe.py --check` shows what is missing (the installer's local route installs it)",
-    "faces": "faces need a YuNet ONNX file (233 KB, MIT; source in docs/en/local-vs-paid.md): pass --face-model <file> or set AVC_FACE_MODEL",
+    "asr": "the transcript needs the ASR model: `python tools/transcribe.py --check` shows whether it is on this computer; if not, `python tools/transcribe.py --fetch-model` shows its size, and after the user's yes the same with --yes (once)",
+    "faces": "faces need the YuNet face model (233 KB, MIT): `python tools/face_center.py fetch-model` shows it; after the user's yes the same with --yes (once, every project finds it)",
 }
 
 
@@ -95,7 +95,9 @@ def plan(root: Path, main: Path, refs: list[Path], a, faces_done: bool) -> list[
                          "inputs": [main], "outputs": [data / "src_cuts.json"]})
         elif step == "faces":
             cmd = [py, str(tools / "face_center.py"), "source", str(main), "-o", str(data / "faces.json")]
-            model = a.face_model or os.environ.get("AVC_FACE_MODEL")
+            from face_center import find_face_model
+
+            model = find_face_model(a.face_model)
             if model:
                 cmd += ["--model", model]
             jobs.append({"step": step, "id": step, "cmd": cmd, "inputs": [main] + ([Path(model)] if model else []), "outputs": [data / "faces.json"]})

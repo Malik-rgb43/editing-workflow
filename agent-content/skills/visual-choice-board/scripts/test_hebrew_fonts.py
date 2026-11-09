@@ -26,10 +26,34 @@ def run(*args):
 
 class FontTests(unittest.TestCase):
     def setUp(self) -> None:
+        import os
+
         self.dir = Path(tempfile.mkdtemp(prefix="fonts 'גופנים' "))
+        self.shared = Path(tempfile.mkdtemp(prefix="shared fonts "))
+        self._old = os.environ.get("AVC_FONTS_DIR")
+        os.environ["AVC_FONTS_DIR"] = str(self.shared)  # never the student's real shared folder
 
     def tearDown(self) -> None:
+        import os
+
         shutil.rmtree(self.dir, ignore_errors=True)
+        shutil.rmtree(self.shared, ignore_errors=True)
+        if self._old is None:
+            os.environ.pop("AVC_FONTS_DIR", None)
+        else:
+            os.environ["AVC_FONTS_DIR"] = self._old
+
+    def test_a_font_fetched_for_one_project_is_reused_without_a_download(self) -> None:
+        # 2026-11-09 review: every project asked for the same fonts and downloaded them again
+        rubik = next(f for f in hf.load()["families"] if f["family"] == "Rubik")
+        font, lic = hf.paths(rubik, self.shared)
+        font.parent.mkdir(parents=True)
+        font.write_bytes(b"x" * rubik["bytes"])
+        lic.write_text("OFL", encoding="utf-8")
+        code, out = run("fetch", "Rubik", "--to", str(self.dir))
+        p = json.loads(out)
+        self.assertEqual((code, p["status"], p["to_download"], p["copied_from_this_computer"]), (0, "ready", 0, ["Rubik"]))
+        self.assertTrue(hf.paths(rubik, self.dir)[0].is_file())
 
     def test_catalogue_is_complete_and_honest(self) -> None:
         cat = hf.load()

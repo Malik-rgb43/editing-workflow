@@ -26,7 +26,7 @@ from typing import Any
 from .errors import ConfigError
 from .fsio import fs_path
 
-__all__ = ["SCHEMA", "Value", "Config", "load_config", "find_config_file", "user_state_dir", "user_cache_dir"]
+__all__ = ["SCHEMA", "Value", "Config", "load_config", "find_config_file", "user_state_dir", "user_cache_dir", "user_models_dir"]
 
 CONFIG_FILENAME = "toolkit.toml"
 LOCAL_FILENAME = "toolkit.local.toml"
@@ -43,6 +43,7 @@ SCHEMA: dict[str, dict[str, tuple[str, str]]] = {
         "matte_dir": ("path", "matte / segmentation model directory"),
         "asr_model_dir": ("path", "ASR model directory"),
         "asr_venv": ("path", "virtualenv holding the ASR runtime"),
+        "face_model": ("path", "YuNet face-detector ONNX file (face_center); default <user models dir>/face_detection_yunet_2023mar.onnx"),
     },
     "binaries": {
         "ffmpeg": ("exe", "ffmpeg executable (empty = PATH)"),
@@ -70,6 +71,12 @@ class Value:
     @property
     def is_set(self) -> bool:
         return self.value not in (None, "")
+
+
+def user_models_dir() -> Path:
+    """One per-user folder for small downloaded models (face detector, cut-out weights), shared by every project: ~/.avc/models
+    (AVC_MODELS_DIR overrides). A model fetched once is found by every later project instead of being asked for again."""
+    return Path(os.environ.get("AVC_MODELS_DIR") or os.path.join(os.path.expanduser("~"), ".avc", "models"))
 
 
 def user_state_dir() -> Path:

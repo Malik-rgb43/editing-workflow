@@ -63,7 +63,7 @@ UI = {
            "summary": "הבחירות שלך", "copy": "העתקת JSON", "pending": "לא נבחר", "saved": "הבחירה נשמרה כקובץ choices.json. אפשר גם להדביק את ה-JSON בצ'אט.",
            "sending": "שולח לסוכן...", "sent": "נשלח לסוכן ✓ אפשר לסגור את הדף.", "sendfail": "השליחה לא הצליחה: ",
            "need": "חסרה בחירה", "needc": "חסרה הערה עבור 'אף אחד'", "hint": "מקשים: 1-9, 0, q, w = אפשרות · n = אף אחד",
-           "contrast": "ניגודיות", "low": "נמוכה", "emb": "מוטמע", "sysf": "פונט מערכת: ייתכן fallback", "warn_rail": "מחוץ לאזור הבטוח",
+           "contrast": "ניגודיות", "low": "נמוכה", "emb": "מוטמע", "sysf": "פונט מותקן: נבדק בדף", "fbad": "הפונט לא נטען: מוצג פונט ברירת מחדל, אי אפשר לבחור", "fsame": "נראה זהה ל", "warn_rail": "מחוץ לאזור הבטוח",
            "spec": "דגימת מילת מפתח", "eyebrow": "בחירת עיצוב", "progress": "נבחרו", "next_q": "סיימת לבחור?",
            "confirm_hint": "הבחירות עוברות לסוכן, והוא מעדכן את העיצוב לפני שכותבים קוד", "copy_hint": "אם השליחה נחסמת: העתק והדבק בצ'אט"},
     "en": {"dir": "ltr", "sample": "Your text (editable)", "pause": "Pause", "clear": "Clear choices (does not restart the clock)",
@@ -71,7 +71,7 @@ UI = {
            "summary": "Your picks", "copy": "Copy JSON", "pending": "not chosen", "saved": "Saved as choices.json. You can also paste the JSON into the chat.",
            "sending": "Sending to the agent...", "sent": "Sent to the agent ✓ You can close this page.", "sendfail": "Sending failed: ",
            "need": "Missing a pick", "needc": "Missing a comment for 'none'", "hint": "Keys: 1-9, 0, q, w = option · n = none",
-           "contrast": "contrast", "low": "low", "emb": "embedded", "sysf": "system font: may fall back", "warn_rail": "outside the safe zone",
+           "contrast": "contrast", "low": "low", "emb": "embedded", "sysf": "installed font: checked on the page", "fbad": "font did not load: the default font is shown, cannot be picked", "fsame": "looks identical to ", "warn_rail": "outside the safe zone",
            "spec": "Keyword specimen", "eyebrow": "Design choices", "progress": "decided", "next_q": "Done choosing?",
            "confirm_hint": "Your picks go to the agent, who updates the design before any code is written", "copy_hint": "If sending is blocked: copy and paste into the chat"},
 }
@@ -185,11 +185,19 @@ def validate(spec: dict, base: Path, max_still_kb: int = 2500) -> dict:
             if k == "font":
                 if not FAMILY_RE.match(str(o.get("family", ""))):
                     raise SpecError(f"{did}/{oid}: family must be a plain font name")
+                if not o.get("font_file") and o.get("system") is not True:
+                    raise SpecError(f"{did}/{oid}: font option {o.get('family')!r} has no font_file. Without the file the page shows the default font "
+                                    "and every option looks the same while the labels say they differ. Embed the file (hebrew_fonts.py fetch + spec, "
+                                    "or --font Family=file=licence); only for a font the user named and has installed, set \"system\": true "
+                                    "(the page then checks that it really renders and blocks it if it does not)")
                 if o.get("font_file"):
                     if not str(o.get("license", "")).strip():
                         raise SpecError(f"{did}/{oid}: an embedded font needs its licence text or notice in `license`")
                     uri, fmt, sha, size = embed(Path(o["font_file"]), "font", base, 3000)
                     o["_uri"], o["_fmt"] = uri, fmt
+                    dup = [f["option"] for f in out["assets"]["fonts"] if f["sha256"] == sha]
+                    if dup:
+                        raise SpecError(f"{did}/{oid}: the same font file as {dup[0]}: two options would look identical")
                     out["assets"]["fonts"].append({"option": f"{did}/{oid}", "file": Path(o["font_file"]).name, "sha256": sha,
                                                    "bytes": size, "license": str(o["license"])[:200]})
             elif k == "caption_anim":
@@ -381,6 +389,9 @@ def ui_css() -> str:
     try:
         b64 = base64.b64encode((ui / "heebo-he-latin.woff2").read_bytes()).decode("ascii")
         css = '@font-face{font-family:"Heebo UI";src:url(data:font/woff2;base64,' + b64 + ') format("woff2");font-weight:100 900;font-display:swap}\n' + css
+    except OSError:
+        pass  # the page falls back to the system font for its own interface text
+    try:  # separate: a missing Heebo must not also drop Karantina
         kb64 = base64.b64encode((ui / "karantina-700-he-latin.woff2").read_bytes()).decode("ascii")
         css = '@font-face{font-family:"Karantina UI";src:url(data:font/woff2;base64,' + kb64 + ') format("woff2");font-weight:700;font-display:swap}\n' + css
     except OSError:
@@ -410,9 +421,10 @@ def build(spec_path: Path, out_dir: Path | None = None, built_utc: str | None = 
     board_id = hashlib.sha256(canon({"spec": public, "ver": 1})).hexdigest()[:16]
     built = built_utc or os.environ.get("AVC_BUILT_UTC") or datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
     data = {"schema_version": 1, "board_id": board_id, "project": spec["project"], "built_utc": built, "dir": ui["dir"],
-            "text": spec["text"], "ui": {k: ui[k] for k in ("saved", "need", "needc", "pending", "none", "sending", "sent", "sendfail", "progress")},
+            "text": spec["text"], "ui": {k: ui[k] for k in ("saved", "need", "needc", "pending", "none", "sending", "sent", "sendfail", "progress", "fbad", "fsame")},
             "decisions": [{"id": d["id"], "title": d.get("title", d["id"]), "kind": d["kind"],
-                           "options": [{"id": o["id"], "label": o["label"]} for o in d["options"]]} for d in spec["decisions"]],
+                           "options": [{"id": o["id"], "label": o["label"], **({"family": o["family"], "weight": int(o.get("weight", 700))} if d["kind"] == "font" else {})}
+                                       for o in d["options"]]} for d in spec["decisions"]],
             "assets": spec["assets"]}
     data_json = json.dumps(data, ensure_ascii=False).replace("</", "<\\/").replace("<!--", "<\\!--")
     page = (TEMPLATE.replace("@@LANG@@", spec["lang"]).replace("@@DIR@@", ui["dir"]).replace("@@TITLE@@", esc(spec["title"]))
@@ -614,7 +626,7 @@ h1{font-size:1.3rem;font-weight:700;margin:0;text-wrap:balance}h2{font-size:1rem
 .chips{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}.top .chips{margin-inline-start:auto}
 .chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--raised);border-radius:999px;padding:2px 10px;font-size:.8rem;color:var(--muted);white-space:nowrap}
 .chip.prog{color:var(--fg);font-weight:600}.chip.prog.all{border-color:var(--ok);color:var(--ok);background:var(--ok-soft)}
-.chip.ok{color:var(--ok)}.chip.warn,.warn{color:var(--warn)}.ok{color:var(--ok)}
+.wrap.broken{opacity:.55}.wrap.broken .pick{cursor:not-allowed}.chip.ok{color:var(--ok)}.chip.warn,.warn{color:var(--warn)}.ok{color:var(--ok)}
 .tools{display:flex;flex-wrap:wrap;gap:10px;align-items:end;padding:14px;margin-bottom:14px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg)}
 .field{display:flex;flex-direction:column;gap:4px;flex:1 1 300px;font-size:.84rem;color:var(--muted)}
 .hint{flex:1 1 100%;font-size:.82rem}
@@ -765,7 +777,8 @@ body.paused .mover{transform:none}body.paused .tr .tb{clip-path:none;transform:n
     el.textContent = n + ' / ' + B.decisions.length + ' ' + B.ui.progress; el.classList.toggle('all', n === B.decisions.length);
   }
   function choose(did, oid) {
-    var a = A[did];
+    var a = A[did], fc = typeof FC === 'object' ? FC[did + '/' + oid] : null;
+    if (fc && !fc.renders) return;  // a font that does not render cannot be picked (keyboard included)
     if (oid === 'none') { a.none = true; a.choice = null; }
     else { a.none = false; a.choice = oid; a.rejected = a.rejected.filter(function (r) { return r !== oid; }); }
     paint();
@@ -828,7 +841,7 @@ body.paused .mover{transform:none}body.paused .tr .tb{clip-path:none;transform:n
       var a = A[d.id]; out[d.id] = {choice: a.none ? null : a.choice, none: a.none, comment: a.comment.trim(), rejected: a.rejected.slice()};
     });
     return {json: {schema_version: 1, board_id: B.board_id, project: B.project, exported_utc: new Date().toISOString(),
-                   session_elapsed_ms: Date.now() - started, sample_text: text, decisions: out, assets: B.assets}};
+                   session_elapsed_ms: Date.now() - started, sample_text: text, decisions: out, assets: B.assets, font_check: FC}};
   }
   function saveFile(s) {
     try {
@@ -858,6 +871,40 @@ body.paused .mover{transform:none}body.paused .tr .tb{clip-path:none;transform:n
   });
   window.__board = {state: A, build: build};
   var _paint = paint; paint = function () { _paint(); progress(); };
+  // Font check (2026-11-09: a board showed one font on every card while the labels named different fonts). Each font option must render
+  // differently from the browser's fallback fonts, and no two options may render identically; a failing card is marked and cannot be picked.
+  var FC = {};
+  function fontCheck() {
+    var cx = document.createElement('canvas').getContext('2d');
+    var probe = text + ' אבגדהוזחטיכלמנסעפצקרשת ABCabcxyz0123';
+    function width(css) { cx.font = css; return cx.measureText(probe).width; }
+    B.decisions.forEach(function (d) {
+      if (d.kind !== 'font') return;
+      var sig = {};
+      d.options.forEach(function (o) {
+        var q = '"' + o.family + '"', w = o.weight || 700;
+        var loads = ['monospace', 'serif', 'sans-serif'].some(function (fb) {
+          // compare with a name no computer has, through the same fallback chain (a bare generic family measures differently)
+          return Math.abs(width(w + ' 40px ' + q + ',' + fb) - width(w + ' 40px "avc-no-such-font-x9",' + fb)) > 0.5;
+        });
+        var s = Math.round(width(w + ' 40px ' + q + ',monospace') * 10);
+        var r = {renders: loads, same_as: loads && sig[s] ? sig[s] : null};
+        if (loads && !sig[s]) sig[s] = o.id;
+        FC[d.id + '/' + o.id] = r;
+        var b = $('.pick[data-dec="' + d.id + '"][data-opt="' + o.id + '"]'); if (!b) return;
+        var chips = b.querySelector('.chips');
+        function chip(t) { var c = document.createElement('span'); c.className = 'chip warn fontcheck'; c.textContent = t; if (chips) chips.appendChild(c); }
+        if (!loads) { chip(B.ui.fbad); b.disabled = true; b.setAttribute('aria-disabled', 'true'); b.closest('.wrap').classList.add('broken'); }
+        else if (r.same_as) chip(B.ui.fsame + r.same_as);
+      });
+    });
+    document.documentElement.setAttribute('data-font-check', 'done');
+  }
+  var loads = [];
+  B.decisions.forEach(function (d) { if (d.kind === 'font') d.options.forEach(function (o) {
+    if (document.fonts && document.fonts.load) loads.push(document.fonts.load((o.weight || 700) + ' 40px "' + o.family + '"', text).catch(function () {}));
+  }); });
+  Promise.all(loads).then(function () { return document.fonts ? document.fonts.ready : null; }).then(fontCheck, fontCheck);
   refresh(); paint();
 })();
 </script>

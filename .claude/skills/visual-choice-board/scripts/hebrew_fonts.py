@@ -10,6 +10,9 @@ Usage:
         without --yes: prints exactly what would be downloaded (files, bytes, total, source) and downloads NOTHING (exit 0);
         with --yes (only after the user said yes): downloads each font + its OFL.txt from the official google/fonts repository into
         DIR/<slug>/, checks the byte size against the catalogue, skips files already present with the right size.
+        Every downloaded font is also kept in ONE shared folder (~/.avc/fonts, AVC_FONTS_DIR overrides); a later project copies it from
+        there with no download and no question (before 2026-11-09 each project asked and downloaded again). Copies from the shared
+        folder happen even without --yes (nothing leaves the computer); only real downloads wait for --yes.
   python hebrew_fonts.py spec --to DIR --text "the user's real line" -o spec.json [--default | --families "A,B,..."]
                               [--keyword WORD] [--title T] [--project P] [--lang he|en] [--caption-style] [--still FRAME.jpg]
         writes a visual-choice-board spec with ONE font decision whose options embed the fetched files (licence text included);
@@ -59,6 +62,47 @@ def pick(cat: dict, names: list[str], default: bool) -> list[dict]:
     if bad:
         raise SystemExit(f"hebrew_fonts: unknown family {bad}; see `hebrew_fonts.py list`")
     return out
+
+
+def shared_dir() -> Path:
+    """The one per-user font folder every project reuses."""
+    import os
+
+    return Path(os.environ.get("AVC_FONTS_DIR") or Path.home() / ".avc" / "fonts")
+
+
+def reuse_shared(fams: list[dict], to: Path) -> list[str]:
+    """Copy fonts (and their OFL.txt) that are already in the shared folder into `to`. Local copy only; returns the families copied."""
+    import shutil
+
+    done = []
+    for f in fams:
+        font, lic = paths(f, to)
+        sf, sl = paths(f, shared_dir())
+        if font.is_file() and font.stat().st_size == f["bytes"] and lic.is_file():
+            continue
+        if sf.is_file() and sf.stat().st_size == f["bytes"] and sl.is_file():
+            font.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(sf, font)
+            shutil.copyfile(sl, lic)
+            done.append(f["family"])
+    return done
+
+
+def keep_shared(fams: list[dict], to: Path) -> None:
+    """After a download, keep a copy in the shared folder so the next project does not download again."""
+    import shutil
+
+    for f in fams:
+        font, lic = paths(f, to)
+        sf, sl = paths(f, shared_dir())
+        if font.is_file() and font.stat().st_size == f["bytes"] and lic.is_file() and not (sf.is_file() and sf.stat().st_size == f["bytes"]):
+            try:
+                sf.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copyfile(font, sf)
+                shutil.copyfile(lic, sl)
+            except OSError:
+                pass  # the shared copy is a convenience; the project copy is what counts
 
 
 def paths(f: dict, to: Path) -> tuple[Path, Path]:
@@ -222,13 +266,22 @@ def main(argv: list[str]) -> int:
         print(exc, file=sys.stderr)
         return 2
     if cmd == "fetch":
+        reused = reuse_shared(fams, to)
         if "--yes" not in flags:
             p = plan(fams, to, cat["download_base"])
+            p["copied_from_this_computer"] = reused
+            if p["to_download"] == 0:
+                p["status"] = "ready"
+                p["note"] = "every font is already on this computer (copied from the shared font folder): nothing to download, no question to ask"
+                print(json.dumps(p, ensure_ascii=False, indent=2))
+                return 0
             p["status"] = "plan_only"
             p["note"] = "nothing was downloaded: show this to the user; after their yes, run the same command with --yes"
             print(json.dumps(p, ensure_ascii=False, indent=2))
             return 0
         code, p = fetch(fams, to, cat["download_base"])
+        keep_shared(fams, to)
+        p["copied_from_this_computer"] = reused
         p["status"] = "ok" if code == 0 else "failed"
         print(json.dumps(p, ensure_ascii=False, indent=2))
         return code

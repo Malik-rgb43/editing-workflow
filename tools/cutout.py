@@ -9,13 +9,17 @@ Routes (``--route``):
   onnx      a matting ONNX model you point at with ``--model`` (MODNet-style: input [1,3,H,W] in -1..1, output [1,1,H,W]); needs ``pip install onnxruntime``.
             ``--stride 2`` runs the model on every second frame and interpolates linearly (fine on talking heads; look at fast gestures).
   external  an alpha you already made elsewhere (``--alpha-from``: a grayscale video, or a video with an alpha channel); this tool only chokes, caches nothing and encodes.
-Model weights are never downloaded here: see ``docs/en/local-vs-paid.md`` for what to download, from where, how big it is and under which licence.
+Model weights are never downloaded implicitly. ``cutout.py fetch-model [--route native|onnx] [--yes]`` shows the download (native: u2net_human_seg,
+175,997,641 bytes, into HyperFrames' own model folder, where the engine finds it instead of downloading it mid-edit; onnx: MODNet, 25,888,640 bytes,
+into the shared models folder) and downloads only with --yes. The onnx route finds its model in --model, [models] matte_dir (a file, or a folder
+holding one .onnx) or the shared models folder. Sources and licences: ``docs/en/local-vs-paid.md``.
 
 Fail-closed: the output must probe, have the source's size and the exact frame count, and its alpha must not be empty; otherwise the file is deleted and the exit
 code is 2. A matte that covers almost nothing or almost everything is reported as a warning in ``<out>.cutout.json`` - LOOK at the sampled frames before using it.
 Heavy: run it under ``render_lock run -- ...``; matte only the ranges the beats need (plus ~2 s of handles).
 
 Usage:
+    python tools/cutout.py fetch-model [--route native|onnx] [--yes]
     python tools/cutout.py <clip> -o hf/assets/video/speaker.webm [--from 12.0 --to 18.0] [--route native|onnx|external]
                            [--cut-at 14.2,16.0 | --cuts src_cuts.json] [--model m.onnx] [--stride 1] [--alpha-from alpha.mp4]
                            [--erode 4] [--blur 1.8] [--quality fast|balanced|best] [--cache-dir DIR] [--no-cache] [--timeout 7200]
@@ -36,6 +40,54 @@ from pathlib import Path
 import _common  # noqa: F401
 
 CRF = {"fast": 32, "balanced": 24, "best": 18}
+
+U2NET_URL = "https://github.com/danielgatis/rembg/releases/download/v0.0.0/u2net_human_seg.onnx"  # the URL HyperFrames itself uses
+U2NET_BYTES = 175_997_641
+MODNET_URL = "https://huggingface.co/Xenova/modnet/resolve/main/onnx/model.onnx"
+MODNET_BYTES = 25_888_640  # verified 2026-10-03 (docs/en/local-vs-paid.md); Apache-2.0
+MODNET_FILE = "modnet.onnx"
+
+
+def native_model_path() -> Path:
+    """Where HyperFrames' remove-background looks for (and otherwise downloads) its model: ~/.cache/hyperframes/background-removal/models."""
+    return Path.home() / ".cache" / "hyperframes" / "background-removal" / "models" / "u2net_human_seg.onnx"
+
+
+def find_onnx_model(explicit: str | None) -> str | None:
+    """--model, else [models] matte_dir (a file, or a folder holding exactly one .onnx), else the shared models folder. Before 2026-11-09 only
+    --model was read, so a configured matte_dir was ignored."""
+    if explicit:
+        return explicit
+    try:
+        from core.config import load_config, user_models_dir
+
+        md = load_config().path("models.matte_dir")
+        if md:
+            md = Path(md)
+            if md.is_file():
+                return str(md)
+            onnx = sorted(md.glob("*.onnx")) if md.is_dir() else []
+            if len(onnx) == 1:
+                return str(onnx[0])
+        default = user_models_dir() / MODNET_FILE
+        return str(default) if default.is_file() else None
+    except Exception:  # noqa: BLE001
+        return None
+
+
+def fetch_model(argv: list[str]) -> int:
+    ap = argparse.ArgumentParser(prog="cutout fetch-model")
+    ap.add_argument("--route", choices=("native", "onnx"), default="native")
+    ap.add_argument("--yes", action="store_true", help="the user approved the shown download")
+    a = ap.parse_args(argv)
+    from _models import fetch_file
+
+    if a.route == "native":
+        return fetch_file(U2NET_URL, native_model_path(), U2NET_BYTES, a.yes, "u2net_human_seg (HyperFrames remove-background)",
+                          "rembg code MIT; the weights' own licence was not separately reviewed")
+    from core.config import user_models_dir
+
+    return fetch_file(MODNET_URL, user_models_dir() / MODNET_FILE, MODNET_BYTES, a.yes, "MODNet matting (Xenova/modnet ONNX)", "Apache-2.0")
 
 
 def seg_filter(fa: int, fb: int) -> str:
@@ -93,7 +145,9 @@ def segment_native(ffmpeg, video, fa, fb, dest, tmp, timeout):
     eng = hf_engine.find()
     if eng is None:
         raise RuntimeError("the HyperFrames engine is not installed (run `python install/bootstrap.py apply`); the native route needs it")
-    print("cutout: native route - on its FIRST run HyperFrames downloads the u2net_human_seg model (about 176 MB, github.com/danielgatis/rembg release v0.0.0); see docs/en/local-vs-paid.md", file=sys.stderr)
+    if not native_model_path().is_file():
+        print("cutout: native route - the u2net_human_seg model is not on this computer yet, so HyperFrames downloads it now (about 176 MB). "
+              "Next time run `python tools/cutout.py fetch-model --yes` ahead of the edit (after the user's yes).", file=sys.stderr)
     seg, mov = Path(tmp) / "seg.mp4", Path(tmp) / "seg.mov"
     r = run([ffmpeg, "-hide_banner", "-nostdin", "-v", "error", "-y", "-i", str(video), "-map", "0:v:0", "-vf", seg_filter(fa, fb), "-an", "-fps_mode", "passthrough", "-c:v", "libx264", "-crf", "10", "-preset", "veryfast", "-pix_fmt", "yuv420p", str(seg)], timeout=timeout)
     if r.returncode != 0:
@@ -178,6 +232,9 @@ def sample_alpha(ffmpeg, out, w, h, times, timeout):
 
 
 def main(argv=None) -> int:
+    argv = sys.argv[1:] if argv is None else list(argv)
+    if argv[:1] == ["fetch-model"]:
+        return fetch_model(argv[1:])
     ap = argparse.ArgumentParser(prog="cutout", description=__doc__.split("\n\n")[0])
     ap.add_argument("video")
     ap.add_argument("-o", "--out", required=True, help=".webm (VP9 alpha) or .mov (ProRes 4444)")
@@ -196,6 +253,8 @@ def main(argv=None) -> int:
     ap.add_argument("--no-cache", action="store_true")
     ap.add_argument("--timeout", type=float, default=7200.0)
     a = ap.parse_args(argv)
+    if a.route == "onnx":
+        a.model = find_onnx_model(a.model)
 
     from core import matte
     from core.envelope import sha256_file
@@ -211,7 +270,8 @@ def main(argv=None) -> int:
         if not Path(a.video).is_file():
             raise ValueError(f"video not found: {a.video}")
         if a.route == "onnx" and not (a.model and Path(a.model).is_file()):
-            raise ValueError("--route onnx needs --model <file.onnx> (the toolkit downloads no weights by itself)")
+            raise ValueError("--route onnx needs a model: --model <file.onnx>, [models] matte_dir, or `python tools/cutout.py fetch-model --route onnx` "
+                             "(shows the 26 MB download; after the user's yes add --yes)")
         if a.route == "external" and not (a.alpha_from and Path(a.alpha_from).is_file()):
             raise ValueError("--route external needs --alpha-from <alpha video>")
         info = probe(a.video)

@@ -165,6 +165,26 @@ class BoardTests(unittest.TestCase):
         self.assertEqual(len(man["assets"]["fonts"][0]["sha256"]), 64)
         self.assertEqual(mb.remote_hits(page), [])
 
+    def test_font_without_file_is_refused_and_page_checks_rendering(self) -> None:
+        # 2026-11-09: a board showed the fallback font on every card while the labels named different fonts.
+        spec = load_sample()
+        del spec["decisions"][0]["options"][0]["system"]
+        with self.assertRaises(mb.SpecError):
+            mb.validate(json.loads(json.dumps(spec)), self.dir)
+        _, page, _ = self.build(load_sample())
+        self.assertIn("fontCheck", page)
+        self.assertIn("font_check: FC", page)
+        self.assertIn('"family": "Arial"', page)
+
+    def test_two_options_with_one_font_file_are_refused(self) -> None:
+        font = self.dir / "fake.ttf"
+        font.write_bytes(b"\x00\x01\x00\x00fake-font-bytes")
+        spec = load_sample()
+        for o in spec["decisions"][0]["options"][:2]:
+            o.update({"font_file": "fake.ttf", "license": "OFL-1.1"})
+        with self.assertRaises(mb.SpecError):
+            mb.validate(spec, self.dir)
+
     def test_limits_are_enforced(self) -> None:
         base = load_sample()
         too_many = json.loads(json.dumps(base))

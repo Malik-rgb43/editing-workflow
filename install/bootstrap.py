@@ -1487,7 +1487,9 @@ def python_env_stage(c: dict, args, dry: bool, manifest: dict) -> str:
         return "skipped: uv not on PATH. Install: see integrations/catalog.toml entry `uv`, then re-run apply (idempotent)."
     if args.offline:
         return "deferred (offline): re-run apply when online"
-    argv = ["uv", "sync", "--no-dev", "--project", str(home)] + (["--locked"] if "uv.lock" in c["toolkit"] else [])
+    # --extra opencv: face_center / motion_qa need it and INSTALL.md promises it ("OpenCV ... via uv sync"); without it prep's faces
+    # step stopped mid-edit at "install the extra" (review 2026-11-09).
+    argv = ["uv", "sync", "--no-dev", "--extra", "opencv", "--project", str(home)] + (["--locked"] if "uv.lock" in c["toolkit"] else [])
     if dry:
         return "would run: " + " ".join(argv)
     p = run_cmd(argv, cwd=home, timeout=1800)
@@ -1752,7 +1754,7 @@ def cmd_add(args) -> int:
                 r["actions"].append({"status": st if not dry else "would: " + st})
                 partial = partial or st.startswith("FAILED")
         elif k == "model":
-            r["actions"].append({"status": "never downloaded by the installer", "size": e.get("download_size"), "source": e.get("source_url"), "how": "the transcription tool asks for your approval of the size first"})
+            r["actions"].append({"status": "never downloaded by the installer", "size": e.get("download_size"), "source": e.get("source_url"), "how": "after the student's yes to the shown size: python tools/transcribe.py --fetch-model --yes (once; a copy already in the Hugging Face cache is used, not downloaded again)"})
         elif k == "native-plugin":
             r["actions"].append({"status": "install by hand", "how": e.get("install_by_hand")})
         results.append(r)

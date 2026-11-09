@@ -21,7 +21,8 @@ Nothing is installed or connected silently, and nothing costs money unless you s
 | Python packages (numpy, Pillow, OpenCV ...) | pypi.org, via `uv sync` | the quality-check tools |
 | **HyperFrames 0.8.98** (the render engine) | the official npm package of HeyGen, via `npm ci --ignore-scripts`; nothing of it is stored in this repository | renders your video from HTML/CSS/GSAP |
 | HyperFrames' headless Chrome | Chrome-for-Testing hosts, only after your yes | rendering |
-| **only if you chose local:** speech-to-text environment (`asr-cpu`) | pypi.org; the model **weights are not downloaded** until you approve their size | Hebrew transcription on your computer |
+| **only if you chose local:** speech-to-text environment (`asr-cpu`) | pypi.org | Hebrew transcription on your computer |
+| **only if you chose local, and only after a separate yes right after the install:** the Hebrew transcription model (about 1.6 GB, once) | huggingface.co | so transcription never stops in the middle of an edit to ask for it |
 | missing tools (FFmpeg, Node, uv ...) | winget / brew, only if you let the agent run the command | prerequisites |
 Sizes are "not measured" where nobody measured them; the agent says so.
 
@@ -66,7 +67,7 @@ The agent tells you, in at most 15 lines: what it detected; **what is downloaded
 
 <!-- step: install-07 -->
 ## install-07 - The installation runs (HyperFrames is installed here)
-`bootstrap.py apply --yes`: toolkit folder, skills (Claude Code: the `editing-workflow` plugin; Codex: copied folders - a **backup** is taken before anything is replaced and a skill of yours with the same name is skipped unless you allow `--force`), the marked note, ASCII work folder + `toolkit.local.toml`, `uv sync --no-dev`, **the HyperFrames engine** (`npm ci --ignore-scripts` from `package.json` + `package-lock.json`, version 0.8.98), the CPU speech-to-text environment (only if you chose local; weights are never downloaded), and a link check. Safe to run again: finished work is skipped. A failed stage never needs manual cleanup.
+`bootstrap.py apply --yes`: toolkit folder, skills (Claude Code: the `editing-workflow` plugin; Codex: copied folders - a **backup** is taken before anything is replaced and a skill of yours with the same name is skipped unless you allow `--force`), the marked note, ASCII work folder + `toolkit.local.toml`, `uv sync --no-dev`, **the HyperFrames engine** (`npm ci --ignore-scripts` from `package.json` + `package-lock.json`, version 0.8.98), the CPU speech-to-text environment (only if you chose local), and a link check. Right after it, if you chose local, the agent offers the local models one at a time, each a yes/no: transcription (about 1.6 GB), face detector (233 KB), speaker cut-out (about 176 MB). Each is downloaded once into a shared place that every project finds. `tools/transcribe.py --check` shows whether it is on your computer; a copy already in the Hugging Face cache is found and used, never downloaded again. Safe to run again: finished work is skipped. A failed stage never needs manual cleanup.
 
 <!-- step: install-08 -->
 ## install-08 - Missing tools

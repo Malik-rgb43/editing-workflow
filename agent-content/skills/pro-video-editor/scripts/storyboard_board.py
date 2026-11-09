@@ -17,7 +17,7 @@ Usage:
 
 storyboard.json (schema avc.storyboard/1):
   {"title", "project", "lang": "he|en", "aspect": "9:16|16:9|1:1|4:5", "story": "the one-sentence story",
-   "mood": {"feel": "...", "palette": ["#hex", ...2-8], "type": {"family": "...", "sample": "the real line"}, "signature": "the one device",
+   "mood": {"feel": "...", "palette": ["#hex", ...2-8], "type": {"family": "...", "sample": "the real line", "font_file": "hf/fonts/x.woff2 (shown in that font; without it the page says so)"}, "signature": "the one device",
             "refs": [{"img": "path", "caption": "what to take from it"}]},
    "beats": [{"id": "b1", "t": 0.0, "end": 2.4, "roll": "A|B|G", "line": "the words under it", "shows": "what is seen",
               "img": "frames/b1.jpg", "source": "own|stock|generated|graphic|reference|sketch", "src_t": 12.4,
@@ -76,7 +76,7 @@ UI = {
            "has_notes": "יש הערות: שלח אותן או מחק אותן", "approve_q": "לאשר את הבורד בלי הערות? לחץ שוב לאישור.", "approve_again": "לחץ שוב לאישור ✓", "sending": "שולח לסוכן...",
            "sent": "ההערות נשלחו לסוכן. אפשר לסגור את הדף.", "approved": "הבורד אושר. הסוכן מתחיל לבנות, אפשר לסגור את הדף.",
            "fail": "השליחה לא הצליחה: ", "saved": "נשמר הקובץ storyboard_review.json: צרף אותו לשיחה עם הסוכן.",
-           "font_note": "תצוגה בדפדפן: הפונט האמיתי נבדק במנוע", "src": {"own": "צילום שלנו", "stock": "סטוק (רישיון לכל קובץ)",
+           "font_note": "תצוגה בדפדפן: הפונט האמיתי נבדק במנוע", "font_missing": "הפונט לא מוצג כאן (אין קובץ פונט): הדוגמה בפונט ברירת מחדל", "src": {"own": "צילום שלנו", "stock": "סטוק (רישיון לכל קובץ)",
            "generated": "ג'נרציה (בתשלום, באישור)", "graphic": "גרפיקה", "reference": "רפרנס", "sketch": "סקיצה"},
            "roll": {"A": "A-roll", "B": "B-roll", "G": "גרפיקה"},
            "shot": {"wide": "רחב", "medium": "בינוני", "close": "קרוב", "detail": "פרט", "graphic": "גרפיקה", "screen": "מסך"}},
@@ -89,7 +89,7 @@ UI = {
            "has_notes": "There are notes: send or delete them", "approve_q": "Approve the board with no notes? Click again to confirm.", "approve_again": "Click again to approve ✓", "sending": "Sending to the agent...",
            "sent": "Notes sent to the agent. You can close this page.", "approved": "Board approved. The agent starts building; you can close this page.",
            "fail": "Sending failed: ", "saved": "storyboard_review.json saved: attach it to the chat with the agent.",
-           "font_note": "browser preview: the real font is checked in the engine", "src": {"own": "our footage", "stock": "stock (licence per file)",
+           "font_note": "browser preview: the real font is checked in the engine", "font_missing": "this font is not shown here (no font file): the sample is in the default font", "src": {"own": "our footage", "stock": "stock (licence per file)",
            "generated": "generated (paid, approved)", "graphic": "graphic", "reference": "reference", "sketch": "sketch"},
            "roll": {"A": "A-roll", "B": "B-roll", "G": "graphic"},
            "shot": {"wide": "wide", "medium": "medium", "close": "close", "detail": "detail", "graphic": "graphic", "screen": "screen"}},
@@ -148,6 +148,19 @@ def validate(spec, base: Path) -> tuple[list[str], list[str]]:
         ty = mood.get("type")
         if ty is not None and (not isinstance(ty, dict) or not _txt(ty.get("family")) or not _txt(ty.get("sample"))):
             errors.append("mood.type must have `family` and `sample` (the real line)")
+        elif ty is not None:
+            ff = ty.get("font_file")
+            if not ff:
+                warnings.append("mood.type has no font_file: the page cannot show the sample in that font (it says so on the card); "
+                                "point font_file at the font in hf/fonts/ or _work/fonts/")
+            else:
+                fp = base / str(ff)
+                if not fp.is_file():
+                    errors.append(f"mood.type.font_file: no file at {ff}")
+                elif fp.suffix.lower() not in FONT_MIME:
+                    errors.append(f"mood.type.font_file must be one of {sorted(FONT_MIME)}")
+                elif fp.stat().st_size > 3 * 1024 * 1024:
+                    errors.append("mood.type.font_file is larger than 3 MB (subset it)")
         if not _txt(mood.get("signature")):
             warnings.append("mood.signature is empty: name the ONE device that belongs to this video")
         refs = mood.get("refs", [])
@@ -339,6 +352,14 @@ def grab(spec_path: Path, video: Path, width: int = 540) -> dict:
     return {"status": "ok" if not failed else "partial", "written": written, "failed": failed, "spec": str(spec_path)}
 
 
+FONT_MIME = {".woff2": "font/woff2", ".woff": "font/woff", ".ttf": "font/ttf", ".otf": "font/otf"}
+
+
+def font_uri(base: Path, rel: str) -> str:
+    p = (base / rel).resolve()
+    return f"data:{FONT_MIME[p.suffix.lower()]};base64," + base64.b64encode(p.read_bytes()).decode("ascii")
+
+
 def data_uri(base: Path, rel: str) -> str:
     p = (base / rel).resolve()
     return f"data:{IMG_MIME[p.suffix.lower()]};base64," + base64.b64encode(p.read_bytes()).decode("ascii")
@@ -354,6 +375,9 @@ def ui_css() -> str:
     try:
         b64 = base64.b64encode((ui / "heebo-he-latin.woff2").read_bytes()).decode("ascii")
         css = '@font-face{font-family:"Heebo UI";src:url(data:font/woff2;base64,' + b64 + ') format("woff2");font-weight:100 900;font-display:swap}\n' + css
+    except OSError:
+        pass  # the page falls back to the system font for its own interface text
+    try:  # separate: a missing Heebo must not also drop Karantina
         kb64 = base64.b64encode((ui / "karantina-700-he-latin.woff2").read_bytes()).decode("ascii")
         css = '@font-face{font-family:"Karantina UI";src:url(data:font/woff2;base64,' + kb64 + ') format("woff2");font-weight:700;font-display:swap}\n' + css
     except OSError:
@@ -376,7 +400,10 @@ def page(spec: dict, base: Path, token: str | None) -> str:
     refs = [{"img": data_uri(base, r["img"]), "caption": _txt(r.get("caption"))} for r in mood.get("refs", [])]
     w, h = ASPECTS[spec.get("aspect", "9:16")]
     data = {"ui": u, "token": token, "beats": beats, "refs": refs, "palette": mood["palette"], "feel": _txt(mood.get("feel")),
-            "signature": _txt(mood.get("signature")), "type": mood.get("type"), "story": _txt(spec.get("story")),
+            "signature": _txt(mood.get("signature")),
+            "type": ({"family": mood["type"]["family"], "sample": mood["type"]["sample"],
+                      "font": font_uri(base, mood["type"]["font_file"]) if mood["type"].get("font_file") else None} if mood.get("type") else None),
+            "story": _txt(spec.get("story")),
             "store": "storyboard:" + _txt(spec.get("project")), "aspect": f"{w} / {h}"}
     blob = json.dumps(data, ensure_ascii=False).replace("<", "\\u003c")  # no "<" can open or close a tag inside the script
     out = (TEMPLATE.replace("__UI_CSS__", ui_css()).replace("__DIR__", u["dir"]).replace("__LANG__", lang)
@@ -627,7 +654,7 @@ function save(){try{localStorage.setItem(B.store,JSON.stringify({notes:notes,gen
 document.documentElement.style.setProperty('--ar',B.aspect);
 $('#story').textContent=B.story;$('#feel').textContent=B.feel;$('#sig').textContent=B.signature||'-';
 B.palette.forEach(function(c){var d=el('div'),s=el('span');s.style.background=c;d.appendChild(s);d.appendChild(document.createTextNode(c));$('#pal').appendChild(d)});
-if(B.type){$('#fam').textContent=B.type.family;$('#spec').textContent=B.type.sample;$('#spec').style.fontFamily='"'+B.type.family+'", var(--sans)';$('#spec').style.color=B.palette[1]||''}else{$('#typebox').hidden=true}
+if(B.type){$('#fam').textContent=B.type.family;$('#spec').textContent=B.type.sample;$('#spec').style.color=B.palette[1]||'';var fam=B.type.font?'avc-mood-type':B.type.family;if(B.type.font){var st=document.createElement('style');st.textContent='@font-face{font-family:"avc-mood-type";src:url('+B.type.font+');font-display:block}';document.head.appendChild(st)}$('#spec').style.fontFamily='"'+fam+'", var(--sans)';var chk=function(){var cx=document.createElement('canvas').getContext('2d'),t=B.type.sample+' ABCabc';var w=function(f){cx.font='700 40px '+f;return cx.measureText(t).width};var ok=['monospace','serif'].some(function(fb){return Math.abs(w('"'+fam+'",'+fb)-w('"avc-no-such-font-x9",'+fb))>0.5});if(!ok){var n=document.createElement('p');n.className='lbl warn';n.id='font-missing';n.textContent=B.ui.font_missing;$('#typebox').appendChild(n)}document.documentElement.setAttribute('data-font-check',ok?'ok':'missing')};(document.fonts&&document.fonts.load?document.fonts.load('700 40px "'+fam+'"',B.type.sample).catch(function(){}):Promise.resolve()).then(chk,chk)}else{$('#typebox').hidden=true}
 B.refs.forEach(function(r){var f=el('figure'),i=el('img');i.src=r.img;i.alt=r.caption;f.appendChild(i);f.appendChild(el('span','badge',U.ref_badge));f.appendChild(el('figcaption','',r.caption));$('#refs').appendChild(f)});
 var total=B.beats.reduce(function(m,b){return Math.max(m,b.end)},0)||1,count={A:0,B:0,G:0};
 B.beats.forEach(function(b){count[b.roll]++;var d=el('div','r'+b.roll,b.roll);d.style.flex=String(b.end-b.t);d.title=b.tc+'  '+b.shows;

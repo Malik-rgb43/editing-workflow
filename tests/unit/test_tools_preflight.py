@@ -115,9 +115,31 @@ def test_media_in_3d_and_hidden_parent_and_tween_on_video(tmp_path):
     <div class="stage"><video id="v1" src="a.mp4" class="clip" data-start="0" data-duration="2"></video></div>
     <div class="hid"><img src="x.png"></div>
     <script>gsap.to("#v1", {opacity: 0});</script></body></html>"""
-    rc, d = run(project(tmp_path, html, font=False))
+    hf = project(tmp_path, html, font=False)
+    (hf / "a.mp4").write_bytes(b"x")
+    (hf / "x.png").write_bytes(b"x")
+    rc, d = run(hf)
     assert rc == 0
     assert {"media_in_3d", "media_parent_visibility", "tween_on_video"} <= set(codes(d))
+
+
+def test_a_missing_media_file_is_an_error(tmp_path):
+    # 2026-11-09 review: a block left pointing at a placeholder plate rendered black with only an "info" note
+    html = """<html><body><div data-composition-id="main"><video src="assets/video/plate.mp4" class="clip" data-start="0" data-duration="2"></video>
+    <img src="data:image/png;base64,AA=="></div></body></html>"""
+    rc, d = run(project(tmp_path, html, font=False))
+    assert rc != 0 and "media_file_missing" in codes(d)
+    assert sum(c == "media_file_missing" for c in codes(d)) == 1  # the data: image is not a file
+
+
+def test_an_unset_block_font_variable_is_flagged_and_a_set_one_is_followed(tmp_path):
+    # 2026-11-09 review: var(--hfb-font, sans-serif) with --hfb-font never set rendered in sans-serif without a warning
+    body = '<div data-composition-id="main"><p class="t" style="font-family: var(--hfb-font, sans-serif)">x</p></div>'
+    rc, d = run(project(tmp_path, f"<html><body>{body}</body></html>", font=False))
+    assert "font_var_unset" in codes(d)
+    host = "<html><head><style>:root{--hfb-font: 'Rubik', sans-serif}</style></head><body>" + body + "</body></html>"
+    rc2, d2 = run(project(tmp_path / "2", host, font=False))
+    assert "font_var_unset" not in codes(d2) and "font_not_declared" in codes(d2)  # Rubik is named but has no @font-face file
 
 
 def test_external_resource_and_color_grading_attr(tmp_path):

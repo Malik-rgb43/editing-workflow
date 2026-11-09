@@ -59,9 +59,12 @@ def test_transcribe_has_exactly_one_route_and_never_a_whisper_cpp_binary():
 def test_transcribe_refuses_without_model_and_without_download_permission(tmp_path):
     wav = tmp_path / "a.wav"
     wav.write_bytes(b"RIFF....")
-    p = run("transcribe", wav, "-o", tmp_path / "w.json")
+    import os
+
+    env = {**os.environ, "HF_HUB_CACHE": str(tmp_path / "hub"), "HF_HOME": str(tmp_path / "home"), "USERPROFILE": str(tmp_path), "HOME": str(tmp_path)}
+    p = run("transcribe", wav, "-o", tmp_path / "w.json", env=env)  # an empty cache: a model already on the real machine must not count
     assert p.returncode == 2 and not (tmp_path / "w.json").exists()
-    assert "allow-download" in p.stderr or "no usable route" in p.stderr
+    assert "--fetch-model" in p.stderr or "no usable route" in p.stderr
 
 
 def test_transcribe_never_assumes_hebrew_and_the_hebrew_model_refuses_other_languages():
@@ -254,3 +257,75 @@ def test_captions_export_groups_words_into_cues_for_srt_vtt_and_txt(tmp_path):
     assert (tmp_path / "out.vtt").read_text(encoding="utf-8").startswith("WEBVTT")
     p.write_text(json.dumps({"words": []}), encoding="utf-8")
     assert run("captions_export", p, "-o", tmp_path / "x.srt").returncode == 2
+
+
+def test_transcribe_finds_a_model_already_in_the_hf_cache(tmp_path):
+    # 2026-11-09: the model sat in the cache and the tool still said "no model", so the agent asked the student to download 1.6 GB again.
+    import transcribe as tr
+
+    mid = tr.DEFAULT_HE_MODEL
+    rev = tr.KNOWN_MODELS[mid]["revision"]
+    snaps = tmp_path / ("models--" + mid.replace("/", "--")) / "snapshots"
+    (snaps / "older").mkdir(parents=True)
+    (snaps / "older" / "model.bin").write_bytes(b"x")
+    (snaps / "half").mkdir()  # an interrupted download: no model.bin
+    assert tr.cached_model_dir(mid, roots=[tmp_path]) == str(snaps / "older")
+    (snaps / rev).mkdir()
+    (snaps / rev / "model.bin").write_bytes(b"x")
+    assert tr.cached_model_dir(mid, roots=[tmp_path]) == str(snaps / rev)  # the pinned revision wins
+    assert tr.cached_model_dir("other/model", roots=[tmp_path]) is None
+    assert tr.hf_cache_roots({"HF_HUB_CACHE": "/a", "HF_HOME": "/b"})[:2] == [Path("/a"), Path("/b") / "hub"]
+
+
+def test_transcribe_fetch_model_without_yes_downloads_nothing(tmp_path):
+    import os
+
+    env = {**os.environ, "HF_HUB_CACHE": str(tmp_path), "HF_HOME": str(tmp_path / "home"), "USERPROFILE": str(tmp_path), "HOME": str(tmp_path)}
+    p = run("transcribe", "--fetch-model", env=env)
+    assert p.returncode == 0, p.stderr
+    out = json.loads(p.stdout)
+    assert out["already_here"] is None and out["bytes"] == 1_621_667_540 and "nothing was downloaded" in out["status"]
+    assert not any(tmp_path.rglob("model.bin"))
+
+
+def test_transcribe_finds_the_python_of_the_installed_asr_environment(tmp_path):
+    # 2026-11-09 review: `apply --local` put faster-whisper in a separate venv ([models] asr_venv) that no tool read.
+    import transcribe as tr
+
+    assert tr.venv_python(None) is None and tr.venv_python(tmp_path) is None
+    win = tmp_path / "Scripts" / "python.exe"
+    win.parent.mkdir()
+    win.write_bytes(b"")
+    assert tr.venv_python(tmp_path) == win
+
+
+def test_face_and_cutout_models_are_found_in_the_shared_models_folder(tmp_path, monkeypatch):
+    # 2026-11-09 review: the YuNet file and a configured matte_dir were read only from --model, so they were asked for again mid-edit
+    import cutout
+    import face_center
+
+    monkeypatch.setenv("AVC_MODELS_DIR", str(tmp_path))
+    monkeypatch.delenv("AVC_FACE_MODEL", raising=False)
+    monkeypatch.setattr("core.config.load_config", lambda *a, **k: type("C", (), {"path": staticmethod(lambda key: None)})())
+    assert face_center.find_face_model(None) is None
+    (tmp_path / face_center.YUNET_FILE).write_bytes(b"x")
+    assert face_center.find_face_model(None) == str(tmp_path / face_center.YUNET_FILE)
+    assert face_center.find_face_model("explicit.onnx") == "explicit.onnx"
+    assert cutout.find_onnx_model(None) is None
+    (tmp_path / cutout.MODNET_FILE).write_bytes(b"x")
+    assert cutout.find_onnx_model(None) == str(tmp_path / cutout.MODNET_FILE)
+    md = tmp_path / "matte"
+    md.mkdir()
+    (md / "rvm.onnx").write_bytes(b"x")
+    monkeypatch.setattr("core.config.load_config", lambda *a, **k: type("C", (), {"path": staticmethod(lambda key: md if key == "models.matte_dir" else None)})())
+    assert cutout.find_onnx_model(None) == str(md / "rvm.onnx")
+
+
+def test_model_fetch_without_yes_downloads_nothing(tmp_path):
+    import os
+
+    env = {**os.environ, "AVC_MODELS_DIR": str(tmp_path)}
+    for tool, args in (("face_center", ["fetch-model"]), ("cutout", ["fetch-model", "--route", "onnx"])):
+        p = run(tool, *args, env=env)
+        assert p.returncode == 0 and "nothing was downloaded" in p.stdout, (tool, p.stderr)
+    assert list(tmp_path.iterdir()) == []

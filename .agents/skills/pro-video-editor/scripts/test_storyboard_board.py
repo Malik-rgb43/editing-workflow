@@ -185,7 +185,21 @@ class SamenessTests(unittest.TestCase):
         self.assertTrue(any("`hero` is true or false" in e for e in sb.validate(sp, p.parent)[0]))
 
     def test_a_varied_board_has_no_sameness_warning(self) -> None:
-        self.assertEqual(self.warns(), [])
+        self.assertEqual([w for w in self.warns() if not w.startswith("mood.type")], [])
+
+    def test_mood_font_is_embedded_or_the_card_says_it_is_not_shown(self) -> None:
+        # 2026-11-09: a font named on a board but never loaded showed the default font under its name.
+        p = make_spec(self.dir)
+        sp = sb.load(p)
+        self.assertTrue(any(w.startswith("mood.type has no font_file") for w in sb.validate(sp, p.parent)[1]))
+        sp["mood"]["type"]["font_file"] = "nope.woff2"
+        self.assertTrue(any("mood.type.font_file: no file" in e for e in sb.validate(sp, p.parent)[0]))
+        (p.parent / "f.woff2").write_bytes(b"wOF2fake")
+        sp["mood"]["type"]["font_file"] = "f.woff2"
+        self.assertEqual(sb.validate(sp, p.parent)[0], [])
+        html = sb.page(sp, p.parent, None)
+        self.assertIn("data:font/woff2;base64,", html)
+        self.assertIn("font_missing", html)
 
     def test_three_in_a_row_and_one_shot_over_half(self) -> None:
         for b in self.spec["beats"][1:4]:

@@ -10,9 +10,9 @@
     {
       "id": "font", "title": "פונט", "kind": "font",
       "options": [
-        {"id": "A", "label": "Arial 800", "family": "Arial", "weight": 800, "fallback": "sans-serif"},
-        {"id": "B", "label": "Tahoma 700", "family": "Tahoma", "weight": 700, "fallback": "sans-serif"},
-        {"id": "C", "label": "Times New Roman 700", "family": "Times New Roman", "weight": 700, "fallback": "serif"}
+        {"id": "A", "label": "Arial 800", "family": "Arial", "weight": 800, "fallback": "sans-serif", "system": true},
+        {"id": "B", "label": "Tahoma 700", "family": "Tahoma", "weight": 700, "fallback": "sans-serif", "system": true},
+        {"id": "C", "label": "Times New Roman 700", "family": "Times New Roman", "weight": 700, "fallback": "serif", "system": true}
       ]
     },
     {
