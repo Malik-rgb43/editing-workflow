@@ -787,6 +787,24 @@ security = "never auto-downloaded; the student approves the size first; pin the 
 doctor = { smoke = "file presence + sha256 recorded by the transcribe tool" }
 
 [[entry]]
+id = "wav2vec2-he-align"
+kind = "model"
+name = "imvladikon/wav2vec2-large-xlsr-53-hebrew (Hebrew forced-alignment weights, CTC)"
+role = "word_align: moves every transcript word edge to where the audio says it is, so cuts land on real word boundaries"
+profiles = ["optional"]
+cost = "free (download only)"
+license = "Apache-2.0 (model card, checked 2026-11-13)"
+download_size = "model.safetensors 1,261,934,532 bytes (about 1.3 GB) - read from the local Hugging Face cache copy on 2026-11-13"
+revision = "3dd308dda70b20507a6920b459052635973ae3cd"
+source_url = "https://huggingface.co/imvladikon/wav2vec2-large-xlsr-53-hebrew"
+status = "verified"
+checked = "2026-11-13"
+confidence = "medium"
+security = "never auto-downloaded; the student approves the size first (word_align --fetch-model shows it); needs the align-cpu extra (torch, torchaudio, transformers), also a separate yes"
+doctor = { smoke = "python tools/word_align.py --check" }
+notes = "Measured on ONE real Hebrew lesson (one machine): Whisper word starts were off by median 30 ms / p90 260 ms and 11.2% started in silence; after alignment 0.4%. Hebrew only. The older xls-r-300m-hebrew model (no licence) is NOT this one."
+
+[[entry]]
 id = "matte-fast"
 kind = "python-lib"
 name = "matte-fast route (RVM + ONNX Runtime/DirectML internal; MODNet as bundle-safe alternative)"

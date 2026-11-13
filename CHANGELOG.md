@@ -9,6 +9,9 @@ Dates and facts here are perishable; each entry states its source where it relie
 
 ## [Unreleased]
 
+### Added
+- `tools/word_align.py`: optional local Hebrew forced alignment (wav2vec2 CTC, Apache-2.0 model, about 1.3 GB, separate `align-cpu` extra) that re-times transcript words to the audio so cuts land on real word edges; refuses non-Hebrew, never downloads without a yes; catalogue entry `wav2vec2-he-align`, docs row in `local-vs-paid`, pointers in `pro-video-editor` and `captions-transcription`.
+
 ## [0.7.0] - 2026-11-09
 
 ### Fixed
